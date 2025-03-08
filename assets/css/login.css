@@ -51,16 +51,33 @@ main {
     left: 20px;
     background-size: contain;
     background-repeat: no-repeat;
-    width: 28%;
-    height: 7%;
+    width: 13vw;
+    height: 8vh;
 }
 
 .coluna2 {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100%;
     width: 66%;
+}
+
+.seta-voltar {
+    margin-bottom: 3%;
+
+    a {
+        img {
+            width: 5vw;
+            height: 6vh;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .imagem-seta:hover {
+            transform: scale(1.2);
+        }
+    }
 }
 
 .container {
@@ -237,7 +254,7 @@ main {
         transition: transform 0.2s ease-in-out;
     }
 
-    #botao-entrada:hover {
+    #botao-entrada:hover, #botao-entrada:focus {
         transform: scale(1.05);
     }
 }
@@ -283,7 +300,7 @@ main {
     transition: transform 0.2s ease-in-out;
 }
 
-.login-google:hover {
+.login-google:hover, .login-google:focus {
     transform: scale(1.05);
 }
 
