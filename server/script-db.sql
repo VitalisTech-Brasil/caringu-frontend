@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS pessoas (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     senha VARCHAR(16) NOT NULL,
+    cpf VARCHAR(11) NOT NULL,
     celular VARCHAR(11),
     data_nascimento DATE,
     genero ENUM('M', 'F', 'Não Binário', 'Outro', 'Prefiro não informar'),
