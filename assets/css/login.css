@@ -28,16 +28,16 @@ main {
     height: 100%;
     width: 100%;
     padding: 1%;
-    /* background-color: green; */
 }
 
 .coluna1 {
     height: 100%;
     width: 39%;
+    min-width: 250px;
 
     background-image: url(../img/imagem-login.svg);
     background-size: cover;
-    background-position: left;
+    background-position: center;
     background-repeat: no-repeat;
 
     border-radius: 1%;
@@ -49,10 +49,11 @@ main {
     position: absolute;
     top: 20px;
     left: 20px;
-    background-size: contain;
-    background-repeat: no-repeat;
+    
     width: 13vw;
-    height: 8vh;
+    max-width: 180px;
+    min-width: 100px;
+    height: auto;
 }
 
 .coluna2 {

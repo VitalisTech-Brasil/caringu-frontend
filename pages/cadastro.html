@@ -4,8 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro | CaringU</title>
+    <link rel="shortcut icon" href="../assets/img/favicon.png" type="image/x-icon">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/cadastro.css">
 </head>
 <body>
-    CADASTRO
+    <main>
+        <section class="coluna1">
+            <a href="../index.html">
+                <img class="logo" src="../assets/img/caringu-logotipo-light.svg" alt="Logo da CaringU">
+            </a>
+        </section>
+        
+        <section class="coluna2">
+
+            <nav>
+                <div class="indicador-etapa">
+                    <div class="indicador etapa-atual"></div>
+                    <div class="indicador"></div>
+                    <div class="indicador"></div>
+                    <div class="indicador"></div>
+                </div>
+
+                <div class="titulo-etapa">
+                    <div class="titulo">Etapa 1</div>
+                    <div class="titulo">Etapa 2</div>
+                    <div class="titulo">Etapa 3</div>
+                    <div class="titulo">Etapa 4</div>
+                </div>
+            </nav>
+
+            <section class="container">
+                <header class="container-titulos">
+                    <h1>Como deseja se cadastrar?</h1>
+                    <h2>Escolha o tipo de conta que deseja criar.</h2>
+                </header>
+    
+                <div class="container-botoes">
+                    <button id="botao-personal" onclick="salvarTipoContaCadastro()">
+                        <div class="imagem-botao">
+                            <img src="../assets/img/dumbell-fitness (peso).svg" alt="Halter de academia">
+                        </div>
+                        <div class="descricao">
+                            <span>Personal Trainer</span>
+                            <p>Para profissionais que oferecem serviços de treinos.</p>
+                        </div>
+                    </button>
+
+                    <button id="botao-aluno" onclick="salvarTipoContaCadastro()">
+                        <div class="imagem-botao">
+                            <img src="../assets/img/mochila-treino.svg" alt="Mochila de treino">
+                        </div>
+                        <div class="descricao">
+                            <span>Aluno</span>
+                            <p>Para quem busca um personal trainer.</p>
+                        </div>
+                    </button>
+                </div>
+                <footer>
+                    <button class="voltar">
+                        <img src="../assets/img/seta-esquerda.svg" alt="Seta mirando para esquerda">
+                        <span>Voltar</span>
+                    </button>
+    
+                    <button class="prosseguir">Prosseguir</button>
+                </footer>
+            </section>
+            
+
+        </section>
+    </main>
+
+    <script src="../assets/js/cadastro.js"></script>
 </body>
 </html>
