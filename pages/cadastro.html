@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/cadastro.css">
 </head>
+
 <body>
     <main>
         <section class="coluna1">
@@ -17,7 +19,7 @@
                 <img class="logo" src="../assets/img/caringu-logotipo-light.svg" alt="Logo da CaringU">
             </a>
         </section>
-        
+
         <section class="coluna2">
 
             <nav>
@@ -37,46 +39,178 @@
             </nav>
 
             <section class="container">
-                <header class="container-titulos">
-                    <h1>Como deseja se cadastrar?</h1>
-                    <h2>Escolha o tipo de conta que deseja criar.</h2>
-                </header>
-    
-                <div class="container-botoes">
-                    <button id="botao-personal" onclick="salvarTipoContaCadastro()">
-                        <div class="imagem-botao">
-                            <img src="../assets/img/dumbell-fitness (peso).svg" alt="Halter de academia">
-                        </div>
-                        <div class="descricao">
-                            <span>Personal Trainer</span>
-                            <p>Para profissionais que oferecem serviços de treinos.</p>
-                        </div>
-                    </button>
-
-                    <button id="botao-aluno" onclick="salvarTipoContaCadastro()">
-                        <div class="imagem-botao">
-                            <img src="../assets/img/mochila-treino.svg" alt="Mochila de treino">
-                        </div>
-                        <div class="descricao">
-                            <span>Aluno</span>
-                            <p>Para quem busca um personal trainer.</p>
-                        </div>
-                    </button>
+                <div class="etapa1" style="display: flex;">
+                    <header class="container-titulos">
+                        <h1>Como deseja se cadastrar?</h1>
+                        <h2>Escolha o tipo de conta que deseja criar.</h2>
+                    </header>
+                    <div class="container-botoes">
+                        <button id="botao-personal">
+                            <div class="imagem-botao">
+                                <img src="../assets/img/dumbell-fitness (peso).svg" alt="Halter de academia">
+                            </div>
+                            <div class="descricao">
+                                <span>Personal Trainer</span>
+                                <p>Para profissionais que oferecem serviços de treinos.</p>
+                            </div>
+                        </button>
+                        <button id="botao-aluno">
+                            <div class="imagem-botao">
+                                <img src="../assets/img/mochila-treino.svg" alt="Mochila de treino">
+                            </div>
+                            <div class="descricao">
+                                <span>Aluno</span>
+                                <p>Para quem busca um personal trainer.</p>
+                            </div>
+                        </button>
+                    </div>
                 </div>
+
+                <div class="etapa2" style="display: none;">
+                    <form id="form-etapa2">
+                        <input type="text" id="input_nome" placeholder="* Nome completo" required>
+
+                        <input type="text" id="input_dataNascimento" onkeyup="mascaraData()" placeholder="* Data de nascimento" maxlength="10" required>
+
+                        <input type="text" id="input_cpf" onkeyup="mascaraCPF()" placeholder="* CPF" maxlength="14" required>
+                        
+                        <select id="select_genero">
+                            <option value="" disabled selected>* Selecione o gênero</option>
+                            <option value="m">Masculino</option>
+                            <option value="f">Feminino</option>
+                            <option value="nao-binario">Não binário</option>
+                            <option value="outro">Outro</option>
+                            <option value="nao-informar">Prefiro não informar</option>
+                        </select>
+                    </form>
+                </div>
+                
+                <div class="etapa3-aluno" style="display: none;">
+                    <form id="form-etapa3-aluno">
+                        <div>
+                            <h2>Dados Físicos:</h2>
+                            <select id="select_deficiencia">
+                                <option value="" disabled selected>* Portador de alguma deficiência?</option>
+                                <option value="sim">Sim</option>
+                                <option value="nao">Não</option>
+                            </select>
+                            <select id="select_condicaoMedica">
+                                <option value="" disabled selected>* Possui alguma condição médica?</option>
+                                <option value="sim">Sim</option>
+                                <option value="nao">Não</option>
+                            </select>
+                            <select id="select_lesao">
+                                <option value="" disabled selected>* Já sofreu alguma lesão?</option>
+                                <option value="sim">Sim</option>
+                                <option value="nao">Não</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <h2>Atividade Fisica e Recursos:</h2>
+
+                            <select id="select_nivelAtividadeAtual">
+                                <option value="" disabled selected>* Nível de atividade atual</option>
+                                <option value="sedentario">Sedentário</option>
+                                <option value="leve">Levemente Ativo</option>
+                                <option value="moderado">Moderadamente Ativo</option>
+                                <option value="muito">Muito Ativo</option>
+                                <option value="extremo">Extremamente Ativo</option>
+                            </select>
+
+                            <select id="select_frequenciaTreino">
+                                <option value="" disabled selected>Frequência de treino desejada</option>
+                                <option value="1x">1 vez por semana</option>
+                                <option value="2x">2 vezes por semana</option>
+                                <option value="3x">3 vezes por semana</option>
+                                <option value="mais3x">Mais de 3 vezes por semana</option>
+                            </select>
+
+                            <select id="select_objetivo">
+                                <option value="" disabled selected>Objetivo</option>
+                                <option value="emagrecimento">Emagrecimento</option>
+                                <option value="hipertrofia">Hipertrofia</option>
+                                <option value="condicionamento-fisico">Condicionamento Físico</option>
+                                <option value="reabilitacao">Reabilitação</option>
+                                <option value="ganho-forca">Ganho de força</option>
+                                <option value="treinamento-funcional">Treinamento Funcional</option>
+                                <option value="alivio-estresse">Alívio do Estresse</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="etapa3-personal" style="display: none;">
+                    <form id="form-etapa3-personal">
+                        <input type="text" id="input_cref" onkeyup="mascaraCREF()" placeholder="* Registro do CREF" maxlength="11" required>
+                        <input type="number" id="input_anosExperiencia" placeholder="* Anos de experiência" required>
+                        <select id="select_especialidade" name="especialidade" required>
+                            <option value="" disabled selected>* Selecione uma especialidade</option>
+                            <option value="musculacao">Musculação</option>
+                            <option value="treinamento-funcional">Treinamento Funcional</option>
+                            <option value="hiit">HIIT (Treino Intervalado de Alta Intensidade)</option>
+                            <option value="core">Treinamento de Core</option>
+                            <option value="emagrecimento">Treinamento para Emagrecimento</option>
+                            <option value="corrida-caminhada">Corrida e Caminhada</option>
+                            <option value="ciclismo-indoor">Ciclismo Indoor (Spinning)</option>
+                            <option value="treinamento-esportivo">Treinamento Esportivo</option>
+                            <option value="alto-rendimento">Treinamento para Atletas de Alto Rendimento</option>
+                            <option value="pilates">Pilates</option>
+                            <option value="alongamento-mobilidade">Alongamento e Mobilidade</option>
+                            <option value="reabilitacao-prevencao">Reabilitação e Prevenção de Lesões</option>
+                            <option value="hipertrofia">Hipertrofia Muscular</option>
+                            <option value="modelagem-corporal">Modelagem Corporal</option>
+                            <option value="deficiencia">Treinamento para Pessoas com Deficiência</option>
+                            <option value="idosos">Treinamento para Idosos</option>
+                            <option value="pre-pos-parto">Treinamento Pré e Pós-Parto</option>
+                            <option value="saude-metabolica">Treinamento para Saúde Metabólica</option>
+                        </select>
+                    </form>
+                </div>
+                
+                <div class="etapa4" style="display: none;">
+                    <form id="form-etapa4">
+                        <input type="text" id="input_email" placeholder="* Email" required>
+
+                        <input type="text" id="input_celular" onkeyup="mascaraCelular()" placeholder="* Celular" maxlength="15" required>
+
+                        <div class="div-senha">
+                            <input type="password" id="input_senha" placeholder="* Senha" maxlength="16" required>
+                            <div>
+                                <ul class="criterios-senha">
+                                    <li>Minimo de 6 caracteres</li>
+                                    <li>Minimo de 1 caractere especial (ex: !, @, #, $, etc.)</li>
+                                    <li>Minimo de 1 letra maiúscula</li>
+                                    <li>Minimo de 1 número</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <input type="password" id="input_confirmarSenha" placeholder="* Confirmar senha" maxlength="16" required>
+                    </form>
+                </div>
+
+                <div class="tela-sucesso">
+                    SUCESSO
+                </div>
+
                 <footer>
                     <button class="voltar">
                         <img src="../assets/img/seta-esquerda.svg" alt="Seta mirando para esquerda">
                         <span>Voltar</span>
                     </button>
-    
-                    <button class="prosseguir">Prosseguir</button>
+
+                    <button type="submit" class="prosseguir">Prosseguir</button>
                 </footer>
             </section>
-            
+
 
         </section>
     </main>
 
-    <script src="../assets/js/cadastro.js"></script>
+    <script src="../assets/js/cadastro/logica-etapas.js"></script>
+    <script src="../assets/js/cadastro/etapa2.js"></script>
 </body>
+
 </html>
