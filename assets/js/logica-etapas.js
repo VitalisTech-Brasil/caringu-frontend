@@ -31,7 +31,7 @@ botaoProsseguir.addEventListener("click", function () {
         return;
     }
 
-    /* if (etapaAtual === 1) {
+    if (etapaAtual === 1) {
 
         let nome = document.getElementById("input_nome").value.trim();
         let dataNascimento = document.getElementById("input_dataNascimento").value.trim();
@@ -73,7 +73,7 @@ botaoProsseguir.addEventListener("click", function () {
             return;
         }
         
-    } else  *//* if (etapaAtual == 3) {
+    } else if (etapaAtual == 3) {
         let email = document.getElementById("input_email").value;
         let celular = document.getElementById("input_celular").value;
         let senha = document.getElementById("input_senha").value;
@@ -85,7 +85,8 @@ botaoProsseguir.addEventListener("click", function () {
         }
 
         if (!validarSenha(senha)) {
-            alert("Critérios de aceitação para senha incorretos!")
+            alert("Critérios de aceitação para senha incorretos!");
+            return;
         }
 
         if (confirmarSenha != senha) {
@@ -98,7 +99,7 @@ botaoProsseguir.addEventListener("click", function () {
             return;
         }
 
-    } */
+    }
 
     mudarEtapa(1);
     console.log(etapas);
