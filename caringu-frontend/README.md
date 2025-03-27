@@ -5,13 +5,14 @@ Este documento explica a estrutura de pastas utilizada no projeto, facilitando a
 ## Estrutura de Diretórios
 
 ```
-│   .gitignore
-│   eslint.config.js
-│   index.html
-│   package-lock.json
-│   package.json
-│   README.md
-│   vite.config.js
+├───📁caringu-frontend
+│       .gitignore
+│       eslint.config.js
+│       index.html
+│       package-lock.json
+│       package.json
+│       README.md
+│       vite.config.js
 │
 ├───📁public
 │       favicon.png
