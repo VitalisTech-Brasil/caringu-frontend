@@ -1,13 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/login.jsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Cadastro from "./components/Cadastro/Cadastro"
 
 const AppRoutes = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro/>} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 
