@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from "react";
+import InputMask from "react-input-mask";
 import "./cadastro.css"
 import { validarDadosCadastrais, validarDadosProfissionais } from './validacoes';
 
@@ -13,46 +14,55 @@ import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 const Cadastro = () => {
     const [etapa, setEtapa] = useState(1);
     const [tipoConta, setTipoConta] = useState(null);
-    const [cref, setCref] = useState("");
-    const [dadosCadastrais, setDadosCadastrais] = useState({
-        nome: "",
-        dataNascimento: "",
-        email: "",
-        telefone: "",
-        senha: "",
-        confirmarSenha: "",
-        genero: "",
-    });
-    
-    const [dadosProfissionais, setDadosProfissionais] = useState({
-        cref: "",
-        experiencia: "",
-        especialidade: "",
-    });
+    const [erros, setErros] = useState({});
 
-    const handleChangeCadastral = (e) => {
-        setDadosCadastrais({ ...dadosCadastrais, [e.target.name]: e.target.value });
-    };
-    
-    const handleChangeProfissional = (e) => {
-        setDadosProfissionais({ ...dadosProfissionais, [e.target.name]: e.target.value });
-    };
+    /* DADOS CADASTRAIS */
+    const [nome, setNome] = useState("");
+    const [dataNascimento, setDataNascimento] = useState("");
+    const [email, setEmail] = useState("");
+    const [telefone, setTelefone] = useState("");
+    const [senha, setSenha] = useState("");
+    const [confirmarSenha, setConfirmarSenha] = useState("");
+    const [genero, setGenero] = useState("");
+
+    /* INFORMAÇÕES PROFISSIONAIS */
+    const [cref, setCref] = useState("");
+    const [experiencia, setExperiencia] = useState("");
+    const [especialidade, setEspecialidade] = useState("");
 
     const totalEtapas = tipoConta === "personal" ? 3 : tipoConta === "aluno" ? 2 : 1;
+
+    const validarCampos = () => {
+        let errosTemp = {};
+
+        if (etapa === 2) {
+            if (!nome.trim()) errosTemp.nome = "Nome é obrigatório.";
+            if (!dataNascimento.trim() || dataNascimento.length < 10) errosTemp.dataNascimento = "Data de nascimento inválida.";
+            if (!email.trim() || !email.includes("@")) errosTemp.email = "E-mail inválido.";
+            if (!telefone.trim() || telefone.length < 10) errosTemp.telefone = "Telefone inválido.";
+            if (!senha.trim() || senha.length < 6) errosTemp.senha = "Senha deve ter pelo menos 6 caracteres.";
+            if (senha !== confirmarSenha) errosTemp.confirmarSenha = "As senhas não coincidem.";
+            if (!genero) errosTemp.genero = "Selecione um gênero.";
+        }
+
+        if (etapa === 3 && tipoConta === "personal") {
+            if (!cref.trim()) errosTemp.cref = "CREF é obrigatório.";
+            if (!experiencia.trim()) errosTemp.experiencia = "Experiência é obrigatória.";
+            if (!especialidade) errosTemp.especialidade = "Selecione uma especialidade.";
+        }
+
+        setErros(errosTemp);
+
+        return Object.keys(errosTemp).length === 0; // Retorna true se não houver erros
+    };
 
     const avancarEtapa = () => {
         if (etapa === 1 && tipoConta === null) {
             alert("Por favor, selecione um tipo de conta antes de prosseguir!");
             return;
         }
-    
-        if (etapa === 2 && !validarDadosCadastrais(dadosCadastrais)) {
-            return;
-        }
-    
-        if (etapa === 3 && tipoConta === "personal" && !validarDadosProfissionais(dadosProfissionais)) {
-            return;
-        }
+
+        if (!validarCampos()) return;
 
         if (etapa < totalEtapas) setEtapa(etapa + 1);
     };
@@ -65,24 +75,41 @@ const Cadastro = () => {
         setTipoConta(tipo);
     };
 
+    const mascaraData = (e) => {
+        let valor = e.target.value.replace(/\D+/g, '')
+
+        // Adiciona a máscara para a data (dd/mm/aaaa)
+        if (valor.length <= 2) {
+            valor = valor.replace(/(\d{2})/, '$1');
+        } else if (valor.length <= 4) {
+            valor = valor.replace(/(\d{2})(\d{2})/, '$1/$2');
+        } else if (valor.length <= 6) {
+            valor = valor.replace(/(\d{2})(\d{2})(\d{2})/, '$1/$2/$3');
+        } else {
+            valor = valor.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+        }
+
+        setDataNascimento(valor);
+    }
+
     const mascaraCREF = (e) => {
         let valor = e.target.value.replace(/[^0-9A-Za-z]/g, '').toUpperCase();
-    
+
         if (valor.length > 6) {
-          valor = valor.slice(0, 6) + '-' + valor.slice(6);
+            valor = valor.slice(0, 6) + '-' + valor.slice(6);
         }
-    
+
         if (valor.length > 8 && valor.indexOf('/') === -1) {
-          valor = valor.slice(0, 8) + '/' + valor.slice(8);
+            valor = valor.slice(0, 8) + '/' + valor.slice(8);
         }
-    
+
         if (valor.indexOf('/') !== -1 && valor.length > valor.indexOf('/') + 3) {
-          valor = valor.slice(0, valor.indexOf('/') + 4);
+            valor = valor.slice(0, valor.indexOf('/') + 4);
         }
-    
+
         setCref(valor);
-      };
-    
+    };
+
 
 
     return (
@@ -136,28 +163,50 @@ const Cadastro = () => {
                         <div className="etapa2">
                             <form>
                                 <h1>Dados Cadastrais</h1>
-                                <input type="text" name="nome" placeholder="* Nome completo" required onChange={handleChangeCadastral} value={dadosCadastrais.nome}/>
-                                <input type="date" name="dataNascimento" placeholder="* Data de nascimento" maxLength={10} required onChange={handleChangeCadastral} value={dadosCadastrais.dataNascimento}/>
-                                <input type="text" name="email" placeholder="* Email" required onChange={handleChangeCadastral} value={dadosCadastrais.email}/>
-                                <input type="text" name="telefone" placeholder="* Telefone" maxLength={11} required onChange={handleChangeCadastral} value={dadosCadastrais.telefone}/>
-                                <div className="div-senha">
+
+                                <div className="div-nome-data">
                                     <input
-                                        type="password"
-                                        name="senha" placeholder="* Senha"
-                                        minLength={6} maxLength={16}
-                                        required 
-                                        onChange={handleChangeCadastral} value={dadosCadastrais.senha}/>
-                                    <div>
-                                        <span>Entre 6 - 16 caracteres</span>
-                                        <span>Mínimo de 1 caractere especial (ex: !, @, #, $, etc.)</span>
-                                        <span>Mínimo de 1 letra maiúscula</span>
-                                        <span>Mínimo de 1 número</span>
+                                        type="text"
+                                        name="nome"
+                                        id='input-nome'
+                                        placeholder="* Nome completo"
+                                        value={nome}
+                                        onChange={(e) => setNome(e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        name="dataNascimento"
+                                        id='input-dataNascimento'
+                                        placeholder="* Data de nascimento"
+                                        onChange={(e) => setDataNascimento(e.target.value)}
+                                        value={dataNascimento}
+                                        maxLength={10}
+                                        required
+                                    />
+                                </div>
+
+                                <input type="text" name="email" placeholder="* Email" required />
+
+                                <input type="text" name="telefone" placeholder="* Telefone" maxLength={11} required />
+                                <div className="senhas">
+                                    <div className="div-senha">
+                                        <input type="password"
+                                            name="senha" placeholder="* Senha"
+                                            minLength={6} maxLength={16}
+                                            required />
+                                        <div className="validacoes-senha">
+                                            <span>Entre 6 - 16 caracteres</span>
+                                            <span>Mínimo de 1 caractere especial (ex: !, @, #, $, etc.)</span>
+                                            <span>Mínimo de 1 letra maiúscula</span>
+                                            <span>Mínimo de 1 número</span>
+                                        </div>
+                                    </div>
+                                    <div className="div-confirmarSenha">
+                                        <input type="password" name="confirmarSenha" minLength={6} maxLength={16} placeholder="* Confirmar Senha" required />
                                     </div>
                                 </div>
-                                <input type="password" name="confirmarSenha" minLength={6} maxLength={16} placeholder="* Confirmar Senha" required onChange={handleChangeCadastral} value={dadosCadastrais.confirmarSenha}/>
-                                <select name="genero"
-                                    onChange={handleChangeCadastral}
-                                    value={dadosCadastrais.genero} defaultValue="">
+
+                                <select name="genero" defaultValue="">
                                     <option value="" disabled>* Selecione o gênero</option>
                                     <option value="M">Masculino</option>
                                     <option value="F">Feminino</option>
@@ -165,10 +214,13 @@ const Cadastro = () => {
                                     <option value="OUTRO">Outro</option>
                                     <option value="NAO_INFORMAR">Prefiro não informar</option>
                                 </select>
+                                
+                                <div>
+                                    <hr />
+                                    <span>*  Obrigatório</span>
+                                </div>
                             </form>
 
-                            <hr />
-                            <span>*  Obrigatório</span>
                         </div>
                     )}
 
@@ -180,18 +232,15 @@ const Cadastro = () => {
                                     type="text"
                                     name='cref'
                                     placeholder="* Registro do CREF"
-                                    onKeyUp={mascaraCREF}
                                     onChange={mascaraCREF}
-                                    value={cref}
                                     maxLength={11} required />
-                                <input 
+                                <input
                                     name='experiencia'
-                                    type="number"
-                                    onChange={handleChangeProfissional} 
-                                    value={dadosProfissionais.experiencia}
+                                    type="text"
+                                    maxLength={2}
                                     placeholder="* Anos de experiência" required />
 
-                                <select id="select_especialidade" name="especialidade" required defaultValue="" onChange={handleChangeProfissional} value={dadosProfissionais.especialidade}>
+                                <select id="select_especialidade" name="especialidade" required >
                                     <option value="" disabled>* Selecione uma especialidade</option>
                                     <option value="musculacao">Musculação</option>
                                     <option value="treinamento-funcional">Treinamento Funcional</option>
