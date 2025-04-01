@@ -62,8 +62,6 @@ const Cadastro = () => {
             return;
         }
 
-        if (!validarCampos()) return;
-
         if (etapa < totalEtapas) setEtapa(etapa + 1);
     };
 
