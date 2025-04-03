@@ -97,9 +97,7 @@ const ColunaInputs = () => {
             </div>
 
             <div className="recuperacao-senha">
-              <Link to="/esqueci-senha">
-                <a href="#">Esqueci minha senha</a>
-              </Link>
+                <a href="/esqueci-senha">Esqueci minha senha</a>
             </div>
 
             <button id="botao-entrada" type="submit">
