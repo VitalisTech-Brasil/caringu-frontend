@@ -34,7 +34,7 @@ main {
     min-width: 250px;
     left: 20px;
 
-    background-image: url(../img/imagem-login.svg);
+    background-image: url(../assets/images/imagem-login.svg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
