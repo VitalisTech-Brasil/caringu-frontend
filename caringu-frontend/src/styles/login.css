@@ -17,8 +17,6 @@
 body {
     background-color: var(--cor-secundaria);
     font-family: 'Inter', sans-serif;
-    height: 100vh;
-    width: 100vw;
 }
 
 main {
@@ -31,9 +29,10 @@ main {
 }
 
 .coluna1 {
-    height: 100%;
-    width: 39%;
+    height: 95vh;
+    width: 33%;
     min-width: 250px;
+    left: 20px;
 
     background-image: url(../img/imagem-login.svg);
     background-size: cover;
@@ -43,6 +42,11 @@ main {
     border-radius: 1%;
 
     position: relative;
+}
+
+.imagem-login{
+    height: 100%;
+    border-radius: 10px;
 }
 
 .logo {
@@ -61,7 +65,7 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 96vh;
+    height: 95vh;
     width: 66%;
 }
 
