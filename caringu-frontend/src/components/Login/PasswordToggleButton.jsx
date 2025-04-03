@@ -23,7 +23,7 @@ const PasswordToggleButton = ({
         placeholder=""
         required
       />
-      <label for="senha">Senha</label>
+      <label htmlFor="senha">Senha</label>
       <button
         type="button"
         className="alternar-senha"

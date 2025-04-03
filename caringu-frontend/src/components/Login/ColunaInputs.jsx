@@ -8,10 +8,6 @@ import PasswordToggleButton from './PasswordToggleButton';
 const ColunaInputs = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [mostrarSenha, setMostrarSenha] = useState(false);
-  const alternarSenha = () => {
-    setMostrarSenha(!mostrarSenha);
-  };
 
   const verificarUsuario = async (event) => {
     event.preventDefault();
@@ -66,63 +62,65 @@ const ColunaInputs = () => {
 
   return (
     <>
-        <section className="coluna2">
-          <div className="seta-voltar">
-            <Link to="/">
-              <img className="imagem-seta" src={setaVoltar} alt="Voltar" />
-            </Link>
-          </div>
+      <section className="coluna2">
+        <div className="seta-voltar">
+          <Link to="/">
+            <img className="imagem-seta" src={setaVoltar} alt="Voltar" />
+          </Link>
+        </div>
 
-          <div className="container">
-            <header className="container-titulos">
-              <h1>Pronto para continuar?</h1>
-              <p>Faça login para continuar sua experiência.</p>
-            </header>
+        <div className="container">
+          <header className="container-titulos">
+            <h1>Pronto para continuar?</h1>
+            <p>Faça login para continuar sua experiência.</p>
+          </header>
 
-            <form className="formulario" onSubmit={verificarUsuario}>
-              <div className="inputs">
-                <InputField
-                  id="email"
-                  name="email"
-                  type="email"
-                  label="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <PasswordToggleButton
-                  id="senha"
-                  name="senha"
-                  label="Senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="recuperacao-senha">
-                <a href="#">Esqueci minha senha</a>
-              </div>
-
-              <button id="botao-entrada" type="submit">
-                Entrar
-              </button>
-            </form>
-
-            <div className="container-botao-google">
-              <button className="login-google">
-                <img src={googleLogo} alt="Google Logo" />
-                Entrar com Google
-              </button>
+          <form className="formulario" onSubmit={verificarUsuario}>
+            <div className="inputs">
+              <InputField
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <PasswordToggleButton
+                id="senha"
+                name="senha"
+                label="Senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+              />
             </div>
 
-            <footer>
-              <p>
-                Não tem uma conta? <Link to="/cadastro">Cadastrar-se</Link>
-              </p>
-            </footer>
+            <div className="recuperacao-senha">
+              <Link to="/esqueci-senha">
+                <a href="#">Esqueci minha senha</a>
+              </Link>
+            </div>
+
+            <button id="botao-entrada" type="submit">
+              Entrar
+            </button>
+          </form>
+
+          <div className="container-botao-google">
+            <button className="login-google">
+              <img src={googleLogo} alt="Google Logo" />
+              Entrar com Google
+            </button>
           </div>
-        </section>
+
+          <footer>
+            <p>
+              Não tem uma conta? <Link to="/cadastro">Cadastrar-se</Link>
+            </p>
+          </footer>
+        </div>
+      </section>
     </>
   );
 };

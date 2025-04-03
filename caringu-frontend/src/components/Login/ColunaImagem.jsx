@@ -1,4 +1,4 @@
-import './login.css'; // Importando o CSS
+// import './login.css'; // Importando o CSS
 import { Link } from 'react-router-dom'; // Importando o Link
 import logo from '../../assets/logos/caringu-logotipo-light.svg';
 import imagemLogin from '../../assets/images/imagem-login.svg';
