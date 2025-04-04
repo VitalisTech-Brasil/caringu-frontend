@@ -8,7 +8,7 @@ import './styles/global.css'
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<Index/>} />
         <Route path="/login" element={<Login/>} />
@@ -16,7 +16,7 @@ const AppRoutes = () => {
         <Route path="/esqueci-senha" element={<EsqueciSenha/>} />
         <Route path="*" element={<Error/>} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 };
 
