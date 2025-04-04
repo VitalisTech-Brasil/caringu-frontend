@@ -20,7 +20,6 @@ main{
 }
 
 body {
-    background-color: var(--cor-secundaria);
     font-family: 'Inter', sans-serif;
     height: 100vh;
     width: 100vw;
