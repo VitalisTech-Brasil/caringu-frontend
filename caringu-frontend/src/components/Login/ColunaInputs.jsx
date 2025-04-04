@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link } from 'react-router-dom';
-import InputField from './inputs';
+import Input from './inputs';
 import PasswordToggleButton from './PasswordToggleButton';
 
 const ColunaInputs = () => {
@@ -76,8 +76,8 @@ const ColunaInputs = () => {
           </header>
 
           <form className="formulario" onSubmit={verificarUsuario}>
-            <div className="inputs">
-              <InputField
+            <div className="inputs w-full">
+              <Input
                 id="email"
                 name="email"
                 type="email"
@@ -86,33 +86,36 @@ const ColunaInputs = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <PasswordToggleButton
+              <Input
                 id="senha"
                 name="senha"
+                type="password"
                 label="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 required
               />
+
             </div>
 
             <div className="recuperacao-senha">
-                <a href="/esqueci-senha">Esqueci minha senha</a>
+              <a href="/esqueci-senha">Esqueci minha senha</a>
             </div>
 
             <button id="botao-entrada" type="submit">
               Entrar
             </button>
+
+            <div className="container-botao-google">
+              <button className="login-google">
+                <img src={googleLogo} alt="Google Logo" />
+                Entrar com Google
+              </button>
+            </div>
+
           </form>
 
-          <div className="container-botao-google">
-            <button className="login-google">
-              <img src={googleLogo} alt="Google Logo" />
-              Entrar com Google
-            </button>
-          </div>
-
-          <footer>
+          <footer className='justify-center items-center'>
             <p>
               Não tem uma conta? <Link to="/cadastro">Cadastrar-se</Link>
             </p>
