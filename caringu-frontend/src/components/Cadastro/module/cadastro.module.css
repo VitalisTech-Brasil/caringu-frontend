@@ -56,7 +56,7 @@ body,
     height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .container-form {
@@ -86,13 +86,16 @@ body,
         width: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         gap: 1.5rem;
 
         .container-nome-data {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 10%;
+
+            margin-top: 1%;
+            height: 8vh;
             width: 100%;
             gap: 1rem;
 
@@ -185,13 +188,36 @@ body,
 
 }
 
+.check {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 70%;
+    width: 100%;
+    color: green;
+
+    gap: 8px;
+}
+
+.neutro {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    height: 70%;
+    width: 100%;
+    color: var(--preto);
+
+    gap: 8px;
+}
+
 .input-container {
     position: relative;
     height: 5vh;
     width: 100%;
+    margin-top: 1%;
 }
 
-.input-container input {
+.input-container input, .input-container-especialidade input {
     font-size: 20px;
     width: 100%;
     border: none;
@@ -201,7 +227,7 @@ body,
     outline: none;
 }
 
-.input-container .label {
+.input-container .label, .input-container-especialidade .label {
     position: absolute;
     top: 10px;
     left: 0;
@@ -211,16 +237,20 @@ body,
 }
 
 .input-container input:focus~.label,
-.input-container input:valid~.label {
+.input-container input:not(:placeholder-shown)~.label,
+
+.input-container-especialidade input:focus~.label,
+.input-container-especialidade input:not(:placeholder-shown)~.label {
     top: -20px;
     font-size: 16px;
     color: #333;
 }
 
-.input-container .underline {
+.input-container .underline,
+.input-container-especialidade .underline {
     position: absolute;
-    bottom: 0;
     left: 0;
+    bottom: 4px;
     height: 2px;
     width: 100%;
     background-color: #333;
@@ -229,7 +259,9 @@ body,
 }
 
 .input-container input:focus~.underline,
-.input-container input:valid~.underline {
+.input-container input:not(:placeholder-shown)~.underline,
+.input-container-especialidade input:focus~.underline,
+.input-container-especialidade input:not(:placeholder-shown)~.underline {
     transform: scaleX(1);
 }
 
@@ -256,15 +288,134 @@ body,
     }
 }
 
+.input-anosExperiencia {
+    height: 100%;
+    width: 27%;
+    gap: 0.5rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-cref {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1%;
+    gap: 0.5rem;
+}
+
+.input-crefErros {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-especialidade {
+    height: 100%;
+    width: 69%;
+    gap: 0.5rem;
+    margin-left: 3%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-container-especialidade {
+    position: relative;
+    height: 5vh;
+    width: 100%;
+}
+
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.info-icon {
+    cursor: pointer;
+    width: 1vw;
+}
+
+
+.tooltip-box {
+    position: absolute;
+    top: -10%;
+    left: -164px;
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 100;
+}
+
+.tooltip-wrapper:hover .tooltip-box {
+    opacity: 1;
+    visibility: visible;
+}
+
+.cadastro-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 0 16px;
+  }
+  
+  .cadastro-container h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+  }
+  
+  .cadastro-container h2 {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #333;
+    margin-bottom: 32px;
+  }
+  
+  .cadastro-container img {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 40px;
+  }
+  
+  .cadastro-container button {
+    background-color: #e65c2e;
+    color: var(--branco);
+    font-weight: 600;
+    width: 25vw;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .cadastro-container button:hover {
+    background-color: #cc4f25;
+  }
+
 .footer {
     width: 100%;
-    height: 100%;
+    height: 10%;
 
     display: flex;
     justify-content: end;
     gap: 2.5rem;
     align-items: center;
-    
+
     .voltar {
         display: flex;
         gap: 0.5em;
@@ -272,14 +423,15 @@ body,
         transition: 0.2s all ease-in-out;
     }
 
-    .voltar:hover, .voltar:focus {
+    .voltar:hover,
+    .voltar:focus {
         transform: scale(1.04);
     }
-    
+
     .prosseguir {
-        height: 34%;
-        width: 19%;
-        
+        height: 50%;
+        width: 17.5%;
+
         cursor: pointer;
         background-color: var(--laranja);
         color: var(--branco);
@@ -288,7 +440,8 @@ body,
         transition: 0.2s all ease-in-out;
     }
 
-    .prosseguir:hover, .prosseguir:focus {
+    .prosseguir:hover,
+    .prosseguir:focus {
         background-color: #ef7f4b;
         transform: scale(1.04);
     }

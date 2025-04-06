@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login";
-import Cadastro from "./components/Cadastro/Cadastro";
+import Cadastro from "./pages/Cadastro";
 import EsqueciSenha from "./pages/Esqueci-senha";
 import Index from "./pages/Index";
 import Error from "./pages/Error";
