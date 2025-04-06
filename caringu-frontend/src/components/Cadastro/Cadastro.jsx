@@ -1,15 +1,18 @@
 import React from 'react'
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import "./cadastro.css"
+import styleCadastro from "./cadastro.module.css"
 
 import imagemCadastro from "../../assets/images/imagem-cadastro.svg";
-
 import logoCaringu from "../../assets/logos/caringu-logotipo-light.svg";
+import alert from "../../assets/images/alert.svg";
+import check from "../../assets/images/check.svg";
+import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 /* import dumbellFitness from "../../assets/images/dumbbell-fitness.svg";
 import mochilaFitness from "../../assets/images/mochila-treino.svg"; */
-import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 
+
+/* Não remover nenhum comentário, pois será utilizado na etapa que o Aluno existir no projeto */
 const Cadastro = () => {
     const [etapa, setEtapa] = useState(2);
     const [tipoConta, setTipoConta] = useState(null);
@@ -40,189 +43,192 @@ const Cadastro = () => {
         if (etapa > 2) setEtapa(etapa - 1);
     };
 
+    /* Não remover, pois será utilizado na etapa que o Aluno existir no projeto */
     const selecionarTipoConta = (tipo) => {
         setTipoConta(tipo);
     };
 
     return (
         <>
-            <main>
-                <section className="coluna1" style={{ backgroundImage: `url(${imagemCadastro})` }}>
+            <main className={styleCadastro.main}>
+                <section className={styleCadastro['primeira-coluna']} style={{ backgroundImage: `url(${imagemCadastro})` }}>
                     <a href="../index.html">
-                        <img className="logo" src={logoCaringu} alt="Logo da CaringU" />
+                        <img className={styleCadastro.logo} src={logoCaringu} alt="Logo da CaringU" />
                     </a>
                 </section>
 
-                <section className="coluna2">
-                    <section className="container">
+                <section className={styleCadastro['segunda-coluna']}>
+                    <div className={styleCadastro['container-form']}>
 
-                    {/* {etapa === 1 && (
-                        <div className="etapa1">
-                            <header className="container-titulos">
-                                <h1>Como deseja se cadastrar?</h1>
-                                <h2>Escolha o tipo de conta que deseja criar.</h2>
-                            </header>
-                            <div className="container-botoes">
-                                <button
-                                    id="botao-personal"
-                                    className={tipoConta === "personal" ? "botaoSelecionado" : ""}
-                                    onClick={() => selecionarTipoConta("personal")}>
-                                    <div className="imagem-botao">
-                                        <img src={dumbellFitness} alt="Halter de academia" />
-                                    </div>
-                                    <div className="descricao">
-                                        <span>Personal Trainer</span>
-                                        <p>Para profissionais que oferecem serviços de treinos.</p>
-                                    </div>
-                                </button>
-                                <button
-                                    id="botao-aluno"
-                                    className={tipoConta === "aluno" ? "botaoSelecionado" : ""}
-                                    onClick={() => selecionarTipoConta("aluno")}>
-                                    <div className="imagem-botao">
-                                        <img src={mochilaFitness} alt="Mochila de treino" />
-                                    </div>
-                                    <div className="descricao">
-                                        <span>Aluno</span>
-                                        <p>Para quem busca um personal trainer.</p>
-                                    </div>
-                                </button>
+                        <form action="">
+
+                            <div className={styleCadastro.titulo}>
+                                <h1>Dados Cadastrais</h1>
                             </div>
-                        </div>
-                    )}
-                    */}
 
-                        {etapa === 2 && (
-                            <div className="etapa2">
-                                <form onSubmit={handleSubmit(onSubmit)}>
-                                    <h1>Dados Cadastrais</h1>
+                            <div className={styleCadastro["container-nome-data"]}>
 
-                                    <input
-                                        type="text"
-                                        placeholder="* Nome completo"
-                                        {...register("nome", { required: "Nome é obrigatório." })}
-                                    />
+                                <div className={styleCadastro['input-nome']}>
 
-                                    <input
-                                        type="date"
-                                        placeholder="* Data de nascimento"
-                                        maxLength={10}
-                                        max={10}
-                                        {...register("dataNascimento", { required: "Data de nascimento é obrigatória." })}
-                                    />
+                                    <div className={styleCadastro["input-container"]}>
+                                        <input
+                                            type="text"
+                                            id="nome"
+                                            className={styleCadastro['nome-input']}
+                                            {...register("nome", { required: true })}
+                                            required
+                                        />
 
-                                    <input
-                                        type="email"
-                                        placeholder="* Email"
-                                        {...register("email", {
-                                            required: "E-mail é obrigatório.",
-                                            pattern: { value: /^\S+@\S+\.\S+$/, message: "E-mail inválido." }
-                                        })}
-                                    />
+                                        <label htmlFor="nome" className={styleCadastro.label}>* Nome completo</label>
+                                        <div className={styleCadastro.underline}></div>
+                                    </div>
 
-                                    <input
-                                        type="tel"
-                                        placeholder="* Telefone"
-                                        {...register("telefone", { required: "Telefone é obrigatório." })}
-                                    />
-
-                                    <input
-                                        type="password"
-                                        placeholder="* Senha"
-                                        minLength={6} maxLength={16}
-                                        {...register("senha", { required: "Senha é obrigatória.", minLength: { value: 6, message: "Mínimo de 6 caracteres." } })}
-                                    />
-
-                                    <input
-                                        type="password"
-                                        placeholder="* Confirmar Senha"
-                                        {...register("confirmarSenha", { required: "Confirmação de senha obrigatória." })}
-                                    />
-
-                                    <select {...register("genero", { required: "Selecione um gênero." })} defaultValue="">
-                                        <option value="" disabled>* Selecione o gênero</option>
-                                        <option value="M">Masculino</option>
-                                        <option value="F">Feminino</option>
-                                        <option value="NAO_BINARIO">Não binário</option>
-                                        <option value="OUTRO">Outro</option>
-                                        <option value="NAO_INFORMAR">Prefiro não informar</option>
-                                    </select>
-
-                                    <hr />
-                                    <span>*  Obrigatório</span>
-                                    {/* Exibição de erros em uma única div */}
-                                    {Object.keys(errors).length > 0 && (
-                                        <div className="mensagens-erro">
-                                            {Object.values(errors).map((erro, index) => (
-                                                <p key={index} className="erro">{erro.message}</p>
-                                            ))}
+                                    {errors.nome && (
+                                        <div className={styleCadastro.erro}>
+                                            <img src={alert} alt="Ícone de alerta" />
+                                            <span>Nome é obrigatório.</span>
                                         </div>
                                     )}
 
-                                    <footer>
-                                        <button className="voltar" type="button" onClick={voltarEtapa}>
-                                            <img src={setaEsquerda} alt="Seta mirando para esquerda" />
-                                            <span>Voltar</span>
-                                        </button>
+                                </div>
 
-                                        <button className="prosseguir" type="submit">Prosseguir</button>
-                                    </footer>
-                                </form>
+                                <div className={styleCadastro['input-data']}>
+
+                                    <div className={styleCadastro["input-container"]}>
+                                        <input type="text" id="data" className={styleCadastro['data-nascimento']} required />
+                                        <label htmlFor="data" className={styleCadastro.label}>* Data de nascimento</label>
+                                        <div className={styleCadastro.underline}></div>
+                                    </div>
+
+                                    <div className={styleCadastro.erro}>
+                                        <img src={alert} alt="Ícone de alerta" />
+                                        <span>Data é obrigatória.</span>
+                                    </div>
+
+                                </div>
 
                             </div>
-                        )}
 
-                        {etapa === 3 /* tipoConta === "personal"  */ && (
-                            <div className="etapa3-personal">
-                                <form>
-                                    <h1>Informações Profissionais</h1>
-                                    <input
-                                        type="text"
-                                        name='cref'
-                                        placeholder="* Registro do CREF"
-                                        /* onChange={mascaraCREF} */
-                                        maxLength={11} required />
-                                    <input
-                                        name='experiencia'
-                                        type="text"
-                                        maxLength={2}
-                                        placeholder="* Anos de experiência" required />
+                            <div className={styleCadastro['input-email']}>
 
-                                    <select id="select_especialidade" name="especialidade" required defaultValue={""}>
-                                        <option value="" disabled>* Selecione uma especialidade</option>
-                                        <option value="musculacao">Musculação</option>
-                                        <option value="treinamento-funcional">Treinamento Funcional</option>
-                                        <option value="hiit">HIIT (Treino Intervalado de Alta Intensidade)</option>
-                                        <option value="core">Treinamento de Core</option>
-                                        <option value="emagrecimento">Treinamento para Emagrecimento</option>
-                                        <option value="corrida-caminhada">Corrida e Caminhada</option>
-                                        <option value="ciclismo-indoor">Ciclismo Indoor (Spinning)</option>
-                                        <option value="treinamento-esportivo">Treinamento Esportivo</option>
-                                        <option value="hipertrofia">Hipertrofia Muscular</option>
-                                    </select>
-                                </form>
+                                <div className={styleCadastro['input-container']}>
+                                    <input type="text" id="email" required />
+                                    <label htmlFor="email" className={styleCadastro.label}>* E-mail</label>
+                                    <div className={styleCadastro.underline}></div>
+                                </div>
 
-                                <hr />
-                                <span>*  Obrigatório</span>
+                                <div className={styleCadastro.erro}>
+                                    <img src={alert} alt="Ícone de alerta" />
+                                    <span>E-mail é obrigatório.</span>
+                                </div>
 
-                                <footer>
-                                    <button className="voltar" onClick={voltarEtapa}>
-                                        <img src={setaEsquerda} alt="Seta mirando para esquerda" />
-                                        <span>Voltar</span>
-                                    </button>
-
-                                    <button className="prosseguir-etapa3" type="submit">Prosseguir</button>
-                                </footer>
                             </div>
-                        )}
 
-                        {etapa === 4 && (
+                            <div className={styleCadastro['input-telefone']}>
+
+                                <div className={styleCadastro["input-container"]}>
+                                    <input type="text" id="telefone" required />
+                                    <label htmlFor="telefone" className={styleCadastro.label}>* Telefone</label>
+                                    <div className={styleCadastro.underline}></div>
+                                </div>
+
+                                <div className={styleCadastro.erro}>
+                                    <img src={alert} alt="Ícone de alerta" />
+                                    <span>Telefone é obrigatório.</span>
+                                </div>
+
+                            </div>
+
+                            <div className={styleCadastro["container-senhas"]}>
+
+                                <div className={styleCadastro["input-senha"]}>
+
+                                    <div className={styleCadastro["input-container"]}>
+                                        <input type="password" id="senha" required />
+                                        <label htmlFor="senha" className={styleCadastro.label}>* Senha</label>
+                                        <div className={styleCadastro.underline}></div>
+                                    </div>
+
+                                    <div className={styleCadastro['container-erros']}>
+
+                                        <div className={styleCadastro.erro}>
+                                            <img src={alert} alt="Ícone de alerta" />
+                                            <span>Entre 6 a 16 caracteres.</span>
+                                        </div>
+                                        <div className={styleCadastro.erro}>
+                                            <img src={alert} alt="Ícone de alerta" />
+                                            <span>Mínimo de 1 caractere especial (ex: !, @, #, $, etc).</span>
+                                        </div>
+
+                                        <div className={styleCadastro.erro}>
+                                            <img src={alert} alt="Ícone de alerta" />
+                                            <span>Mínimo de 1 letra maiúscula.</span>
+                                        </div>
+
+                                        <div className={styleCadastro.erro}>
+                                            <img src={alert} alt="Ícone de alerta" />
+                                            <span>Mínimo de 1 número.</span>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div className={styleCadastro['input-confirmarSenha']}>
+
+                                    <div className={styleCadastro['input-container']}>
+                                        <input type="password" id="confirmarSenha" required />
+                                        <label htmlFor="confirmarSenha" className={styleCadastro.label}>* Confirmar senha</label>
+                                        <div className={styleCadastro.underline}></div>
+                                    </div>
+
+                                    <div className={styleCadastro['erro-confirmacaoSenha']}>
+                                        <img src={alert} alt="Ícone de alerta" />
+                                        <span>Confirmação de senha é obrigatória.</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div className={styleCadastro['input-genero']}>
+
+                                <select className={styleCadastro.select} defaultValue="#" required>
+                                    <option value="#" disabled>* Gênero</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Feminino</option>
+                                    <option value="NAO_BINARIO">Não binário</option>
+                                    <option value="OUTRO">Outro</option>
+                                    <option value="NAO_INFORMAR">Prefiro não informar</option>
+                                </select>
+
+                                <div className={styleCadastro.erro}>
+                                    <img src={alert} alt="Ícone de alerta" />
+                                    <span>Selecione o gênero.</span>
+                                </div>
+
+                            </div>
+
                             <div>
-                                Cadastro realizado com sucesso
+                                <hr style={{height: "2%", width: "100%", color: "grey"}}/>
+                                <div style={{marginTop: "1%"}}>* Obrigatório</div>
                             </div>
-                        )}
-                    </section>
+                        </form>
+
+
+                        <footer className={styleCadastro.footer}>
+                            <button className={styleCadastro.voltar} type="button" onClick={voltarEtapa}>
+                                <img src={setaEsquerda} alt="Seta mirando para esquerda" />
+                                <span>Voltar</span>
+                            </button>
+
+                            <button className={styleCadastro.prosseguir} type="submit">Prosseguir</button>
+                        </footer>
+
+                    </div>
+
                 </section>
+
             </main>
         </>
     );
