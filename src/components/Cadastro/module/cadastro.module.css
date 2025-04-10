@@ -8,12 +8,6 @@
     --laranja: #E96E35;
 }
 
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-
 body,
 #root {
     font-family: 'Inter', sans-serif;
