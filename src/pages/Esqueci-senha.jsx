@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/esqueciSenha.css'
 import imagemEsqueciSenha from '../assets/images/imagem-esqueci-senha.svg'
 
 import EtapaEmail from '../components/EsqueciSenha/EtapaEmail';
@@ -13,7 +12,7 @@ const EsqueciSenha = () => {
     }, []);
 
     const [email, setEmail] = useState('');
-    const [etapa, setEtapa] = useState("novaSenha");
+    const [etapa, setEtapa] = useState("codigo");
     const [novaSenha, setNovaSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
 

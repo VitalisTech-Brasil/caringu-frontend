@@ -48,22 +48,34 @@ const Carrossel = () => {
         setCurrentIndex(slideIndex);
     };
 
+    const getVisibleSlides = () => {
+        const visibleSlides = [];
+        for (let i = 0; i < 3; i++) {
+            const index = (currentIndex + i) % slides.length;
+            visibleSlides.push(slides[index]);
+        }
+        return visibleSlides;
+    };
+
     return (
         <div className='relative w-full h-[400px] px-4'>
             <div className='flex items-center justify-center h-full'>
                 <div
                     onClick={prevSlide}
-                    className='absolute left-8 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition-all'
+                    className='absolute left-8 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition-all z-10'
                 >
                     <FaChevronLeft size={30} />
                 </div>
 
-                <div className='flex gap-8'>
-                    {slides.map((slide, slideIndex) => (
+                <div className='flex gap-8 items-center'>
+                    {getVisibleSlides().map((slide, index) => (
                         <div
-                            key={slideIndex}
-                            className={`w-[432px] h-[242px] bg-white rounded-lg p-6 shadow-lg transition-all duration-500 transform ${slideIndex === currentIndex ? 'scale-105 opacity-100' : 'scale-90 opacity-50'
-                                }`}
+                            key={index}
+                            className={`w-[432px] h-[242px] bg-white rounded-lg p-6 shadow-lg transition-all duration-500 transform ${
+                                index === 1 
+                                    ? 'scale-105 opacity-100 z-10' 
+                                    : 'scale-90 opacity-50'
+                            }`}
                         >
                             <img src={slide.icon} alt={slide.title} className="w-10 h-10 mb-4" />
                             <h3 className='text-xl font-bold mb-2'>{slide.title}</h3>
@@ -74,7 +86,7 @@ const Carrossel = () => {
 
                 <div
                     onClick={nextSlide}
-                    className='absolute right-8 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition-all'
+                    className='absolute right-8 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition-all z-10'
                 >
                     <FaChevronRight size={30} />
                 </div>
@@ -85,8 +97,9 @@ const Carrossel = () => {
                     <div
                         key={slideIndex}
                         onClick={() => goToSlide(slideIndex)}
-                        className={`w-3 h-3 rounded-full cursor-pointer transition-all ${slideIndex === currentIndex ? 'bg-black' : 'bg-gray-400'
-                            }`}
+                        className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
+                            slideIndex === currentIndex ? 'bg-black' : 'bg-gray-400'
+                        }`}
                     />
                 ))}
             </div>
