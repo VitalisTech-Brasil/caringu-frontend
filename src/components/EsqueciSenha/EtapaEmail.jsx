@@ -27,13 +27,13 @@ const EtapaEmail = ({ email, setEmail, onAvancar }) => {
       <div className='flex justify-center items-center h-full w-full'>
         <div className='flex justify-center items-center w-full h-150 flex-col gap-10'>
           <div className='flex w-100 items-center justify-between'>
-            <div className='bg-[var(--cor-primaria)] rounded-full h-6 w-25'></div>
-            <div className='bg-[var(--azul-claro)]  rounded-full h-6 w-25'></div>
-            <div className='bg-[var(--azul-claro)]  rounded-full h-6 w-25'></div>
+            <div className='bg-[var(--cor-primaria)] rounded-full h-3 w-25'></div>
+            <div className='bg-[var(--azul-claro)]  rounded-full h-3 w-25'></div>
+            <div className='bg-[var(--azul-claro)]  rounded-full h-3 w-25'></div>
           </div>
-          <div className='text-[var(--cor-primaria)] h-27 w-1/2 text-center flex-col justify-end'>
-            <h1 className=' text-[48px]'>Recuperação de senha</h1>
-            <p>Não se preocupe! Isso acontece. Informe seu e-mail e enviaremos um link para você redefinir sua senha.</p>
+          <div className='text-[var(--cor-primaria)] h-27 w-2/3 text-center flex-col justify-end'>
+            <h1 className=' text-[48px] font-bold'>Recuperação de senha</h1>
+            <p className='text-[20px] font-normal'>Não se preocupe! Isso acontece. Informe seu e-mail e enviaremos um link para você redefinir sua senha.</p>
           </div>
           <div className='w-1/2'>
             <Input
@@ -47,7 +47,7 @@ const EtapaEmail = ({ email, setEmail, onAvancar }) => {
             />
           </div>
           <footer className='flex flex-col h-25 justify-between items-center'>
-            <button onClick={handleEnviarEmail} className='w-[511px] h-[50px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'>
+            <button onClick={handleEnviarEmail} className='w-[511px] h-[50px] ext-[20px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'>
               Resetar Senha
             </button>
             <a href="/Login">Voltar para Login</a>

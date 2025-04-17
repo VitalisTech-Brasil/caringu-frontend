@@ -27,9 +27,9 @@ const EtapaNovaSenha = ({ email, novaSenha, setNovaSenha, confirmarSenha, setCon
       <div className='flex justify-center items-center h-full w-full'>
         <div className='flex justify-center items-center w-full h-150 flex-col gap-10'>
           <div className='flex w-100 items-center justify-between'>
-            <div className='bg-[var(--azul-claro)]  rounded-full h-6 w-25'></div>
-            <div className='bg-[var(--azul-claro)]  rounded-full h-6 w-25'></div>
-            <div className='bg-[var(--cor-primaria)] rounded-full h-6 w-25'></div>
+            <div className='bg-[var(--azul-claro)]  rounded-full h-3 w-25'></div>
+            <div className='bg-[var(--azul-claro)]  rounded-full h-3 w-25'></div>
+            <div className='bg-[var(--cor-primaria)] rounded-full h-3 w-25'></div>
           </div>
           <div className='text-[var(--cor-primaria)] h-20 w-2/3 text-center flex-col justify-end'>
             <h1 className=' text-[48px]'>Escolha uma nova senha</h1>
