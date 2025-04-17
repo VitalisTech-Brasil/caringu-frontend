@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link } from 'react-router-dom';
-import Input from './inputs';
-import PasswordToggleButton from './PasswordToggleButton';
+import Input from '../Utils/Inputs';
 
 const ColunaInputs = () => {
   const [email, setEmail] = useState('');

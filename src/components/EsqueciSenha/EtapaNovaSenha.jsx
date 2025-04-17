@@ -1,6 +1,6 @@
 // src/components/EsqueciSenha/EtapaNovaSenha.jsx
 import React from 'react';
-import Input from '../Login/inputs';
+import Input from '../Utils/Inputs';
 
 const EtapaNovaSenha = ({ email, novaSenha, setNovaSenha, confirmarSenha, setConfirmarSenha, onAvancar }) => {
   const handleAlterarSenha = async () => {

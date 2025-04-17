@@ -1,6 +1,6 @@
 // src/components/EsqueciSenha/EtapaEmail.jsx
 import React from 'react';
-import Input from '../Login/inputs';
+import Input from '../Utils/Inputs';
 
 const EtapaEmail = ({ email, setEmail, onAvancar }) => {
   const handleEnviarEmail = async () => {
