@@ -22,9 +22,9 @@ const FeatureCarousel = () => {
       {/* Botão Esquerda */}
       <button
         onClick={() => swiperRef.current?.slidePrev()}
-        className="absolute left-20 z-10 bg-white/80 hover:bg-white text-black p-2 rounded-full shadow-md"
+        className="absolute left-40  z-10 hover:scale-110 transition-all duration-300 shadow-md"
       >
-        ←
+        <img src="src/assets/images/back.svg" alt="Arrow Left" className="w-6 h-6" />
       </button>
 
       {/* Swiper */}
@@ -82,9 +82,9 @@ const FeatureCarousel = () => {
       {/* Botão Direita */}
       <button
         onClick={() => swiperRef.current?.slideNext()}
-        className="absolute right-20 z-10 bg-white/80 hover:bg-white text-black p-2 rounded-full shadow-md"
+        className="absolute right-40 z-10 hover:scale-110 transition-all duration-300"
       >
-        →
+        <img src="src/assets/images/next.svg" alt="Arrow Right" className="w-6 h-6" />
       </button>
     </div>
   );
