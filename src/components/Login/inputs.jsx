@@ -1,4 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import olhoAberto from '../../assets/images/eye.svg';
+import olhoFechado from '../../assets/images/eye-slash.svg';
+
 
 const Input = ({
   id,
@@ -42,7 +45,7 @@ const Input = ({
             fontSize: '16px',
           }}
         >
-          <i className={`fas ${mostrarSenha ? 'fa-eye-slash' : 'fa-eye'}`} />
+          <img src={mostrarSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
         </button>
       )}
     </div>
