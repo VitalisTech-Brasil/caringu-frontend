@@ -1,110 +1,93 @@
-// components/Carousel.js
-import React, { useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import iconeAgenda from '../../assets/images/iconeAgenda.svg'
-import iconeExercicio from '../../assets/images/iconeExercicio.svg'
-import iconeTreino from '../../assets/images/iconeTreinos.svg'
-import iconeAluno from '../../assets/images/iconeAlunos.svg'
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import clsx from 'clsx';
+import { useRef, useState } from 'react';
 
-const slides = [
-    {
-        icon: iconeExercicio,
-        title: "Gerenciamento de exercícios",
-        description: "Crie e atribua exercícios a treinos para facilitar o compartilhamento entre os alunos."
-    },
-    {
-        icon: iconeTreino,
-        title: "Gerenciamento de treinos",
-        description: "Crie treinos e distribua entre seus alunos para maior praticidade e conforto."
-    },
-    {
-        icon: iconeAluno,
-        title: "Gerenciamento de alunos",
-        description: "Gerencie seus alunos com planos ativos, veja seu desempenho com gráficos e preencha sua anamnese online."
-    },
-    {
-        icon: iconeAgenda,
-        title: "Agenda",
-        description: "Acesse suas aulas agendadas com um calendário mensal, semanal e diário para se manter informado sobre sua agenda."
-    }
+const features = [
+  { title: 'Gerenciamento de exercícios', description: 'Crie e atribua exercícios a treinos para facilitar o compartilhamento entre os alunos.', icon: 'src/assets/images/iconeExercicio.svg' },
+  { title: 'Gerenciamento de treinos', description: 'Crie treinos e distribua entre seus alunos para maior praticidade e conforto.', icon: 'src/assets/images/iconeTreinos.svg' },
+  { title: 'Gerenciamento de alunos', description: 'Gerencie seus alunos com planos ativos, veja seu desempenho com gráficos e preencha sua anamnese online.', icon: 'src/assets/images/iconeAlunos.svg' },
+  { title: 'Agenda', description: 'Acesse suas aulas agendadas com um calendário mensal, semanal e diário para se manter informado sobre sua agenda.', icon: 'src/assets/images/iconeAgenda.svg' },
 ];
 
-const Carrossel = () => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const FeatureCarousel = () => {
+  const [activeIndex, setActiveIndex] = useState(1);
+  const swiperRef = useRef(null);
 
-    const prevSlide = () => {
-        const isFirstSlide = currentIndex === 0;
-        const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
-        setCurrentIndex(newIndex);
-    };
+  return (
+    <div className="relative w-full py-16 flex flex-col items-center justify-center gap-6">
+      {/* Botão Esquerda */}
+      <button
+        onClick={() => swiperRef.current?.slidePrev()}
+        className="absolute left-20 z-10 bg-white/80 hover:bg-white text-black p-2 rounded-full shadow-md"
+      >
+        ←
+      </button>
 
-    const nextSlide = () => {
-        const isLastSlide = currentIndex === slides.length - 1;
-        const newIndex = isLastSlide ? 0 : currentIndex + 1;
-        setCurrentIndex(newIndex);
-    };
-
-    const goToSlide = (slideIndex) => {
-        setCurrentIndex(slideIndex);
-    };
-
-    const getVisibleSlides = () => {
-        const visibleSlides = [];
-        for (let i = 0; i < 3; i++) {
-            const index = (currentIndex + i) % slides.length;
-            visibleSlides.push(slides[index]);
-        }
-        return visibleSlides;
-    };
-
-    return (
-        <div className='relative w-full h-[400px] px-4'>
-            <div className='flex items-center justify-center h-full'>
-                <div
-                    onClick={prevSlide}
-                    className='absolute left-8 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition-all z-10'
-                >
-                    <FaChevronLeft size={30} />
+      {/* Swiper */}
+      <div className="w-full max-w-6xl flex justify-center items-center">
+        <Swiper
+          modules={[Navigation, Pagination]}
+          slidesPerView={3}
+          slidesPerGroup={1}
+          loop
+          centeredSlides
+          spaceBetween={30}
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+          className="w-full"
+        >
+          {features.map((feature, index) => (
+            <SwiperSlide
+              key={index}
+              className="flex justify-center !shrink-0 cursor-pointer"
+              onClick={() => swiperRef.current?.slideToLoop(index)}
+            >
+              <div
+                className={clsx(
+                  "transition-all duration-300 rounded-2xl p-6 text-start w-full max-w-[500px] h-[250px]",
+                  activeIndex === index
+                    ? "bg-white scale-105 shadow-xl"
+                    : "bg-white/80 scale-95 shadow-md backdrop-blur"
+                )}
+              >
+                <div className="text-4xl mb-4 w-full flex justify-start items-center">
+                  <img src={feature.icon} alt={feature.title} className="w-12 h-12" />
                 </div>
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-sm text-gray-700">{feature.description}</p>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
 
-                <div className='flex gap-8 items-center'>
-                    {getVisibleSlides().map((slide, index) => (
-                        <div
-                            key={index}
-                            className={`w-[432px] h-[242px] bg-white rounded-lg p-6 shadow-lg transition-all duration-500 transform ${
-                                index === 1 
-                                    ? 'scale-105 opacity-100 z-10' 
-                                    : 'scale-90 opacity-50'
-                            }`}
-                        >
-                            <img src={slide.icon} alt={slide.title} className="w-10 h-10 mb-4" />
-                            <h3 className='text-xl font-bold mb-2'>{slide.title}</h3>
-                            <p className='text-gray-600'>{slide.description}</p>
-                        </div>
-                    ))}
-                </div>
+      {/* Paginação personalizada */}
+      <div className="flex gap-2 mt-4">
+        {features.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => swiperRef.current?.slideToLoop(index)}
+            className={clsx(
+              "w-3 h-3 rounded-full flex items-center justify-center shadow transition-all cursor-pointer",
+              activeIndex === index ? "bg-blue-500" : "bg-white"
+            )}
+          ></button>
+        ))}
+      </div>
 
-                <div
-                    onClick={nextSlide}
-                    className='absolute right-8 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition-all z-10'
-                >
-                    <FaChevronRight size={30} />
-                </div>
-            </div>
-
-            <div className='flex justify-center gap-2 mt-4'>
-                {slides.map((_, slideIndex) => (
-                    <div
-                        key={slideIndex}
-                        onClick={() => goToSlide(slideIndex)}
-                        className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
-                            slideIndex === currentIndex ? 'bg-black' : 'bg-gray-400'
-                        }`}
-                    />
-                ))}
-            </div>
-        </div>
-    );
+      {/* Botão Direita */}
+      <button
+        onClick={() => swiperRef.current?.slideNext()}
+        className="absolute right-20 z-10 bg-white/80 hover:bg-white text-black p-2 rounded-full shadow-md"
+      >
+        →
+      </button>
+    </div>
+  );
 };
 
-export default Carrossel;
+export default FeatureCarousel;

@@ -3,14 +3,14 @@ import bgImage from "../assets/images/primeira-imagem-fundo-index.svg";
 import logoImage from '../assets/logos/caringu-logo-branco.svg'
 import cardImage from '../assets/images/cardIndex.svg'
 import secondImage from '../assets/images/segunda-imagem-fundo-index.svg'
-import Carousel from "../components/Index/Carrossel";
+import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
 
 export default function HomePage() {
   return (
     <>
       <header className="absolute top-0 left-0 z-11 w-full h-[80px] flex items-center justify-between text-white px-8 pl-20 pr-20">
-          <nav className="flex gap-8 m-4 flex justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]">
+          <nav className="flex gap-8 m-4 justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]">
             <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Home</a>
             <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Sobre nós</a>
             <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Serviços</a>
@@ -82,7 +82,7 @@ export default function HomePage() {
           <p className="text-[24px] text-center max-w-4xl">As soluções implementadas na CaringU foram construídas sob medida para auxiliar os Personal Trainers em suas dores do dia a dia.</p>
         </div>
         <div className="w-full h-1/3 flex justify-center items-center">
-          <Carousel />
+          <Carrossel />
         </div>
       </section>
       <section className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
