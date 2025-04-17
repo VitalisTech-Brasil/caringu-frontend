@@ -14,7 +14,7 @@
     position: relative;
 }
 
-.imagem-login{
+.imagem-login {
     height: 100%;
     border-radius: 10px;
 }
@@ -23,7 +23,7 @@
     position: absolute;
     top: 20px;
     left: 20px;
-    
+
     width: 13vw;
     max-width: 180px;
     min-width: 100px;
@@ -50,7 +50,7 @@
         }
 
         .imagem-seta:hover {
-            transform: scale(1.2);
+            transform: scale(1.05);
         }
     }
 }
@@ -148,11 +148,11 @@
 
         height: 17.57%;
         width: 100%;
-        transition: transform 0.2s ease-in-out;
+        transition: background-color 0.2s ease-in-out;
     }
 
-    #botao-entrada:hover, #botao-entrada:focus {
-        transform: scale(1.05);
+    #botao-entrada:hover{
+        background-color: #677e9c;
     }
 }
 
@@ -194,11 +194,11 @@
 
     height: 100%;
     width: 100%;
-    transition: transform 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.login-google:hover, .login-google:focus {
-    transform: scale(1.05);
+.login-google:hover {
+    background-color: var(--cor-primaria);
 }
 
 footer {
@@ -229,6 +229,42 @@ footer {
         width: 100%;
         height: 2px;
         background-color: var(--azul-escuro);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    a:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+#navegacao {
+    a {
+        display: inline-block;
+
+        font-size: 16px;
+        font-weight: 700;
+
+        color: var(--cor-secundaria);
+
+        text-decoration: none;
+        position: relative;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    a:hover {
+        transform: scale(1.01);
+    }
+
+    a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 100%;
+        height: 2px;
+        background-color: var(--cor-secundaria);
         transform: scaleX(0);
         transform-origin: left;
         transition: transform 0.3s ease-in-out;
