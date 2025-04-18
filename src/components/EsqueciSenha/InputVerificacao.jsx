@@ -27,14 +27,14 @@ export default function InputVerificacao({ length = 4, onComplete }) {
   };
 
   return (
-    <div className="flex gap-2 justify-center">
+    <div className="flex gap-5 justify-center">
       {values.map((val, idx) => (
         <input
           key={idx}
           type="text"
           inputMode="numeric"
           maxLength="1"
-          className="w-20 h-20 text-2xl text-center rounded bg-[#EFEFEF] focus:outline-none focus:ring-2 ring-orange-500"
+          className="w-17 h-20 text-2xl text-center rounded bg-[#EFEFEF] focus:outline-none focus:ring-2 ring-orange-500"
           value={val}
           onChange={(e) => handleChange(idx, e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, idx)}

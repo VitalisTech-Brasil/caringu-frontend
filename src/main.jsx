@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import AppRoutes from './routes';
+import AppRoutes from './Routes';
 import './styles/global.css';
 
 createRoot(document.getElementById('root')).render(

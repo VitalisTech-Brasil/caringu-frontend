@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link } from 'react-router-dom';
-import Input from './inputs';
-import PasswordToggleButton from './PasswordToggleButton';
+import Input from '../Utils/Inputs';
+import Button from '../Utils/Button';
 
 const ColunaInputs = () => {
   const [email, setEmail] = useState('');
@@ -75,7 +75,7 @@ const ColunaInputs = () => {
             <p>Faça login para continuar sua experiência.</p>
           </header>
 
-          <form className="formulario" onSubmit={verificarUsuario}>
+          <form className="formulario gap-2" onSubmit={verificarUsuario}>
             <div className="inputs w-full">
               <Input
                 id="email"
@@ -101,17 +101,21 @@ const ColunaInputs = () => {
             <div className="recuperacao-senha">
               <a href="/esqueci-senha">Esqueci minha senha</a>
             </div>
-
+            {/* 
             <button id="botao-entrada" type="submit">
               Entrar
-            </button>
+            </button> */}
 
+            <Button texto="Entrar" type="submit" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="100%" height="17.57%" fontSize="14px" />
+
+            <Button logo={googleLogo} texto="Entrar com Google" type="submit" cor="var(--azul-escuro)" corTexto="var(--cor-secundaria)" corHover="var(--cor-primaria)" width="100%" height="17.57%" fontSize="14px" />
+{/* 
             <div className="container-botao-google">
               <button className="login-google">
                 <img src={googleLogo} alt="Google Logo" />
                 Entrar com Google
               </button>
-            </div>
+            </div> */}
 
           </form>
 
