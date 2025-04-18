@@ -1,6 +1,7 @@
 // src/components/EsqueciSenha/EtapaEmail.jsx
 import React from 'react';
 import Input from '../Utils/Inputs';
+import Button from '../Utils/Button';
 
 const EtapaEmail = ({ email, setEmail, onAvancar }) => {
   const handleEnviarEmail = async () => {
@@ -47,9 +48,7 @@ const EtapaEmail = ({ email, setEmail, onAvancar }) => {
             />
           </div>
           <footer className='flex flex-col h-25 justify-between items-center'>
-            <button onClick={handleEnviarEmail} className='w-[511px] h-[50px] ext-[20px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'>
-              Resetar Senha
-            </button>
+            <Button texto="Resetar Senha" onClick={handleEnviarEmail} cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="511px" height="50px" fontSize="14px" />
             <a href="/Login">Voltar para Login</a>
           </footer>
         </div>

@@ -5,23 +5,22 @@ import cardImage from '../assets/images/cardIndex.svg'
 import secondImage from '../assets/images/segunda-imagem-fundo-index.svg'
 import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
+import Button from "../components/Utils/Button";
 
 export default function HomePage() {
   return (
     <>
       <header className="absolute top-0 left-0 z-11 w-full h-[80px] flex items-center justify-between text-white px-8 pl-20 pr-20">
-          <nav className="flex gap-8 m-4 justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]">
-            <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Home</a>
-            <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Sobre nós</a>
-            <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Serviços</a>
-            <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Fale conosco</a>
-          </nav>
+        <nav className="flex gap-8 m-4 justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]">
+          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Home</a>
+          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Sobre nós</a>
+          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Serviços</a>
+          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Fale conosco</a>
+        </nav>
         <img src={logoImage} alt="Logo CaringU" className="h-[50px]" />
         <div className="flex gap-16 items-center w-[300px] justify-end">
           <a href="#" className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</a>
-          <button className="bg-[var(--laranja)] text-white text-sm font-medium px-4 py-2 rounded hover:bg-orange-600 transition-all h-[40px] w-[80px] cursor-pointer">
-            Entrar
-          </button>
+          <Button texto="Entrar" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="80px" height="40px" fontSize="14px" />
         </div>
       </header>
       <section className="relative w-full h-screen bg-cover flex items-start" style={{ backgroundImage: `url(${bgImage})` }}>
@@ -33,9 +32,7 @@ export default function HomePage() {
           <p className="text-[24px] mb-8 max-w-160">
             A CaringU facilita a gestão, conecta você a novos alunos e otimiza a comunicação, permitindo focar no que importa: Transformar vidas através do treino.
           </p>
-          <button className="bg-[var(--laranja)] text-white font-semibold px-6 py-3 rounded hover:bg-orange-600 transition w-[200px] h-[50px] text-[18px] cursor-pointer">
-            Cadastre-se
-          </button>
+          <Button texto="Cadastre-se" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="200px" height="50px" fontSize="18px" />
         </div>
       </section>
       <section className="h-screen w-full bg-[var(--cor-secundaria)]">
@@ -151,15 +148,13 @@ export default function HomePage() {
               <p className="text-white text-[14px]">*Obrigatório</p>
             </div>
             <div className="flex items-center justify-center gap-4">
-              <button className="bg-[var(--azul-claro)] text-white font-semibold px-6 py-3 rounded transition w-[400px] h-[50px] text-[18px] cursor-pointer">
-                Enviar
-              </button>
+              <Button texto="Enviar" cor="var(--azul-claro)" corTexto="var(--cor-secundaria)" corHover="#677e9c" width="400px" height="50px" />
             </div>
           </div>
         </div>
       </section>
-      <footer className="h-[350px] w-full bg-[var(--azul-escuro)] flex items-center justify-between px-20">
-        <div className="flex flex-col items-start justify-center h-full w-[600px] gap-5">
+      <footer className="h-[350px] w-full bg-[var(--azul-escuro)] flex items-center  px-20">
+        <div className="flex flex-col items-start justify-center h-full w-[1500px] gap-5">
           <img src='src/assets/logos/caringu-logo-branco-fundo-laranja.svg' alt="Logo CaringU" className="h-[90px] w-[350px]" />
           <div className="w-[500px]">
             <h1 className="text-white text-[20px] font-bold">Transforme seu treino com mais facilidade</h1>
@@ -168,7 +163,7 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-start justify-center h-full w-[200px] gap-5" id="navegacao">
+        <div className="flex flex-col items-start justify-center h-full w-[150px] gap-3 mr-20" id="navegacao">
           <h1 className="text-white text-[20px] font-bold">
             Navegação
           </h1>
@@ -179,7 +174,7 @@ export default function HomePage() {
           <a href="#">Entrar</a>
           <a href="#">Inscreva-se</a>
         </div>
-        <div className="flex flex-col items-start justify-center h-full w-[200px] gap-5">
+        <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5">
           <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer" />
           <img src="src/assets/logos/linkedin-logo.svg" alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer" />
           <img src="src/assets/logos/instagram-logo.svg" alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer" />

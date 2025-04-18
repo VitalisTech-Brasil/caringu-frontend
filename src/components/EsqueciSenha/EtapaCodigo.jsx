@@ -1,6 +1,7 @@
 // src/components/EsqueciSenha/EtapaCodigo.jsx
 import React, { useState } from 'react';
 import InputVerificacao from './InputVerificacao';
+import Button from '../Utils/Button';
 
 const EtapaCodigo = ({ email, onAvancar }) => {
   const [codigo, setCodigo] = useState('');
@@ -35,9 +36,10 @@ const EtapaCodigo = ({ email, onAvancar }) => {
           </div>
           <InputVerificacao value={codigo} onChange={setCodigo} />
           <footer className='flex flex-col h-30 justify-between items-center'>
-            <button onClick={handleVerificarCodigo} className='w-[511px] h-[50px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'>
+            {/* <button onClick={handleVerificarCodigo} className='w-[511px] h-[50px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'>
               Verificar Código
-            </button>
+            </button> */}
+            <Button texto="Verificar Código" onClick={handleVerificarCodigo} cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="511px" height="50px" fontSize="14px" />
             <p>Não recebeu o código? <a href="">Clique para reenviar em [x] segundos</a></p>
             <a href="/Login">Voltar para Login</a>
           </footer>
