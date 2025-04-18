@@ -6,24 +6,31 @@ import secondImage from '../assets/images/segunda-imagem-fundo-index.svg'
 import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
 import Button from "../components/Utils/Button";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <>
       <header className="absolute top-0 left-0 z-11 w-full h-[80px] flex items-center justify-between text-white px-8 pl-20 pr-20">
         <nav className="flex gap-8 m-4 justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]">
-          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Home</a>
-          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Sobre nós</a>
-          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Serviços</a>
-          <a href="#" className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all">Fale conosco</a>
+          <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('home')}>Home</a>
+          <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('sobre')}>Sobre nós</a>
+          <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('servicos')}>Serviços</a>  
+          <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('fale')}>Fale conosco</a>
         </nav>
         <img src={logoImage} alt="Logo CaringU" className="h-[50px]" />
         <div className="flex gap-16 items-center w-[300px] justify-end">
-          <a href="#" className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</a>
-          <Button texto="Entrar" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="80px" height="40px" fontSize="14px" />
+          <Link to="/cadastro"><a className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</a></Link>
+          <Link to="/login"><Button texto="Entrar" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="80px" height="40px" fontSize="14px" /></Link>
         </div>
       </header>
-      <section className="relative w-full h-screen bg-cover flex items-start" style={{ backgroundImage: `url(${bgImage})` }}>
+      <section id="home" className="relative w-full h-screen bg-cover flex items-start" style={{ backgroundImage: `url(${bgImage})` }}>
         <div className="absolute inset-0 bg-black opacity-60" />
         <div className="relative z-10 flex flex-col justify-center items-start h-full text-white max-w-250 mx-25">
           <p className="text-[64px] font-extrabold mb-6">
@@ -32,10 +39,10 @@ export default function HomePage() {
           <p className="text-[24px] mb-8 max-w-160">
             A CaringU facilita a gestão, conecta você a novos alunos e otimiza a comunicação, permitindo focar no que importa: Transformar vidas através do treino.
           </p>
-          <Button texto="Cadastre-se" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="200px" height="50px" fontSize="18px" />
+          <Link to="/cadastro"><Button texto="Cadastre-se" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="200px" height="50px" fontSize="18px" /></Link>
         </div>
       </section>
-      <section className="h-screen w-full bg-[var(--cor-secundaria)]">
+      <section id="sobre" className="h-screen w-full bg-[var(--cor-secundaria)]">
         <div className="flex flex-col items-center justify-center gap-4 h-1/3 mb-10 w-full">
           <h1 className="text-[48px] font-bold">Por que criamos a CaringU?</h1>
           <p className="text-[24px] max-w-300  text-center">A  <b>CaringU</b> surgiu com o objetivo de conectar os personal trainers com seus alunos e facilitar a organização dos treinos, exercícios e aulas agendadas.</p>
@@ -70,7 +77,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <section className="h-screen w-full relative bg-cover flex items-start flex-col" style={{ backgroundImage: `url(${secondImage})` }}>
+      <section id="servicos" className="h-screen w-full relative bg-cover flex items-start flex-col" style={{ backgroundImage: `url(${secondImage})` }}>
         <div className="absolute inset-0 bg-black opacity-80" />
         <div className="relative z-1 flex flex-col justify-center items-center h-1/2 text-white w-full">
           <h1 className="text-[48px] font-bold">
@@ -82,7 +89,7 @@ export default function HomePage() {
           <Carrossel />
         </div>
       </section>
-      <section className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
+      <section id="perguntas-frequentes" className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center gap-4 h-1/3">
           <h1 className="text-[48px] font-bold">
             Perguntas Frequentes
@@ -90,7 +97,7 @@ export default function HomePage() {
           <PerguntasFrequentes />
         </div>
       </section>
-      <section className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
+      <section id="fale" className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
         <h1 className="text-[48px] font-bold">
           Conecte-se, treine e evolua com a CaringU!
         </h1>
@@ -167,17 +174,17 @@ export default function HomePage() {
           <h1 className="text-white text-[20px] font-bold">
             Navegação
           </h1>
-          <a href="#">Home</a>
-          <a href="#">Sobre nós</a>
-          <a href="#">Serviços</a>
-          <a href="#">Fale conosco</a>
-          <a href="#">Entrar</a>
-          <a href="#">Inscreva-se</a>
+          <a onClick={() => scrollToSection('home')}>Home</a>
+          <a onClick={() => scrollToSection('sobre')}>Sobre nós</a>
+          <a onClick={() => scrollToSection('servicos')}>Serviços</a>
+          <a onClick={() => scrollToSection('fale')}>Fale conosco</a>
+          <Link to="/login" ><a>Entrar</a></Link>
+          <Link to="/cadastro"><a>Inscreva-se</a></Link>
         </div>
         <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5">
-          <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer" />
-          <img src="src/assets/logos/linkedin-logo.svg" alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer" />
-          <img src="src/assets/logos/instagram-logo.svg" alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer" />
+          <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+          <img src="src/assets/logos/linkedin-logo.svg" alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+          <img src="src/assets/logos/instagram-logo.svg" alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
         </div>
       </footer>
     </>

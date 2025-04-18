@@ -185,6 +185,7 @@ footer {
         text-decoration: none;
         position: relative;
         transition: transform 0.2s ease-in-out;
+        cursor: pointer;
     }
 
     a:hover {
