@@ -1,5 +1,8 @@
 import React from 'react'
 import { useForm } from "react-hook-form";
+import { useCadastro } from './context/CadastroContext';
+
+import axios from 'axios';
 
 import styleCadastro from "./module/cadastro.module.css";
 
@@ -11,9 +14,39 @@ import info from "../../assets/images/info.svg";
 export default function Etapa3({ setEtapa }) {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = (data) => {
-        console.log("Dados da etapa 3:", data);
-        setEtapa(4);
+
+    const { dadosCadastro, atualizarDados } = useCadastro();
+
+    const onSubmit = async (data) => {
+        atualizarDados(data);
+
+        const payloadFinal1 = {
+            ...dadosCadastro,
+            ...data
+        };
+
+        const payloadFinal = {
+            "nome": "gustavo ryuiti kohatsu",
+            "email": "gustavo.kohatsu@gmail.com",
+            "senha": "123Ab@",
+            "celular": "11947139850",
+            "dataNascimento": "3333-03-12",
+            "genero": "MASCULINO",
+            "cref": "102464-G/SP",
+            "especialidade": ["especialidade 1"],
+            "experiencia": 20,
+            "urlFotoPerfil": "string"
+          }
+
+        console.log(payloadFinal);
+
+        try {
+            await axios.post("http://localhost:8080/personal-trainers", payloadFinal);
+            console.info("Cadastro realizado com sucesso!");
+            setEtapa(4);
+        } catch (error) {
+            console.error("Erro no cadastro: ", error);
+        }
     };
 
     const voltarEtapa = () => {
@@ -41,7 +74,7 @@ export default function Etapa3({ setEtapa }) {
                         <input
                             type="text"
                             id="cref"
-                            maxLength={10}
+                            maxLength={11}
                             {...register("cref", {
                                 required: "Formato de CREF inválido."
                             })}

@@ -1,10 +1,11 @@
 import React from 'react'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import styleCadastro from "./module/cadastro.module.css";
+import { useCadastro } from './context/CadastroContext';
 
+import styleCadastro from "./module/cadastro.module.css";
 import alert from "../../assets/images/alert.svg";
 import check from "../../assets/images/check.svg";
 import setaEsquerda from "../../assets/images/seta-esquerda.svg";
@@ -16,18 +17,43 @@ export default function Etapa2({ setEtapa }) {
     const [showSenha, setShowSenha] = useState(false);
     const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
-    const senha = watch("senha");
+    const { dadosCadastro, atualizarDados } = useCadastro();
+    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue } = useForm({
+        defaultValues: {
+            nome: dadosCadastro.nome || "",
+            email: dadosCadastro.email || "",
+            telefone: dadosCadastro.telefone || "",
+            data: dadosCadastro.data ||"",
+            genero: dadosCadastro.genero || "",
+            senha: dadosCadastro.senha || "",
+            confirmarSenha: dadosCadastro.confirmarSenha
+        },
+        mode: 'onChange'
+    });
     const navigate = useNavigate();
 
+
+    useEffect(() => {
+        console.log(dadosCadastro);
+
+        if (dadosCadastro) {
+          setValue("nome", dadosCadastro.nome || "");
+          setValue("email", dadosCadastro.email || "");
+          setValue("telefone", dadosCadastro.telefone || "");
+          setValue("data", dadosCadastro.data || "");
+          setValue("genero", dadosCadastro.genero || "");
+          setValue("senha", dadosCadastro.senha || "");
+          setValue("confirmarSenha", dadosCadastro.confirmarSenha || "");
+        }
+      }, []);
+
     const onSubmit = (data) => {
-        console.log("Dados da etapa 2:", data);
+        atualizarDados(data);
         setEtapa(3);
     };
 
     const voltarEtapa = () => {
         navigate("/login");
-
     };
 
     return (
@@ -175,16 +201,14 @@ export default function Etapa2({ setEtapa }) {
                                 required: "Senha é obrigatória.",
                                 validate: {
                                     tamanho: (value) => value.length >= 6 && value.length <= 16 || "Entre 6 a 16 caracteres.",
-                                    especial: (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value) || "Mínimo de 1 caractere especial.",
+                                    especial: (value) => /[!@#$%^&*(),.?":{}|<>^~'./]/.test(value) || "Mínimo de 1 caractere especial.",
                                     maiuscula: (value) => /[A-Z]/.test(value) || "Mínimo de 1 letra maiúscula.",
                                     numero: (value) => /\d/.test(value) || "Mínimo de 1 número."
                                 }
                             })}
-                            onFocus={() => setSenhaInteragiu(true)}
                             value={senhaValue}
                             onChange={(e) => {
                                 setSenhaValue(e.target.value);
-                                console.log(senhaValue);
                                 if (!senhaInteragiu) setSenhaInteragiu(true);
                             }}
                         />
@@ -196,7 +220,7 @@ export default function Etapa2({ setEtapa }) {
                             className={styleCadastro["btn-olho"]}
                             tabIndex={-1}
                         >
-                            <i className={`fas ${showSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{color: "#666666", fontSize: "16px"}} />
+                            <i className={`fas ${showSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{ color: "#666666", fontSize: "16px" }} />
                         </button>
                         <div
                             className={styleCadastro.underline}
@@ -207,16 +231,15 @@ export default function Etapa2({ setEtapa }) {
                     </div>
 
                     <div className={styleCadastro['container-erros']}>
-
                         {/* 1 - Tamanho */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? senhaValue.length >= 6 && senhaValue.length <= 16
                                     ? styleCadastro.check
                                     : styleCadastro.erro
                                 : styleCadastro.neutro
                         }>
-                            {senhaInteragiu && (
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={senhaValue.length >= 6 && senhaValue.length <= 16 ? check : alert}
                                     alt="Ícone"
@@ -227,12 +250,13 @@ export default function Etapa2({ setEtapa }) {
 
                         {/* 2 - Caractere especial */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? /[!@#$%^&*(),.?":{}|<>]/.test(senhaValue)
                                     ? styleCadastro.check
                                     : styleCadastro.erro
-                                : styleCadastro.neutro}>
-                            {senhaInteragiu && (
+                                : styleCadastro.neutro
+                        }>
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={/[!@#$%^&*(),.?":{}|<>]/.test(senhaValue) ? check : alert}
                                     alt="Ícone"
@@ -243,12 +267,13 @@ export default function Etapa2({ setEtapa }) {
 
                         {/* 3 - Letra maiúscula */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? /[A-Z]/.test(senhaValue)
                                     ? styleCadastro.check
                                     : styleCadastro.erro
-                                : styleCadastro.neutro}>
-                            {senhaInteragiu && (
+                                : styleCadastro.neutro
+                        }>
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={/[A-Z]/.test(senhaValue) ? check : alert}
                                     alt="Ícone"
@@ -259,12 +284,13 @@ export default function Etapa2({ setEtapa }) {
 
                         {/* 4 - Número */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? /\d/.test(senhaValue)
                                     ? styleCadastro.check
                                     : styleCadastro.erro
-                                : styleCadastro.neutro}>
-                            {senhaInteragiu && (
+                                : styleCadastro.neutro
+                        }>
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={/\d/.test(senhaValue) ? check : alert}
                                     alt="Ícone"
@@ -296,7 +322,7 @@ export default function Etapa2({ setEtapa }) {
                             className={styleCadastro["btn-olho"]}
                             tabIndex={-1}
                         >
-                            <i className={`fas ${showConfirmarSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{color: "#666666", fontSize: "16px"}} />
+                            <i className={`fas ${showConfirmarSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{ color: "#666666", fontSize: "16px" }} />
                         </button>
                         <div
                             className={styleCadastro.underline}
