@@ -29,9 +29,9 @@ const Cadastro = () => {
                 <main className={styleCadastro.main}>
                     <section className={styleCadastro['primeira-coluna']} style={{ backgroundImage: `url(${imagemCadastro})` }}>
                         <Link to="/">
-                            <a>
+                            <button style={{ cursor: "pointer"}}>
                                 <img className={styleCadastro.logo} src={logoCaringu} alt="Logo da CaringU" />
-                            </a>
+                            </button>
                         </Link>
                     </section>
 

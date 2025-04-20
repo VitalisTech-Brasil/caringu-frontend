@@ -1,4 +1,6 @@
 import React from 'react'
+
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useCadastro } from './context/CadastroContext';
 
@@ -10,47 +12,156 @@ import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 import alert from "../../assets/images/alert.svg";
 import toolTipCref from "../../assets/images/tooltip-cref.svg";
 import info from "../../assets/images/info.svg";
+import botaoDelete from "../../assets/images/botao-delete.svg";
 
 export default function Etapa3({ setEtapa }) {
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
     const { dadosCadastro, atualizarDados } = useCadastro();
+    const { register, handleSubmit, formState: { errors }, trigger, setValue, watch } = useForm({
+        defaultValues: {
+            cref: dadosCadastro.cref || "",
+            especialidade: dadosCadastro.especialidade || "",
+            experiencia: dadosCadastro.experiencia || ""
+        },
+        mode: 'onChange'
+    });
+
+    useEffect(() => {
+        console.info("DADOS AO VOLTAR PRA ETAPA 3:", dadosCadastro);
+        Object.entries(dadosCadastro).forEach(([key, value]) => {
+            if (value) setValue(key, value);
+        });
+    }, []);
+
+    const opcoesEspecialidade = [
+        "Musculação",
+        "Treinamento Funcional",
+        "HIIT (Treino Intervalado de Alta Intensidade)",
+        "Treinamento de Core",
+        "Treinamento para Emagrecimento",
+        "Corrida e Caminhada",
+        "Ciclismo Indoor (Spinning)",
+        "Treinamento Esportivo",
+        "Treinamento para Atletas de Alto Rendimento",
+        "Pilates",
+        "Alongamento e Mobilidade",
+        "Reabilitação e Prevenção de Lesões",
+        "Hipertrofia Muscular",
+        "Modelagem Corporal",
+        "Treinamento para Pessoas com Deficiência",
+        "Treinamento para Idosos",
+        "Treinamento Pré e Pós-Parto",
+        "Treinamento para Saúde Metabólica"
+    ];
+
+    const [buscaEspecialidade, setBuscaEspecialidade] = useState("");
+    const [sugestoes, setSugestoes] = useState([]);
+    const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState(dadosCadastro.especialidade || []);
+
+    useEffect(() => {
+        setValue("especialidade", especialidadesSelecionadas);
+        trigger("especialidade");
+    }, [especialidadesSelecionadas]);
+
+    const handleEspecialidadeChange = (e) => {
+        const valor = e.target.value;
+        setBuscaEspecialidade(valor);
+
+        if (valor.length > 0) {
+            const filtradas = opcoesEspecialidade.filter(op =>
+                op.toLowerCase().includes(valor.toLowerCase()) &&
+                !especialidadesSelecionadas.includes(op)
+            );
+            setSugestoes(filtradas);
+        } else {
+            setSugestoes([]);
+        }
+    };
+
+    const selecionarSugestao = (sugestao) => {
+        if (!especialidadesSelecionadas.includes(sugestao)) {
+            setEspecialidadesSelecionadas(prev => [...prev, sugestao]);
+            setBuscaEspecialidade("");
+            setSugestoes([]);
+        }
+    };
+
+    const removerEspecialidade = (item) => {
+        setEspecialidadesSelecionadas(prev => prev.filter(e => e !== item));
+    };
+
+    const handleCrefChange = (e) => {
+        let input = e.target.value.toUpperCase();
+        let inputFormatado = input.replace(/[^A-Z0-9]/gi, "");;
+
+        if (inputFormatado.length > 11) inputFormatado = inputFormatado.slice(0, 11);
+
+        let formatted = "";
+
+        if (inputFormatado.length > 11) {
+            formatted = `${inputFormatado.slice(0, 6)}-${inputFormatado.slice(6, 7)}/${inputFormatado.slice(7, 9)}`;
+
+        } else if (inputFormatado.length > 7) {
+            formatted = `${inputFormatado.slice(0, 6)}-${inputFormatado.slice(6, 7)}/${inputFormatado.slice(7)}`;
+
+        } else if (inputFormatado.length > 6) {
+            formatted = `${inputFormatado.slice(0, 6)}-${inputFormatado.slice(6)}`;
+
+        } else {
+            formatted = inputFormatado;
+        }
+
+        setValue("cref", formatted);
+        trigger("cref");
+    };
+
+    const voltarEtapa = async () => {
+        const valido = await trigger();
+        if (valido) {
+            const data = {
+                cref: watch("cref"),
+                especialidade: especialidadesSelecionadas,
+                experiencia: watch("experiencia")
+            };
+            atualizarDados(data);
+        }
+
+        setEtapa(2);
+    };
 
     const onSubmit = async (data) => {
         atualizarDados(data);
 
-        const payloadFinal1 = {
-            ...dadosCadastro,
-            ...data
-        };
+        function converterParaISO(dataBR) {
+            const [dia, mes, ano] = dataBR.split('/');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        function formatarCelular(celular) {
+            return celular.replace(/\D/g, "")
+        }
 
         const payloadFinal = {
-            "nome": "gustavo ryuiti kohatsu",
-            "email": "gustavo.kohatsu@gmail.com",
-            "senha": "123Ab@",
-            "celular": "11947139850",
-            "dataNascimento": "3333-03-12",
-            "genero": "MASCULINO",
-            "cref": "102464-G/SP",
-            "especialidade": ["especialidade 1"],
-            "experiencia": 20,
-            "urlFotoPerfil": "string"
-          }
+            nome: dadosCadastro.nome || "",
+            email: dadosCadastro.email || "",
+            senha: dadosCadastro.senha || "",
+            celular: formatarCelular(dadosCadastro.telefone),
+            dataNascimento: converterParaISO(dadosCadastro.dataNascimento),
+            genero: dadosCadastro.genero || "",
+            cref: data.cref,
+            especialidade: especialidadesSelecionadas,
+            experiencia: data.experiencia
+        };
 
-        console.log(payloadFinal);
+        console.info("Payload enviado: ", payloadFinal);
 
         try {
             await axios.post("http://localhost:8080/personal-trainers", payloadFinal);
             console.info("Cadastro realizado com sucesso!");
             setEtapa(4);
         } catch (error) {
-            console.error("Erro no cadastro: ", error);
+            console.error("Erro no cadastro: ", error.response.data.message);
         }
-    };
-
-    const voltarEtapa = () => {
-        setEtapa(2);
     };
 
     return (
@@ -74,11 +185,17 @@ export default function Etapa3({ setEtapa }) {
                         <input
                             type="text"
                             id="cref"
+                            autoComplete='off'
                             maxLength={11}
-                            {...register("cref", {
-                                required: "Formato de CREF inválido."
-                            })}
                             placeholder=""
+                            {...register("cref", {
+                                required: "CREF é obrigatório.",
+                                pattern: {
+                                    value: /^\d{6}-[A-Z]\/[A-Z]{2}$/,
+                                    message: "Formato de CREF inválido. Ex: 123456-G/SP"
+                                }
+                            })}
+                            onChange={handleCrefChange}
                         />
                         <label htmlFor="cref" className={styleCadastro.label}>* Registro do CREF</label>
                         <div
@@ -95,34 +212,107 @@ export default function Etapa3({ setEtapa }) {
                 </div>
             </div>
 
-
             <div className={styleCadastro["container-nome-data"]}>
 
-                <div className={styleCadastro['input-especialidade']}>
+                <div className={styleCadastro['div-principal-especialidade']}>
+                    <div className={styleCadastro['input-especialidade']} style={{ position: "relative" }}>
 
-                    <div className={styleCadastro["input-container-especialidade"]}>
-                        <input
-                            type="text"
-                            id="especialidade"
-                            className={styleCadastro['nome-input']}
-                            {...register("especialidade", { required: true })}
-                            placeholder=""
-                        />
-                        <label htmlFor="especialidade" className={styleCadastro.label}>* Especialidade</label>
-                        <div
-                            className={styleCadastro.underline}
-                            style={{ marginBottom: errors.especialidade ? "-4px" : "0px" }}
-                        >
+                        <div className={styleCadastro["input-container-especialidade"]}>
+                            <input
+                                type="text"
+                                id="especialidade"
+                                autoComplete="off"
+                                style={{borderBottom: "2px solid black"}}
+                                className={styleCadastro['nome-input']}
+                                placeholder=""
+                                value={buscaEspecialidade}
+                                onChange={handleEspecialidadeChange}
+                            />
+                            <label htmlFor="especialidade" className={styleCadastro.label} style={{ color: "black" }}>* Digite para buscar especialidades</label>
+                            <div
+                                className={styleCadastro.underline}
+                                style={{ marginBottom: errors.especialidade ? "-4px" : "0px", backgroundColor: "black" }}
+                            />
                         </div>
+
+                        {sugestoes.length > 0 && (
+                            <ul style={{
+                                position: "absolute",
+                                top: "77%",
+                                left: 0,
+                                width: "100%",
+                                backgroundColor: "#fff",
+                                border: "1px solid #ccc",
+                                borderRadius: "0 0 8px 8px",
+                                maxHeight: "200px",
+                                overflowY: "auto",
+                                zIndex: 10
+                            }}>
+                                {sugestoes.map((opcao, index) => (
+                                    <li
+                                        key={index}
+                                        onClick={() => selecionarSugestao(opcao)}
+                                        style={{
+                                            padding: "8px",
+                                            cursor: "pointer",
+                                            borderBottom: "1px solid #eee"
+                                        }}
+                                    >
+                                        {opcao}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
                     </div>
 
-                    {errors.especialidade && (
-                        <div className={styleCadastro.erro}>
-                            <img src={alert} alt="Ícone de alerta" />
-                            <span>Especialidade é obrigatória.</span>
-                        </div>
-                    )}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "end", width: "100%", marginLeft: "2%", maxHeight: "120px", zIndex: "100" }}>
+                        {especialidadesSelecionadas.length > 0 && (
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "10px",
+                                marginTop: "-5px",
+                                width: "97%",
+                                maxHeight: "200px",
+                                overflowY: "auto",
+                                paddingRight: "5px"
+                            }}>
+                                {especialidadesSelecionadas.map((esp, idx) => (
+                                    <div key={idx} style={{
+                                        borderRadius: "20px",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        fontSize: "16px"
+                                    }}>
+                                        <span>{idx + 1}. {esp}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => removerEspecialidade(esp)}
+                                            style={{
+                                                background: "transparent",
+                                                border: "none",
+                                                cursor: "pointer",
+                                                fontWeight: "bold",
+                                                color: "#f00"
+                                            }}
+                                        >
+                                            <img src={botaoDelete} alt="Botão para deletar a especialidade" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
+                        {errors.especialidade && (
+                            <div className={styleCadastro.erro}>
+                                <img src={alert} alt="Ícone de alerta" />
+                                <span>Escolha ao menos uma especialidade.</span>
+                            </div>
+                        )}
+
+                    </div>
                 </div>
 
                 <div className={styleCadastro['input-anosExperiencia']}>
@@ -130,23 +320,23 @@ export default function Etapa3({ setEtapa }) {
                     <div className={styleCadastro["input-container"]}>
                         <input
                             type="text"
-                            id="anosExperiencia"
+                            id="experiencia"
                             maxLength={2}
                             className={styleCadastro['data-nascimento']}
-                            {...register("anosExperiencia", { required: true })}
+                            {...register("experiencia", { required: true })}
 
                             placeholder=""
                         />
-                        <label htmlFor="anosExperiencia" className={styleCadastro.label}>* Anos de experiência</label>
+                        <label htmlFor="experiencia" className={styleCadastro.label}>* Anos de experiência</label>
                         <div
                             className={styleCadastro.underline}
-                            style={{ marginBottom: errors.anosExperiencia ? "-4px" : "0px" }}
+                            style={{ marginBottom: errors.experiencia ? "-4px" : "0px" }}
                         >
 
                         </div>
                     </div>
 
-                    {errors.anosExperiencia && (
+                    {errors.experiencia && (
                         <div className={styleCadastro.erro}>
                             <img src={alert} alt="Ícone de alerta" />
                             <span>Experiência é obrigatória.</span>
@@ -157,8 +347,8 @@ export default function Etapa3({ setEtapa }) {
 
             </div>
 
-            <div>
-                <hr style={{ border: "1px solid #00000039", width: "100%", marginTop: "15%" }} />
+            <div style={{ height: "17.4%", display: "flex", flexDirection: "column", justifyContent: "end", zIndex: "-1" }}>
+                <hr style={{ border: "1px solid #00000039", width: "100%" }} />
                 <div style={{ marginTop: "1%" }}>* Obrigatório</div>
             </div>
 
@@ -168,7 +358,7 @@ export default function Etapa3({ setEtapa }) {
                     <span>Voltar</span>
                 </button>
 
-                <button className={styleCadastro.prosseguir} type="submit">Prosseguir</button>
+                <button className={styleCadastro.prosseguir} type="submit">Enviar</button>
             </footer>
         </form>
     )

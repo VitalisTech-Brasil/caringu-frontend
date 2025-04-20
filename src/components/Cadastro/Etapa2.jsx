@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useCadastro } from './context/CadastroContext';
+import { parse, isValid } from 'date-fns';
 
 import styleCadastro from "./module/cadastro.module.css";
 import alert from "../../assets/images/alert.svg";
@@ -18,34 +19,62 @@ export default function Etapa2({ setEtapa }) {
     const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
 
     const { dadosCadastro, atualizarDados } = useCadastro();
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue } = useForm({
+    const { register, handleSubmit, formState: { errors, isSubmitted }, trigger, setValue } = useForm({
         defaultValues: {
             nome: dadosCadastro.nome || "",
             email: dadosCadastro.email || "",
             telefone: dadosCadastro.telefone || "",
-            data: dadosCadastro.data ||"",
+            dataNascimento: dadosCadastro.dataNascimento || "",
             genero: dadosCadastro.genero || "",
             senha: dadosCadastro.senha || "",
             confirmarSenha: dadosCadastro.confirmarSenha
         },
         mode: 'onChange'
     });
+
     const navigate = useNavigate();
 
+    const handleDateChange = (e) => {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value.length > 8) value = value.slice(0, 8);
+
+        if (value.length > 4) {
+            value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+        } else if (value.length > 2) {
+            value = `${value.slice(0, 2)}/${value.slice(2)}`;
+        }
+
+        setValue("dataNascimento", value);
+        trigger("dataNascimento");
+    };
+
+    const handleTelefoneChange = (e) => {
+        let input = e.target.value;
+        let digitos = input.replace(/\D/g, "");
+
+        if (digitos.length > 11) digitos = digitos.slice(0, 11);
+
+        let formatted = "";
+
+        if (digitos.length > 7) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+        } else if (digitos.length > 2) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+        } else if (digitos.length > 0) {
+            formatted = `(${digitos}`;
+        }
+
+        setValue("telefone", formatted);
+        trigger("telefone");
+    };
 
     useEffect(() => {
-        console.log(dadosCadastro);
-
-        if (dadosCadastro) {
-          setValue("nome", dadosCadastro.nome || "");
-          setValue("email", dadosCadastro.email || "");
-          setValue("telefone", dadosCadastro.telefone || "");
-          setValue("data", dadosCadastro.data || "");
-          setValue("genero", dadosCadastro.genero || "");
-          setValue("senha", dadosCadastro.senha || "");
-          setValue("confirmarSenha", dadosCadastro.confirmarSenha || "");
-        }
-      }, []);
+        console.log("DADOS AO VOLTAR PRA ETAPA 2:", dadosCadastro);
+        Object.entries(dadosCadastro).forEach(([key, value]) => {
+            if (value) setValue(key, value);
+        });
+        setSenhaValue(dadosCadastro.senha || "");
+    }, []);
 
     const onSubmit = (data) => {
         atualizarDados(data);
@@ -71,6 +100,7 @@ export default function Etapa2({ setEtapa }) {
                         <input
                             type="text"
                             id="nome"
+                            maxLength={100}
                             className={styleCadastro['nome-input']}
                             {...register("nome", { required: true })}
                             placeholder=""
@@ -98,26 +128,43 @@ export default function Etapa2({ setEtapa }) {
 
                     <div className={styleCadastro["input-container"]}>
                         <input
-                            type="date"
-                            id="data"
+                            type="text"
+                            id="dataNascimento"
                             className={styleCadastro['data-nascimento']}
-                            {...register("data", { required: true })}
-
                             placeholder=""
+                            {...register("dataNascimento", {
+                                required: "Data de nascimento é obrigatória",
+                                validate: (value) => {
+                                    const data = parse(value, "dd/MM/yyyy", new Date());
+
+                                    if (!isValid(data)) {
+                                        return "Data inválida";
+                                    }
+
+                                    const hoje = new Date();
+                                    if (data > hoje) {
+                                        return "Data futura não permitida.";
+                                    }
+
+                                    return true;
+                                }
+
+                            })}
+                            onChange={handleDateChange}
                         />
-                        <label htmlFor="data" className={styleCadastro.label}>* Data de nascimento</label>
+                        <label htmlFor="dataNascimento" className={styleCadastro.label}>* Data de nascimento</label>
                         <div
                             className={styleCadastro.underline}
-                            style={{ marginBottom: errors.data ? "-4px" : "0px" }}
+                            style={{ marginBottom: errors.dataNascimento ? "-4px" : "0px" }}
                         >
 
                         </div>
                     </div>
 
-                    {errors.data && (
+                    {errors.dataNascimento && (
                         <div className={styleCadastro.erro}>
                             <img src={alert} alt="Ícone de alerta" />
-                            <span>Data é obrigatória.</span>
+                            <span>{errors.dataNascimento.message}</span>
                         </div>
                     )}
 
@@ -165,9 +212,9 @@ export default function Etapa2({ setEtapa }) {
                     <input
                         type="text"
                         id="telefone"
-                        maxLength={11}
-                        {...register("telefone", { required: true })}
                         placeholder=""
+                        {...register("telefone", { required: true })}
+                        onChange={handleTelefoneChange}
                     />
                     <label htmlFor="telefone" className={styleCadastro.label}>* Telefone</label>
                     <div
@@ -347,15 +394,16 @@ export default function Etapa2({ setEtapa }) {
 
                 <select
                     className={styleCadastro.select}
+                    /* style={{color: "#ccc", borderColor: "#ccc"}} se quiser pode descomentar */
                     defaultValue=""
                     {...register("genero", { required: true })}
                 >
                     <option value="" disabled>* Gênero</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Feminino</option>
+                    <option value="MASCULINO">Masculino</option>
+                    <option value="FEMININO">Feminino</option>
                     <option value="NAO_BINARIO">Não binário</option>
                     <option value="OUTRO">Outro</option>
-                    <option value="NAO_INFORMAR">Prefiro não informar</option>
+                    <option value="PREFIRO_NAO_INFORMAR">Prefiro não informar</option>
                 </select>
 
                 {errors.genero && (
