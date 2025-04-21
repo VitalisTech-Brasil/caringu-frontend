@@ -3,6 +3,7 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useCadastro } from './context/CadastroContext';
+import debounce from 'lodash.debounce';
 
 import axios from 'axios';
 
@@ -10,11 +11,19 @@ import styleCadastro from "./module/cadastro.module.css";
 
 import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 import alert from "../../assets/images/alert.svg";
+import check from "../../assets/images/check.svg";
+import loading from "../../assets/gifs/loading-black.gif";
 import toolTipCref from "../../assets/images/tooltip-cref.svg";
 import info from "../../assets/images/info.svg";
 import botaoDelete from "../../assets/images/botao-delete.svg";
 
 export default function Etapa3({ setEtapa }) {
+
+    const [crefStatus, setCrefStatus] = useState(null); // 'ok' | 'erro' | null | validando
+    const [mensagemCref, setMensagemCref] = useState("");
+
+    const [especialidadeInteragiu, setEspecialidadeInteragiu] = useState(false);
+    const [botaoInteragiu, setBotaoInteragiu] = useState(false);
 
     const { dadosCadastro, atualizarDados } = useCadastro();
     const { register, handleSubmit, formState: { errors }, trigger, setValue, watch } = useForm({
@@ -90,6 +99,28 @@ export default function Etapa3({ setEtapa }) {
         setEspecialidadesSelecionadas(prev => prev.filter(e => e !== item));
     };
 
+    const debouncedAzureCall = debounce(async (cref) => {
+        try {
+            const urlAzureFunction = `http://74.163.97.5:8000/consultar?registro=${cref}`;
+            const response = await axios.get(urlAzureFunction);
+
+            if (response.data[0].cref === cref) {
+                console.info("cref valido")
+                setCrefStatus("ok");
+                setMensagemCref("CREF válido!");
+            } else {
+                setCrefStatus("erro");
+                setMensagemCref("CREF não encontrado ou inválido.");
+            }
+
+            console.log('Resposta da função:', response.data[0]);
+        } catch (error) {
+            setCrefStatus("erro");
+            setMensagemCref("Erro ao verificar o CREF. Tente novamente.");
+            console.error('Erro ao chamar a função:', error);
+        }
+    }, 2000);
+
     const handleCrefChange = (e) => {
         let input = e.target.value.toUpperCase();
         let inputFormatado = input.replace(/[^A-Z0-9]/gi, "");;
@@ -113,6 +144,11 @@ export default function Etapa3({ setEtapa }) {
 
         setValue("cref", formatted);
         trigger("cref");
+
+        if (/^\d{6}-[A-Z]\/[A-Z]{2}$/.test(formatted)) {
+            setCrefStatus("validando");
+            debouncedAzureCall(formatted);
+        }
     };
 
     const voltarEtapa = async () => {
@@ -130,6 +166,14 @@ export default function Etapa3({ setEtapa }) {
     };
 
     const onSubmit = async (data) => {
+        const isFormValido = await trigger();
+        const isEspecialidadeValida = especialidadesSelecionadas.length > 0;
+
+        if (!isFormValido || !isEspecialidadeValida) {
+            if (!isEspecialidadeValida) setBotaoInteragiu(true);
+            return;
+        }
+
         atualizarDados(data);
 
         function converterParaISO(dataBR) {
@@ -173,7 +217,7 @@ export default function Etapa3({ setEtapa }) {
 
             <div className={styleCadastro['input-cref']}>
 
-                <div className={styleCadastro['tooltip-wrapper']} style={{ marginBottom: errors.cref?.message ? "3%" : "-2%" }}>
+                <div className={styleCadastro['tooltip-wrapper']} style={{ marginBottom: (errors.cref?.message || crefStatus) ? "3%" : "-2%" }}>
                     <img src={info} alt="Informação" className={styleCadastro['info-icon']} />
                     <div className={styleCadastro['tooltip-box']}>
                         <img src={toolTipCref} alt="Tooltip CREF" />
@@ -209,6 +253,25 @@ export default function Etapa3({ setEtapa }) {
                             <span>{errors.cref.message}</span>
                         </div>
                     )}
+
+                    {!errors.cref && crefStatus && (
+                        <div className={styleCadastro.erro} style={{ color: crefStatus === "ok" ? "green" : crefStatus === "validando" ? "#999" : "#D45C56" }}>
+
+                            <img src={
+                                crefStatus === "ok" ? check :
+                                    crefStatus === "validando" ? loading :
+                                        alert
+                            } alt="Ícone de status" width={"18px"} />
+                            <span>
+                                {
+                                    crefStatus === "ok" ? mensagemCref :
+                                        crefStatus === "validando" ? "Validando CREF..." :
+                                            mensagemCref
+                                }
+                            </span>
+                        </div>
+                    )}
+
                 </div>
             </div>
 
@@ -222,11 +285,14 @@ export default function Etapa3({ setEtapa }) {
                                 type="text"
                                 id="especialidade"
                                 autoComplete="off"
-                                style={{borderBottom: "2px solid black"}}
+                                style={{ borderBottom: "2px solid black" }}
                                 className={styleCadastro['nome-input']}
                                 placeholder=""
                                 value={buscaEspecialidade}
-                                onChange={handleEspecialidadeChange}
+                                onChange={(e) => {
+                                    handleEspecialidadeChange(e)
+                                    if (!especialidadeInteragiu) setEspecialidadeInteragiu(true);
+                                }}
                             />
                             <label htmlFor="especialidade" className={styleCadastro.label} style={{ color: "black" }}>* Digite para buscar especialidades</label>
                             <div
@@ -278,6 +344,7 @@ export default function Etapa3({ setEtapa }) {
                                 overflowY: "auto",
                                 paddingRight: "5px"
                             }}>
+
                                 {especialidadesSelecionadas.map((esp, idx) => (
                                     <div key={idx} style={{
                                         borderRadius: "20px",
@@ -305,7 +372,7 @@ export default function Etapa3({ setEtapa }) {
                             </div>
                         )}
 
-                        {errors.especialidade && (
+                        {errors.especialidade || ((botaoInteragiu || especialidadeInteragiu) && especialidadesSelecionadas.length == 0) && (
                             <div className={styleCadastro.erro}>
                                 <img src={alert} alt="Ícone de alerta" />
                                 <span>Escolha ao menos uma especialidade.</span>
@@ -358,7 +425,7 @@ export default function Etapa3({ setEtapa }) {
                     <span>Voltar</span>
                 </button>
 
-                <button className={styleCadastro.prosseguir} type="submit">Enviar</button>
+                <button className={styleCadastro.prosseguir} onClick={() => setBotaoInteragiu(true)} type="submit">Cadastrar</button>
             </footer>
         </form>
     )
