@@ -9,6 +9,10 @@
     --laranja: #E96E35;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 .root{
   width: 100vw;
   height: 100vh;
