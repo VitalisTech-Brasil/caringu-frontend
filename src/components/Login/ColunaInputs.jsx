@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState }  from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,12 +8,12 @@ import Button from '../Utils/Button';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { api } from '../../provider/api';
-import { useNavigate } from 'react-router-dom';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm({})
 
   const verificarUsuario = async (event) => {
  
@@ -36,7 +36,6 @@ const ColunaInputs = () => {
           'Content-Type': 'application/json'
         }
       });
-
 
         if (response.status === 200 && response.data?.token) {
           sessionStorage.setItem('authToken',response.data.token);
@@ -69,7 +68,7 @@ const ColunaInputs = () => {
           <p>Faça login para continuar sua experiência.</p>
         </header>
 
-        <form className="formulario gap-2" onSubmit={handleSubmit(onSubmit)}>
+        <form className="formulario gap-2" onSubmit={verificarUsuario}>
           <div className="inputs w-full">
             <Input
               id="email"
@@ -104,14 +103,13 @@ const ColunaInputs = () => {
             width="100%"
             height="17.57%"
             fontSize="14px"
-            onClick={onSubmit}
+            onClick={verificarUsuario}
           />
 
           <Button
             logo={googleLogo}
             texto="Entrar com Google"
             type="submit"
-            onClick={loginComGoogle}
             cor="var(--azul-escuro)"
             corTexto="var(--cor-secundaria)"
             corHover="var(--cor-primaria)"
