@@ -4,13 +4,20 @@ import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link } from 'react-router-dom';
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
+import { api } from '../../provider/api';
+import { useNavigate } from 'react-router-dom';
 
 const ColunaInputs = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
   const verificarUsuario = async (event) => {
+ 
     event.preventDefault();
+
+    console.log('Email:', email);
+    console.log('Senha:', senha);
 
     if (!email || !senha) {
       alert('Por favor, preencha todos os campos!');
@@ -18,47 +25,71 @@ const ColunaInputs = () => {
     }
 
     try {
-      const resposta = await fetch(
-        `http://localhost:3000/pessoas?email=${email}`
-      );
-      const usuario = await resposta.json();
-
-      if (usuario.length === 0) {
-        alert('Usuário não encontrado!');
-        return;
-      }
-
-      const payloadUsuario = usuario[0];
-
-      if (payloadUsuario.senha !== senha) {
-        alert('Senha incorreta!');
-        return;
-      }
-
-      const sessaoLogada = await fetch('http://localhost:3000/sessao', {
-        method: 'POST',
+      const response= await api.post('/login', {
+        email: email,
+        senha: senha
+      },{
         headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          usuarioId: payloadUsuario.id,
-          nome: payloadUsuario.nome,
-          email: payloadUsuario.email,
-          logadoEm: new Date().toISOString(),
-        }),
+          'Content-Type': 'application/json'
+        }
       });
 
-      if (!sessaoLogada.ok) {
-        throw new Error('Erro ao criar sessão.');
-      }
 
-      alert(`Bem-vindo, ${payloadUsuario.nome}!`);
-      window.location.href = 'home.html';
+        if (response.status === 200 && response.data?.token) {
+          sessionStorage.setItem('authToken',response.data.token);
+          sessionStorage.setItem('usuario',response.data.nome);
+          sessionStorage.setItem('tipo',response.data.tipo);
+          setTimeout(() =>{
+            navigate('/'); // mudar aqui para a página que vai se redirecionar após o login
+          },1000);
+        }else {
+          throw new Error('Ops! Ocorreu um erro interno.');
+        }
     } catch (error) {
       console.error('Erro ao realizar login:', error);
       alert('Erro ao conectar ao servidor.');
+
     }
   };
+
+
+      // const resposta = await fetch(
+      //   `http://localhost:3000/pessoas?email=${email}`
+      // );
+      // const usuario = await resposta.json();
+
+      // if (usuario.length === 0) {
+      //   alert('Usuário não encontrado!');
+      //   return;
+      // }
+
+      // const payloadUsuario = usuario[0];
+
+      // if (payloadUsuario.senha !== senha) {
+      //   alert('Senha incorreta!');
+      //   return;
+      // }
+
+      // const sessaoLogada = await fetch('http://localhost:3000/sessao', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     usuarioId: payloadUsuario.id,
+      //     nome: payloadUsuario.nome,
+      //     email: payloadUsuario.email,
+      //     logadoEm: new Date().toISOString(),
+      //   }),
+      // });
+
+      // if (!sessaoLogada.ok) {
+      //   throw new Error('Erro ao criar sessão.');
+      // }
+
+      // alert(`Bem-vindo, ${payloadUsuario.nome}!`);
+      // window.location.href = 'home.html'; 
+
 
   return (
     <>
@@ -83,7 +114,10 @@ const ColunaInputs = () => {
                 type="email"
                 label="Email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  console.log('Email digitado:', e.target.value);
+                  setEmail(e.target.value);
+                }}
                 required
               />
               <Input
@@ -92,7 +126,10 @@ const ColunaInputs = () => {
                 type="password"
                 label="Senha"
                 value={senha}
-                onChange={(e) => setSenha(e.target.value)}
+                onChange={(e) => {
+                  console.log('Senha digitada:', e.target.value);
+                  setSenha(e.target.value);
+                }}
                 required
               />
 

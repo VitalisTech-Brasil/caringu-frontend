@@ -41,7 +41,7 @@ const EtapaCodigo = ({ email, onAvancar }) => {
             </button> */}
             <Button texto="Verificar Código" onClick={handleVerificarCodigo} cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="511px" height="50px" fontSize="14px" />
             <p>Não recebeu o código? <a href="">Clique para reenviar em [x] segundos</a></p>
-            <a href="/Login">Voltar para Login</a>
+            <a href="/login">Voltar para Login</a>
           </footer>
         </div>
       </div>
