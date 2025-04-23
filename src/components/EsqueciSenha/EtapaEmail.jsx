@@ -1,56 +1,83 @@
 // src/components/EsqueciSenha/EtapaEmail.jsx
 import React from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';  // Importando o axios
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
 
-const EtapaEmail = ({ email, setEmail, onAvancar }) => {
-  const handleEnviarEmail = async () => {
-    try {
-      const response = await fetch("url do servidor pra ver se existe o email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+const EtapaEmail = ({ onAvancar }) => {
+  // Usando o hook-form
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
-      const data = await response.json();
-      if (data.success) {
-        onAvancar();
+  const handleEnviarEmail = async (data) => {
+    const { email } = data; // Pega o email do formulário
+
+    try {
+      // Usando axios para enviar a requisição ao backend
+      const response = await axios.post('url_do_servidor_para_validar_email', { email });
+
+      // Verificando a resposta do backend
+      if (response.data.success) {
+        onAvancar(); // Avança para a próxima etapa
       } else {
         alert("Email não encontrado.");
       }
     } catch (error) {
       console.error("Erro ao enviar e-mail:", error);
+      alert("Erro ao tentar recuperar a senha.");
+      onAvancar();
     }
   };
 
   return (
-    <section className='flex justify-center items-center h-screen w-1/2'>
-      <div className='flex justify-center items-center h-full w-full'>
-        <div className='flex justify-center items-center w-full h-150 flex-col gap-10'>
-          <div className='flex w-100 items-center justify-between'>
-            <div className='bg-[var(--cor-primaria)] rounded-full h-3 w-25'></div>
-            <div className='bg-[var(--azul-claro)]  rounded-full h-3 w-25'></div>
-            <div className='bg-[var(--azul-claro)]  rounded-full h-3 w-25'></div>
+    <section className="flex justify-center items-center h-screen w-1/2">
+      <div className="flex justify-center items-center h-full w-full">
+        <div className="flex justify-center items-center w-full h-150 flex-col gap-10">
+          <div className="flex w-100 items-center justify-between">
+            <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-25"></div>
+            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
+            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
           </div>
-          <div className='text-[var(--cor-primaria)] h-27 w-2/3 text-center flex-col justify-end'>
-            <h1 className=' text-[48px] font-bold'>Recuperação de senha</h1>
-            <p className='text-[20px] font-normal'>Não se preocupe! Isso acontece. Informe seu e-mail e enviaremos um link para você redefinir sua senha.</p>
+          <div className="text-[var(--cor-primaria)] h-27 w-2/3 text-center flex-col justify-end">
+            <h1 className="text-[48px] font-bold">Recuperação de senha</h1>
+            <p className="text-[20px] font-normal">
+              Não se preocupe! Isso acontece. Informe seu e-mail e enviaremos um link para você redefinir sua senha.
+            </p>
           </div>
-          <div className='w-1/2'>
+
+          {/* Formulário com react-hook-form */}
+          <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2">
             <Input
               id="email"
               name="email"
               type="email"
               label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              {...register("email", {
+                required: "O email é obrigatório",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Formato de e-mail inválido"
+                }
+              })}
+              isError={!!errors.email}
+              errorMessage={errors.email?.message}
             />
-          </div>
-          <footer className='flex flex-col h-25 justify-between items-center'>
-            <Button texto="Resetar Senha" onClick={handleEnviarEmail} cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="511px" height="50px" fontSize="14px" />
-            <a href="/Login">Voltar para Login</a>
-          </footer>
+
+            <footer className="flex flex-col h-25 justify-between items-center">
+              <Button
+                texto="Resetar Senha"
+                type="submit"
+                cor="var(--laranja)"
+                corTexto="var(--cor-secundaria)"
+                corHover="#ca6333"
+                width="511px"
+                height="50px"
+                fontSize="14px"
+                onClick={handleEnviarEmail}
+              />
+              <a href="/Login">Voltar para Login</a>
+            </footer>
+          </form>
         </div>
       </div>
     </section>
