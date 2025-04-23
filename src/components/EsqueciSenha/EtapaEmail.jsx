@@ -49,7 +49,7 @@ const EtapaEmail = ({ email, setEmail, onAvancar }) => {
           </div>
           <footer className='flex flex-col h-25 justify-between items-center'>
             <Button texto="Resetar Senha" onClick={handleEnviarEmail} cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="511px" height="50px" fontSize="14px" />
-            <a href="/Login">Voltar para Login</a>
+            <a href="/login">Voltar para Login</a>
           </footer>
         </div>
       </div>

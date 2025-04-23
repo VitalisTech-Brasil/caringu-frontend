@@ -67,7 +67,7 @@ const EtapaNovaSenha = ({ email, novaSenha, setNovaSenha, confirmarSenha, setCon
             <button onClick={handleAlterarSenha} className='w-[511px] h-[50px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'>
               Alterar Senha
             </button>
-            <a href="/Login">Voltar para Login</a>
+            <a href="/login">Voltar para Login</a>
           </footer>
         </div>
       </div>
