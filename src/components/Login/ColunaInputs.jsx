@@ -1,24 +1,19 @@
-import { React, useState }  from 'react';
+import { React}  from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
-
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import { api } from '../../provider/api';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm({})
+  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
 
-  const verificarUsuario = async (event) => {
+  const verificarUsuario = async (data) => {
  
-    event.preventDefault();
-
+    const { email, senha } = data;
     console.log('Email:', email);
     console.log('Senha:', senha);
 
@@ -28,10 +23,7 @@ const ColunaInputs = () => {
     }
 
     try {
-      const response= await api.post('/login', {
-        email: email,
-        senha: senha
-      },{
+      const response= await api.post('/login', {email,senha},{
         headers: {
           'Content-Type': 'application/json'
         }
@@ -68,7 +60,7 @@ const ColunaInputs = () => {
           <p>Faça login para continuar sua experiência.</p>
         </header>
 
-        <form className="formulario gap-2" onSubmit={verificarUsuario}>
+        <form className="formulario gap-2" onSubmit={handleSubmit(verificarUsuario)}>
           <div className="inputs w-full">
             <Input
               id="email"
@@ -103,7 +95,6 @@ const ColunaInputs = () => {
             width="100%"
             height="17.57%"
             fontSize="14px"
-            onClick={verificarUsuario}
           />
 
           <Button

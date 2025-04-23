@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import olhoAberto from '../../assets/images/eye.svg';
 import olhoFechado from '../../assets/images/eye-slash.svg';
 
-
 const Input = ({
   id,
   name,
   label,
   type = 'text',
   required = false,
-  value,
-  onChange, 
-  
+  isError,
+  errorMessage,
+  ...rest 
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
@@ -25,12 +24,13 @@ const Input = ({
         id={id}
         name={name}
         required={required}
-        placeholder="  " // importante pra ativar :placeholder-shown
-        value={value}
-        onChange={onChange} 
+        placeholder="  "
+        {...rest} 
       />
       <label htmlFor={id} className="label">{label}</label>
       <div className="underline" />
+
+      {isError && <span className="error-message">{errorMessage}</span>}
 
       {isPassword && (
         <button
@@ -56,6 +56,5 @@ const Input = ({
     </div>
   );
 };
-
 
 export default Input;
