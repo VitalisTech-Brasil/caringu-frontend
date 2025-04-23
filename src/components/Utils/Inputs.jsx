@@ -9,6 +9,9 @@ const Input = ({
   label,
   type = 'text',
   required = false,
+  value,
+  onChange, 
+  
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
@@ -23,6 +26,8 @@ const Input = ({
         name={name}
         required={required}
         placeholder="  " // importante pra ativar :placeholder-shown
+        value={value}
+        onChange={onChange} 
       />
       <label htmlFor={id} className="label">{label}</label>
       <div className="underline" />

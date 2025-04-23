@@ -78,7 +78,7 @@ const EtapaCodigo = ({ email, onAvancar }) => {
                 Não recebeu o código?{' '}
                 <a href="">Clique para reenviar em [x] segundos</a>
               </p>
-              <a href="/Login">Voltar para Login</a>
+              <a href="/login">Voltar para Login</a>
             </footer>
           </form>
         </div>

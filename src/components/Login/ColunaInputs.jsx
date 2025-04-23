@@ -4,67 +4,54 @@ import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
+
 import { useForm } from 'react-hook-form';
-import axios from 'axios'; // Importando o axios
+import axios from 'axios';
+import { api } from '../../provider/api';
+import { useNavigate } from 'react-router-dom';
 
 const ColunaInputs = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
-  const onSubmit = async (data) => {
-    const { email, senha } = data;
+  const verificarUsuario = async (event) => {
+ 
+    event.preventDefault();
+
+    console.log('Email:', email);
+    console.log('Senha:', senha);
+
+    if (!email || !senha) {
+      alert('Por favor, preencha todos os campos!');
+      return;
+    }
 
     try {
-      const resposta = await axios.get(`http://localhost:3000/pessoas?email=${email}`);
-      const usuario = resposta.data;
-
-      if (usuario.length === 0) {
-        alert('Usuário não encontrado!');
-        return;
-      }
-
-      const payloadUsuario = usuario[0];
-
-      if (payloadUsuario.senha !== senha) {
-        alert('Senha incorreta!');
-        return;
-      }
-
-      // Criação da sessão no backend
-      const sessaoLogada = await axios.post('http://localhost:3000/sessao', {
-        usuarioId: payloadUsuario.id,
-        nome: payloadUsuario.nome,
-        email: payloadUsuario.email,
-        logadoEm: new Date().toISOString(),
+      const response= await api.post('/login', {
+        email: email,
+        senha: senha
+      },{
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
-      if (sessaoLogada.status !== 200) {
-        throw new Error('Erro ao criar sessão.');
-      }
 
-      alert(`Bem-vindo, ${payloadUsuario.nome}!`);
-      navigate('/home');
+        if (response.status === 200 && response.data?.token) {
+          sessionStorage.setItem('authToken',response.data.token);
+          sessionStorage.setItem('usuario',response.data.nome);
+          sessionStorage.setItem('tipo',response.data.tipo);
+          setTimeout(() =>{
+            navigate('/'); // mudar aqui para a página que vai se redirecionar após o login
+          },1000);
+        }else {
+          throw new Error('Ops! Ocorreu um erro interno.');
+        }
     } catch (error) {
       console.error('Erro ao realizar login:', error);
       alert('Erro ao conectar ao servidor.');
-    }
-  };
 
-  const loginComGoogle = async () => {
-    try {
-      const resposta = await axios.get('http://localhost:3000/auth/google'); // Supondo que você tenha um endpoint no backend para o Google OAuth
-
-      if (resposta.status !== 200) {
-        throw new Error('Erro ao fazer login com o Google.');
-      }
-
-      const dadosUsuario = resposta.data;
-
-      alert(`Bem-vindo, ${dadosUsuario.nome}!`);
-      navigate('/home'); // Navega para a página inicial após login bem-sucedido com o Google
-    } catch (error) {
-      console.error('Erro ao realizar login com o Google:', error);
-      alert('Erro ao conectar ao servidor.');
     }
   };
 
