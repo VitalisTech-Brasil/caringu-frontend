@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import olhoAberto from '../../assets/images/eye.svg';
+import olhoFechado from '../../assets/images/eye-slash.svg';
 
 const Input = ({
   id,
@@ -6,6 +8,9 @@ const Input = ({
   label,
   type = 'text',
   required = false,
+  isError,
+  errorMessage,
+  ...rest 
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
@@ -19,10 +24,13 @@ const Input = ({
         id={id}
         name={name}
         required={required}
-        placeholder="  " // importante pra ativar :placeholder-shown
+        placeholder="  "
+        {...rest} 
       />
       <label htmlFor={id} className="label">{label}</label>
       <div className="underline" />
+
+      {isError && <span className="error-message">{errorMessage}</span>}
 
       {isPassword && (
         <button
@@ -42,12 +50,11 @@ const Input = ({
             fontSize: '16px',
           }}
         >
-          <i className={`fas ${mostrarSenha ? 'fa-eye-slash' : 'fa-eye'}`} />
+          <img src={mostrarSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
         </button>
       )}
     </div>
   );
 };
-
 
 export default Input;
