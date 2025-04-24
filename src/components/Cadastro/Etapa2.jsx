@@ -9,6 +9,8 @@ import { parse, isValid } from 'date-fns';
 import styleCadastro from "./module/cadastro.module.css";
 import alert from "../../assets/images/alert.svg";
 import check from "../../assets/images/check.svg";
+import olhoAberto from '../../assets/images/eye.svg';
+import olhoFechado from '../../assets/images/eye-slash.svg';
 import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 
 export default function Etapa2({ setEtapa }) {
@@ -267,7 +269,7 @@ export default function Etapa2({ setEtapa }) {
                             className={styleCadastro["btn-olho"]}
                             tabIndex={-1}
                         >
-                            <i className={`fas ${showSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{ color: "#666666", fontSize: "16px" }} />
+                            <img src={showSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
                         </button>
                         <div
                             className={styleCadastro.underline}
@@ -369,7 +371,7 @@ export default function Etapa2({ setEtapa }) {
                             className={styleCadastro["btn-olho"]}
                             tabIndex={-1}
                         >
-                            <i className={`fas ${showConfirmarSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{ color: "#666666", fontSize: "16px" }} />
+                            <img src={showConfirmarSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
                         </button>
                         <div
                             className={styleCadastro.underline}

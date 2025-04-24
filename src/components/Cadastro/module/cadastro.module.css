@@ -223,14 +223,14 @@ body,
 
 .input-container {
     position: relative;
-    height: 5vh;
+    height: 4.5vh;
     width: 100%;
     margin-top: 1%;
 }
 
 .input-container input,
 .input-container-especialidade input {
-    font-size: 20px;
+    font-size: 16px;
     width: 100%;
     border: none;
     border-bottom: 2px solid #ccc;
@@ -254,7 +254,7 @@ body,
 
 .input-container-especialidade input:focus~.label,
 .input-container-especialidade input:not(:placeholder-shown)~.label {
-    top: -20px;
+    top: -15px;
     font-size: 16px;
     color: #333;
 }
