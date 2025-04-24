@@ -98,7 +98,7 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro['input-nome']}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type="text"
                             id="nome"
@@ -128,14 +128,14 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro['input-data']}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type="text"
                             id="dataNascimento"
                             className={styleCadastro['data-nascimento']}
                             placeholder=""
                             {...register("dataNascimento", {
-                                required: "Data de nascimento é obrigatória",
+                                required: "Data é obrigatória",
                                 validate: (value) => {
                                     const data = parse(value, "dd/MM/yyyy", new Date());
 
@@ -176,7 +176,7 @@ export default function Etapa2({ setEtapa }) {
 
             <div className={styleCadastro['input-email']}>
 
-                <div className={styleCadastro['input-container']}>
+                <div className={styleCadastro['input-container-cadastro']}>
                     <input
                         type="text"
                         id="email"
@@ -210,7 +210,7 @@ export default function Etapa2({ setEtapa }) {
 
             <div className={styleCadastro['input-telefone']}>
 
-                <div className={styleCadastro["input-container"]}>
+                <div className={styleCadastro["input-container-cadastro"]}>
                     <input
                         type="text"
                         id="telefone"
@@ -240,7 +240,7 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro["input-senha"]}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type={showSenha ? "text" : "password"}
                             id="senha"
@@ -353,7 +353,7 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro['input-confirmarSenha']}>
 
-                    <div className={styleCadastro['input-container']}>
+                    <div className={styleCadastro['input-container-cadastro']}>
                         <input
                             type={showConfirmarSenha ? "text" : "password"}
                             id="confirmarSenha"

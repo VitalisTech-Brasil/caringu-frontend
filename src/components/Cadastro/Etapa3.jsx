@@ -104,13 +104,15 @@ export default function Etapa3({ setEtapa }) {
             const urlAzureFunction = `http://74.163.97.5:8000/consultar?registro=${cref}`;
             const response = await axios.get(urlAzureFunction);
 
-            if (response.data[0].cref === cref) {
-                console.info("cref valido")
+            console.log(response.data[0].nome);
+            console.log(dadosCadastro.nome.toUpperCase());
+
+            if (response.data[0].cref === cref && response.data[0].nome === dadosCadastro.nome.toUpperCase()) {
                 setCrefStatus("ok");
                 setMensagemCref("CREF válido!");
             } else {
                 setCrefStatus("erro");
-                setMensagemCref("CREF não encontrado ou inválido.");
+                setMensagemCref("Cref e/ou nome não encontrado ou inválido.");
             }
 
             console.log('Resposta da função:', response.data[0]);
@@ -146,22 +148,21 @@ export default function Etapa3({ setEtapa }) {
         trigger("cref");
 
         if (/^\d{6}-[A-Z]\/[A-Z]{2}$/.test(formatted)) {
+            setMensagemCref("Validando CREF...");
             setCrefStatus("validando");
             debouncedAzureCall(formatted);
         }
     };
 
     const voltarEtapa = async () => {
-        const valido = await trigger();
-        if (valido) {
-            const data = {
-                cref: watch("cref"),
-                especialidade: especialidadesSelecionadas,
-                experiencia: watch("experiencia")
-            };
-            atualizarDados(data);
-        }
+        
+        const data = {
+            cref: watch("cref"),
+            especialidade: especialidadesSelecionadas,
+            experiencia: watch("experiencia")
+        };
 
+        atualizarDados(data);
         setEtapa(2);
     };
 
@@ -171,6 +172,15 @@ export default function Etapa3({ setEtapa }) {
 
         if (!isFormValido || !isEspecialidadeValida) {
             if (!isEspecialidadeValida) setBotaoInteragiu(true);
+            return;
+        }
+
+        if (crefStatus !== "ok") {
+
+            if (crefStatus === "validando") {
+                setMensagemCref("Aguarde a validação do CREF antes de prosseguir.");
+            }
+            
             return;
         }
 
@@ -225,7 +235,7 @@ export default function Etapa3({ setEtapa }) {
                 </div>
 
                 <div className={styleCadastro["input-crefErros"]}>
-                    <div className={styleCadastro['input-container']}>
+                    <div className={styleCadastro['input-container-cadastro']}>
                         <input
                             type="text"
                             id="cref"
@@ -264,8 +274,6 @@ export default function Etapa3({ setEtapa }) {
                             } alt="Ícone de status" width={"18px"} />
                             <span>
                                 {
-                                    crefStatus === "ok" ? mensagemCref :
-                                        crefStatus === "validando" ? "Validando CREF..." :
                                             mensagemCref
                                 }
                             </span>
@@ -280,7 +288,7 @@ export default function Etapa3({ setEtapa }) {
                 <div className={styleCadastro['div-principal-especialidade']}>
                     <div className={styleCadastro['input-especialidade']} style={{ position: "relative" }}>
 
-                        <div className={styleCadastro["input-container-especialidade"]}>
+                        <div className={styleCadastro["input-container-cadastro-especialidade"]}>
                             <input
                                 type="text"
                                 id="especialidade"
@@ -294,10 +302,10 @@ export default function Etapa3({ setEtapa }) {
                                     if (!especialidadeInteragiu) setEspecialidadeInteragiu(true);
                                 }}
                             />
-                            <label htmlFor="especialidade" className={styleCadastro.label} style={{ color: "black" }}>* Digite para buscar especialidades</label>
+                            <label htmlFor="especialidade" className={styleCadastro.label} style={{ color: "#333" }}>* Digite para buscar especialidades</label>
                             <div
                                 className={styleCadastro.underline}
-                                style={{ marginBottom: errors.especialidade ? "-4px" : "0px", backgroundColor: "black" }}
+                                style={{ marginBottom: errors.especialidade ? "-4px" : "0px", backgroundColor: "#333" }}
                             />
                         </div>
 
@@ -384,7 +392,7 @@ export default function Etapa3({ setEtapa }) {
 
                 <div className={styleCadastro['input-anosExperiencia']}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type="text"
                             id="experiencia"
