@@ -272,11 +272,7 @@ export default function Etapa3({ setEtapa }) {
                                     crefStatus === "validando" ? loading :
                                         alert
                             } alt="Ícone de status" width={"18px"} />
-                            <span>
-                                {
-                                            mensagemCref
-                                }
-                            </span>
+                            <span>{mensagemCref}</span>
                         </div>
                     )}
 

@@ -401,11 +401,11 @@ export default function Etapa2({ setEtapa }) {
                     {...register("genero", { required: true })}
                 >
                     <option value="" disabled>* Gênero</option>
-                    <option value="MASCULINO">Masculino</option>
-                    <option value="FEMININO">Feminino</option>
-                    <option value="NAO_BINARIO">Não binário</option>
-                    <option value="OUTRO">Outro</option>
-                    <option value="PREFIRO_NAO_INFORMAR">Prefiro não informar</option>
+                    <option value="HOMEM_CISGENERO">Homem Cisgênero</option>
+                    <option value="HOMEM_TRANSGENERO">Homem Transgênero</option>
+                    <option value="MULHER_CISGENERO">Mulher Cisgênero</option>
+                    <option value="MULHER_TRANSGENERO">Mulher Transgênero</option>
+                    <option value="NAO_BINARIO">Não Binário</option>
                 </select>
 
                 {errors.genero && (
