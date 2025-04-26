@@ -1,10 +1,12 @@
-import React from 'react'
+import axios from 'axios';
 
-import { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useCadastro } from './context/CadastroContext';
 import { parse, isValid } from 'date-fns';
+
+import { caringuApi } from '../../provider/caringuApi';
 
 import styleCadastro from "./module/cadastro.module.css";
 import alert from "../../assets/images/alert.svg";
@@ -14,6 +16,8 @@ import olhoFechado from '../../assets/images/eye-slash.svg';
 import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 
 export default function Etapa2({ setEtapa }) {
+
+    const [erroEmailExistente, setErroEmailExistente] = useState(null);
 
     const [senhaInteragiu, setSenhaInteragiu] = useState(false);
     const [senhaValue, setSenhaValue] = useState("");
@@ -78,7 +82,39 @@ export default function Etapa2({ setEtapa }) {
         setSenhaValue(dadosCadastro.senha || "");
     }, []);
 
-    const onSubmit = (data) => {
+    const verificarEmail = async (email) => {
+        try {
+            const response = await caringuApi.get("/pessoas/verificacao-email", {
+                params: { email }
+            });
+    
+            if (response.data === true) {
+                setErroEmailExistente("Este e-mail já está cadastrado.");
+                return true;
+            } else {
+                setErroEmailExistente(null);
+                return false;
+            }
+        } catch (err) {
+            console.error("Erro ao verificar e-mail:", err);
+            setErroEmailExistente("Erro ao verificar e-mail.");
+            return false;
+        }
+    };
+
+    const onSubmit = async (data) => {
+        const email = data.email;
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            alert("entrou aqui")
+            return;
+        }
+
+        const emailExiste = await verificarEmail(email);
+        if (emailExiste) {
+            console.log("email ja existe")
+            return;
+        }
+
         atualizarDados(data);
         setEtapa(3);
     };
@@ -184,13 +220,12 @@ export default function Etapa2({ setEtapa }) {
                             required: "E-mail é obrigatório.",
                             pattern: { value: /^\S+@\S+\.\S+$/, message: "E-mail inválido." }
                         })}
-
                         placeholder=""
                     />
                     <label htmlFor="email" className={styleCadastro.label}>* E-mail</label>
                     <div
                         className={styleCadastro.underline}
-                        style={{ marginBottom: errors.email ? "-4px" : "0px" }}
+                        style={{ marginBottom: errors.email || erroEmailExistente ? "-4px" : "0px" }}
                     >
 
                     </div>
@@ -203,6 +238,13 @@ export default function Etapa2({ setEtapa }) {
                             {errors.email.type === "required" && "E-mail é obrigatório."}
                             {errors.email.type === "pattern" && "E-mail inválido."}
                         </span>
+                    </div>
+                )}
+
+                {erroEmailExistente && (
+                    <div className={styleCadastro.erro}>
+                        <img src={alert} alt="Ícone de alerta" />
+                        <span>{erroEmailExistente}</span>
                     </div>
                 )}
 
@@ -401,11 +443,11 @@ export default function Etapa2({ setEtapa }) {
                     {...register("genero", { required: true })}
                 >
                     <option value="" disabled>* Gênero</option>
-                    <option value="MASCULINO">Masculino</option>
-                    <option value="FEMININO">Feminino</option>
-                    <option value="NAO_BINARIO">Não binário</option>
-                    <option value="OUTRO">Outro</option>
-                    <option value="PREFIRO_NAO_INFORMAR">Prefiro não informar</option>
+                    <option value="HOMEM_CISGENERO">Homem Cisgênero</option>
+                    <option value="HOMEM_TRANSGENERO">Homem Transgênero</option>
+                    <option value="MULHER_CISGENERO">Mulher Cisgênero</option>
+                    <option value="MULHER_TRANSGENERO">Mulher Transgênero</option>
+                    <option value="NAO_BINARIO">Não Binário</option>
                 </select>
 
                 {errors.genero && (

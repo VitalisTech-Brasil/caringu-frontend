@@ -1,10 +1,10 @@
-import React from 'react'
-
-import { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useCadastro } from './context/CadastroContext';
 import debounce from 'lodash.debounce';
 
+
+import { caringuApi } from '../../provider/caringuApi';
 import axios from 'axios';
 
 import styleCadastro from "./module/cadastro.module.css";
@@ -99,6 +99,18 @@ export default function Etapa3({ setEtapa }) {
         setEspecialidadesSelecionadas(prev => prev.filter(e => e !== item));
     };
 
+    const voltarEtapa = async () => {
+
+        const data = {
+            cref: watch("cref"),
+            especialidade: especialidadesSelecionadas,
+            experiencia: watch("experiencia")
+        };
+
+        atualizarDados(data);
+        setEtapa(2);
+    };
+
     const debouncedAzureCall = debounce(async (cref) => {
         try {
             const urlAzureFunction = `http://74.163.97.5:8000/consultar?registro=${cref}`;
@@ -123,7 +135,29 @@ export default function Etapa3({ setEtapa }) {
         }
     }, 2000);
 
-    const handleCrefChange = (e) => {
+    const verificarCrefNoBanco = async (cref) => {
+        try {
+            const response = await caringuApi.get("/personal-trainers/verificacao-cref", {
+                params: { cref }
+            });
+
+            if (response.data) {
+                setCrefStatus("erro");
+                setMensagemCref("CREF já cadastrado.");
+                return "erro";
+            } else {
+                setCrefStatus("ok");
+                return "ok";
+            }
+        } catch (error) {
+            setCrefStatus("erro");
+            setMensagemCref("Erro ao verificar CREF no banco. Tente novamente.");
+            console.error('Erro ao verificar CREF no banco:', error);
+            return "erro";
+        }
+    };
+
+    const handleCrefChange = async (e) => {
         let input = e.target.value.toUpperCase();
         let inputFormatado = input.replace(/[^A-Z0-9]/gi, "");;
 
@@ -150,20 +184,15 @@ export default function Etapa3({ setEtapa }) {
         if (/^\d{6}-[A-Z]\/[A-Z]{2}$/.test(formatted)) {
             setMensagemCref("Validando CREF...");
             setCrefStatus("validando");
-            debouncedAzureCall(formatted);
+
+            const statusBanco = await verificarCrefNoBanco(formatted);
+
+            if (statusBanco !== "erro") {
+                setMensagemCref("Validando CREF...");
+                setCrefStatus("validando");
+                debouncedAzureCall(formatted);
+            }
         }
-    };
-
-    const voltarEtapa = async () => {
-        
-        const data = {
-            cref: watch("cref"),
-            especialidade: especialidadesSelecionadas,
-            experiencia: watch("experiencia")
-        };
-
-        atualizarDados(data);
-        setEtapa(2);
     };
 
     const onSubmit = async (data) => {
@@ -180,7 +209,20 @@ export default function Etapa3({ setEtapa }) {
             if (crefStatus === "validando") {
                 setMensagemCref("Aguarde a validação do CREF antes de prosseguir.");
             }
-            
+
+            if (crefStatus === null) {
+                setMensagemCref("Validando CREF...");
+                setCrefStatus("validando");
+
+                const statusBanco = await verificarCrefNoBanco(data.cref);
+
+                if (statusBanco !== "erro") {
+                    setMensagemCref("Validando CREF...");
+                    setCrefStatus("validando");
+                    debouncedAzureCall(data.cref);
+                }
+            }
+
             return;
         }
 
@@ -210,7 +252,7 @@ export default function Etapa3({ setEtapa }) {
         console.info("Payload enviado: ", payloadFinal);
 
         try {
-            await axios.post("http://localhost:8080/personal-trainers", payloadFinal);
+            await caringuApi.post("/personal-trainers", payloadFinal);
             console.info("Cadastro realizado com sucesso!");
             setEtapa(4);
         } catch (error) {
@@ -272,11 +314,7 @@ export default function Etapa3({ setEtapa }) {
                                     crefStatus === "validando" ? loading :
                                         alert
                             } alt="Ícone de status" width={"18px"} />
-                            <span>
-                                {
-                                            mensagemCref
-                                }
-                            </span>
+                            <span>{mensagemCref}</span>
                         </div>
                     )}
 
@@ -433,7 +471,8 @@ export default function Etapa3({ setEtapa }) {
                     <span>Voltar</span>
                 </button>
 
-                <button className={styleCadastro.prosseguir} onClick={() => setBotaoInteragiu(true)} type="submit">Cadastrar</button>
+                <button className={styleCadastro.prosseguir} onClick={() => setBotaoInteragiu(true)}
+                    type="submit">Cadastrar</button>
             </footer>
         </form>
     )
