@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Utils/Button';
-// import axios from 'axios';
+import axios from 'axios';
 
 const FaleConosco = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,20 +15,19 @@ const FaleConosco = () => {
         console.log(data);
         setIsSubmitting(false);
 
-        // try {
-        //     const response = await axios.post('/api/fale-conosco', data);
-
-        //     if (response.status === 200) {
-        //         setResponseMessage('Mensagem enviada com sucesso!');
-        //     } else {
-        //         setResponseMessage('Erro ao enviar mensagem. Tente novamente.');
-        //     }
-        // } catch (error) {
-        //     console.error('Erro ao enviar:', error);
-        //     setResponseMessage('Erro de conexão. Tente novamente.');
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
+        try {
+            const response = await axios.post('http://localhost:8080/fale-conosco', data);
+            if (response.status === 200) {
+                setResponseMessage('Mensagem enviada com sucesso!');
+            } else {
+                setResponseMessage('Erro ao enviar mensagem. Tente novamente.');
+            }
+        } catch (error) {
+            console.error('Erro ao enviar:', error);
+            setResponseMessage('Erro de conexão. Tente novamente.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
