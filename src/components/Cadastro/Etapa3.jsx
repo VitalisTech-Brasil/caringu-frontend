@@ -36,7 +36,6 @@ export default function Etapa3({ setEtapa }) {
     });
 
     useEffect(() => {
-        console.info("DADOS AO VOLTAR PRA ETAPA 3:", dadosCadastro);
         Object.entries(dadosCadastro).forEach(([key, value]) => {
             if (value) setValue(key, value);
         });
