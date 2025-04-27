@@ -24,10 +24,8 @@ const Home = () => {
   useEffect(() => {
     let tokenExistente = sessionStorage.getItem("authToken");
 
-    return () => {
-      if (!tokenExistente) {
-        setShowModal(true);
-      }
+    if (!tokenExistente) {
+      setShowModal(true);
     }
   }, [])
 
