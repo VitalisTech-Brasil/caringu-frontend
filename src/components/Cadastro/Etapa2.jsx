@@ -1,33 +1,136 @@
-import React from 'react'
-
-import { useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import styleCadastro from "./module/cadastro.module.css";
+import { useCadastro } from './context/CadastroContext';
+import { parse, isValid } from 'date-fns';
 
+import { caringuApi } from '../../provider/caringuApi';
+
+import styleCadastro from "./module/cadastro.module.css";
 import alert from "../../assets/images/alert.svg";
 import check from "../../assets/images/check.svg";
+import olhoAberto from '../../assets/images/eye.svg';
+import olhoFechado from '../../assets/images/eye-slash.svg';
 import setaEsquerda from "../../assets/images/seta-esquerda.svg";
 
 export default function Etapa2({ setEtapa }) {
+
+    const [erroEmailExistente, setErroEmailExistente] = useState(null);
 
     const [senhaInteragiu, setSenhaInteragiu] = useState(false);
     const [senhaValue, setSenhaValue] = useState("");
     const [showSenha, setShowSenha] = useState(false);
     const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
-    const senha = watch("senha");
+    const { dadosCadastro, atualizarDados } = useCadastro();
+    const { register, handleSubmit, formState: { errors, isSubmitted }, trigger, setValue } = useForm({
+        defaultValues: {
+            nome: dadosCadastro.nome || "",
+            email: dadosCadastro.email || "",
+            telefone: dadosCadastro.telefone || "",
+            dataNascimento: dadosCadastro.dataNascimento || "",
+            genero: dadosCadastro.genero || "",
+            senha: dadosCadastro.senha || "",
+            confirmarSenha: dadosCadastro.confirmarSenha
+        },
+        mode: 'onChange'
+    });
+
     const navigate = useNavigate();
 
-    const onSubmit = (data) => {
-        console.log("Dados da etapa 2:", data);
+    const handleDateChange = (e) => {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value.length > 8) value = value.slice(0, 8);
+
+        if (value.length > 4) {
+            value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+        } else if (value.length > 2) {
+            value = `${value.slice(0, 2)}/${value.slice(2)}`;
+        }
+
+        setValue("dataNascimento", value);
+        trigger("dataNascimento");
+    };
+
+    const handleTelefoneChange = (e) => {
+        let input = e.target.value;
+        let digitos = input.replace(/\D/g, "");
+
+        if (digitos.length > 11) digitos = digitos.slice(0, 11);
+
+        let formatted = "";
+
+        if (digitos.length > 7) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+        } else if (digitos.length > 2) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+        } else if (digitos.length > 0) {
+            formatted = `(${digitos}`;
+        }
+
+        setValue("telefone", formatted);
+        trigger("telefone");
+    };
+
+    const handleEmailChange = async (e) => {
+        const email = e.target.value;
+        setValue("email", email);
+        trigger("email");
+    
+        setErroEmailExistente(null);
+    
+        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            const emailExiste = await verificarEmail(email);
+            if (emailExiste) {
+                setErroEmailExistente("Este e-mail já está cadastrado.");
+            }
+        }
+    };
+
+    useEffect(() => {
+        Object.entries(dadosCadastro).forEach(([key, value]) => {
+            if (value) setValue(key, value);
+        });
+        setSenhaValue(dadosCadastro.senha || "");
+    }, []);
+
+    const verificarEmail = async (email) => {
+        try {
+            const response = await caringuApi.get("/pessoas/verificacao-email", {
+                params: { email }
+            });
+    
+            if (response.data === true) {
+                setErroEmailExistente("Este e-mail já está cadastrado.");
+                return true;
+            } else {
+                setErroEmailExistente(null);
+                return false;
+            }
+        } catch (err) {
+            console.error("Erro ao verificar e-mail:", err);
+            setErroEmailExistente("Erro ao verificar e-mail.");
+            return false;
+        }
+    };
+
+    const onSubmit = async (data) => {
+        const email = data.email;
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            return;
+        }
+
+        const emailExiste = await verificarEmail(email);
+        if (emailExiste) {
+            return;
+        }
+
+        atualizarDados(data);
         setEtapa(3);
     };
 
     const voltarEtapa = () => {
         navigate("/login");
-
     };
 
     return (
@@ -41,10 +144,11 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro['input-nome']}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type="text"
                             id="nome"
+                            maxLength={100}
                             className={styleCadastro['nome-input']}
                             {...register("nome", { required: true })}
                             placeholder=""
@@ -70,28 +174,45 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro['input-data']}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
-                            type="date"
-                            id="data"
+                            type="text"
+                            id="dataNascimento"
                             className={styleCadastro['data-nascimento']}
-                            {...register("data", { required: true })}
-
                             placeholder=""
+                            {...register("dataNascimento", {
+                                required: "Data é obrigatória",
+                                validate: (value) => {
+                                    const data = parse(value, "dd/MM/yyyy", new Date());
+
+                                    if (!isValid(data)) {
+                                        return "Data inválida";
+                                    }
+
+                                    const hoje = new Date();
+                                    if (data > hoje) {
+                                        return "Data futura não permitida.";
+                                    }
+
+                                    return true;
+                                }
+
+                            })}
+                            onChange={handleDateChange}
                         />
-                        <label htmlFor="data" className={styleCadastro.label}>* Data de nascimento</label>
+                        <label htmlFor="dataNascimento" className={styleCadastro.label}>* Data de nascimento</label>
                         <div
                             className={styleCadastro.underline}
-                            style={{ marginBottom: errors.data ? "-4px" : "0px" }}
+                            style={{ marginBottom: errors.dataNascimento ? "-4px" : "0px" }}
                         >
 
                         </div>
                     </div>
 
-                    {errors.data && (
+                    {errors.dataNascimento && (
                         <div className={styleCadastro.erro}>
                             <img src={alert} alt="Ícone de alerta" />
-                            <span>Data é obrigatória.</span>
+                            <span>{errors.dataNascimento.message}</span>
                         </div>
                     )}
 
@@ -101,7 +222,7 @@ export default function Etapa2({ setEtapa }) {
 
             <div className={styleCadastro['input-email']}>
 
-                <div className={styleCadastro['input-container']}>
+                <div className={styleCadastro['input-container-cadastro']}>
                     <input
                         type="text"
                         id="email"
@@ -109,19 +230,19 @@ export default function Etapa2({ setEtapa }) {
                             required: "E-mail é obrigatório.",
                             pattern: { value: /^\S+@\S+\.\S+$/, message: "E-mail inválido." }
                         })}
-
                         placeholder=""
+                        onChange={handleEmailChange}
                     />
                     <label htmlFor="email" className={styleCadastro.label}>* E-mail</label>
                     <div
                         className={styleCadastro.underline}
-                        style={{ marginBottom: errors.email ? "-4px" : "0px" }}
+                        style={{ marginBottom: errors.email || erroEmailExistente ? "-4px" : "0px" }}
                     >
 
                     </div>
                 </div>
 
-                {errors.email && (
+                {!erroEmailExistente && errors.email && (
                     <div className={styleCadastro.erro}>
                         <img src={alert} alt="Ícone de alerta" />
                         <span>
@@ -131,17 +252,24 @@ export default function Etapa2({ setEtapa }) {
                     </div>
                 )}
 
+                {erroEmailExistente && (
+                    <div className={styleCadastro.erro}>
+                        <img src={alert} alt="Ícone de alerta" />
+                        <span>{erroEmailExistente}</span>
+                    </div>
+                )}
+
             </div>
 
             <div className={styleCadastro['input-telefone']}>
 
-                <div className={styleCadastro["input-container"]}>
+                <div className={styleCadastro["input-container-cadastro"]}>
                     <input
                         type="text"
                         id="telefone"
-                        maxLength={11}
-                        {...register("telefone", { required: true })}
                         placeholder=""
+                        {...register("telefone", { required: true })}
+                        onChange={handleTelefoneChange}
                     />
                     <label htmlFor="telefone" className={styleCadastro.label}>* Telefone</label>
                     <div
@@ -165,7 +293,7 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro["input-senha"]}>
 
-                    <div className={styleCadastro["input-container"]}>
+                    <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type={showSenha ? "text" : "password"}
                             id="senha"
@@ -175,16 +303,14 @@ export default function Etapa2({ setEtapa }) {
                                 required: "Senha é obrigatória.",
                                 validate: {
                                     tamanho: (value) => value.length >= 6 && value.length <= 16 || "Entre 6 a 16 caracteres.",
-                                    especial: (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value) || "Mínimo de 1 caractere especial.",
+                                    especial: (value) => /[!@#$%^&*(),.?":{}|<>^~'./]/.test(value) || "Mínimo de 1 caractere especial.",
                                     maiuscula: (value) => /[A-Z]/.test(value) || "Mínimo de 1 letra maiúscula.",
                                     numero: (value) => /\d/.test(value) || "Mínimo de 1 número."
                                 }
                             })}
-                            onFocus={() => setSenhaInteragiu(true)}
                             value={senhaValue}
                             onChange={(e) => {
                                 setSenhaValue(e.target.value);
-                                console.log(senhaValue);
                                 if (!senhaInteragiu) setSenhaInteragiu(true);
                             }}
                         />
@@ -196,7 +322,7 @@ export default function Etapa2({ setEtapa }) {
                             className={styleCadastro["btn-olho"]}
                             tabIndex={-1}
                         >
-                            <i className={`fas ${showSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{color: "#666666", fontSize: "16px"}} />
+                            <img src={showSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
                         </button>
                         <div
                             className={styleCadastro.underline}
@@ -207,16 +333,15 @@ export default function Etapa2({ setEtapa }) {
                     </div>
 
                     <div className={styleCadastro['container-erros']}>
-
                         {/* 1 - Tamanho */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? senhaValue.length >= 6 && senhaValue.length <= 16
                                     ? styleCadastro.check
                                     : styleCadastro.erro
                                 : styleCadastro.neutro
                         }>
-                            {senhaInteragiu && (
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={senhaValue.length >= 6 && senhaValue.length <= 16 ? check : alert}
                                     alt="Ícone"
@@ -227,12 +352,13 @@ export default function Etapa2({ setEtapa }) {
 
                         {/* 2 - Caractere especial */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? /[!@#$%^&*(),.?":{}|<>]/.test(senhaValue)
                                     ? styleCadastro.check
                                     : styleCadastro.erro
-                                : styleCadastro.neutro}>
-                            {senhaInteragiu && (
+                                : styleCadastro.neutro
+                        }>
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={/[!@#$%^&*(),.?":{}|<>]/.test(senhaValue) ? check : alert}
                                     alt="Ícone"
@@ -243,12 +369,13 @@ export default function Etapa2({ setEtapa }) {
 
                         {/* 3 - Letra maiúscula */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? /[A-Z]/.test(senhaValue)
                                     ? styleCadastro.check
                                     : styleCadastro.erro
-                                : styleCadastro.neutro}>
-                            {senhaInteragiu && (
+                                : styleCadastro.neutro
+                        }>
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={/[A-Z]/.test(senhaValue) ? check : alert}
                                     alt="Ícone"
@@ -259,12 +386,13 @@ export default function Etapa2({ setEtapa }) {
 
                         {/* 4 - Número */}
                         <div className={
-                            senhaInteragiu
+                            senhaInteragiu || isSubmitted
                                 ? /\d/.test(senhaValue)
                                     ? styleCadastro.check
                                     : styleCadastro.erro
-                                : styleCadastro.neutro}>
-                            {senhaInteragiu && (
+                                : styleCadastro.neutro
+                        }>
+                            {(senhaInteragiu || isSubmitted) && (
                                 <img
                                     src={/\d/.test(senhaValue) ? check : alert}
                                     alt="Ícone"
@@ -278,7 +406,7 @@ export default function Etapa2({ setEtapa }) {
 
                 <div className={styleCadastro['input-confirmarSenha']}>
 
-                    <div className={styleCadastro['input-container']}>
+                    <div className={styleCadastro['input-container-cadastro']}>
                         <input
                             type={showConfirmarSenha ? "text" : "password"}
                             id="confirmarSenha"
@@ -296,7 +424,7 @@ export default function Etapa2({ setEtapa }) {
                             className={styleCadastro["btn-olho"]}
                             tabIndex={-1}
                         >
-                            <i className={`fas ${showConfirmarSenha ? 'fa-eye-slash' : 'fa-eye'}`} style={{color: "#666666", fontSize: "16px"}} />
+                            <img src={showConfirmarSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
                         </button>
                         <div
                             className={styleCadastro.underline}
@@ -321,15 +449,16 @@ export default function Etapa2({ setEtapa }) {
 
                 <select
                     className={styleCadastro.select}
+                    /* style={{color: "#ccc", borderColor: "#ccc"}} se quiser pode descomentar */
                     defaultValue=""
                     {...register("genero", { required: true })}
                 >
                     <option value="" disabled>* Gênero</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Feminino</option>
-                    <option value="NAO_BINARIO">Não binário</option>
-                    <option value="OUTRO">Outro</option>
-                    <option value="NAO_INFORMAR">Prefiro não informar</option>
+                    <option value="HOMEM_CISGENERO">Homem Cisgênero</option>
+                    <option value="HOMEM_TRANSGENERO">Homem Transgênero</option>
+                    <option value="MULHER_CISGENERO">Mulher Cisgênero</option>
+                    <option value="MULHER_TRANSGENERO">Mulher Transgênero</option>
+                    <option value="NAO_BINARIO">Não Binário</option>
                 </select>
 
                 {errors.genero && (

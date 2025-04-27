@@ -1,11 +1,11 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Cadastro from "./pages/Cadastro";
 import Error from "./pages/Error";
 import EsqueciSenha from "./pages/Esqueci-senha";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
-import Login from "./pages/login";
-import GerenciarAlunos from "./pages/GerenciarAlunos/GerenciarAlunos"; // Importando GerenciarAlunos
+import Login from "./pages/login.jsx";
+import GerenciarAlunos from "./pages/GerenciarAlunos/GerenciarAlunos";
 import "./styles/global.css";
 
 const AppRoutes = () => {

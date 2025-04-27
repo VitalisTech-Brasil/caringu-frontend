@@ -16,6 +16,7 @@ const MenuLateral = () => {
   const location = useLocation();
 
   const handleLogout = () => {
+    sessionStorage.clear();
     navigate("/");
   };
 

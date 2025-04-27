@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CiMedicalCase } from "react-icons/ci";
 import { FaClipboardList, FaClock, FaDumbbell, FaUsers } from "react-icons/fa";
 import { GoPersonAdd } from "react-icons/go";
@@ -11,9 +12,24 @@ import CompromissosHoje from "../components/Utils/CompromissosHoje";
 import EstaSemana from "../components/Utils/EstaSemana";
 import KPI from "../components/Utils/KPI";
 
+import alert from "../assets/images/alert.svg";
+
 const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
+
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let tokenExistente = sessionStorage.getItem("authToken");
+
+    return () => {
+      if (!tokenExistente) {
+        setShowModal(true);
+      }
+    }
+  }, [])
 
   // Define o dia atual como padrão ao carregar a página
   useEffect(() => {
@@ -35,6 +51,12 @@ const Home = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Função para fechar o modal
+  const closeModal = () => {
+    setShowModal(false);
+    navigate("/"); // Redireciona para a página de login ou página inicial
   };
 
   const atalhos = [
@@ -272,8 +294,33 @@ const Home = () => {
             />
             <EstaSemana onDaySelect={setSelectedDay} />
           </div>
+
         </main>
       </div>
+
+      {/* Modal de Token Inexistente */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
+              <img src={alert} alt="Alerta" className="w-6 h-6" />
+              <span>Problema com o Token!</span>
+            </h2>
+            <p className="text-center mt-4">
+              O token de autenticação não foi encontrado. Você será redirecionado.
+            </p>
+            <div className="flex justify-center mt-6">
+              <button
+                className="bg-[#D45C56] text-white px-4 py-2 rounded-lg cursor-pointer"
+                onClick={closeModal}
+              >
+                Fechar e Redirecionar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

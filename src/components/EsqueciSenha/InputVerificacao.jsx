@@ -27,7 +27,7 @@ export default function InputVerificacao({ length = 4, onComplete }) {
   };
 
   return (
-    <div className="flex gap-5 justify-center">
+    <div className="flex gap-5 justify-center mb-6">
       {values.map((val, idx) => (
         <input
           key={idx}

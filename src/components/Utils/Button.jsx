@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 const Botton = ({ id, texto, onClick, cor, corTexto, corHover, width, height, type, fontSize, logo}) => {
 
   const [bgColor, setBgColor] = useState(cor);

@@ -93,6 +93,11 @@ body,
             width: 100%;
             gap: 1rem;
 
+            .div-principal-especialidade {
+                width: 69%;
+                height: 100%;
+            }
+
             .input-nome {
                 height: 100%;
                 width: 69%;
@@ -106,7 +111,7 @@ body,
 
             .input-data {
                 height: 100%;
-                width: 25%;
+                width: 28%;
                 gap: 0.5rem;
 
                 display: flex;
@@ -218,14 +223,14 @@ body,
 
 .input-container {
     position: relative;
-    height: 5vh;
+    height: 4.5vh;
     width: 100%;
     margin-top: 1%;
 }
 
 .input-container input,
 .input-container-especialidade input {
-    font-size: 20px;
+    font-size: 16px;
     width: 100%;
     border: none;
     border-bottom: 2px solid #ccc;
@@ -249,7 +254,7 @@ body,
 
 .input-container-especialidade input:focus~.label,
 .input-container-especialidade input:not(:placeholder-shown)~.label {
-    top: -20px;
+    top: -15px;
     font-size: 16px;
     color: #333;
 }
@@ -272,6 +277,75 @@ body,
 .input-container-especialidade input:not(:placeholder-shown)~.underline {
     transform: scaleX(1);
 }
+
+/* INPUT DE CADASTRO: */
+.input-container-cadastro {
+    position: relative;
+    height: 4.5vh;
+    width: 100%;
+    margin-top: 1%;
+}
+
+.input-container-cadastro input,
+.input-container-cadastro-especialidade input {
+    font-size: 16px;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    padding: 6px 0;
+    background-color: transparent;
+    outline: none;
+}
+
+.input-container-cadastro-especialidade input {
+    padding: 8px 0;
+}
+
+.input-container-cadastro .label,
+.input-container-cadastro-especialidade .label {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    color: #ccc;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.input-container-cadastro input:focus~.label,
+.input-container-cadastro input:not(:placeholder-shown)~.label,
+
+.input-container-cadastro-especialidade input:focus~.label,
+.input-container-cadastro-especialidade input:not(:placeholder-shown)~.label {
+    top: -20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.input-container-cadastro .underline,
+.input-container-cadastro-especialidade .underline {
+    position: absolute;
+    left: 0;
+    bottom: 4px;
+    height: 2px;
+    width: 100%;
+    background-color: #333;
+    transform: scaleX(0);
+    transition: all 0.3s ease;
+}
+
+.input-container-cadastro input:focus~.underline,
+.input-container-cadastro input:not(:placeholder-shown)~.underline,
+.input-container-cadastro-especialidade input:focus~.underline,
+.input-container-cadastro-especialidade input:not(:placeholder-shown)~.underline {
+    transform: scaleX(1);
+}
+
+.input-container-cadastro-especialidade {
+    position: relative;
+    height: 5vh;
+    width: 100%;
+}
+/*  */
 
 .input-genero {
     height: 10%;
@@ -327,9 +401,9 @@ body,
 
 .input-especialidade {
     height: 100%;
-    width: 69%;
+    width: 96%;
     gap: 0.5rem;
-    margin-left: 3%;
+    margin-left: 5%;
 
     display: flex;
     flex-direction: column;
@@ -438,7 +512,7 @@ body,
 
     .prosseguir {
         height: 50%;
-        width: 17.5%;
+        width: 14.5%;
 
         cursor: pointer;
         background-color: var(--laranja);
