@@ -34,7 +34,7 @@ const ColunaInputs = () => {
           sessionStorage.setItem('usuario',response.data.nome);
           sessionStorage.setItem('tipo',response.data.tipo);
           setTimeout(() =>{
-            navigate('/'); // mudar aqui para a página que vai se redirecionar após o login
+            navigate('/home'); // mudar aqui para a página que vai se redirecionar após o login
           },1000);
         }else {
           throw new Error('Ops! Ocorreu um erro interno.');
