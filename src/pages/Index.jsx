@@ -26,7 +26,7 @@ export default function HomePage() {
         </nav>
         <img src={logoImage} alt="Logo CaringU" className="h-[50px]" />
         <div className="flex gap-16 items-center w-[300px] justify-end">
-          <Link to="/cadastro"><a className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</a></Link>
+          <Link to="/cadastro"><div className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</div></Link>
           <Link to="/login"><Button texto="Entrar" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="80px" height="40px" fontSize="14px" /></Link>
         </div>
       </header>
@@ -178,8 +178,8 @@ export default function HomePage() {
           <a onClick={() => scrollToSection('sobre')}>Sobre nós</a>
           <a onClick={() => scrollToSection('servicos')}>Serviços</a>
           <a onClick={() => scrollToSection('fale')}>Fale conosco</a>
-          <Link to="/login" ><a>Entrar</a></Link>
-          <Link to="/cadastro"><a>Inscreva-se</a></Link>
+          <Link to="/login" >Entrar</Link>
+          <Link to="/cadastro">Inscreva-se</Link>
         </div>
         <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5">
           <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
