@@ -72,6 +72,21 @@ export default function Etapa2({ setEtapa }) {
         trigger("telefone");
     };
 
+    const handleEmailChange = async (e) => {
+        const email = e.target.value;
+        setValue("email", email);
+        trigger("email");
+    
+        setErroEmailExistente(null);
+    
+        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            const emailExiste = await verificarEmail(email);
+            if (emailExiste) {
+                setErroEmailExistente("Este e-mail já está cadastrado.");
+            }
+        }
+    };
+
     useEffect(() => {
         Object.entries(dadosCadastro).forEach(([key, value]) => {
             if (value) setValue(key, value);
@@ -218,6 +233,7 @@ export default function Etapa2({ setEtapa }) {
                             pattern: { value: /^\S+@\S+\.\S+$/, message: "E-mail inválido." }
                         })}
                         placeholder=""
+                        onChange={handleEmailChange}
                     />
                     <label htmlFor="email" className={styleCadastro.label}>* E-mail</label>
                     <div
@@ -228,7 +244,7 @@ export default function Etapa2({ setEtapa }) {
                     </div>
                 </div>
 
-                {errors.email && (
+                {!erroEmailExistente && errors.email && (
                     <div className={styleCadastro.erro}>
                         <img src={alert} alt="Ícone de alerta" />
                         <span>
