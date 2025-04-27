@@ -7,8 +7,6 @@ import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
 import Button from "../components/Utils/Button";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import FaleConosco from "../components/Index/FaleConosco";
 
 export default function HomePage() {
   const scrollToSection = (id) => {
@@ -17,25 +15,18 @@ export default function HomePage() {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
-
-  const onSubmit = (data) => {
-    console.log("Formulário enviado:", data);
-    // Aqui você pode enviar para uma API ou tratar como quiser
-  };
   return (
     <>
       <header className="absolute top-0 left-0 z-11 w-full h-[80px] flex items-center justify-between text-white px-8 pl-20 pr-20">
         <nav className="flex gap-8 m-4 justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]">
           <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('home')}>Home</a>
           <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('sobre')}>Sobre nós</a>
-          <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('servicos')}>Serviços</a>
+          <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('servicos')}>Serviços</a>  
           <a className="text-sm hover:underline font-bold text-[14px] cursor-pointer transition-all" onClick={() => scrollToSection('fale')}>Fale conosco</a>
         </nav>
         <img src={logoImage} alt="Logo CaringU" className="h-[50px]" />
         <div className="flex gap-16 items-center w-[300px] justify-end">
-          <Link to="/cadastro" className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</Link>
+          <Link to="/cadastro"><a className="text-sm font-bold text-[14px] cursor-pointer hover:underline transition-all">Inscreva-se</a></Link>
           <Link to="/login"><Button texto="Entrar" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="80px" height="40px" fontSize="14px" /></Link>
         </div>
       </header>
@@ -106,36 +97,95 @@ export default function HomePage() {
           <PerguntasFrequentes />
         </div>
       </section>
-      <FaleConosco />
-      <footer className="h-[350px] w-full bg-[var(--azul-escuro)] px-20 flex items-center justify-center flex-col">
-        <div className="flex items-center">
-          <div className="flex flex-col items-start justify-center h-full w-[1500px] gap-5">
-            <img src='src/assets/logos/caringu-logo-branco-fundo-laranja.svg' alt="Logo CaringU" className="h-[90px] w-[350px]" />
-            <div className="w-[500px]">
-              <h1 className="text-white text-[20px] font-bold">Transforme seu treino com mais facilidade</h1>
-              <p className="text-white text-[14px]">
-                Elevamos sua experiência fitness, conectando você ao personal ideal para seus objetivos, tornando sua jornada mais eficiente e motivadora.
-              </p>
+      <section id="fale" className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
+        <h1 className="text-[48px] font-bold">
+          Conecte-se, treine e evolua com a CaringU!
+        </h1>
+        <div className="flex flex-col items-center justify-center gap-4 h-full">
+          <div className="flex flex-col items-center justify-center gap-4 bg-[var(--azul-escuro)] w-[900px] h-[550px] p-8 rounded-lg">
+            <div className="flex items-center justify-start gap-4 w-full">
+              <p className="text-white text-[24px] font-bold">Fale Conosco</p>
+            </div>
+            <div className="flex items-center justify-center gap-4 w-full">
+              <div className="flex flex-col gap-1 w-full">
+                <label htmlFor="nome" className="text-[14px] text-white">
+                  *Nome Completo
+                </label>
+                <input
+                  id="nome"
+                  type="text"
+                  placeholder="Digite seu Nome"
+                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
+                />
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <label htmlFor="telefone" className="text-[14px] text-white">
+                  Telefone para contato
+                </label>
+                <input
+                  id="telefone"
+                  type="text"
+                  placeholder="Digite seu Telefone"
+                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1 w-full">
+              <label htmlFor="email" className="text-[14px] text-white">
+                *Email
+              </label>
+              <input
+                id="email"
+                type="text"
+                placeholder="Digite seu Email"
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
+              />
+            </div>
+            <div className="flex flex-col gap-1 w-full">
+              <label htmlFor="mensagem" className="text-[14px] text-white">
+                *Mensagem
+              </label>
+              <textarea
+                id="mensagem"
+                type="text"
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black h-[100px]"
+              />
+            </div>
+            <div className="flex items-center justify-start gap-4 w-full">
+              <p className="text-white text-[14px]">*Obrigatório</p>
+            </div>
+            <div className="flex items-center justify-center gap-4">
+              <Button texto="Enviar" cor="var(--azul-claro)" corTexto="var(--cor-secundaria)" corHover="#677e9c" width="400px" height="50px" />
             </div>
           </div>
-          <div className="flex flex-col items-start justify-center h-full w-[150px] gap-3 mr-20" id="navegacao">
-            <h1 className="text-white text-[20px] font-bold">
-              Navegação
-            </h1>
-            <a onClick={() => scrollToSection('home')}>Home</a>
-            <a onClick={() => scrollToSection('sobre')}>Sobre nós</a>
-            <a onClick={() => scrollToSection('servicos')}>Serviços</a>
-            <a onClick={() => scrollToSection('fale')}>Fale conosco</a>
-            <Link to="/login" >Entrar</Link>
-            <Link to="/cadastro">Inscreva-se</Link>
-          </div>
-          <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5">
-            <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
-            <img src="src/assets/logos/linkedin-logo.svg" alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
-            <img src="src/assets/logos/instagram-logo.svg" alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+        </div>
+      </section>
+      <footer className="h-[350px] w-full bg-[var(--azul-escuro)] flex items-center  px-20">
+        <div className="flex flex-col items-start justify-center h-full w-[1500px] gap-5">
+          <img src='src/assets/logos/caringu-logo-branco-fundo-laranja.svg' alt="Logo CaringU" className="h-[90px] w-[350px]" />
+          <div className="w-[500px]">
+            <h1 className="text-white text-[20px] font-bold">Transforme seu treino com mais facilidade</h1>
+            <p className="text-white text-[14px]">
+              Elevamos sua experiência fitness, conectando você ao personal ideal para seus objetivos, tornando sua jornada mais eficiente e motivadora.
+            </p>
           </div>
         </div>
-        <p className="text-white text-[14px] mt-3">Copyright © CaringU. All Rights Reserved.</p>
+        <div className="flex flex-col items-start justify-center h-full w-[150px] gap-3 mr-20" id="navegacao">
+          <h1 className="text-white text-[20px] font-bold">
+            Navegação
+          </h1>
+          <a onClick={() => scrollToSection('home')}>Home</a>
+          <a onClick={() => scrollToSection('sobre')}>Sobre nós</a>
+          <a onClick={() => scrollToSection('servicos')}>Serviços</a>
+          <a onClick={() => scrollToSection('fale')}>Fale conosco</a>
+          <Link to="/login" ><a>Entrar</a></Link>
+          <Link to="/cadastro"><a>Inscreva-se</a></Link>
+        </div>
+        <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5">
+          <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+          <img src="src/assets/logos/linkedin-logo.svg" alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+          <img src="src/assets/logos/instagram-logo.svg" alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+        </div>
       </footer>
     </>
   );

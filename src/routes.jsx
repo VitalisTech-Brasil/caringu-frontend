@@ -1,20 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/login.jsx";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Cadastro from "./pages/Cadastro";
-import EsqueciSenha from "./pages/Esqueci-senha";
-import Index from "./pages/Index";
 import Error from "./pages/Error";
-import './styles/global.css'
+import EsqueciSenha from "./pages/Esqueci-senha";
+import Home from "./pages/Home";
+import Index from "./pages/Index";
+import Login from "./pages/login";
+import GerenciarAlunos from "./pages/GerenciarAlunos/GerenciarAlunos"; // Importando GerenciarAlunos
+import "./styles/global.css";
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Index/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/cadastro" element={<Cadastro/>} />
-        <Route path="/esqueci-senha" element={<EsqueciSenha/>} />
-        <Route path="*" element={<Error/>} />
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
+        <Route path="*" element={<Error />} />
       </Routes>
     </Router>
   );

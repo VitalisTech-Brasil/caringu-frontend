@@ -1,21 +1,16 @@
-import { React}  from 'react';
+import React, { useState } from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
-import { useForm } from 'react-hook-form';
-import { api } from '../../provider/api';
 
 const ColunaInputs = () => {
-  const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
-  const verificarUsuario = async (data) => {
- 
-    const { email, senha } = data;
-    console.log('Email:', email);
-    console.log('Senha:', senha);
+  const verificarUsuario = async (event) => {
+    event.preventDefault();
 
     if (!email || !senha) {
       alert('Por favor, preencha todos os campos!');
@@ -23,100 +18,115 @@ const ColunaInputs = () => {
     }
 
     try {
-      const response= await api.post('/login', {email,senha},{
+      const resposta = await fetch(
+        `http://localhost:3000/pessoas?email=${email}`
+      );
+      const usuario = await resposta.json();
+
+      if (usuario.length === 0) {
+        alert('Usuário não encontrado!');
+        return;
+      }
+
+      const payloadUsuario = usuario[0];
+
+      if (payloadUsuario.senha !== senha) {
+        alert('Senha incorreta!');
+        return;
+      }
+
+      const sessaoLogada = await fetch('http://localhost:3000/sessao', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usuarioId: payloadUsuario.id,
+          nome: payloadUsuario.nome,
+          email: payloadUsuario.email,
+          logadoEm: new Date().toISOString(),
+        }),
       });
 
-        if (response.status === 200 && response.data?.token) {
-          sessionStorage.setItem('authToken',response.data.token);
-          sessionStorage.setItem('usuario',response.data.nome);
-          sessionStorage.setItem('tipo',response.data.tipo);
-          setTimeout(() =>{
-            navigate('/'); // mudar aqui para a página que vai se redirecionar após o login
-          },1000);
-        }else {
-          throw new Error('Ops! Ocorreu um erro interno.');
-        }
+      if (!sessaoLogada.ok) {
+        throw new Error('Erro ao criar sessão.');
+      }
+
+      alert(`Bem-vindo, ${payloadUsuario.nome}!`);
+      window.location.href = 'home.html';
     } catch (error) {
       console.error('Erro ao realizar login:', error);
       alert('Erro ao conectar ao servidor.');
-
     }
   };
 
   return (
-    <section className="coluna2">
-      <div className="seta-voltar">
-        <Link to="/">
-          <img className="imagem-seta" src={setaVoltar} alt="Voltar" />
-        </Link>
-      </div>
+    <>
+      <section className="coluna2">
+        <div className="seta-voltar">
+          <Link to="/">
+            <img className="imagem-seta" src={setaVoltar} alt="Voltar" />
+          </Link>
+        </div>
 
-      <div className="container">
-        <header className="container-titulos">
-          <h1>Pronto para continuar?</h1>
-          <p>Faça login para continuar sua experiência.</p>
-        </header>
+        <div className="container">
+          <header className="container-titulos">
+            <h1>Pronto para continuar?</h1>
+            <p>Faça login para continuar sua experiência.</p>
+          </header>
 
-        <form className="formulario gap-2" onSubmit={handleSubmit(verificarUsuario)}>
-          <div className="inputs w-full">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              label="Email"
-              {...register('email', { required: 'Email é obrigatório' })}
-              isError={!!errors.email}
-              errorMessage={errors.email?.message}
-            />
-            <Input
-              id="senha"
-              name="senha"
-              type="password"
-              label="Senha"
-              {...register('senha', { required: 'Senha é obrigatória' })}
-              isError={!!errors.senha}
-              errorMessage={errors.senha?.message}
-            />
-          </div>
+          <form className="formulario gap-2" onSubmit={verificarUsuario}>
+            <div className="inputs w-full">
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <Input
+                id="senha"
+                name="senha"
+                type="password"
+                label="Senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+              />
 
-          <div className="recuperacao-senha">
-            <a href="/esqueci-senha">Esqueci minha senha</a>
-          </div>
+            </div>
 
-          <Button
-            texto="Entrar"
-            type="submit"
-            cor="var(--azul-claro)"
-            corTexto="var(--cor-secundaria)"
-            corHover="#677e9c"
-            width="100%"
-            height="17.57%"
-            fontSize="14px"
-          />
+            <div className="recuperacao-senha">
+              <a href="/esqueci-senha">Esqueci minha senha</a>
+            </div>
+            {/* 
+            <button id="botao-entrada" type="submit">
+              Entrar
+            </button> */}
 
-          <Button
-            logo={googleLogo}
-            texto="Entrar com Google"
-            type="submit"
-            cor="var(--azul-escuro)"
-            corTexto="var(--cor-secundaria)"
-            corHover="var(--cor-primaria)"
-            width="100%"
-            height="17.57%"
-            fontSize="14px"
-          />
-        </form>
+            <Button texto="Entrar" type="submit" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="100%" height="17.57%" fontSize="14px" />
 
-        <footer className="justify-center items-center">
-          <p>
-            Não tem uma conta? <Link to="/cadastro">Cadastrar-se</Link>
-          </p>
-        </footer>
-      </div>
-    </section>
+            <Button logo={googleLogo} texto="Entrar com Google" type="submit" cor="var(--azul-escuro)" corTexto="var(--cor-secundaria)" corHover="var(--cor-primaria)" width="100%" height="17.57%" fontSize="14px" />
+{/* 
+            <div className="container-botao-google">
+              <button className="login-google">
+                <img src={googleLogo} alt="Google Logo" />
+                Entrar com Google
+              </button>
+            </div> */}
+
+          </form>
+
+          <footer className='justify-center items-center'>
+            <p>
+              Não tem uma conta? <Link to="/cadastro">Cadastrar-se</Link>
+            </p>
+          </footer>
+        </div>
+      </section>
+    </>
   );
 };
 
