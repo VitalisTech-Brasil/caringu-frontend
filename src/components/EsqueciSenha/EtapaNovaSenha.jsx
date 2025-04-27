@@ -3,10 +3,11 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
 import styleCadastro from '../Cadastro/module/cadastro.module.css';
-import alert from "../../assets/images/alert.svg";
+import alerta from "../../assets/images/alert.svg";
 import check from "../../assets/images/check.svg";
 import olhoAberto from '../../assets/images/eye.svg';
 import olhoFechado from '../../assets/images/eye-slash.svg';
+import Button from '../Utils/Button';
 
 const EtapaNovaSenha = ({ email, onAvancar }) => {
   const [senhaInteragiu, setSenhaInteragiu] = useState(false);
@@ -20,11 +21,11 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
   const [senhaValue, setSenhaValue] = useState("");
 
   const handleAlterarSenha = async (data) => {
-    const { novaSenha } = data;
+    const { senha } = data;
     try {
       const response = await axios.post("http://seu-servidor.com/api/alterar-senha", {
         email,
-        novaSenha
+        novaSenha: senha, // agora está correto
       });
 
       const responseData = response.data;
@@ -32,10 +33,12 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
         onAvancar();
       } else {
         alert("Erro ao alterar a senha.");
+        onAvancar();
       }
     } catch (error) {
       console.error("Erro ao alterar a senha:", error);
       alert("Erro ao tentar alterar a senha.");
+      onAvancar();
     }
   };
 
@@ -107,7 +110,7 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
                 }>
                   {(senhaInteragiu || isSubmitted) && (
                     <img
-                      src={senhaValue.length >= 6 && senhaValue.length <= 16 ? check : alert}
+                      src={senhaValue.length >= 6 && senhaValue.length <= 16 ? check : alerta}
                       alt="Ícone"
                     />
                   )}
@@ -124,7 +127,7 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
                 }>
                   {(senhaInteragiu || isSubmitted) && (
                     <img
-                      src={/[!@#$%^&*(),.?":{}|<>]/.test(senhaValue) ? check : alert}
+                      src={/[!@#$%^&*(),.?":{}|<>]/.test(senhaValue) ? check : alerta}
                       alt="Ícone"
                     />
                   )}
@@ -141,7 +144,7 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
                 }>
                   {(senhaInteragiu || isSubmitted) && (
                     <img
-                      src={/[A-Z]/.test(senhaValue) ? check : alert}
+                      src={/[A-Z]/.test(senhaValue) ? check : alerta}
                       alt="Ícone"
                     />
                   )}
@@ -158,7 +161,7 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
                 }>
                   {(senhaInteragiu || isSubmitted) && (
                     <img
-                      src={/\d/.test(senhaValue) ? check : alert}
+                      src={/\d/.test(senhaValue) ? check : alerta}
                       alt="Ícone"
                     />
                   )}
@@ -194,13 +197,12 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
                   className={styleCadastro.underline}
                   style={{ marginBottom: errors.confirmarSenha ? "0px" : "0px" }}
                 >
-
                 </div>
               </div>
 
               {errors.confirmarSenha && (
                 <div className="flex items-center gap-2 mt-1 text-[#D45C56]">
-                  <img src={alert} alt="Ícone de alerta" />
+                  <img src={alerta} alt="Ícone de alerta" />
                   <span>{errors.confirmarSenha.message}</span>
                 </div>
               )}
@@ -208,12 +210,16 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
             </div>
 
             <footer className='flex flex-col h-30 justify-between items-center'>
-              <button
+              <Button
+                texto="Alterar Senha"
                 type="submit"
-                className='w-[511px] h-[50px] bg-[var(--laranja)] text-[var(--cor-secundaria)] rounded-[8px]'
-              >
-                Alterar Senha
-              </button>
+                cor="var(--laranja)"
+                corTexto="var(--cor-secundaria)"
+                corHover="#ca6333"
+                width="511px"
+                height="50px"
+                fontSize="14px"
+              />
               <a href="/Login">Voltar para Login</a>
             </footer>
           </form>
