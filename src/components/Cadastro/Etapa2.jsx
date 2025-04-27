@@ -117,13 +117,11 @@ export default function Etapa2({ setEtapa }) {
     const onSubmit = async (data) => {
         const email = data.email;
         if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-            alert("entrou aqui")
             return;
         }
 
         const emailExiste = await verificarEmail(email);
         if (emailExiste) {
-            console.log("email ja existe")
             return;
         }
 

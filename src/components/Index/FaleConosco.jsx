@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Utils/Button';
-// import axios from 'axios';
+import axios from 'axios';
 
 const FaleConosco = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
 
+    const [telefone, setTelefone] = useState('')
+
+    const handleTelefoneChange = (e) => {
+        let input = e.target.value;
+        let digitos = input.replace(/\D/g, "");
+
+        if (digitos.length > 11) digitos = digitos.slice(0, 11);
+
+        let formatted = "";
+
+        if (digitos.length > 7) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+        } else if (digitos.length > 2) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+        } else if (digitos.length > 0) {
+            formatted = `(${digitos}`;
+        }
+
+        setTelefone(formatted)
+    };
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
@@ -15,20 +35,19 @@ const FaleConosco = () => {
         console.log(data);
         setIsSubmitting(false);
 
-        // try {
-        //     const response = await axios.post('/api/fale-conosco', data);
-
-        //     if (response.status === 200) {
-        //         setResponseMessage('Mensagem enviada com sucesso!');
-        //     } else {
-        //         setResponseMessage('Erro ao enviar mensagem. Tente novamente.');
-        //     }
-        // } catch (error) {
-        //     console.error('Erro ao enviar:', error);
-        //     setResponseMessage('Erro de conexão. Tente novamente.');
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
+        try {
+            const response = await axios.post('http://localhost:8080/fale-conosco', data);
+            if (response.status === 200) {
+                setResponseMessage('Mensagem enviada com sucesso!');
+            } else {
+                setResponseMessage('Erro ao enviar mensagem. Tente novamente.');
+            }
+        } catch (error) {
+            console.error('Erro ao enviar:', error);
+            setResponseMessage('Erro de conexão. Tente novamente.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -60,6 +79,8 @@ const FaleConosco = () => {
                                 type="text"
                                 placeholder="Digite seu Telefone"
                                 {...register("telefone")}
+                                onChange={handleTelefoneChange}
+                                value={telefone}
                                 className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
                             />
                         </div>
