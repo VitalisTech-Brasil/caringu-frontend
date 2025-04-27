@@ -53,10 +53,10 @@ const Home = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Função para fechar o modal
+  // Função para fechar o modal de acesso negado
   const closeModal = () => {
     setShowModal(false);
-    navigate("/"); // Redireciona para a página de login ou página inicial
+    navigate("/login");
   };
 
   const atalhos = [
@@ -298,23 +298,24 @@ const Home = () => {
         </main>
       </div>
 
-      {/* Modal de Token Inexistente */}
+      {/* Modal de Acesso Negado */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
               <img src={alert} alt="Alerta" className="w-6 h-6" />
-              <span>Problema com o Token!</span>
+              <span>Acesso Negado</span>
             </h2>
             <p className="text-center mt-4">
-              O token de autenticação não foi encontrado. Você será redirecionado.
+              <div>Sessão expirada ou não autenticado.</div>
+              <div>Clique em "Redirecionar" para fazer login.</div>
             </p>
             <div className="flex justify-center mt-6">
               <button
                 className="bg-[#D45C56] text-white px-4 py-2 rounded-lg cursor-pointer"
                 onClick={closeModal}
               >
-                Fechar e Redirecionar
+                Redirecionar
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaUserCircle, FaRegFileAlt } from "react-icons/fa";
 import { IoHomeOutline, IoWalletOutline } from "react-icons/io5";
 import { MdOutlinePersonSearch } from "react-icons/md";
@@ -6,7 +6,7 @@ import { CiDumbbell, CiFileOn } from "react-icons/ci";
 import { BsCalendar } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
 
 const MenuLateral = () => {
@@ -14,6 +14,26 @@ const MenuLateral = () => {
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [nomePessoa, setNomePessoa] = useState("");
+  const [tipoPessoa, setTipoPessoa] = useState("");
+
+  useEffect(() => {
+    return () => {
+      const usuario = sessionStorage.getItem("usuario");
+
+      if (usuario) {
+        const nome = usuario.split(' ')[0];
+        const primeiroNome = nome[0].toUpperCase() + nome.slice(1);
+
+        const tipo = sessionStorage.getItem("tipo");
+
+        setNomePessoa(primeiroNome);
+        setTipoPessoa(tipo);
+      }
+    }
+  }, [])
+
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -62,9 +82,8 @@ const MenuLateral = () => {
 
   return (
     <aside
-      className={`sticky top-0 h-screen bg-[var(--cor-secundaria)] text-black transition-width duration-300 ${
-        isOpen ? "w-64" : "w-18"
-      } flex flex-col`}
+      className={`sticky top-0 h-screen bg-[var(--cor-secundaria)] text-black transition-width duration-300 ${isOpen ? "w-64" : "w-18"
+        } flex flex-col`}
       style={{
         minWidth: isOpen ? "16rem" : "4.5rem",
       }}
@@ -77,9 +96,8 @@ const MenuLateral = () => {
         <div className="flex items-center gap-2">
           {isOpen && <img src={logo} alt="Logo CaringU" className="h-10 w-10" />}
           <h1
-            className={`text-2xl font-bold whitespace-nowrap ${
-              !isOpen && "hidden"
-            }`}
+            className={`text-2xl font-bold whitespace-nowrap ${!isOpen && "hidden"
+              }`}
           >
             CaringU
           </h1>
@@ -113,8 +131,8 @@ const MenuLateral = () => {
       >
         <FaUserCircle size={40} className="flex-shrink-0" />
         <div className={`${!isOpen && "hidden"} flex flex-col`}>
-          <p className="text-lg font-bold">Usuário</p>
-          <p className="text-sm">Personal</p>
+          <p className="text-lg font-bold">{nomePessoa}</p>
+          <p className="text-sm">{tipoPessoa}</p>
         </div>
       </div>
 
@@ -123,11 +141,10 @@ const MenuLateral = () => {
         {menuItems.map((item, index) => (
           <li key={index} className="flex flex-col">
             <div
-              className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${
-                location.pathname === item.path
+              className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
                   ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
                   : "hover:bg-[var(--azul-claro)]"
-              }`}
+                }`}
               onClick={() => {
                 if (item.label === "Treinos") {
                   if (!isOpen) {
@@ -158,27 +175,24 @@ const MenuLateral = () => {
             </div>
             {item.children && (
               <ul
-                className={`ml-6 mt-2 overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-                  isTreinosOpen && isOpen ? "max-h-40" : "max-h-0"
-                }`}
+                className={`ml-6 mt-2 overflow-hidden transition-[max-height] duration-300 ease-in-out ${isTreinosOpen && isOpen ? "max-h-40" : "max-h-0"
+                  }`}
               >
                 {item.children.map((child, childIndex) => (
                   <li
                     key={childIndex}
-                    className={`flex items-center p-2 rounded cursor-pointer ${
-                      location.pathname === child.path
+                    className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
                         ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
                         : "hover:bg-[var(--azul-claro)]"
-                    }`}
+                      }`}
                     onClick={() => navigate(child.path)}
                     title={!isOpen ? child.label : ""}
                   >
                     <div className="flex items-center gap-2">
                       {child.icon}
                       <span
-                        className={`flex-grow ${
-                          !isOpen && "hidden"
-                        } whitespace-nowrap text-left`}
+                        className={`flex-grow ${!isOpen && "hidden"
+                          } whitespace-nowrap text-left`}
                       >
                         {child.label}
                       </span>

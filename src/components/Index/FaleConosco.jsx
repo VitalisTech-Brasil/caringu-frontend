@@ -8,6 +8,26 @@ const FaleConosco = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
 
+    const [telefone, setTelefone] = useState('')
+
+    const handleTelefoneChange = (e) => {
+        let input = e.target.value;
+        let digitos = input.replace(/\D/g, "");
+
+        if (digitos.length > 11) digitos = digitos.slice(0, 11);
+
+        let formatted = "";
+
+        if (digitos.length > 7) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+        } else if (digitos.length > 2) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+        } else if (digitos.length > 0) {
+            formatted = `(${digitos}`;
+        }
+
+        setTelefone(formatted)
+    };
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
@@ -59,6 +79,8 @@ const FaleConosco = () => {
                                 type="text"
                                 placeholder="Digite seu Telefone"
                                 {...register("telefone")}
+                                onChange={handleTelefoneChange}
+                                value={telefone}
                                 className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
                             />
                         </div>
