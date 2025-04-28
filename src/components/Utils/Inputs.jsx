@@ -30,7 +30,7 @@ const Input = ({
       />
       <label htmlFor={id} className="label">{label}</label>
 
-      <div className="underline" style={{ marginBottom: '5%' }} />
+      <div className="underline" style={{ marginBottom: '5.5%' }} />
 
 
       <span className="error-message" style={{

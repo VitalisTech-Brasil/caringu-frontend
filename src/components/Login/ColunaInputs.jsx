@@ -98,8 +98,8 @@ const ColunaInputs = () => {
             corTexto="var(--cor-secundaria)"
             corHover="#677e9c"
             width="100%"
-            height="17.57%"
-            fontSize="14px"
+            height="12.15%"
+            font-size="14px"
           />
 
           <Button
@@ -110,8 +110,8 @@ const ColunaInputs = () => {
             corTexto="var(--cor-secundaria)"
             corHover="var(--cor-primaria)"
             width="100%"
-            height="17.57%"
-            fontSize="14px"
+            height="12.15%"
+            font-size="14px"
           />
         </form>
 

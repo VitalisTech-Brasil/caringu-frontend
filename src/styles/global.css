@@ -37,8 +37,7 @@ body {
 
 .input-container {
   position: relative;
-  margin: 50px auto;
-  width: 100%;
+  margin: 50px auto 25px 0;
 }
 
 .input-container input[type="text"],
