@@ -1,4 +1,4 @@
-import { React}  from 'react';
+import { React } from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,10 +12,8 @@ const ColunaInputs = () => {
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
 
   const verificarUsuario = async (data) => {
- 
+
     const { email, senha } = data;
-    console.log('Email:', email);
-    console.log('Senha:', senha);
 
     if (!email || !senha) {
       alert('Por favor, preencha todos os campos!');
@@ -23,22 +21,22 @@ const ColunaInputs = () => {
     }
 
     try {
-      const response= await api.post('/login', {email,senha},{
+      const response = await api.post('/login', { email, senha }, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-        if (response.status === 200 && response.data?.token) {
-          sessionStorage.setItem('authToken',response.data.token);
-          sessionStorage.setItem('usuario',response.data.nome);
-          sessionStorage.setItem('tipo',response.data.tipo);
-          setTimeout(() =>{
-            navigate('/home'); // mudar aqui para a página que vai se redirecionar após o login
-          },1000);
-        }else {
-          throw new Error('Ops! Ocorreu um erro interno.');
-        }
+      if (response.status === 200 && response.data?.token) {
+        sessionStorage.setItem('authToken', response.data.token);
+        sessionStorage.setItem('usuario', response.data.nome);
+        sessionStorage.setItem('tipo', response.data.tipo);
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
+      } else {
+        throw new Error('Ops! Ocorreu um erro interno.');
+      }
     } catch (error) {
       console.error('Erro ao realizar login:', error);
       alert('Erro ao conectar ao servidor.');
@@ -47,20 +45,27 @@ const ColunaInputs = () => {
   };
 
   return (
-    <section className="coluna2">
-      <div className="seta-voltar">
-        <Link to="/">
-          <img className="imagem-seta" src={setaVoltar} alt="Voltar" />
+    <section className="flex flex-col justify-center items-center h-[95vh] w-[66%]" >
+      <div className="mb-[3%]">
+        <Link
+          to="/"
+          className="inline-block w-[5vw] h-[6vh] transition-transform duration-200 ease-in-out hover:scale-105"
+        >
+          <img src={setaVoltar} alt="Voltar" className="w-full h-full" />
         </Link>
       </div>
 
-      <div className="container">
-        <header className="container-titulos">
-          <h1>Pronto para continuar?</h1>
-          <p>Faça login para continuar sua experiência.</p>
+      <div className="h-[68%] w-[50%] flex flex-col justify-around items-center">
+        <header className="flex flex-col justify-center items-center gap-[5px] text-center">
+          <h1 className="text-[clamp(1.5rem,5vw,3rem)] font-black">
+            Pronto para continuar?
+          </h1>
+          <p className="text-[clamp(1rem,2vw,1.5rem)] font-light">
+            Faça login para continuar sua experiência.
+          </p>
         </header>
 
-        <form className="formulario gap-2" onSubmit={handleSubmit(verificarUsuario)}>
+        <form className="h-[70%] w-[70%] gap-2 flex flex-col justify-center items-center mb-[2%]" onSubmit={handleSubmit(verificarUsuario)}>
           <div className="inputs w-full">
             <Input
               id="email"
@@ -82,8 +87,8 @@ const ColunaInputs = () => {
             />
           </div>
 
-          <div className="recuperacao-senha">
-            <a href="/esqueci-senha">Esqueci minha senha</a>
+          <div className="flex justify-start items-center w-full pt-[1%] pr-0 pb-[3%] pl-[2%]">
+            <a className="text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:scale-101 hover:after:scale-x-100" href="/esqueci-senha">Esqueci minha senha</a>
           </div>
 
           <Button
@@ -110,9 +115,9 @@ const ColunaInputs = () => {
           />
         </form>
 
-        <footer className="justify-center items-center">
+        <footer className="justify-center items-center flex">
           <p>
-            Não tem uma conta? <Link to="/cadastro">Cadastrar-se</Link>
+            Não tem uma conta? <Link className="inline-block text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100" to="/cadastro">Cadastrar-se</Link>
           </p>
         </footer>
       </div>

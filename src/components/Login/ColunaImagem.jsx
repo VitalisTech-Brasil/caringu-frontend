@@ -1,4 +1,3 @@
-// import '../../styles/login.css'; // Importando o CSS
 import { Link } from 'react-router-dom'; // Importando o Link
 import logo from '../../assets/logos/caringu-logotipo-light.svg';
 
@@ -7,12 +6,12 @@ const ColunaImagem = () => {
   return (
     <>
 
-        <section className="coluna1">
-          <Link to="/teste">
-            <img className="logo" src={logo} alt="Logo da CaringU" />
+        <section className="bg-[url('../assets/images/imagem-login.svg')] h-95/100 w-[33%] min-w-[250px] rounded-[1%] relative left-[20px] bg-cover bg-center bg-no-repeat">
+          <Link to="/">
+            <img className="absolute top-[20px] left-[20px] w-[13vw] max-w-[180px] min-w-[100px] h-auto"
+             src={logo} alt="Logo da CaringU" />
           </Link>
         </section>
-    
     </>
   );
 };

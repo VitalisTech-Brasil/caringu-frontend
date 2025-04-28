@@ -28,9 +28,17 @@ const Input = ({
         {...rest} 
       />
       <label htmlFor={id} className="label">{label}</label>
-      <div className="underline" />
 
-      {isError && <span className="error-message">{errorMessage}</span>}
+      <span className="error-message" style={{ 
+        display: 'block', 
+        height: '20px', 
+        marginTop: '4px'      }}>
+        {isError ? errorMessage : ''}
+      </span>
+
+      {isError && (
+        <div className="underline" style={{ marginBottom: '-1%' }} />
+      )}
 
       {isPassword && (
         <button
@@ -41,7 +49,7 @@ const Input = ({
           style={{
             position: 'absolute',
             right: '10px',
-            top: '50%',
+            top: '20%',
             transform: 'translateY(-50%)',
             background: 'none',
             border: 'none',
@@ -56,6 +64,5 @@ const Input = ({
     </div>
   );
 };
-
 
 export default Input;
