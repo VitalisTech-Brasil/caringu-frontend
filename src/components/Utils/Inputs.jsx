@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import olhoAberto from '../../assets/images/eye.svg';
 import olhoFechado from '../../assets/images/eye-slash.svg';
+import info2 from '../../assets/images/info-2.svg';
 
 const Input = ({
   id,
@@ -10,7 +11,7 @@ const Input = ({
   required = false,
   isError,
   errorMessage,
-  ...rest 
+  ...rest
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
@@ -25,20 +26,35 @@ const Input = ({
         name={name}
         required={required}
         placeholder="  "
-        {...rest} 
+        {...rest}
       />
       <label htmlFor={id} className="label">{label}</label>
 
-      <span className="error-message" style={{ 
-        display: 'block', 
-        height: '20px', 
-        marginTop: '4px'      }}>
-        {isError ? errorMessage : ''}
+      <div className="underline" style={{ marginBottom: '5%' }} />
+
+
+      <span className="error-message" style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '5px',
+        height: '21px',
+        marginTop: '4px',
+        color: '#D45C56',
+        fontSize: '16px',
+      }}>
+        {isError && (
+          <>
+            <img
+              src={info2}
+              alt="Erro"
+              style={{ width: '16px', height: '16px' }}
+            />
+            {errorMessage}
+          </>
+        )}
       </span>
 
-      {isError && (
-        <div className="underline" style={{ marginBottom: '-1%' }} />
-      )}
+
 
       {isPassword && (
         <button
