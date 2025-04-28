@@ -1,7 +1,9 @@
 import React from "react";
 import bgImage from "../assets/images/primeira-imagem-fundo-index.svg";
 import logoImage from '../assets/logos/caringu-logo-branco.svg'
-import cardImage from '../assets/images/cardIndex.svg'
+import cardImage from '../assets/images/ginasio-sem-pessoas-interior_107420-6120.svg'
+import cardImage2 from '../assets/images/Foto2CardsIndex.svg'
+import cardImage3 from '../assets/images/Being A Personal Trainer_ Pros and Cons.svg'
 import secondImage from '../assets/images/segunda-imagem-fundo-index.svg'
 import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
@@ -57,7 +59,7 @@ export default function HomePage() {
           <p className="text-[24px] max-w-300  text-center">A  <b>CaringU</b> surgiu com o objetivo de conectar os personal trainers com seus alunos e facilitar a organização dos treinos, exercícios e aulas agendadas.</p>
         </div>
         <div className="flex items-center justify-center gap-8 h-1/2">
-          <div className="w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center">
+          <div className="w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center rounded-[6px]">
             <img src={cardImage} alt="Card" className="w-full h-auto" />
             <div className="flex m-5">
               <div className="flex flex-col gap-4">
@@ -66,20 +68,20 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center">
-            <img src={cardImage} alt="Card" className="w-full h-auto" />
+          <div className="w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center rounded-[6px]">
+            <img src={cardImage2} alt="Card" className="w-full h-auto" />
             <div className="flex m-5">
               <div className="flex flex-col gap-4">
-                <p className="text-[20px] font-bold text-start">Algo relacionado a alunos</p>
-                <p className="text-[16px] text-start">Buscamos entender o personal e nos colocar no seu lugar para entender suas dores. Para isso, passamos por uma série de pesquisas  com aprofundamento das dificuldades do profissional da área.</p>
+                <p className="text-[20px] font-bold text-start">Foco nos alunos</p>
+                <p className="text-[16px] text-start">Criamos a CaringU pensando na experiência dos alunos, com foco em motivação, progresso e personalização. Queremos tornar a jornada de treino mais engajadora, aumentando a disciplina e o alcance de resultados reais.</p>
               </div>
             </div>
           </div>
-          <div className="w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center">
-            <img src={cardImage} alt="Card" className="w-full h-auto" />
+          <div className="w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center rounded-[6px]">
+            <img src={cardImage3} alt="Card" className="w-full h-auto" />
             <div className="flex m-5">
               <div className="flex flex-col gap-4">
-                <p className="text-[20px] font-bold text-start">Pesquisas com personal trainers</p>
+                <p className="text-[20px] font-bold text-start">Resultado</p>
                 <p className="text-[16px] text-start">Desenvolvemos uma solução prática que conta com funcionalidades que buscam suprir a necessidade de organização do personal, como gerenciamento de alunos, agenda e relatórios para acompanhar o desempenho do aluno.</p>
               </div>
             </div>
