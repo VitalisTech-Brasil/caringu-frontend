@@ -9,7 +9,12 @@ import olhoAberto from '../../assets/images/eye.svg';
 import olhoFechado from '../../assets/images/eye-slash.svg';
 import Button from '../Utils/Button';
 
-const EtapaNovaSenha = ({ email, onAvancar }) => {
+import { useEmail } from './Context/EsqueciSenhaContext';
+
+const EtapaNovaSenha = ({ onAvancar }) => {
+
+  const { email } = useEmail();
+
   const [senhaInteragiu, setSenhaInteragiu] = useState(false);
   const [showSenha, setShowSenha] = useState(false);
   const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
@@ -23,22 +28,19 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
   const handleAlterarSenha = async (data) => {
     const { senha } = data;
     try {
-      const response = await axios.post("http://seu-servidor.com/api/alterar-senha", {
+      const response = await axios.patch("http://localhost:8080/esqueci-senha/nova-senha", {
         email,
         novaSenha: senha, // agora está correto
       });
 
-      const responseData = response.data;
-      if (responseData.success) {
+      if (response.status == 200) {
         onAvancar();
       } else {
         alert("Erro ao alterar a senha.");
-        onAvancar();
       }
     } catch (error) {
       console.error("Erro ao alterar a senha:", error);
       alert("Erro ao tentar alterar a senha.");
-      onAvancar();
     }
   };
 
@@ -75,6 +77,7 @@ const EtapaNovaSenha = ({ email, onAvancar }) => {
                       numero: (value) => /\d/.test(value) || "Mínimo de 1 número."
                     }
                   })}
+                  autoComplete="new-password"
                   value={senhaValue}
                   onChange={(e) => {
                     setSenhaValue(e.target.value);

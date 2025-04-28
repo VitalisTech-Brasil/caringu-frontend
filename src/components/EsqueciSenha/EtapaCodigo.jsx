@@ -1,22 +1,25 @@
-// src/components/EsqueciSenha/EtapaCodigo.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios'; // Importando o axios
 import InputVerificacao from './InputVerificacao';
 import Button from '../Utils/Button';
+import { useEmail } from './Context/EsqueciSenhaContext';  // Importando o useEmail
 
-const EtapaCodigo = ({ email, onAvancar }) => {
+const EtapaCodigo = ({ onAvancar }) => {
+  const { email } = useEmail(); // Pega o email do Context
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [codigo, setCodigo] = useState('');
 
-  const handleVerificarCodigo = async (data) => {
-    const { codigo } = data; // Pega o código do formulário
+  // Função para verificar o código
+  const handleVerificarCodigo = async (codigo) => {
 
     try {
-      // Usando axios para enviar a requisição de verificação de código
-      const response = await axios.post('http://seu-servidor.com/api/verificar-codigo', { email, codigo });
+      // Envia o código para o backend para verificação
+      const response = await axios.post('http://localhost:8080/esqueci-senha/validacao-token', { email, codigo });
 
-      if (response.data.success) {
+      console.log(response.status)
+
+      if (response.status == 200) {
         onAvancar(); // Avança para a próxima etapa
       } else {
         alert('Código incorreto.');
@@ -24,9 +27,21 @@ const EtapaCodigo = ({ email, onAvancar }) => {
     } catch (error) {
       console.error('Erro ao verificar código:', error);
       alert('Erro ao tentar verificar o código.');
-      onAvancar();
     }
   };
+
+  const handleComplete = (codigo) => {
+    setCodigo(codigo);  // Atualiza o estado do código
+    handleVerificarCodigo(codigo);  // Chama a função de verificação
+  };
+
+  useEffect(() => {
+    if (!email) {
+      alert('Email não encontrado. Por favor, forneça um email primeiro.');
+      // Redireciona de volta para a página anterior
+      window.location.href = '/esqueci-senha';
+    }
+  }, [email]);
 
   return (
     <section className="flex justify-center items-center h-screen w-1/2">
@@ -37,29 +52,19 @@ const EtapaCodigo = ({ email, onAvancar }) => {
             <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-25"></div>
             <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
           </div>
+
           <div className="text-[var(--cor-primaria)] h-27 w-1/2 text-center flex-col justify-end">
             <h1 className="text-[48px]">Verifique seu e-mail</h1>
-            <p>Enviamos um código de verificação para <strong>{email}</strong>. Digite o código abaixo para continuar.</p>
+            <p>
+              Enviamos um código de verificação para <strong>{email}</strong>. Digite o código abaixo para continuar.
+            </p>
           </div>
 
           {/* Formulário com react-hook-form */}
           <form onSubmit={handleSubmit(handleVerificarCodigo)} className="w-1/2">
             <InputVerificacao
-              value={codigo}
-              onChange={(e) => setCodigo(e.target.value)}
-              id="codigo"
-              name="codigo"
-              label="Código"
-              {...register('codigo', {
-                required: 'O código é obrigatório',
-                pattern: {
-                  value: /^[0-9]{6}$/, // Exemplo: código de 6 dígitos
-                  message: 'Código inválido. Deve conter 6 dígitos.'
-                }
-              })}
-              isError={!!errors.codigo}
-              errorMessage={errors.codigo?.message}
-              onComplete={(codigo) => setCodigo(codigo)}
+              length={4}
+              onComplete={handleComplete}  // Passando a função handleComplete
             />
 
             <footer className="flex flex-col h-30 justify-between items-center">
@@ -72,7 +77,6 @@ const EtapaCodigo = ({ email, onAvancar }) => {
                 width="511px"
                 height="50px"
                 fontSize="14px"
-                onClick={handleVerificarCodigo}
               />
               <p>
                 Não recebeu o código?{' '}

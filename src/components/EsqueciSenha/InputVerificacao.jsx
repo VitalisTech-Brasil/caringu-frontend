@@ -1,8 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 export default function InputVerificacao({ length = 4, onComplete }) {
   const [values, setValues] = useState(Array(length).fill(''));
   const inputsRef = useRef([]);
+
+  // Focar no primeiro campo ao carregar o componente
+  useEffect(() => {
+    inputsRef.current[0]?.focus();
+  }, []);
 
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) return; // só aceita número único
@@ -10,19 +15,21 @@ export default function InputVerificacao({ length = 4, onComplete }) {
     newValues[index] = value;
     setValues(newValues);
 
-    // se preencheu e não é o último, vai para o próximo
+    // Se preencheu e não é o último, vai para o próximo
     if (value && index < length - 1) {
-      inputsRef.current[index + 1].focus();
+      inputsRef.current[index + 1]?.focus();
     }
 
+    // Chama onComplete quando todos os campos forem preenchidos
     if (newValues.every(v => v !== '')) {
       onComplete(newValues.join(''));
     }
   };
 
   const handleKeyDown = (e, index) => {
+    // Se Backspace e o campo estiver vazio, vai para o anterior
     if (e.key === 'Backspace' && !values[index] && index > 0) {
-      inputsRef.current[index - 1].focus();
+      inputsRef.current[index - 1]?.focus();
     }
   };
 

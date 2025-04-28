@@ -1,31 +1,31 @@
 // src/components/EsqueciSenha/EtapaEmail.jsx
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';  // Importando o axios
+import axios from 'axios';
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
+import { useEmail } from './Context/EsqueciSenhaContext';
 
 const EtapaEmail = ({ onAvancar }) => {
-  // Usando o hook-form
+  const { atualizarEmail } = useEmail(); // pega o atualizarEmail do Context
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const handleEnviarEmail = async (data) => {
-    const { email } = data; // Pega o email do formulário
+    const { email } = data;
+    console.log(email)
 
     try {
-      // Usando axios para enviar a requisição ao backend
-      const response = await axios.post('url_do_servidor_para_validar_email', { email });
+      const response = await axios.post('http://localhost:8080/esqueci-senha', { email });
 
-      // Verificando a resposta do backend
-      if (response.data.success) {
-        onAvancar(); // Avança para a próxima etapa
+      if (response.status === 200) {
+        atualizarEmail(email); // <<< Atualiza o email no Context!
+        onAvancar();            // Avança para a próxima etapa
       } else {
         alert("Email não encontrado.");
       }
     } catch (error) {
       console.error("Erro ao enviar e-mail:", error);
-      alert("Erro ao tentar recuperar a senha.");
-      onAvancar();
+      alert("Ocorreu um erro ao tentar enviar o e-mail. Tente novamente.");
     }
   };
 
@@ -38,14 +38,14 @@ const EtapaEmail = ({ onAvancar }) => {
             <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
             <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
           </div>
+
           <div className="text-[var(--cor-primaria)] h-27 w-2/3 text-center flex-col justify-end">
             <h1 className="text-[48px] font-bold">Recuperação de senha</h1>
             <p className="text-[20px] font-normal">
-              Não se preocupe! Isso acontece. Informe seu e-mail e enviaremos um link para você redefinir sua senha.
+              Não se preocupe! Informe seu e-mail e enviaremos um link para redefinir sua senha.
             </p>
           </div>
 
-          {/* Formulário com react-hook-form */}
           <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2">
             <Input
               id="email"
@@ -73,7 +73,6 @@ const EtapaEmail = ({ onAvancar }) => {
                 width="511px"
                 height="50px"
                 fontSize="14px"
-                onClick={handleEnviarEmail}
               />
               <a href="/Login">Voltar para Login</a>
             </footer>

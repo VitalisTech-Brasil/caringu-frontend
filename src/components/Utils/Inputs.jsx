@@ -10,7 +10,7 @@ const Input = ({
   required = false,
   isError,
   errorMessage,
-  ...rest 
+  ...rest
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
@@ -25,7 +25,8 @@ const Input = ({
         name={name}
         required={required}
         placeholder="  "
-        {...rest} 
+        autoComplete={rest.autoComplete || 'off'} // coloca autocomplete padrão "off" caso não venha nada
+        {...rest}
       />
       <label htmlFor={id} className="label">{label}</label>
       <div className="underline" />
