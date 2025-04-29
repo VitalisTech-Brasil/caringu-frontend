@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Utils/Button';
-import axios from 'axios';
+import { caringuApi } from '../../provider/caringuApi';
 
 const FaleConosco = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -33,10 +33,9 @@ const FaleConosco = () => {
         setIsSubmitting(true);
         setResponseMessage('');
         console.log(data);
-        setIsSubmitting(false);
 
         try {
-            const response = await axios.post('http://localhost:8080/fale-conosco', data);
+            const response = await caringuApi.post('/fale-conosco', data);
             if (response.status === 200) {
                 setResponseMessage('Mensagem enviada com sucesso!');
             } else {

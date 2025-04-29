@@ -23,12 +23,23 @@ const MenuLateral = () => {
       const usuario = sessionStorage.getItem("usuario");
 
       if (usuario) {
-        const nome = usuario.split(' ')[0];
-        const primeiroNome = nome[0].toUpperCase() + nome.slice(1);
+        const nomeSeparado = usuario.split(' ');
+        
+        const nome = nomeSeparado[0];
+        const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
+        
+        const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
+        const ultimoNomeFormatado = ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
 
         const tipo = sessionStorage.getItem("tipo");
 
-        setNomePessoa(primeiroNome);
+        let nomeFinal = nomeFormatado + " " + ultimoNomeFormatado;
+
+        if (nomeFinal.length > 13) {
+          nomeFinal = nomeFormatado + " " + ultimoNomeFormatado[0] + ".";
+        }
+
+        setNomePessoa(nomeFinal);
         setTipoPessoa(tipo);
       }
     }
