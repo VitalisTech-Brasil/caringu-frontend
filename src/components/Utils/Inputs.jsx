@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import olhoAberto from '../../assets/images/eye.svg';
 import olhoFechado from '../../assets/images/eye-slash.svg';
-import info2 from '../../assets/images/info-2.svg';
 
 const Input = ({
   id,
@@ -26,35 +25,13 @@ const Input = ({
         name={name}
         required={required}
         placeholder="  "
+        autoComplete={rest.autoComplete || 'off'} // coloca autocomplete padrão "off" caso não venha nada
         {...rest}
       />
       <label htmlFor={id} className="label">{label}</label>
+      <div className="underline" />
 
-      <div className="underline" style={{ marginBottom: '5.5%' }} />
-
-
-      <span className="error-message" style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '5px',
-        height: '21px',
-        marginTop: '4px',
-        color: '#D45C56',
-        fontSize: '16px',
-      }}>
-        {isError && (
-          <>
-            <img
-              src={info2}
-              alt="Erro"
-              style={{ width: '16px', height: '16px' }}
-            />
-            {errorMessage}
-          </>
-        )}
-      </span>
-
-
+      {isError && <span className="error-message">{errorMessage}</span>}
 
       {isPassword && (
         <button
@@ -65,7 +42,7 @@ const Input = ({
           style={{
             position: 'absolute',
             right: '10px',
-            top: '20%',
+            top: '50%',
             transform: 'translateY(-50%)',
             background: 'none',
             border: 'none',
