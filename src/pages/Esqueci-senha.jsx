@@ -13,7 +13,7 @@ const EsqueciSenha = () => {
         document.title = "Esqueci Senha";
     }, []);
 
-    const [etapa, setEtapa] = useState("email");
+    const [etapa, setEtapa] = useState("novaSenha");
     const [novaSenha, setNovaSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
 
