@@ -28,10 +28,10 @@ const ModalRemoverEspecialidade = ({
         {/* Texto de confirmação */}
         <div className="text-center">
           <h2 className="font-bold text-gray-900 text-[18px]">
-            Tem certeza que deseja remover essa Especialidade?
+            Tem certeza que deseja remover a conta?
           </h2>
           <p className="text-gray-500 mt-2 text-[16px]">
-            Você não poderá disponibilizá-los futuramente.
+            Você não poderá utilizá-la futuramente.
           </p>
         </div>
 

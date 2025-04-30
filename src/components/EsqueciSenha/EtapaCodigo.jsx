@@ -79,10 +79,10 @@ const EtapaCodigo = ({ onAvancar }) => {
                 height="50px"
                 fontSize="14px"
               />
-              <p>
+{/*               <p>
                 Não recebeu o código?{' '}
                 <a href="">Clique para reenviar em [x] segundos</a>
-              </p>
+              </p> */}
               <a href="/login">Voltar para Login</a>
             </footer>
           </form>
