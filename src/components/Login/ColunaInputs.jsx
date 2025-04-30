@@ -1,4 +1,4 @@
-import { React } from 'react';
+import { React,useEffect } from 'react';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,19 +6,28 @@ import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
 import { useForm } from 'react-hook-form';
 import { api } from '../../provider/api';
+import toast from 'react-hot-toast';
+import CustomToast from '../Utils/CustomToast';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
+  
+
+  useEffect(() => {
+    return () => {
+      toast.remove();
+    };
+  }, []);
 
   const verificarUsuario = async (data) => {
 
     const { email, senha } = data;
 
-    if (!email || !senha) {
-      alert('Por favor, preencha todos os campos!');
-      return;
-    }
+    // if (!email || !senha) {
+    //   alert('Por favor, preencha todos os campos!');
+    //   return;
+    // }
 
     try {
       const response = await api.post('/login', { email, senha }, {
@@ -31,6 +40,12 @@ const ColunaInputs = () => {
         sessionStorage.setItem('authToken', response.data.token);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
+
+          toast.custom((t) => (
+            <CustomToast t={t} type="success" message="Login realizado com sucesso!" />
+          ));
+        
+  
         setTimeout(() => {
           navigate('/home');
         }, 1000);
@@ -38,9 +53,16 @@ const ColunaInputs = () => {
         throw new Error('Ops! Ocorreu um erro interno.');
       }
     } catch (error) {
-      console.error('Erro ao realizar login:', error);
-      alert('Erro ao conectar ao servidor.');
-
+      if (error.response?.status === 401) {
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Credenciais inválidas. Verifique seu email e senha." />
+        ));
+      } else {
+        console.error('Erro ao realizar login:', error);
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Erro ao conectar ao servidor. Tente novamente mais tarde." />
+        ));
+      }
     }
   };
 
