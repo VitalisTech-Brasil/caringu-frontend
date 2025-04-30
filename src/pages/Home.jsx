@@ -271,7 +271,9 @@ const Home = () => {
 
           {/* Seção de Atalhos */}
           <div className="bg-[var(--cor-secundaria)] rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Atalhos</h2>
+            <h2 className="text-lg font-bold text-gray-900 mb-4 text-[23px]">
+              Atalhos
+            </h2>{" "}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {atalhos.map((atalho, index) => (
                 <Atalho
