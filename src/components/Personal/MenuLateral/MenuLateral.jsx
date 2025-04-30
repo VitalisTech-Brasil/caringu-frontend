@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { FaUserCircle, FaRegFileAlt } from "react-icons/fa";
-import { IoHomeOutline, IoWalletOutline } from "react-icons/io5";
-import { MdOutlinePersonSearch } from "react-icons/md";
-import { CiDumbbell, CiFileOn } from "react-icons/ci";
+import React, { useEffect, useState } from "react";
 import { BsCalendar } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { CiDumbbell, CiFileOn } from "react-icons/ci";
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaRegFileAlt,
+  FaUserCircle,
+} from "react-icons/fa";
+import { IoHomeOutline, IoWalletOutline } from "react-icons/io5";
+import { MdOutlinePersonSearch } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
 
 const MenuLateral = () => {
@@ -22,13 +26,14 @@ const MenuLateral = () => {
     const usuario = sessionStorage.getItem("usuario");
 
     if (usuario) {
-      const nomeSeparado = usuario.split(' ');
+      const nomeSeparado = usuario.split(" ");
 
       const nome = nomeSeparado[0];
       const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
 
       const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
-      const ultimoNomeFormatado = ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
+      const ultimoNomeFormatado =
+        ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
 
       const tipo = sessionStorage.getItem("tipo");
 
@@ -41,8 +46,7 @@ const MenuLateral = () => {
       setNomePessoa(nomeFinal);
       setTipoPessoa(tipo);
     }
-  }, [])
-
+  }, []);
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -55,15 +59,31 @@ const MenuLateral = () => {
   };
 
   const menuItems = [
-    { icon: <IoHomeOutline size={24} />, label: "Página Inicial", path: "/home" },
-    { icon: <MdOutlinePersonSearch size={24} />, label: "Gerenciar Alunos", path: "/gerenciar-alunos" },
+    {
+      icon: <IoHomeOutline size={24} />,
+      label: "Página Inicial",
+      path: "/home",
+    },
+    {
+      icon: <MdOutlinePersonSearch size={24} />,
+      label: "Gerenciar Alunos",
+      path: "/gerenciar-alunos",
+    },
     {
       icon: <CiDumbbell size={24} />,
       label: "Treinos",
       path: "/treinos",
       children: [
-        { icon: <CiFileOn size={20} />, label: "Gerenciar Treinos", path: "/gerenciar-treinos" },
-        { icon: <FaRegFileAlt size={20} />, label: "Gerenciar Exercícios", path: "/gerenciar-exercicios" },
+        {
+          icon: <CiFileOn size={20} />,
+          label: "Gerenciar Treinos",
+          path: "/gerenciar-treinos",
+        },
+        {
+          icon: <FaRegFileAlt size={20} />,
+          label: "Gerenciar Exercícios",
+          path: "/gerenciar-exercicios",
+        },
       ],
     },
     {
@@ -103,7 +123,9 @@ const MenuLateral = () => {
         style={{ minHeight: "4rem" }} // Adiciona uma altura mínima consistente
       >
         <div className="flex items-center gap-2">
-          {isOpen && <img src={logo} alt="Logo CaringU" className="h-10 w-10" />}
+          {isOpen && (
+            <img src={logo} alt="Logo CaringU" className="h-10 w-10" />
+          )}
           <h1
             className={`text-2xl font-bold whitespace-nowrap ${!isOpen && "hidden"
               }`}
@@ -151,8 +173,8 @@ const MenuLateral = () => {
           <li key={index} className="flex flex-col">
             <div
               className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
-                ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                : "hover:bg-[var(--azul-claro)]"
+                  ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                  : "hover:bg-[var(--azul-claro)]"
                 }`}
               onClick={() => {
                 if (item.label === "Treinos") {
@@ -174,13 +196,13 @@ const MenuLateral = () => {
                   {item.label}
                 </span>
               </div>
-              {item.children && isOpen && (
-                isTreinosOpen ? (
+              {item.children &&
+                isOpen &&
+                (isTreinosOpen ? (
                   <FaChevronUp size={16} />
                 ) : (
                   <FaChevronDown size={16} />
-                )
-              )}
+                ))}
             </div>
             {item.children && (
               <ul
@@ -191,8 +213,8 @@ const MenuLateral = () => {
                   <li
                     key={childIndex}
                     className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
-                      ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                      : "hover:bg-[var(--azul-claro)]"
+                        ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                        : "hover:bg-[var(--azul-claro)]"
                       }`}
                     onClick={() => navigate(child.path)}
                     title={!isOpen ? child.label : ""}
