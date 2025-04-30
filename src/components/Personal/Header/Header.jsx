@@ -1,6 +1,7 @@
 import { Navbar, NavbarBrand } from "flowbite-react";
-import { useLocation } from "react-router-dom";
+import { HiOutlineUserCircle } from "react-icons/hi";
 import { MdOutlinePersonSearch } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const location = useLocation();
@@ -31,7 +32,10 @@ const Header = () => {
       icon: <MdOutlinePersonSearch className="w-6 h-6 text-gray-800" />,
       label: "Gerenciar Alunos",
     },
-    // Adicione mais rotas conforme necessário
+    "/perfil": {
+      icon: <HiOutlineUserCircle className="w-6 h-6 text-gray-800" />,
+      label: "Perfil",
+    },
   };
 
   const currentPage = pageConfig[location.pathname] || {

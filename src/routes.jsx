@@ -2,10 +2,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Cadastro from "./pages/Cadastro";
 import Error from "./pages/Error";
 import EsqueciSenha from "./pages/Esqueci-senha";
+import GerenciarAlunos from "./pages/GerenciarAlunos/GerenciarAlunos";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Login from "./pages/login.jsx";
-import GerenciarAlunos from "./pages/GerenciarAlunos/GerenciarAlunos";
+import Perfil from "./pages/Perfil/Perfil";
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/home" element={<Home />} />
         <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
+        <Route path="/perfil" element={<Perfil />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
