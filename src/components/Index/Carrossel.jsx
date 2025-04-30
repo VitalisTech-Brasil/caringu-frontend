@@ -6,11 +6,17 @@ import 'swiper/css/pagination';
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 
+import iconeExercicio from '../../assets/images/iconeExercicio.svg';
+import iconeTreinos from '../../assets/images/iconeTreinos.svg';
+import iconeAlunos from '../../assets/images/iconeAlunos.svg';
+import iconeAgenda from '../../assets/images/iconeAgenda.svg';
+import setaVoltar from '../../assets/images/back.svg';
+
 const features = [
-  { title: 'Gerenciamento de exercícios', description: 'Crie e atribua exercícios a treinos para facilitar o compartilhamento entre os alunos.', icon: 'src/assets/images/iconeExercicio.svg' },
-  { title: 'Gerenciamento de treinos', description: 'Crie treinos e distribua entre seus alunos para maior praticidade e conforto.', icon: 'src/assets/images/iconeTreinos.svg' },
-  { title: 'Gerenciamento de alunos', description: 'Gerencie seus alunos com planos ativos, veja seu desempenho com gráficos e preencha sua anamnese online.', icon: 'src/assets/images/iconeAlunos.svg' },
-  { title: 'Agenda', description: 'Acesse suas aulas agendadas com um calendário mensal, semanal e diário para se manter informado sobre sua agenda.', icon: 'src/assets/images/iconeAgenda.svg' },
+  { title: 'Gerenciamento de exercícios', description: 'Crie e atribua exercícios a treinos para facilitar o compartilhamento entre os alunos.', icon: iconeExercicio },
+  { title: 'Gerenciamento de treinos', description: 'Crie treinos e distribua entre seus alunos para maior praticidade e conforto.', icon: iconeTreinos },
+  { title: 'Gerenciamento de alunos', description: 'Gerencie seus alunos com planos ativos, veja seu desempenho com gráficos e preencha sua anamnese online.', icon: iconeAlunos },
+  { title: 'Agenda', description: 'Acesse suas aulas agendadas com um calendário mensal, semanal e diário para se manter informado sobre sua agenda.', icon: iconeAgenda },
 ];
 
 const FeatureCarousel = () => {
@@ -24,7 +30,7 @@ const FeatureCarousel = () => {
         onClick={() => swiperRef.current?.slidePrev()}
         className="absolute left-40  z-10 hover:scale-110 transition-all duration-300 shadow-md"
       >
-        <img src="src/assets/images/back.svg" alt="Arrow Left" className="w-6 h-6" />
+        <img src={setaVoltar} alt="Arrow Left" className="w-6 h-6" />
       </button>
 
       {/* Swiper */}

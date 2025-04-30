@@ -12,6 +12,11 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FaleConosco from "../components/Index/FaleConosco";
 
+import logoLaranjaCaringu from '../assets/logos/caringu-logo-branco-fundo-laranja.svg';
+import githubLogo from '../assets/logos/github-logo.svg';
+import linkedinLogo from '../assets/logos/linkedin-logo.svg';
+import instaLogo from '../assets/logos/instagram-logo.svg';
+
 export default function HomePage() {
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
@@ -112,7 +117,7 @@ export default function HomePage() {
       <footer className="h-[350px] w-full bg-[var(--azul-escuro)] px-20 flex items-center justify-center flex-col">
         <div className="flex items-center">
           <div className="flex flex-col items-start justify-center h-full w-[1500px] gap-5">
-            <img src='src/assets/logos/caringu-logo-branco-fundo-laranja.svg' alt="Logo CaringU" className="h-[90px] w-[350px]" />
+            <img src={logoLaranjaCaringu} alt="Logo CaringU" className="h-[90px] w-[350px]" />
             <div className="w-[500px]">
               <h1 className="text-white text-[20px] font-bold">Transforme seu treino com mais facilidade</h1>
               <p className="text-white text-[14px]">
@@ -132,9 +137,9 @@ export default function HomePage() {
             <Link to="/cadastro">Inscreva-se</Link>
           </div>
           <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5">
-            <img src="src/assets/logos/github-logo.svg" alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
-            <img src="src/assets/logos/linkedin-logo.svg" alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
-            <img src="src/assets/logos/instagram-logo.svg" alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+            <img src={githubLogo} alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+            <img src={linkedinLogo} alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+            <img src={instaLogo} alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
           </div>
         </div>
         <p className="text-white text-[14px] mt-3">Copyright © CaringU. All Rights Reserved.</p>
