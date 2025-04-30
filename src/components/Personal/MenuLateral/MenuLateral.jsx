@@ -19,29 +19,27 @@ const MenuLateral = () => {
   const [tipoPessoa, setTipoPessoa] = useState("");
 
   useEffect(() => {
-    return () => {
-      const usuario = sessionStorage.getItem("usuario");
+    const usuario = sessionStorage.getItem("usuario");
 
-      if (usuario) {
-        const nomeSeparado = usuario.split(' ');
-        
-        const nome = nomeSeparado[0];
-        const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
-        
-        const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
-        const ultimoNomeFormatado = ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
+    if (usuario) {
+      const nomeSeparado = usuario.split(' ');
 
-        const tipo = sessionStorage.getItem("tipo");
+      const nome = nomeSeparado[0];
+      const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
 
-        let nomeFinal = nomeFormatado + " " + ultimoNomeFormatado;
+      const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
+      const ultimoNomeFormatado = ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
 
-        if (nomeFinal.length > 13) {
-          nomeFinal = nomeFormatado + " " + ultimoNomeFormatado[0] + ".";
-        }
+      const tipo = sessionStorage.getItem("tipo");
 
-        setNomePessoa(nomeFinal);
-        setTipoPessoa(tipo);
+      let nomeFinal = nomeFormatado + " " + ultimoNomeFormatado;
+
+      if (nomeFinal.length > 13) {
+        nomeFinal = nomeFormatado + " " + ultimoNomeFormatado[0] + ".";
       }
+
+      setNomePessoa(nomeFinal);
+      setTipoPessoa(tipo);
     }
   }, [])
 
@@ -153,8 +151,8 @@ const MenuLateral = () => {
           <li key={index} className="flex flex-col">
             <div
               className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
-                  ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                  : "hover:bg-[var(--azul-claro)]"
+                ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                : "hover:bg-[var(--azul-claro)]"
                 }`}
               onClick={() => {
                 if (item.label === "Treinos") {
@@ -193,8 +191,8 @@ const MenuLateral = () => {
                   <li
                     key={childIndex}
                     className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
-                        ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                        : "hover:bg-[var(--azul-claro)]"
+                      ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                      : "hover:bg-[var(--azul-claro)]"
                       }`}
                     onClick={() => navigate(child.path)}
                     title={!isOpen ? child.label : ""}
