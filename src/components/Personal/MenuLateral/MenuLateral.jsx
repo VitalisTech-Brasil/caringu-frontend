@@ -115,7 +115,7 @@ const MenuLateral = () => {
             <path d="M12.1001 7.97513L13.4001 2.5752" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M20.4751 7.98746L21.6501 2.5625" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-          <span className="absolute text-base font-bold text-200 rounded-full px-1 top-[15%]">
+          <span className="absolute text-xs font-bold text-200 rounded-full px-1 top-[30%] text-gray-800">
             {getCurrentDay()}
           </span>
         </div>
