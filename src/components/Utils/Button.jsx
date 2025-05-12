@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
 
-const Botton = ({ id, texto, onClick, cor, corTexto, corHover, width, height, type, fontSize, logo}) => {
+const Botton = ({ id,
+                  texto,
+                  onClick,
+                  cor,
+                  corTexto,
+                  corHover,
+                  width,
+                  height,
+                  type,
+                  fontSize,
+                  logo,
+                  ariaLabel,
+                  borderColor,
+                  borderStyle,
+                  borderWidth,
+                  fontWeight}) => {
 
   const [bgColor, setBgColor] = useState(cor);
 
@@ -11,17 +26,21 @@ const Botton = ({ id, texto, onClick, cor, corTexto, corHover, width, height, ty
       onClick={onClick}
       onMouseEnter={() => setBgColor(corHover)}
       onMouseLeave={() => setBgColor(cor)}
+      aria-label={ariaLabel}
       style={{
         backgroundColor: bgColor,
         color: corTexto,
         width: width,
         height: height,
-        fontSize: fontSize
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        borderColor: borderColor,
+        borderStyle: borderStyle || "none", 
+        borderWidth: borderWidth
+        
       }}
       className="
         rounded-[6px]
-        
-        border-none 
         outline-none 
         cursor-pointer 
         transition-colors 
@@ -37,4 +56,4 @@ const Botton = ({ id, texto, onClick, cor, corTexto, corHover, width, height, ty
   );
 };
 
-export default Botton;
+export default Botton;  
