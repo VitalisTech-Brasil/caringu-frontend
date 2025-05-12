@@ -38,11 +38,11 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7] outline outline-red-500 overflow-x-hidden">
+        <div className="flex min-h-screen bg-[#fdfbf7]">
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header toggleSidebar={toggleSidebar} />
-                <main className="p-10 md:p-8 font-sans space-y-8 overflow-y-auto">
+                <main className="p-10 md:p-8 font-sans space-y-8">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] flex md:flex-row flex-col w-full">
                         <div className="flex flex-col justify-center w-full md:w-1/2">
                             <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5 max-h-7">
@@ -54,7 +54,6 @@ const Dashboard = () => {
                                 </Link>
                                 <h1>Braços</h1>
                             </div>
-                            {/* INFO ALUNO — VISÍVEL NO MOBILE */}
                             <div className="flex md:hidden justify-start w-full mt-4">
                                 <div className='flex justify-between w-full border-2 border-[#E6E6E2] rounded-md p-5 text-2xs sm:text-sm'>
                                     <h1><b>Aluno: </b>Maria Gladys</h1>
@@ -218,7 +217,7 @@ const Dashboard = () => {
                             </div>
 
                         </div>
-                        <div className='w-full md:w-1/2 flex flex-col items-center'>
+                        <div className='max-w-full md:w-1/2 flex flex-col items-center'>
                             <div className="hidden md:flex justify-end w-full max-h-[80px] md:justify-end">
                                 <div className='flex justify-center md:gap-32 border-2 border-[#E6E6E2] rounded-md p-5 md:w-17/18'>
                                     <h1 className="text-sm md:text-[20px] md:max-w-1xl text-black font-normal"><b>Aluno: </b>Maria Gladys</h1>
@@ -226,9 +225,9 @@ const Dashboard = () => {
                                     <h1 className="text-sm md:text-[20px] text-black font-normal"><b>Altura: </b>1,80m</h1>
                                 </div>
                             </div>
-                            <div className='flex flex-col gap-5 m-3 w-full md:w-11/13'>
+                            <div className='flex flex-col gap-5 m-3 md:w-11/13'>
                                 <h1 className='text-xl font-semibold'>Evolução dos treinos cumpridos</h1>
-                                <div className='w-full border-2 border-[#E6E6E2] rounded-md p-5'>
+                                <div className='border-2 border-[#E6E6E2] rounded-md p-5'>
                                     <ReactApexChart
                                         options={{
                                             chart: {
@@ -293,7 +292,7 @@ const Dashboard = () => {
 
                                 </div>
                                 <h1 className='text-xl font-semibold'>Total de horas treinadas por mês</h1>
-                                <div className='w-full border-2 border-[#E6E6E2] rounded-md p-5'>
+                                <div className='border-2 border-[#E6E6E2] rounded-md p-5'>
                                     <ReactApexChart
                                         options={{
                                             chart: {
