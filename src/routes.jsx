@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Login from "./pages/login.jsx";
 import Perfil from "./pages/Perfil/Perfil";
+import Planos from "./pages/Planos/Planos.jsx";
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/planos" element={<Planos />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
