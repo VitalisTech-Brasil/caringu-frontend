@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Login from "./pages/login.jsx";
 import Perfil from "./pages/Perfil/Perfil";
+import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/procurando-personal" element={<ProcurandoPersonal />} /> {/* Nova rota */}
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

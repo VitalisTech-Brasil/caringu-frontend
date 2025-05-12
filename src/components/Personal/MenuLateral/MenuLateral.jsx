@@ -181,7 +181,7 @@ const MenuLateral = () => {
 
       {/* Informações do Usuário */}
       <div
-        className="flex items-center gap-4 p-4 border-b border-gray-300"
+        className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
         style={{ minHeight: "5rem" }}
       >
         <FaUserCircle size={40} className="flex-shrink-0" />
@@ -192,7 +192,7 @@ const MenuLateral = () => {
       </div>
 
       {/* Itens do Menu */}
-      <ul className="flex flex-col gap-4 p-4 border-b border-gray-300 flex-grow">
+        <ul className="flex flex-col gap-4 p-4 border border-gray-300 border-t-0 border-l-0 flex-grow">
         {menuItems.map((item, index) => (
           <li key={index} className="flex flex-col">
             <div

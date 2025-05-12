@@ -21,13 +21,13 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let tokenExistente = sessionStorage.getItem("authToken");
+  // useEffect(() => {
+  //   let tokenExistente = sessionStorage.getItem("authToken");
 
-    if (!tokenExistente) {
-      setShowModal(true);
-    }
-  }, [])
+  //   if (!tokenExistente) {
+  //     setShowModal(true);
+  //   }
+  // }, [])
 
   // Define o dia atual como padrão ao carregar a página
   useEffect(() => {
