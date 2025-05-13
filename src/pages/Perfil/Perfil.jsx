@@ -10,17 +10,7 @@ import { caringuApi } from '../../provider/caringuApi';
 
 const Perfil = () => {
 
-    const [formData, setFormData] = useState({
-        nome: "",
-        email: "",
-        dataNascimento: "",
-        genero: "",
-        celular: "",
-        cref: "",
-        especialidade: [],
-        experiencia: "",
-        cidade: ""
-    });
+    const [formData, setFormData] = useState({});
 
     useEffect(() => {
         const pessoaId = sessionStorage.getItem('pessoaId');
@@ -34,7 +24,7 @@ const Perfil = () => {
                     }
                 });
                 const celularComMascara = formatarCelular(response.data.celular);
-
+                console.log(response.data);
                 setFormData({
                     ...response.data,
                     celular: celularComMascara,
@@ -288,7 +278,7 @@ const Perfil = () => {
                                                 Especialidade
                                             </label>
                                             <div className="flex flex-wrap gap-2">
-                                                {formData.especialidade?.map((especialidade, index) => (
+                                                {formData.especialidades?.map((especialidade, index) => (
                                                     <div key={index} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
                                                         {especialidade}
                                                         <button

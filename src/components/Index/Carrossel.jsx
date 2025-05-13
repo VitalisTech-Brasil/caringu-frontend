@@ -28,7 +28,7 @@ const FeatureCarousel = () => {
       {/* Botão Esquerda */}
       <button
         onClick={() => swiperRef.current?.slidePrev()}
-        className="absolute left-40  z-10 hover:scale-110 transition-all duration-300 shadow-md"
+        className="absolute left-40  z-10 hover:scale-110 transition-all duration-300 shadow-md cursor-pointer"
       >
         <img src={setaVoltar} alt="Arrow Left" className="w-6 h-6" />
       </button>
@@ -88,7 +88,7 @@ const FeatureCarousel = () => {
       {/* Botão Direita */}
       <button
         onClick={() => swiperRef.current?.slideNext()}
-        className="absolute right-40 z-10 hover:scale-110 transition-all duration-300"
+        className="absolute right-40 z-10 hover:scale-110 transition-all duration-300 cursor-pointer"
       >
         <img src="src/assets/images/next.svg" alt="Arrow Right" className="w-6 h-6" />
       </button>
