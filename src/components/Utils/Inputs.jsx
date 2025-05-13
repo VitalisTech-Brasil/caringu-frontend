@@ -11,6 +11,7 @@ const Input = ({
   required = false,
   isError,
   errorMessage,
+  underlineClassName = 'mb-[5.5%]',
   ...rest
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -30,7 +31,7 @@ const Input = ({
       />
       <label htmlFor={id} className="label">{label}</label>
 
-      <div className="underline" style={{ marginBottom: '5.5%' }} />
+      <div className={`underline ${underlineClassName}`} />
 
 
       <span className="error-message" style={{
