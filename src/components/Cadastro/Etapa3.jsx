@@ -41,30 +41,20 @@ export default function Etapa3({ setEtapa }) {
         });
     }, []);
 
-    const opcoesEspecialidade = [
-        "Musculação",
-        "Treinamento Funcional",
-        "HIIT (Treino Intervalado de Alta Intensidade)",
-        "Treinamento de Core",
-        "Treinamento para Emagrecimento",
-        "Corrida e Caminhada",
-        "Ciclismo Indoor (Spinning)",
-        "Treinamento Esportivo",
-        "Treinamento para Atletas de Alto Rendimento",
-        "Pilates",
-        "Alongamento e Mobilidade",
-        "Reabilitação e Prevenção de Lesões",
-        "Hipertrofia Muscular",
-        "Modelagem Corporal",
-        "Treinamento para Pessoas com Deficiência",
-        "Treinamento para Idosos",
-        "Treinamento Pré e Pós-Parto",
-        "Treinamento para Saúde Metabólica"
-    ];
-
     const [buscaEspecialidade, setBuscaEspecialidade] = useState("");
     const [sugestoes, setSugestoes] = useState([]);
+
+    const [opcoesEspecialidade, setEspecialidades] = useState({});
     const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState(dadosCadastro.especialidade || []);
+
+    useEffect(() => {
+        caringuApi.get('/especialidades')
+            .then(response => {
+                let especialidades = response.data;
+                setEspecialidades(especialidades);
+            })
+            .catch(error => console.error("Erro ao buscar especialidades:", error));
+    }, []);
 
     useEffect(() => {
         setValue("especialidade", especialidadesSelecionadas);
@@ -77,8 +67,8 @@ export default function Etapa3({ setEtapa }) {
 
         if (valor.length > 0) {
             const filtradas = opcoesEspecialidade.filter(op =>
-                op.toLowerCase().includes(valor.toLowerCase()) &&
-                !especialidadesSelecionadas.includes(op)
+                op.nome.toLowerCase().includes(valor.toLowerCase()) &&
+                !especialidadesSelecionadas.some(especialidade => especialidade.id === op.id)
             );
             setSugestoes(filtradas);
         } else {
@@ -87,15 +77,21 @@ export default function Etapa3({ setEtapa }) {
     };
 
     const selecionarSugestao = (sugestao) => {
-        if (!especialidadesSelecionadas.includes(sugestao)) {
+        const jaSelecionado = especialidadesSelecionadas.some(
+            (esp) => esp.id === sugestao.id
+        );
+
+        if (!jaSelecionado) {
             setEspecialidadesSelecionadas(prev => [...prev, sugestao]);
             setBuscaEspecialidade("");
             setSugestoes([]);
         }
     };
 
-    const removerEspecialidade = (item) => {
-        setEspecialidadesSelecionadas(prev => prev.filter(e => e !== item));
+    const removerEspecialidade = (especialidade) => {
+        setEspecialidadesSelecionadas(prev =>
+            prev.filter(esp => esp.id !== especialidade.id)
+        );
     };
 
     const voltarEtapa = async () => {
@@ -244,10 +240,12 @@ export default function Etapa3({ setEtapa }) {
             dataNascimento: converterParaISO(dadosCadastro.dataNascimento),
             genero: dadosCadastro.genero || "",
             cref: data.cref,
-            especialidade: especialidadesSelecionadas,
+            especialidadesIds: especialidadesSelecionadas.map(esp => Number(esp.id)),
             experiencia: data.experiencia
         };
 
+        console.log(data);
+        console.log("Payload acima");
         console.info("Payload enviado: ", payloadFinal);
 
         try {
@@ -369,7 +367,7 @@ export default function Etapa3({ setEtapa }) {
                                             borderBottom: "1px solid #eee"
                                         }}
                                     >
-                                        {opcao}
+                                        {opcao.nome}
                                     </li>
                                 ))}
                             </ul>
@@ -398,7 +396,7 @@ export default function Etapa3({ setEtapa }) {
                                         alignItems: "center",
                                         fontSize: "16px"
                                     }}>
-                                        <span>{idx + 1}. {esp}</span>
+                                        <span>{idx + 1}. {esp.nome}</span>
                                         <button
                                             type="button"
                                             onClick={() => removerEspecialidade(esp)}
