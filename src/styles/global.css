@@ -16,12 +16,6 @@
   height: 100vh;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --navbar-bg: #fffdf6; /* Sobrescreve o fundo no modo escuro */
-  }
-}
-
 .navbar {
   background-color: var(--cor-secundaria) !important;
 }

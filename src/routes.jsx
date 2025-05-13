@@ -7,8 +7,10 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Login from "./pages/login.jsx";
 import Perfil from "./pages/Perfil/Perfil";
+import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
+
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -24,6 +26,7 @@ const AppRoutes = () => {
         <Route path="/relatorio-treino/:id" element={<RelatorioTreino />} />
         <Route path="/dashboard/:idAluno/:idTreino" element={<Dashboard />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/procurando-personal" element={<ProcurandoPersonal />} /> {/* Nova rota */}
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
