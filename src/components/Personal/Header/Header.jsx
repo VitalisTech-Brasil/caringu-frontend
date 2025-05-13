@@ -68,17 +68,17 @@ const Header = () => {
     },
     "/relatorio-treino/*": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 45" fill="none">
-        <path d="M30.9375 17.8125L23.0625 25.6875L20.0625 21.1875L14.0625 27.1875" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M27.1875 17.8125H30.9375V21.5625" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M16.875 41.25H28.125C37.5 41.25 41.25 37.5 41.25 28.125V16.875C41.25 7.5 37.5 3.75 28.125 3.75H16.875C7.5 3.75 3.75 7.5 3.75 16.875V28.125C3.75 37.5 7.5 41.25 16.875 41.25Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M30.9375 17.8125L23.0625 25.6875L20.0625 21.1875L14.0625 27.1875" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M27.1875 17.8125H30.9375V21.5625" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M16.875 41.25H28.125C37.5 41.25 41.25 37.5 41.25 28.125V16.875C41.25 7.5 37.5 3.75 28.125 3.75H16.875C7.5 3.75 3.75 7.5 3.75 16.875V28.125C3.75 37.5 7.5 41.25 16.875 41.25Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       </svg>,
       label: "Relatórios",
     },
     "/dashboard/*": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 45" fill="none">
-        <path d="M30.9375 17.8125L23.0625 25.6875L20.0625 21.1875L14.0625 27.1875" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M27.1875 17.8125H30.9375V21.5625" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M16.875 41.25H28.125C37.5 41.25 41.25 37.5 41.25 28.125V16.875C41.25 7.5 37.5 3.75 28.125 3.75H16.875C7.5 3.75 3.75 7.5 3.75 16.875V28.125C3.75 37.5 7.5 41.25 16.875 41.25Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M30.9375 17.8125L23.0625 25.6875L20.0625 21.1875L14.0625 27.1875" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M27.1875 17.8125H30.9375V21.5625" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M16.875 41.25H28.125C37.5 41.25 41.25 37.5 41.25 28.125V16.875C41.25 7.5 37.5 3.75 28.125 3.75H16.875C7.5 3.75 3.75 7.5 3.75 16.875V28.125C3.75 37.5 7.5 41.25 16.875 41.25Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       </svg>,
       label: "Relatórios",
     },
