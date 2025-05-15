@@ -56,7 +56,6 @@ const EtapaEmail = ({ onAvancar }) => {
               marginBottomLinha="5.5%"
               margin="50px auto 0px 0px"
               corBordaInput={"#ccc"}
-              corTextoLabel={"#ccc"}
 
               {...register("email", {
                 required: "O email é obrigatório",
