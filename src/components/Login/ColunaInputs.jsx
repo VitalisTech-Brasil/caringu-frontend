@@ -95,6 +95,10 @@ const ColunaInputs = () => {
               name="email"
               type="email"
               label="Email"
+              marginBottomLinha="5.5%"
+              margin="50px auto 0px 0px"
+              corBordaInput={"#ccc"}
+              corTextoLabel={"#ccc"}
               {...register('email', { required: 'Email é obrigatório' })}
               isError={!!errors.email}
               errorMessage={errors.email?.message}
@@ -104,6 +108,10 @@ const ColunaInputs = () => {
               name="senha"
               type="password"
               label="Senha"
+              marginBottomLinha="5.5%"
+              margin="50px auto 0px 0px"
+              corBordaInput={"#ccc"}
+              corTextoLabel={"#ccc"}
               {...register('senha', { required: 'Senha é obrigatória' })}
               isError={!!errors.senha}
               errorMessage={errors.senha?.message}

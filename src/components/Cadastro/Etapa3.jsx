@@ -132,7 +132,7 @@ export default function Etapa3({ setEtapa }) {
             setMensagemCref("Erro ao verificar o CREF. Tente novamente.");
             console.error('Erro ao chamar a função:', error);
         }
-    }, 2000);
+    }, 5000);
 
     const verificarCrefNoBanco = async (cref) => {
         try {

@@ -127,7 +127,7 @@ const CardPlano = ({ onEditar, onDeletar }) => {
               <path d="M5.89352 20.627C2.46518 22.922 2.46518 26.662 5.89352 28.9428C9.78935 31.5495 16.1785 31.5495 20.0743 28.9428C23.5027 26.6478 23.5027 22.9078 20.0743 20.627C16.1927 18.0345 9.80352 18.0345 5.89352 20.627Z" stroke="#748CAB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
               <path d="M25.9814 28.333C27.0014 28.1205 27.9648 27.7097 28.7581 27.1005C30.9681 25.443 30.9681 22.7088 28.7581 21.0513C27.9789 20.4563 27.0298 20.0597 26.0239 19.833" stroke="#748CAB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <span className="text-base sm:text-xl 2xl:text-2xl font-light text-[var(--cor-primaria)] leading-tight  ms-6">5 aulas por mês </span>
+            <span className="text-base sm:text-xl 2xl:text-2xl font-light text-[var(--cor-primaria)] leading-tight  ms-6">5 aulas</span>
           </li>
           <li className="flex">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-[34px] sm:h-[34px]" viewBox="0 0 34 34" fill="none">

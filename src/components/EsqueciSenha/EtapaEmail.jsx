@@ -53,6 +53,11 @@ const EtapaEmail = ({ onAvancar }) => {
               name="email"
               type="email"
               label="Email"
+              marginBottomLinha="5.5%"
+              margin="50px auto 0px 0px"
+              corBordaInput={"#ccc"}
+              corTextoLabel={"#ccc"}
+
               {...register("email", {
                 required: "O email é obrigatório",
                 pattern: {

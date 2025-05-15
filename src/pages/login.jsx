@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import ColunaImagem from "../components/Login/ColunaImagem";
 import ColunaInputs from "../components/Login/ColunaInputs";
-import "../styles/login.css";
 import { Toaster } from 'react-hot-toast';
 
 
