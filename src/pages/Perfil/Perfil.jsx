@@ -10,17 +10,7 @@ import { caringuApi } from '../../provider/caringuApi';
 
 const Perfil = () => {
 
-    const [formData, setFormData] = useState({
-        nome: "",
-        email: "",
-        dataNascimento: "",
-        genero: "",
-        celular: "",
-        cref: "",
-        especialidade: [],
-        experiencia: "",
-        cidade: ""
-    });
+    const [formData, setFormData] = useState({});
 
     useEffect(() => {
         const pessoaId = sessionStorage.getItem('pessoaId');
@@ -34,7 +24,7 @@ const Perfil = () => {
                     }
                 });
                 const celularComMascara = formatarCelular(response.data.celular);
-
+                console.log(response.data);
                 setFormData({
                     ...response.data,
                     celular: celularComMascara,
@@ -55,12 +45,12 @@ const Perfil = () => {
 
     const navigate = useNavigate();
 
-    const handleRemoveEspecialidade = async (especialidade) => {
+    const handleRemoveEspecialidade = async (idEspecialidade) => {
         const pessoaId = sessionStorage.getItem('pessoaId');
         const token = sessionStorage.getItem('authToken');
 
         try {
-            await caringuApi.delete(`/personal-trainers/${pessoaId}/especialidades/${especialidade}`, {
+            await caringuApi.delete(`/personal-trainers/${pessoaId}/especialidades/${idEspecialidade}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -68,7 +58,7 @@ const Perfil = () => {
 
             setFormData((prev) => ({
                 ...prev,
-                especialidade: prev.especialidade.filter((item) => item !== especialidade),
+                especialidades: prev.especialidades.filter(e => e.id !== idEspecialidade)
             }));
         } catch (error) {
             console.error("Erro ao remover especialidade:", error);
@@ -288,11 +278,11 @@ const Perfil = () => {
                                                 Especialidade
                                             </label>
                                             <div className="flex flex-wrap gap-2">
-                                                {formData.especialidade?.map((especialidade, index) => (
-                                                    <div key={index} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
-                                                        {especialidade}
+                                                {formData.especialidades?.map((especialidade) => (
+                                                    <div key={especialidade.id} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
+                                                        {especialidade.nome}
                                                         <button
-                                                            onClick={() => handleRemoveEspecialidade(especialidade)}
+                                                            onClick={() => handleRemoveEspecialidade(especialidade.id)}
                                                             className="text-red-600"
                                                         >
                                                             <HiOutlineTrash className="w-5 h-5" />
@@ -302,11 +292,14 @@ const Perfil = () => {
                                                 <button
                                                     className="text-[16px] text-blue-600"
                                                     onClick={() => {
-                                                        const novaEspecialidade = prompt("Digite a nova especialidade:");
-                                                        if (novaEspecialidade) {
+                                                        const nomeEspecialidade = prompt("Digite a nova especialidade:");
+                                                        if (nomeEspecialidade) {
                                                             setFormData((prev) => ({
                                                                 ...prev,
-                                                                especialidade: [...prev.especialidade, novaEspecialidade],
+                                                                especialidades: [
+                                                                    ...(prev.especialidades || []),
+                                                                    { id: null, nome: nomeEspecialidade },
+                                                                ],
                                                             }));
                                                         }
                                                     }}
@@ -380,7 +373,7 @@ const Perfil = () => {
                                             />
                                         </div>
                                         <div>
-                                            {/* <label className="block text-[16px] font-medium text-gray-700">
+                                            <label className="block text-[16px] font-medium text-gray-700">
                                                 Cidade
                                             </label>
                                             <input
@@ -389,14 +382,14 @@ const Perfil = () => {
                                                 placeholder="Digite sua cidade"
                                                 value={formData.cidade || "São Paulo"}
                                                 onChange={handleInputChange}
-                                            /> */}
+                                            />
                                         </div>
                                     </div>
 
                                     {/* Botões Salvar e Cancelar */}
                                     <div className="flex justify-end gap-4 mt-6">
                                         <span className="px-6 py-2 text-[16px] text-white bg-[#B41F1F] rounded-md hover:bg-red-800"
-                                            onClick={() => setModalVisible(true) }
+                                            onClick={() => setModalVisible(true)}
                                         >
                                             Deletar Conta
                                         </span>

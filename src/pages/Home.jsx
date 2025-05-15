@@ -12,14 +12,39 @@ import CompromissosHoje from "../components/Utils/CompromissosHoje";
 import EstaSemana from "../components/Utils/EstaSemana";
 import KPI from "../components/Utils/KPI";
 
+import { caringuApi } from "../provider/caringuApi";
+
 import alert from "../assets/images/alert.svg";
 
 const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
+  const [treinosCriados, setTreinosCriados] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+          const personalId = sessionStorage.getItem('pessoaId');
+          const token = sessionStorage.getItem('authToken');
+  
+          const fetchData = async () => {
+              try {
+                  const response = await caringuApi.get(`/treino/treinos-criados/${personalId}`, {
+                      headers: {
+                          Authorization: `Bearer ${token}`
+                      }
+                  });
+
+                  setTreinosCriados(response.data);
+
+              } catch (error) {
+                  console.error("Erro ao buscar personal trainer:", error);
+              }
+          };
+  
+          fetchData();
+      }, []);
 
   useEffect(() => {
     let tokenExistente = sessionStorage.getItem("authToken");
@@ -91,7 +116,7 @@ const Home = () => {
     },
     {
       title: "Treinos criados",
-      value: 45,
+      value: treinosCriados,
       description: "Treinos criados recentemente.",
       icon: <FaDumbbell />,
       bgColor: "bg-[#46982B38]",
