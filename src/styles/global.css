@@ -31,10 +31,9 @@ body {
 
 .input-container {
   position: relative;
-  margin: 50px auto 0px 0;
 }
 
-.input-container input[type="text"],
+/* .input-container input[type="text"],
 .input-container input[type="password"],
 .input-container input[type="email"] {
   font-size: 16px;
@@ -45,30 +44,30 @@ body {
   background-color: transparent;
   outline: none;
   box-shadow: none;
-}
+} */
 
-.input-container .label {
+/* .input-container .label {
   position: absolute;
   top: 0;
   left: 0;
   color: #ccc;
   transition: all 0.3s ease;
   pointer-events: none;
-}
+} */
 
 /* Aplica ao focar */
-.input-container input:focus ~ .label {
+/* .input-container input:focus ~ .label {
   top: -20px;
   font-size: 16px;
   color: #333;
-}
+} */
 
 /* Aplica se tiver valor (não placeholder) */
-.input-container input:not(:placeholder-shown) ~ .label {
+/* .input-container input:not(:placeholder-shown) ~ .label {
   top: -20px;
   font-size: 16px;
   color: #333;
-}
+} */
 
 .input-container .underline {
   position: absolute;
@@ -84,4 +83,217 @@ body {
 .input-container input:focus ~ .underline,
 .input-container input:not(:placeholder-shown) ~ .underline {
   transform: scaleX(1);
+}
+
+
+/* .coluna1 {
+    height: 95vh;
+    width: 33%;
+    min-width: 250px;
+    left: 20px;
+
+    background-image: url(../assets/images/imagem-login.svg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border-radius: 1%;
+
+    position: relative;
+}
+
+.imagem-login {
+    height: 100%;
+    border-radius: 10px;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    width: 13vw;
+    max-width: 180px;
+    min-width: 100px;
+    height: auto;
+}
+
+.coluna2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+    width: 66%;
+}
+
+.seta-voltar {
+    margin-bottom: 3%;
+
+    a {
+        img {
+            width: 5vw;
+            height: 6vh;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .imagem-seta:hover {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.container {
+    height: 60%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.container-titulos {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+
+    h1 {
+        text-align: center;
+        font-size: clamp(1.5rem, 5vw, 3rem);
+        font-weight: 900;
+    }
+
+    p {
+        font-size: clamp(1rem, 2vw, 1.5rem);
+        text-align: center;
+        font-weight: 300;
+    }
+
+}
+
+.formulario {
+    height: 70%;
+    width: 70%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2%;
+
+    .recuperacao-senha {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        padding: 1% 0 3% 2%;
+
+        width: 100%;
+
+        a {
+            font-size: 16px;
+            color: var(--azul-escuro);
+            text-decoration: none;
+            position: relative;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        a:hover {
+            transform: scale(1.01);
+        }
+
+        a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 100%;
+            height: 1px;
+            background-color: var(--azul-escuro);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        a:hover::after {
+            transform: scaleX(1);
+        }
+    }
+} */
+
+footer {
+    display: flex;
+
+    a {
+        display: inline-block;
+
+        font-size: 16px;
+        font-weight: 700;
+
+        color: var(--azul-escuro);
+
+        text-decoration: none;
+        position: relative;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    a:hover {
+        transform: scale(1.01);
+    }
+
+    a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 100%;
+        height: 2px;
+        background-color: var(--azul-escuro);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    a:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+#navegacao {
+    a {
+        display: inline-block;
+
+        font-size: 16px;
+        font-weight: 700;
+
+        color: var(--cor-secundaria);
+
+        text-decoration: none;
+        position: relative;
+        transition: transform 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    a:hover {
+        transform: scale(1.01);
+    }
+
+    a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 100%;
+        height: 2px;
+        background-color: var(--cor-secundaria);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    a:hover::after {
+        transform: scaleX(1);
+    }
 }

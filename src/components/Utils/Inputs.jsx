@@ -11,7 +11,9 @@ const Input = ({
   required = false,
   isError,
   errorMessage,
-  underlineClassName = 'mb-[5.5%]',
+  margin,
+  marginBottomLinha,
+  corBordaInput,
   ...rest
 }) => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -20,18 +22,41 @@ const Input = ({
   const inputType = isPassword ? (mostrarSenha ? 'text' : 'password') : type;
 
   return (
-    <div className="input-container">
+    <div className="input-container"
+    style={{
+      margin: margin,
+    }}
+    >
       <input
         type={inputType}
+        className='text-base w-full border-solid border-b-2 p-0 bg-transparent shadow-none outline-none peer'
         id={id}
         name={name}
         required={required}
         placeholder="  "
+        style={{
+          borderColor:corBordaInput
+        }}
         {...rest}
       />
-      <label htmlFor={id} className="label">{label}</label>
+      <label htmlFor={id}
+      className="absolute pointer-events-none top-0 left-0 text-[#ccc] transition-all duration-300 ease-in-out
+               peer-placeholder-shown:text-base
+               peer-focus:top-[-20px]
+             peer-focus:text-[#333]
+               peer-not-placeholder-shown:top-[-20px]
+               peer-not-placeholder-shown:text-base
+             peer-not-placeholder-shown:text-[#333]
+              ">
+      {label}
+      </label>
 
-      <div className={`underline ${underlineClassName}`} />
+      <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#333] transition-all duration-300 ease-in-out
+      transform scale-x-0
+      peer-focus:scale-x-100
+      peer-not-placeholder-shown:scale-x-100"
+      style={{ marginBottom: marginBottomLinha }} />
+      {/* <div className="underline" style={{ marginBottom: marginBottomLinha }} /> */}
 
 
       <span className="error-message" style={{
@@ -48,7 +73,7 @@ const Input = ({
             <img
               src={info2}
               alt="Erro"
-              style={{ width: '16px', height: '16px' }}
+              className='w-4 h-4'
             />
             {errorMessage}
           </>
