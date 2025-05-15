@@ -4,14 +4,14 @@ const Label = ({
     id,
     nomeLabel,
     fontSize,
-    fonrWeight
+    fontWeight
 }) => {
     return(
         <>
         <label htmlFor={id} className="text-[var(--cor-primaria)]"
         style={{
             fontSize: fontSize,
-            fontWeight: fonrWeight}}>
+            fontWeight: fontWeight}}>
             {nomeLabel}
         </label>
         </>

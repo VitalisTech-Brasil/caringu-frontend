@@ -264,7 +264,7 @@ const Planos = () => {
                                                     id="plano"
                                                     nomeLabel="Nome do plano"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <InputPosLogin
                                                     id="plano"
@@ -285,7 +285,7 @@ const Planos = () => {
                                                     id="duracao"
                                                     nomeLabel="Período de duração do plano"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <div className="relative">
                                                     <select defaultValue=""
@@ -325,7 +325,7 @@ const Planos = () => {
                                                     id="preco"
                                                     nomeLabel="Preço por aula"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <InputPosLogin
                                                     id="preco"
@@ -356,7 +356,7 @@ const Planos = () => {
                                                     id="aulas"
                                                     nomeLabel="Quantidade de aulas no período"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <InputPosLogin
                                                     id="aulas"
@@ -453,7 +453,7 @@ const Planos = () => {
                                                     id="plano"
                                                     nomeLabel="Nome do plano"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <InputPosLogin
                                                     id="plano"
@@ -474,7 +474,7 @@ const Planos = () => {
                                                     id="duracao"
                                                     nomeLabel="Período de duração do plano"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <div className="relative">
                                                     <select defaultValue=""
@@ -514,7 +514,7 @@ const Planos = () => {
                                                     id="preco"
                                                     nomeLabel="Preço por aula"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <InputPosLogin
                                                     id="preco"
@@ -545,7 +545,7 @@ const Planos = () => {
                                                     id="aulas"
                                                     nomeLabel="Quantidade de aulas no período"
                                                     fontSize="20px"
-                                                    fonrWeight="500"
+                                                    fontWeight="500"
                                                 />
                                                 <InputPosLogin
                                                     id="aulas"

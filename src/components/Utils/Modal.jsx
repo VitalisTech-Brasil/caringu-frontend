@@ -21,7 +21,7 @@ function Modal({
         id="popup-modal"
         tabIndex="-1"
         className="fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full h-screen"
-        aria-label={() => ariaLabel}
+        aria-label={ariaLabel}
       >
         <div className="absolute inset-0 bg-[#000000] opacity-50"
               aria-label="Fundo Escurecido"
