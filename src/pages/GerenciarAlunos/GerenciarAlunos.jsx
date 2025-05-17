@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import {
   HiOutlineSearch,
   HiOutlineFilter,
   HiOutlineClock,
 } from "react-icons/hi";
 import { FaEllipsisV } from "react-icons/fa";
-import { Avatar, Dropdown, Button, Popover } from "flowbite-react";
+import { Avatar, Dropdown, Button, Popover, DropdownItem } from "flowbite-react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +19,33 @@ const GerenciarAlunos = () => {
   const [aguardandoTreino, setAguardandoTreino] = useState(false);
   const navigate = useNavigate();
 
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        openMenuId !== null &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        !buttonRef.current?.contains(event.target)
+      ) {
+        setOpenMenuId(null);
+      }
+    };
+
+    const handleScroll = () => setOpenMenuId(null);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [openMenuId]);
+
   const alunosAtivos = [
     {
       id: 1,
@@ -29,6 +57,102 @@ const GerenciarAlunos = () => {
     },
     {
       id: 2,
+      nome: "João Silva",
+      objetivo: "Ganhar Massa",
+      telefone: "1198765-4321",
+      avatar: "https://via.placeholder.com/50",
+      status: "aguardandoTreino",
+    },
+    {
+      id: 3,
+      nome: "Maria Gladys Mello da Silva",
+      objetivo: "Emagrecer",
+      telefone: "1191234-5678",
+      avatar: "https://via.placeholder.com/50",
+      status: "anamnesesPendentes",
+    },
+    {
+      id: 4,
+      nome: "João Silva",
+      objetivo: "Ganhar Massa",
+      telefone: "1198765-4321",
+      avatar: "https://via.placeholder.com/50",
+      status: "aguardandoTreino",
+    },
+    {
+      id: 5,
+      nome: "Maria Gladys Mello da Silva",
+      objetivo: "Emagrecer",
+      telefone: "1191234-5678",
+      avatar: "https://via.placeholder.com/50",
+      status: "anamnesesPendentes",
+    },
+    {
+      id: 6,
+      nome: "João Silva",
+      objetivo: "Ganhar Massa",
+      telefone: "1198765-4321",
+      avatar: "https://via.placeholder.com/50",
+      status: "aguardandoTreino",
+    },
+    {
+      id: 7,
+      nome: "Maria Gladys Mello da Silva",
+      objetivo: "Emagrecer",
+      telefone: "1191234-5678",
+      avatar: "https://via.placeholder.com/50",
+      status: "anamnesesPendentes",
+    },
+    {
+      id: 8,
+      nome: "João Silva",
+      objetivo: "Ganhar Massa",
+      telefone: "1198765-4321",
+      avatar: "https://via.placeholder.com/50",
+      status: "aguardandoTreino",
+    },
+    {
+      id: 9,
+      nome: "Maria Gladys Mello da Silva",
+      objetivo: "Emagrecer",
+      telefone: "1191234-5678",
+      avatar: "https://via.placeholder.com/50",
+      status: "anamnesesPendentes",
+    },
+    {
+      id: 10,
+      nome: "João Silva",
+      objetivo: "Ganhar Massa",
+      telefone: "1198765-4321",
+      avatar: "https://via.placeholder.com/50",
+      status: "aguardandoTreino",
+    },
+    {
+      id: 11,
+      nome: "Maria Gladys Mello da Silva",
+      objetivo: "Emagrecer",
+      telefone: "1191234-5678",
+      avatar: "https://via.placeholder.com/50",
+      status: "anamnesesPendentes",
+    },
+    {
+      id: 12,
+      nome: "João Silva",
+      objetivo: "Ganhar Massa",
+      telefone: "1198765-4321",
+      avatar: "https://via.placeholder.com/50",
+      status: "aguardandoTreino",
+    },
+    {
+      id: 13,
+      nome: "Maria Gladys Mello da Silva",
+      objetivo: "Emagrecer",
+      telefone: "1191234-5678",
+      avatar: "https://via.placeholder.com/50",
+      status: "anamnesesPendentes",
+    },
+    {
+      id: 14,
       nome: "João Silva",
       objetivo: "Ganhar Massa",
       telefone: "1198765-4321",
@@ -115,13 +239,17 @@ const GerenciarAlunos = () => {
                         <div className="flex gap-2">
                           <Button
                             color={sortOrder === "A-Z" ? "blue" : "gray"}
-                            onClick={() => setSortOrder("A-Z")}
+                            onClick={() =>
+                              setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z"))
+                            }
                           >
                             A-Z
                           </Button>
                           <Button
                             color={sortOrder === "Z-A" ? "blue" : "gray"}
-                            onClick={() => setSortOrder("Z-A")}
+                            onClick={() =>
+                              setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A"))
+                            }
                           >
                             Z-A
                           </Button>
@@ -129,18 +257,14 @@ const GerenciarAlunos = () => {
                         <div className="flex gap-2 flex-wrap">
                           <Button
                             color={anamnesesPendentes ? "blue" : "gray"}
-                            onClick={() =>
-                              setAnamnesesPendentes((prev) => !prev)
-                            }
+                            onClick={() => setAnamnesesPendentes((prev) => !prev)}
                           >
                             <HiOutlineClock className="w-4 h-4 mr-1" />
                             Anamneses Pendentes
                           </Button>
                           <Button
                             color={aguardandoTreino ? "orange" : "gray"}
-                            onClick={() =>
-                              setAguardandoTreino((prev) => !prev)
-                            }
+                            onClick={() => setAguardandoTreino((prev) => !prev)}
                           >
                             <HiOutlineClock className="w-4 h-4 mr-1 text-orange-500" />
                             Aguardando Treino
@@ -153,39 +277,43 @@ const GerenciarAlunos = () => {
                       <HiOutlineFilter className="w-5 h-5 text-gray-600" />
                     </button>
                   </Popover>
+
                 </div>
                 <div className="space-y-4 overflow-y-auto max-h-[400px]">
-                  
+
                   {filteredAlunos.map((aluno) => (
                     <div
                       key={aluno.id}
-                      className="flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4"
+                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
                     >
                       <Avatar img={aluno.avatar} rounded />
+
                       <div className="flex-1">
                         <p className="font-bold text-md">{aluno.nome}</p>
-                        <p className="text-sm text-gray-600">
-                          Objetivo: {aluno.objetivo}
-                        </p>
+                        <p className="text-sm text-gray-600">Objetivo: {aluno.objetivo}</p>
                         <p className="text-sm text-gray-600 flex items-center gap-1">
                           <HiOutlineClock className="w-4 h-4" />
                           {aluno.telefone}
                         </p>
                       </div>
-                      <Popover
-                        trigger="click"
-                        placement="bottom-end"
-                        content={
-                          <div className="bg-white text-gray-800 rounded-md shadow-lg p-2 w-48">
+
+                      {/* Botão + menu */}
+                      <div className="relative" ref={buttonRef}>
+                        <button onClick={() => setOpenMenuId(openMenuId === aluno.id ? null : aluno.id)}>
+                          <FaEllipsisV className="text-xl cursor-pointer" />
+                        </button>
+
+                        {openMenuId === aluno.id && (
+                          <div
+                            ref={menuRef}
+                            className="absolute top-0 right-full mr-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-2 w-48"
+                          >
                             <AlunoActionsMenu aluno={aluno} />
                           </div>
-                        }
-                      >
-                        <button className="p-2 text-gray-600 rounded hover:bg-gray-100">
-                          <FaEllipsisV />
-                        </button>
-                      </Popover>
+                        )}
+                      </div>
                     </div>
+
                   ))}
                 </div>
               </div>
@@ -197,18 +325,9 @@ const GerenciarAlunos = () => {
                 <h2 className="text-lg font-bold mb-4">
                   Presença de alunos por:
                 </h2>
-                <Dropdown
-                  label={filter}
-                  inline
-                  className="mb-4"
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <Dropdown.Item onClick={() => setFilter("Semana")}>
-                    Semana
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => setFilter("Mês")}>
-                    Mês
-                  </Dropdown.Item>
+                <Dropdown label={filter} inline className="mb-4">
+                  <DropdownItem onClick={() => setFilter("Semana")}>Semana</DropdownItem>
+                  <DropdownItem onClick={() => setFilter("Mês")}>Mês</DropdownItem>
                 </Dropdown>
                 <div className="space-y-2 overflow-y-auto max-h-[200px]">
                   {/* Conteúdo do widget */}
