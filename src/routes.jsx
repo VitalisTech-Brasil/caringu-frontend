@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Cadastro from "./pages/Cadastro";
 import Error from "./pages/Error";
@@ -11,11 +12,24 @@ import Planos from "./pages/Planos/Planos.jsx";
 import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
+import SessaoExpiradaModal from "./components/Utils/SessaoExpiradaModal.jsx";
 import "./styles/global.css";
 
 const AppRoutes = () => {
+
+  const [sessaoExpirada, setSessaoExpirada] = useState(false);
+
+  useEffect(() => {
+    const handler = () => {
+      setSessaoExpirada(true);
+    };
+    window.addEventListener('sessaoExpirada', handler);
+    return () => window.removeEventListener('sessaoExpirada', handler);
+  }, []);
+
   return (
     <Router>
+      <SessaoExpiradaModal visible={sessaoExpirada} onClose={() => setSessaoExpirada(false)} />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
