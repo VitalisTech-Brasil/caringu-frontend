@@ -11,6 +11,10 @@ import Planos from "./pages/Planos/Planos.jsx";
 import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
+import RegistroCorporal from "./pages/Relatorios/RegistroCorporal.jsx";
+import PerfilAluno from "./pages/GerenciarAlunos/PerfilAluno.jsx";
+import GerenciarTreinos from "./pages/GerenciarTreinos/GerenciarTreinos.jsx";
+import CriarTreino from "./pages/GerenciarTreinos/CriarTreino.jsx";
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -23,8 +27,12 @@ const AppRoutes = () => {
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/home" element={<Home />} />
         <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
+        <Route path="/gerenciar-treinos" element={<GerenciarTreinos />} />
+        <Route path="/criar-treino" element={<CriarTreino />} />
         <Route path="/relatorio-treino/:id" element={<RelatorioTreino />} />
         <Route path="/dashboard/:idAluno/:idTreino" element={<Dashboard />} />
+        <Route path="/relatorios/registro-corporal/:idAluno" element={<RegistroCorporal />} />
+        <Route path="/perfil-aluno/:idAluno" element={<PerfilAluno />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/planos" element={<Planos />} />
         <Route path="/procurando-personal" element={<ProcurandoPersonal />} /> {/* Nova rota */}
