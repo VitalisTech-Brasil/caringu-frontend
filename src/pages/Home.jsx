@@ -27,9 +27,8 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const response = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
-
         setTreinosCriados(response.data);
-
+        
       } catch (error) {
         console.error("Erro ao buscar personal trainer:", error);
       }
@@ -41,6 +40,7 @@ const Home = () => {
   // Define o dia atual como padrão ao carregar a página
   useEffect(() => {
     const today = new Date();
+    document.title = "Home | CaringU"
     setSelectedDay({
       day: today.toLocaleDateString("pt-BR", { weekday: "long" }),
       date: today.toLocaleDateString("pt-BR", {
