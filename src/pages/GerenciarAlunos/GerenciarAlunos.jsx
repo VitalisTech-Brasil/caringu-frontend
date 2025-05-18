@@ -289,6 +289,7 @@ const GerenciarAlunos = () => {
                               e.stopPropagation(); // Prevent card click event
                               setOpenMenuId(openMenuId === aluno.id ? null : aluno.id);
                             }}
+                            className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                           >
                             <FaEllipsisV className="text-xl cursor-pointer" />
                           </button>
