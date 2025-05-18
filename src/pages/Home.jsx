@@ -17,7 +17,11 @@ import { caringuApi } from "../provider/caringuApi";
 const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
+
+  const [alunosAtivos, setAlunosAtivos] = useState(0);
+  const [treinosVencimento, setTreinosVencimento] = useState(0);
   const [treinosCriados, setTreinosCriados] = useState(0);
+  const [anamnesesPendentes, setAnamnesesPendentes] = useState(0);
 
   const navigate = useNavigate();
 
@@ -26,9 +30,18 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
-        const response = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
-        setTreinosCriados(response.data);
+        const totalAlunosAtivos = await caringuApi.get(`/planos-contratados/kpis/alunos-ativos/${personalId}`);
+        setAlunosAtivos(totalAlunosAtivos.data);
         
+        const totalTreinosVencimento = await caringuApi.get(`/alunos-treinos/kpis/proximos-vencimento/${personalId}`);
+        setTreinosVencimento(totalTreinosVencimento.data);
+
+        const totalTreinosCriados = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
+        setTreinosCriados(totalTreinosCriados.data);
+
+        const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
+        setAnamnesesPendentes(totalAnamnesePendentes.data);
+
       } catch (error) {
         console.error("Erro ao buscar personal trainer:", error);
       }
@@ -86,7 +99,7 @@ const Home = () => {
   const kpis = [
     {
       title: "Alunos ativos",
-      value: 120,
+      value: alunosAtivos,
       description: "Número total de alunos ativos.",
       icon: <FaUsers />,
       bgColor: "bg-[#748CAB1A]",
@@ -102,7 +115,7 @@ const Home = () => {
     },
     {
       title: "Treinos próximos do vencimento",
-      value: 8,
+      value: treinosVencimento,
       description: "Treinos que expiram em breve.",
       icon: <FaClock />,
       bgColor: "bg-[#E96E354F]",
@@ -110,7 +123,7 @@ const Home = () => {
     },
     {
       title: "Anamneses pendentes",
-      value: 5,
+      value: anamnesesPendentes,
       description: "Anamneses aguardando preenchimento.",
       icon: <FaClipboardList />,
       bgColor: "bg-yellow-100",
