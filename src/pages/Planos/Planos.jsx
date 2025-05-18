@@ -38,7 +38,7 @@ const Planos = () => {
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
     function useResponsiveStyles() {
-        const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
+    const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
 
         useEffect(() => {
 
@@ -204,8 +204,9 @@ const Planos = () => {
                                 {planos.map((plano) => (
                                     <CardPlano
                                         key={plano.id}
-                                        onEditar={() => handleOpenEditModal(plano)} // Passa o plano para edição
+                                        onEditar={() => handleOpenEditModal(plano)} 
                                         onDeletar={openDeleteModal}
+                                        showContratarPlano={false}
                                     />
                                 ))}
 

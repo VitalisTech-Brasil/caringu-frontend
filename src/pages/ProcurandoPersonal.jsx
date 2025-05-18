@@ -3,6 +3,7 @@ import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Header from "../components/Personal/Header/Header";
 import MenuLateral from "../components/Personal/MenuLateral/MenuLateral";
+import { useNavigate } from "react-router-dom";
 
 const mockPersonalTrainers = [
   {
@@ -41,6 +42,8 @@ const ProcurandoPersonal = () => {
     periodoPlano: "",
     faixaPreco: { min: "", max: "" },
   });
+
+   const navigate = useNavigate();
 
   const toggleFilterModal = () => {
     setIsFilterOpen((prev) => !prev);
@@ -97,7 +100,7 @@ const ProcurandoPersonal = () => {
             <div className="flex items-center gap-4 bg-[#fffdf6] border border-gray-300 rounded-md p-4 shadow-sm">
               <input
                 type="text"
-                placeholder="Pesquisar treino"
+                placeholder="Pesquisar Personal"
                 value={searchTerm}
                 onChange={handleSearch}
                 className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#1E293B]"
@@ -171,7 +174,9 @@ const ProcurandoPersonal = () => {
                         <p>Email: {trainer.email}</p>
                         <p>Contato: {trainer.telefone}</p>
                       </div>
-                      <button className="mt-4 bg-[#7C8DB5] text-white rounded px-4 py-2 font-semibold hover:brightness-110">
+                      <button 
+                      onClick={() => navigate("/perfil-personal")}
+                      className="mt-4 bg-[#7C8DB5] text-white rounded px-4 py-2 font-semibold hover:brightness-110">
                         Ver planos do personal
                       </button>
                     </div>
