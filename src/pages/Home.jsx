@@ -25,26 +25,26 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-          const personalId = sessionStorage.getItem('pessoaId');
-          const token = sessionStorage.getItem('authToken');
-  
-          const fetchData = async () => {
-              try {
-                  const response = await caringuApi.get(`/treino/treinos-criados/${personalId}`, {
-                      headers: {
-                          Authorization: `Bearer ${token}`
-                      }
-                  });
+    const personalId = sessionStorage.getItem('pessoaId');
+    const token = sessionStorage.getItem('authToken');
 
-                  setTreinosCriados(response.data);
+    const fetchData = async () => {
+      try {
+        const response = await caringuApi.get(`/treino/treinos-criados/${personalId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
-              } catch (error) {
-                  console.error("Erro ao buscar personal trainer:", error);
-              }
-          };
-  
-          fetchData();
-      }, []);
+        setTreinosCriados(response.data);
+
+      } catch (error) {
+        console.error("Erro ao buscar personal trainer:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     let tokenExistente = sessionStorage.getItem("authToken");
@@ -57,6 +57,7 @@ const Home = () => {
   // Define o dia atual como padrão ao carregar a página
   useEffect(() => {
     const today = new Date();
+    document.title = "Home | CaringU"
     setSelectedDay({
       day: today.toLocaleDateString("pt-BR", { weekday: "long" }),
       date: today.toLocaleDateString("pt-BR", {

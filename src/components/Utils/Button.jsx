@@ -11,6 +11,7 @@ const Botton = ({ id,
                   type,
                   fontSize,
                   logo,
+                  logoSvg,
                   ariaLabel,
                   borderColor,
                   borderStyle,
@@ -50,6 +51,7 @@ const Botton = ({ id,
         gap-3
       "
     >
+      {logoSvg}
       {logo && <img src={logo} alt="Logo" />}
       {texto}
     </button>

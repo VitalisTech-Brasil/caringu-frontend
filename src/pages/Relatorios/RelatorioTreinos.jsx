@@ -1,17 +1,17 @@
 import React, { use } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
-import Input from '../../components/Utils/Inputs'
-import Button from '../../components/Utils/Button'
+import ButtonInterno from '../../components/Utils/Button'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams, useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast';
-import CustomToast from '../../components/Utils/CustomToast'
-import {caringuApi} from '../../provider/caringuApi';
+import { Popover, Button } from "flowbite-react";
+import { HiOutlineFilter } from "react-icons/hi";
 
 const RelatorioTreinos = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const params = useParams();
     const navigate = useNavigate();
 
@@ -21,31 +21,32 @@ const RelatorioTreinos = () => {
     };
 
     useEffect(() => {
-        pegarExercicios(params.id)
+        document.title = "Relatórios de Treino | CaringU"
+        // pegarExercicios(params.id)
     }, [])
 
-    const pegarExercicios = async (id) => {
-        try {
-            const response = await caringuApi.get(`/treinos/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
-                },
-            });
+    // const pegarExercicios = async (id) => {
+    //     try {
+    //         const response = await caringuApi.get(`/treinos/${id}`, {
+    //             headers: {
+    //                 'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
+    //             },
+    //         });
 
-            if (response.status === 200) {
-                console.log('Treinos obtidos com sucesso:', response.data);
-                // Aqui você pode atualizar o estado com os treinos recebidos
-                // Exemplo: setTreinos(response.data);
-            } else {
-                throw new Error('Erro ao obter os treinos.');
-            }
-        } catch (error) {
-            console.error('Erro ao buscar os treinos:', error);
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Erro ao buscar os treinos. Tente novamente mais tarde." />
-            ));
-        }
-    };
+    //         if (response.status === 200) {
+    //             console.log('Treinos obtidos com sucesso:', response.data);
+    //             // Aqui você pode atualizar o estado com os treinos recebidos
+    //             // Exemplo: setTreinos(response.data);
+    //         } else {
+    //             throw new Error('Erro ao obter os treinos.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Erro ao buscar os treinos:', error);
+    //         toast.custom((t) => (
+    //             <CustomToast t={t} type="error" message="Erro ao buscar os treinos. Tente novamente mais tarde." />
+    //         ));
+    //     }
+    // };
 
     const treinos = [
         {
@@ -79,9 +80,22 @@ const RelatorioTreinos = () => {
             quantidadeExercicios: 6,
         },
     ];
+
+    const filteredTreinos = treinos
+        .filter((treino) => {
+            if (searchTerm && !treino.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
+                return false;
+            }
+            return true;
+        })
+        .sort((a, b) => {
+            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
+            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+            return 0;
+        });
+
     const idAluno = params.id;
     const irParaDash = (idTreino) => {
-        console.log(idAluno, idTreino)
         navigate(`/dashboard/${idAluno}/${idTreino}`);
     }
 
@@ -101,30 +115,48 @@ const RelatorioTreinos = () => {
                             </Link>
                             <h1>Selecionar Treino</h1>
                         </div>
-                        <div className="flex flex-wrap items-center gap-4 mt-5">
-                            <div className="w-full md:w-110">
-                                <Input
-                                    id="treino"
-                                    name="treino"
-                                    label="Pesquisar Treino"
-                                    type="text"
-                                    required={true}
-                                />
-                            </div>
-                            <div className="flex items-center justify-between gap-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 cursor-pointer" viewBox="0 0 35 35" fill="none">
-                                    <path d="M16.7707 30.6243C24.4221 30.6243 30.6248 24.4216 30.6248 16.7702C30.6248 9.11874 24.4221 2.91602 16.7707 2.91602C9.11923 2.91602 2.9165 9.11874 2.9165 16.7702C2.9165 24.4216 9.11923 30.6243 16.7707 30.6243Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M32.0832 32.0827L29.1665 29.166" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 cursor-pointer" viewBox="0 0 35 35" fill="none">
-                                    <path d="M7.87516 3.0625H27.1252C28.7293 3.0625 30.0418 4.375 30.0418 5.97917V9.1875C30.0418 10.3542 29.3127 11.8125 28.5835 12.5417L22.3127 18.0833C21.4377 18.8125 20.8543 20.2708 20.8543 21.4375V27.7083C20.8543 28.5833 20.271 29.75 19.5418 30.1875L17.5002 31.5C15.6043 32.6667 12.9793 31.3542 12.9793 29.0208V21.2917C12.9793 20.2708 12.396 18.9583 11.8127 18.2292L6.271 12.3958C5.54183 11.6667 4.9585 10.3542 4.9585 9.47917V6.125C4.9585 4.375 6.271 3.0625 7.87516 3.0625Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M15.9396 3.0625L8.75 14.5833" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
+                        <div className="flex items-center gap-2 mb-4 max-w-[400px] mt-5">
+                            <input
+                                type="text"
+                                placeholder="Pesquisar treino"
+                                className="flex-1 border border-gray-300 rounded-md p-2"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <Popover
+                                placement="bottom"
+                                trigger="click"
+                                content={
+                                    <div className="p-4 space-y-4 ">
+                                        <div className="flex gap-2">
+                                            <Button
+                                                color={sortOrder === "A-Z" ? "blue" : "gray"}
+                                                onClick={() =>
+                                                    setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z"))
+                                                }
+                                            >
+                                                A-Z
+                                            </Button>
+                                            <Button
+                                                color={sortOrder === "Z-A" ? "blue" : "gray"}
+                                                onClick={() =>
+                                                    setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A"))
+                                                }
+                                            >
+                                                Z-A
+                                            </Button>
+                                        </div>
+                                    </div>
+                                }
+                            >
+                                <button className="p-2 bg-gray-200 rounded-md">
+                                    <HiOutlineFilter className="w-5 h-5 text-gray-600" />
+                                </button>
+                            </Popover>
                         </div>
                         <div className="flex flex-col items-center gap-4 mt-5 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-140 overflow-y-auto overflow-x-hidden">
 
-                            {treinos.map((treino) => (
+                            {filteredTreinos.map((treino) => (
                                 <div key={treino.id} className="w-full bg-[var(--cor-secundaria)] border border-[#E6E6E2] flex flex-wrap items-center rounded-lg justify-between p-4">
                                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 w-full">
                                         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -142,7 +174,7 @@ const RelatorioTreinos = () => {
                                                 <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
                                             </div>
                                         </div>
-                                        <Button
+                                        <ButtonInterno
                                             texto="Ver Relatório"
                                             type="submit"
                                             cor="var(--azul-claro)"
@@ -151,7 +183,7 @@ const RelatorioTreinos = () => {
                                             width="268px"
                                             height="50px"
                                             font-size="14px"
-                                            onClick={() => {irParaDash(treino.id)}}
+                                            onClick={() => { irParaDash(treino.id) }}
                                         />
                                     </div>
                                 </div>
