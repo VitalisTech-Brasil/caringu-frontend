@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import {
   HiOutlineSearch,
   HiOutlineFilter,
   HiOutlineClock,
 } from "react-icons/hi";
 import { FaEllipsisV } from "react-icons/fa";
-import { Avatar, Dropdown, Button, Popover } from "flowbite-react";
+import { Avatar, Dropdown, Button, Popover, DropdownItem } from "flowbite-react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { useNavigate } from "react-router-dom";
@@ -18,25 +19,119 @@ const GerenciarAlunos = () => {
   const [aguardandoTreino, setAguardandoTreino] = useState(false);
   const navigate = useNavigate();
 
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    document.title = "Gerenciar Alunos | CaringU"
+    const handleClickOutside = (event) => {
+      if (
+        openMenuId !== null &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        !buttonRef.current?.contains(event.target)
+      ) {
+        setOpenMenuId(null);
+      }
+    };
+
+    const handleScroll = () => setOpenMenuId(null);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [openMenuId]);
+
   const alunosAtivos = [
     {
       id: 1,
-      nome: "Maria Gladys Mello da Silva",
-      objetivo: "Emagrecer",
-      telefone: "1191234-5678",
-      avatar: "https://via.placeholder.com/50",
+      nome: "Ana Paula Oliveira",
+      objetivo: "Definição Muscular",
+      telefone: "1199988-1234",
+      avatar: "https://placehold.co/50x50",
       status: "anamnesesPendentes",
+      aulasRestantes: 8.5,
+      frequenciaSemanal: 3.0,
     },
     {
       id: 2,
-      nome: "João Silva",
-      objetivo: "Ganhar Massa",
-      telefone: "1198765-4321",
-      avatar: "https://via.placeholder.com/50",
+      nome: "Carlos Eduardo Ramos",
+      objetivo: "Hipertrofia",
+      telefone: "1198877-2345",
+      avatar: "https://placehold.co/50x50",
       status: "aguardandoTreino",
+      aulasRestantes: 12.0,
+      frequenciaSemanal: 4.0,
     },
-    // Adicione mais alunos aqui
+    {
+      id: 3,
+      nome: "Juliana Martins Silva",
+      objetivo: "Emagrecimento",
+      telefone: "1197766-3456",
+      avatar: "https://placehold.co/50x50",
+      status: "treinoEmAndamento",
+      aulasRestantes: 5.0,
+      frequenciaSemanal: 2.0,
+    },
+    {
+      id: 4,
+      nome: "Fernando Costa Souza",
+      objetivo: "Resistência Cardiorrespiratória",
+      telefone: "1196655-4567",
+      avatar: "https://placehold.co/50x50",
+      status: "anamnesesPendentes",
+      aulasRestantes: 10.0,
+      frequenciaSemanal: 3.0,
+    },
+    {
+      id: 5,
+      nome: "Mariana Lima Rocha",
+      objetivo: "Reabilitação Pós-cirúrgica",
+      telefone: "1195544-5678",
+      avatar: "https://placehold.co/50x50",
+      status: "aguardandoTreino",
+      aulasRestantes: 6.5,
+      frequenciaSemanal: 2.0,
+    },
+    {
+      id: 6,
+      nome: "Rafael dos Santos",
+      objetivo: "Condicionamento Físico",
+      telefone: "1194433-6789",
+      avatar: "https://placehold.co/50x50",
+      status: "treinoEmAndamento",
+      aulasRestantes: 14.0,
+      frequenciaSemanal: 5.0,
+    },
+    {
+      id: 7,
+      nome: "Bianca Ferreira Melo",
+      objetivo: "Qualidade de Vida",
+      telefone: "1193322-7890",
+      avatar: "https://placehold.co/50x50",
+      status: "treinoConcluido",
+      aulasRestantes: 0.0,
+      frequenciaSemanal: 2.0,
+    },
+    {
+      id: 8,
+      nome: "Gustavo Almeida Nunes",
+      objetivo: "Ganho de Peso",
+      telefone: "1192211-8901",
+      avatar: "https://placehold.co/50x50",
+      status: "anamnesesPendentes",
+      aulasRestantes: 7.5,
+      frequenciaSemanal: 3.0,
+    }
   ];
+
+
+
 
   // Componente do menu de ações do aluno
   const AlunoActionsMenu = ({ aluno }) => (
@@ -65,6 +160,14 @@ const GerenciarAlunos = () => {
           <path d="M12 16V8" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
+      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.id}`)}>
+        Progressão corporal
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M2.77017 18.25C2.89017 20.31 4.00017 22 6.76017 22H17.2402C20.0002 22 21.1002 20.31 21.2302 18.25L21.7502 9.99C21.8902 7.83 20.1702 6 18.0002 6C17.3902 6 16.8302 5.65 16.5502 5.11L15.8302 3.66C15.3702 2.75 14.1702 2 13.1502 2H10.8602C9.83017 2 8.63017 2.75 8.17017 3.66L7.45017 5.11C7.17017 5.65 6.61017 6 6.00017 6C3.83017 6 2.11017 7.83 2.25017 9.99L2.51017 14.06" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M10.5002 8H13.5002" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M12.0002 18C13.7902 18 15.2502 16.54 15.2502 14.75C15.2502 12.96 13.7902 11.5 12.0002 11.5C10.2102 11.5 8.75018 12.96 8.75018 14.75C8.75018 16.54 10.2102 18 12.0002 18Z" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
     </div>
   );
 
@@ -72,12 +175,19 @@ const GerenciarAlunos = () => {
     navigate(`/relatorio-treino/${id}`);
   }
 
+  const redirectToPerfilAluno = (id) => {
+    navigate(`/perfil-aluno/${id}`);
+  }
+
   // Aplicar filtros e ordenação
   const filteredAlunos = alunosAtivos
     .filter((aluno) => {
       if (anamnesesPendentes && aluno.status !== "anamnesesPendentes")
         return false;
-      if (aguardandoTreino && aluno.status !== "aguardandoTreino") return false;
+      if (aguardandoTreino && aluno.status !== "aguardandoTreino")
+        return false;
+      if (searchTerm && !aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+        return false;
       return true;
     })
     .sort((a, b) => {
@@ -94,7 +204,7 @@ const GerenciarAlunos = () => {
         <main className="p-6 font-sans space-y-6">
           <div className="grid grid-cols-3 gap-6">
             <div className="col-span-2">
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl shadow-sm p-6 h-full">
                 <h2 className="text-xl font-bold mb-4">Alunos Ativos</h2>
                 <div className="flex items-center gap-2 mb-4">
                   <input
@@ -104,9 +214,6 @@ const GerenciarAlunos = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <button className="p-2 bg-gray-200 rounded-md">
-                    <HiOutlineSearch className="w-5 h-5 text-gray-600" />
-                  </button>
                   <Popover
                     placement="bottom"
                     trigger="click"
@@ -115,13 +222,17 @@ const GerenciarAlunos = () => {
                         <div className="flex gap-2">
                           <Button
                             color={sortOrder === "A-Z" ? "blue" : "gray"}
-                            onClick={() => setSortOrder("A-Z")}
+                            onClick={() =>
+                              setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z"))
+                            }
                           >
                             A-Z
                           </Button>
                           <Button
                             color={sortOrder === "Z-A" ? "blue" : "gray"}
-                            onClick={() => setSortOrder("Z-A")}
+                            onClick={() =>
+                              setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A"))
+                            }
                           >
                             Z-A
                           </Button>
@@ -129,18 +240,14 @@ const GerenciarAlunos = () => {
                         <div className="flex gap-2 flex-wrap">
                           <Button
                             color={anamnesesPendentes ? "blue" : "gray"}
-                            onClick={() =>
-                              setAnamnesesPendentes((prev) => !prev)
-                            }
+                            onClick={() => setAnamnesesPendentes((prev) => !prev)}
                           >
                             <HiOutlineClock className="w-4 h-4 mr-1" />
                             Anamneses Pendentes
                           </Button>
                           <Button
                             color={aguardandoTreino ? "orange" : "gray"}
-                            onClick={() =>
-                              setAguardandoTreino((prev) => !prev)
-                            }
+                            onClick={() => setAguardandoTreino((prev) => !prev)}
                           >
                             <HiOutlineClock className="w-4 h-4 mr-1 text-orange-500" />
                             Aguardando Treino
@@ -153,73 +260,105 @@ const GerenciarAlunos = () => {
                       <HiOutlineFilter className="w-5 h-5 text-gray-600" />
                     </button>
                   </Popover>
+
                 </div>
-                <div className="space-y-4 overflow-y-auto max-h-[400px]">
-                  
+                <div className="space-y-4 overflow-y-auto max-h-[620px]">
+
                   {filteredAlunos.map((aluno) => (
                     <div
                       key={aluno.id}
-                      className="flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4"
+                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer"
+                      onClick={() => redirectToPerfilAluno(aluno.id)}
                     >
                       <Avatar img={aluno.avatar} rounded />
+
                       <div className="flex-1">
                         <p className="font-bold text-md">{aluno.nome}</p>
-                        <p className="text-sm text-gray-600">
-                          Objetivo: {aluno.objetivo}
-                        </p>
+                        <p className="text-sm text-gray-600">Objetivo: {aluno.objetivo}</p>
                         <p className="text-sm text-gray-600 flex items-center gap-1">
                           <HiOutlineClock className="w-4 h-4" />
                           {aluno.telefone}
                         </p>
                       </div>
-                      <Popover
-                        trigger="click"
-                        placement="bottom-end"
-                        content={
-                          <div className="bg-white text-gray-800 rounded-md shadow-lg p-2 w-48">
-                            <AlunoActionsMenu aluno={aluno} />
-                          </div>
-                        }
-                      >
-                        <button className="p-2 text-gray-600 rounded hover:bg-gray-100">
-                          <FaEllipsisV />
-                        </button>
-                      </Popover>
+
+                      {/* Botão + menu */}
+                      <div className="flex justify-end items-center">
+                        <div className="relative" ref={buttonRef}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent card click event
+                              setOpenMenuId(openMenuId === aluno.id ? null : aluno.id);
+                            }}
+                            className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
+                          >
+                            <FaEllipsisV className="text-xl cursor-pointer" />
+                          </button>
+
+                          {openMenuId === aluno.id && (
+                            <div
+                              ref={menuRef}
+                              onClick={(e) => e.stopPropagation()} // Prevent card click event
+                              className="absolute top-0 right-full mr-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-2"
+                            >
+                              <AlunoActionsMenu aluno={aluno} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
+
                   ))}
                 </div>
               </div>
             </div>
 
             {/* Seção Direita: Widgets */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="space-y-4 max-h-full">
+              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2">
                 <h2 className="text-lg font-bold mb-4">
                   Presença de alunos por:
                 </h2>
-                <Dropdown
-                  label={filter}
-                  inline
-                  className="mb-4"
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <Dropdown.Item onClick={() => setFilter("Semana")}>
-                    Semana
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => setFilter("Mês")}>
-                    Mês
-                  </Dropdown.Item>
+                <Dropdown label={filter} inline className="mb-4">
+                  <DropdownItem onClick={() => setFilter("Semana")}>Semana</DropdownItem>
+                  <DropdownItem onClick={() => setFilter("Mês")}>Mês</DropdownItem>
                 </Dropdown>
-                <div className="space-y-2 overflow-y-auto max-h-[200px]">
+                <div className="space-y-2 overflow-y-auto max-h-[250px]">
                   {/* Conteúdo do widget */}
+                  {filteredAlunos.map((aluno) => (
+                    <div
+                      key={aluno.id}
+                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                    >
+                      <Avatar img={aluno.avatar} rounded />
+
+                      <div className="flex-1">
+                        <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
+                        <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaSemanal}x por semana</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2">
                 <h2 className="text-lg font-bold mb-4">
                   Alunos com o plano perto do fim:
                 </h2>
-                <div className="space-y-2 overflow-y-auto max-h-[200px]">
+                <div className="space-y-2 overflow-y-auto max-h-[270px]">
                   {/* Conteúdo do widget */}
+                  {filteredAlunos.map((aluno) => (
+                    <div
+                      key={aluno.id}
+                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                    >
+                      <Avatar img={aluno.avatar} rounded />
+
+                      <div className="flex-1">
+                        <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
+                        <p className="text-sm text-gray-600">{aluno.aulasRestantes} aulas restantes</p>
+                      </div>
+                    </div>
+
+                  ))}
                 </div>
               </div>
             </div>

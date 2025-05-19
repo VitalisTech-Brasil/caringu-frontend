@@ -13,6 +13,8 @@ const Perfil = () => {
     const [formData, setFormData] = useState({});
 
     useEffect(() => {
+        document.title = "Perfil | CaringU"
+
         const pessoaId = sessionStorage.getItem('pessoaId');
         const token = sessionStorage.getItem('authToken');
 
