@@ -18,7 +18,7 @@ const CardAlunoAtivos = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 xl:w-8 xl:h-8" viewBox="0 0 32 32" fill="none">
                     <path d="M6.8667 2.66699V29.3337" stroke="#1D2D44" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M6.8667 5.33301H21.8C25.4 5.33301 26.2 7.33301 23.6667 9.86634L22.0667 11.4663C21 12.533 21 14.2663 22.0667 15.1997L23.6667 16.7997C26.2 19.333 25.2667 21.333 21.8 21.333H6.8667" fill="#1D2D44"/>
-                    <path d="M6.8667 5.33301H21.8C25.4 5.33301 26.2 7.33301 23.6667 9.86634L22.0667 11.4663C21 12.533 21 14.2663 22.0667 15.1997L23.6667 16.7997C26.2 19.333 25.2667 21.333 21.8 21.333H6.8667" stroke="#1D2D44" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6.8667 5.33301H21.8C25.4 5.33301 26.2 7.33301 23.6667 9.86634L22.0667 11.4663C21 12.533 21 14.2663 22.0667 15.1997L23.6667 16.7997C26.2 19.333 25.2667 21.333 21.8 21.333H6.8667" stroke="#1D2D44" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                     <span className="text-base sm:text-[28px] lg:text-xl 2xl:text-[28px] font-normal text-[var(--cor-primaria)]">Iniciante</span>
                 </div>

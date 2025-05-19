@@ -12,6 +12,8 @@ import Planos from "./pages/Planos/Planos.jsx";
 import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
+import PerfilPersonal from "./pages/PerfilPersonal.jsx";
+import SolicitacoesPendentes from "./pages/SolicitacoesPendentes.jsx";
 import SessaoExpiradaModal from "./components/Utils/SessaoExpiradaModal.jsx";
 import RegistroCorporal from "./pages/Relatorios/RegistroCorporal.jsx";
 import PerfilAluno from "./pages/GerenciarAlunos/PerfilAluno.jsx";
@@ -49,7 +51,9 @@ const AppRoutes = () => {
         <Route path="/perfil-aluno/:idAluno" element={<PerfilAluno />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/planos" element={<Planos />} />
-        <Route path="/procurando-personal" element={<ProcurandoPersonal />} /> {/* Nova rota */}
+        <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
+        <Route path="/perfil-personal" element={<PerfilPersonal />} />
+        <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

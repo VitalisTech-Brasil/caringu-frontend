@@ -12,6 +12,7 @@ const Botton = ({ id,
                   fontSize,
                   logo,
                   logoSvg,
+                  disabled,
                   ariaLabel,
                   borderColor,
                   borderStyle,
@@ -24,6 +25,7 @@ const Botton = ({ id,
     <button
       id={id}
       type={type}
+      disabled={disabled || false}
       onClick={onClick}
       onMouseEnter={() => setBgColor(corHover)}
       onMouseLeave={() => setBgColor(cor)}
@@ -38,7 +40,7 @@ const Botton = ({ id,
         borderColor: borderColor,
         borderStyle: borderStyle || "none", 
         borderWidth: borderWidth
-        
+
       }}
       className="
         rounded-[6px]
@@ -58,4 +60,4 @@ const Botton = ({ id,
   );
 };
 
-export default Botton;  
+export default Botton;
