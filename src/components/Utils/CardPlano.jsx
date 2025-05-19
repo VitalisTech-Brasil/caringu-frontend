@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Button from "./Button";
 
 const CardPlano = ({
-  onEditar,
+   onEditar,
   onDeletar,
+  onModalContratar,
+  textoBotao,
   showDropdown = true,
   showContratarPlano = true
+  
 }) => {
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,6 +57,10 @@ const CardPlano = ({
     onDeletar && onDeletar();
   };
 
+  const handleContratar = () => {
+    setMenuOpen(false);
+    onModalContratar && onModalContratar();
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -178,10 +185,10 @@ const CardPlano = ({
           </ul>
           {showContratarPlano && (
             <>
-              <div className=" 2xl:w-55 lg:w-35 md:w-35 sm:w-38 w-full sm:h-auto h-10 flex flex-row items-end justify-center ">
+              <div className=" 2xl:w-55 lg:w-35 md:w-35 sm:w-38 w-full sm:h-auto h-10 flex flex-row items-end justify-center">
                 <Button
                   id={"btn-contratar-plano"}
-                  texto="Contratar Plano"
+                  texto={textoBotao}
                   cor="var(--azul-claro)"
                   corHover="none"
                   corTexto="#fff"
@@ -190,6 +197,7 @@ const CardPlano = ({
                   ariaLabel="Contratar plano"
                   fontSize={fontSize}
                   fontWeight="600"
+                   onClick={handleContratar}
                 />
               </div>
             </>
