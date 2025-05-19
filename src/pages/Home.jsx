@@ -17,7 +17,11 @@ import { caringuApi } from "../provider/caringuApi";
 const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
+
+  const [alunosAtivos, setAlunosAtivos] = useState(0);
+  const [treinosVencimento, setTreinosVencimento] = useState(0);
   const [treinosCriados, setTreinosCriados] = useState(0);
+  const [anamnesesPendentes, setAnamnesesPendentes] = useState(0);
 
   const navigate = useNavigate();
 
@@ -26,11 +30,20 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
-        const response = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
-        setTreinosCriados(response.data);
+        const totalAlunosAtivos = await caringuApi.get(`/planos-contratados/kpis/alunos-ativos/${personalId}`);
+        setAlunosAtivos(totalAlunosAtivos.data);
         
+        const totalTreinosVencimento = await caringuApi.get(`/alunos-treinos/kpis/proximos-vencimento/${personalId}`);
+        setTreinosVencimento(totalTreinosVencimento.data);
+
+        const totalTreinosCriados = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
+        setTreinosCriados(totalTreinosCriados.data);
+
+        const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
+        setAnamnesesPendentes(totalAnamnesePendentes.data);
+
       } catch (error) {
-        console.error("Erro ao buscar personal trainer:", error);
+        console.error("Erro ao informações das KPIs:", error);
       }
     };
 
@@ -86,7 +99,7 @@ const Home = () => {
   const kpis = [
     {
       title: "Alunos ativos",
-      value: 120,
+      value: alunosAtivos,
       description: "Número total de alunos ativos.",
       icon: <FaUsers />,
       bgColor: "bg-[#748CAB1A]",
@@ -102,7 +115,7 @@ const Home = () => {
     },
     {
       title: "Treinos próximos do vencimento",
-      value: 8,
+      value: treinosVencimento,
       description: "Treinos que expiram em breve.",
       icon: <FaClock />,
       bgColor: "bg-[#E96E354F]",
@@ -110,7 +123,7 @@ const Home = () => {
     },
     {
       title: "Anamneses pendentes",
-      value: 5,
+      value: anamnesesPendentes,
       description: "Anamneses aguardando preenchimento.",
       icon: <FaClipboardList />,
       bgColor: "bg-yellow-100",
@@ -123,7 +136,7 @@ const Home = () => {
       id: 1,
       horario: "9:00 - 10:00",
       local: "Academia XYZ",
-      data: new Date().toLocaleDateString("pt-BR"),
+      data: new Date(new Date().setDate(new Date().getDate())).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "João Silva",
         foto: "https://via.placeholder.com/150",
@@ -133,7 +146,7 @@ const Home = () => {
       id: 2,
       horario: "14:00 - 15:00",
       local: "Academia ABC",
-      data: "30/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Maria Oliveira",
         foto: "https://via.placeholder.com/150",
@@ -143,7 +156,7 @@ const Home = () => {
       id: 3,
       horario: "10:00 - 11:00",
       local: "Academia XYZ",
-      data: "30/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Carlos Souza",
         foto: "https://via.placeholder.com/150",
@@ -153,7 +166,7 @@ const Home = () => {
       id: 4,
       horario: "11:00 - 12:00",
       local: "Academia ABC",
-      data: "30/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate())).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Ana Paula",
         foto: "https://via.placeholder.com/150",
@@ -163,7 +176,7 @@ const Home = () => {
       id: 5,
       horario: "15:00 - 16:00",
       local: "Academia XYZ",
-      data: "30/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate())).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Lucas Mendes",
         foto: "https://via.placeholder.com/150",
@@ -173,7 +186,7 @@ const Home = () => {
       id: 6,
       horario: "8:00 - 9:00",
       local: "Academia XYZ",
-      data: "29/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Fernanda Lima",
         foto: "https://via.placeholder.com/150",
@@ -183,7 +196,7 @@ const Home = () => {
       id: 7,
       horario: "9:00 - 10:00",
       local: "Academia ABC",
-      data: "29/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 6)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Rafael Costa",
         foto: "https://via.placeholder.com/150",
@@ -193,7 +206,7 @@ const Home = () => {
       id: 8,
       horario: "10:00 - 11:00",
       local: "Academia XYZ",
-      data: "29/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 5)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Juliana Alves",
         foto: "https://via.placeholder.com/150",
@@ -203,7 +216,7 @@ const Home = () => {
       id: 9,
       horario: "11:00 - 12:00",
       local: "Academia ABC",
-      data: "29/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Pedro Henrique",
         foto: "https://via.placeholder.com/150",
@@ -213,7 +226,7 @@ const Home = () => {
       id: 10,
       horario: "13:00 - 14:00",
       local: "Academia XYZ",
-      data: "29/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Mariana Silva",
         foto: "https://via.placeholder.com/150",
@@ -223,7 +236,7 @@ const Home = () => {
       id: 11,
       horario: "14:00 - 15:00",
       local: "Academia ABC",
-      data: "29/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Gabriel Santos",
         foto: "https://via.placeholder.com/150",
@@ -233,7 +246,7 @@ const Home = () => {
       id: 12,
       horario: "9:00 - 10:00",
       local: "Academia XYZ",
-      data: "28/04/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 4)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Beatriz Oliveira",
         foto: "https://via.placeholder.com/150",
@@ -243,7 +256,7 @@ const Home = () => {
       id: 13,
       horario: "10:00 - 11:00",
       local: "Academia ABC",
-      data: "03/05/2025",
+      data: new Date(new Date().setDate(new Date().getDate() + 3)).toLocaleDateString("pt-BR"),
       aluno: {
         nome: "Ricardo Lima",
         foto: "https://via.placeholder.com/150",
