@@ -178,6 +178,7 @@ const Planos = () => {
                                     fontSize={fontSize}
                                     fontWeight="300"
                                     corHover="#1D2D4417"
+                                    onClick={() => navigate("/solicitacoes-pendentes")}
                                 >
                                 </Button>
                                 <Button

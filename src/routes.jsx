@@ -12,6 +12,7 @@ import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da 
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
 import PerfilPersonal from "./pages/PerfilPersonal.jsx";
+import SolicitacoesPendentes from "./pages/SolicitacoesPendentes.jsx";
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -30,6 +31,7 @@ const AppRoutes = () => {
         <Route path="/planos" element={<Planos />} />
         <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
         <Route path="/perfil-personal" element={<PerfilPersonal />} />
+        <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

@@ -9,9 +9,13 @@ import barraProgresso from "../assets/images/barra-progresso.svg";
 import barraMetade from "../assets/images/barra-metade.svg";
 import barraCompleta from "../assets/images/barra-completa.svg";
 import Button from "../components/Utils/Button";
+import { useNavigate } from "react-router-dom";
 
 
 const PerfilPersonal = () => {
+
+        const navigate = useNavigate(); 
+
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [modalContratar, setModalContratar] = useState(false);
@@ -73,7 +77,9 @@ const PerfilPersonal = () => {
                     <Header onToggleSidebar={toggleSidebar} />
                     <div className="w-full h-auto">
                         <div className="pl-[2.5rem] pt-2 pb-2 w-full h-auto">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53" fill="none"
+                             className="cursor-pointer"
+                                onClick={() => navigate("/procurando-personal")}>
                                 <path d="M21.1331 13.0957L7.72852 26.5003L21.1331 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M45.2717 26.5H8.10547" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
@@ -202,7 +208,7 @@ const PerfilPersonal = () => {
                                         <Button
                                             texto="Confirmar pagamento"
                                             corTexto="var(--cor-secundaria)"
-                                            cor="var(--azul-claro)"
+                                            cor={botaoDesabilitado[planoSelecionado] ? "#D9D9D9" : "var(--azul-claro)"}
                                             height="3rem"
                                             width="45%"
                                             corHover="var(--azul-claro)"
