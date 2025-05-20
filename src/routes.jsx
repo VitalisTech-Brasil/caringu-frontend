@@ -12,6 +12,7 @@ import Planos from "./pages/Planos/Planos.jsx";
 import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
+import Agenda from './pages/Agenda/Agenda.jsx';
 import PerfilPersonal from "./pages/PerfilPersonal.jsx";
 import SolicitacoesPendentes from "./pages/SolicitacoesPendentes.jsx";
 import SessaoExpiradaModal from "./components/Utils/SessaoExpiradaModal.jsx";
@@ -54,6 +55,7 @@ const AppRoutes = () => {
         <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
         <Route path="/perfil-personal" element={<PerfilPersonal />} />
         <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
+        <Route path="/agenda" element={<Agenda />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

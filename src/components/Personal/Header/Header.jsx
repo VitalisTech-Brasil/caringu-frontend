@@ -42,14 +42,14 @@ const Header = () => {
       </svg>,
       label: "Gerenciar Exercícios",
     },
-    "/calendario": {
+    "/agenda": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 30 30" fill="none">
         <path d="M27.4124 8.45001L23.1999 25.3625C22.8999 26.625 21.7749 27.5 20.4749 27.5H4.04992C2.16242 27.5 0.812438 25.6499 1.37494 23.8374L6.63743 6.93756C6.99993 5.76256 8.08745 4.94995 9.31245 4.94995H24.6874C25.8749 4.94995 26.8624 5.67496 27.2749 6.67496C27.5124 7.21246 27.5624 7.82501 27.4124 8.45001Z" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" />
         <path d="M20 27.5H25.975C27.5875 27.5 28.85 26.1375 28.7375 24.525L27.5 7.5" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M12.1001 7.97513L13.4001 2.5752" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M20.4751 7.98746L21.6501 2.5625" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
       </svg>,
-      label: "Calendário",
+      label: "Agenda",
     },
     "/planos": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 30 30" fill="none">

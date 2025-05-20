@@ -169,33 +169,33 @@ const PerfilPersonal = () => {
                                                     ? barraMetade
                                                     : barraProgresso
                                             }
-                                            alt="" className="pt-4 h-115 sm:h-106" />
-                                        <div className="flex flex-col items-start justify-start sm:gap-12">
+                                            alt="" className="pt-4 h-135 sm:h-115" />
+                                        <div className="flex flex-col items-start justify-start sm:gap-8">
                                             <div>
                                                 <h2 className="text-[var(--cor-primaria)]  font-semibold text-base sm:text-xl">
                                                     Combinar com o Personal Trainer
                                                 </h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-sm font-normal">
+                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
                                                     Antes de realizar o pagamento, é preciso combinar com o Personal Trainer a forma de pagamento. Entre em contato pelo número localizado no seu perfil antes de realizar qualquer pagamento.
                                                 </p>
                                             </div>
                                             <div>
-                                                <h2 className="text-[var(--cor-primaria)] mt-[12%] sm:mt-0 font-semibold text-base sm:text-xl">
+                                                <h2 className="text-[var(--cor-primaria)] mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
                                                     Confirmar pagamento</h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-sm font-normal">
+                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
                                                     Para que o plano seja liberado, é necessário combinar uma forma de pagamento com o personal e realizar o pagamento. Quando essa etapa for completa, clique no botão “confirmar pagamento”.
                                                 </p>
                                             </div>
                                             <div>
-                                                <h2 className="text-[var(--cor-primaria)]  mt-[12%] sm:mt-0 font-semibold text-base sm:text-xl">
+                                                <h2 className="text-[var(--cor-primaria)]  mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
                                                     Esperando confirmação do personal</h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-sm font-normal">
+                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
                                                     Após isso, o personal deve confirmar se recebeu o pagamento. Aguarde até que essa etapa seja concluída.                                            </p>
                                             </div>
                                             <div>
-                                                <h2 className="text-[var(--cor-primaria)]  mt-[12%] sm:mt-0 font-semibold text-base sm:text-xl">
+                                                <h2 className="text-[var(--cor-primaria)]  mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
                                                     Plano liberado</h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-sm font-normal">
+                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
                                                     Com todas as etapas anteriores concluídas, o plano será liberado para o seu acompanhamento.                                            </p>
                                             </div>
                                         </div>

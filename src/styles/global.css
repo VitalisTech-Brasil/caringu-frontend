@@ -33,6 +33,45 @@ body {
   position: relative;
 }
 
+.react-calendar__month-view__weekdays {
+  font-size:24px;
+  font-weight: 400;    
+  color: #1D2D448C;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.react-calendar__navigation__label {
+  font-size: 32px;
+  font-weight: 400;
+  padding-bottom: 30px;
+  
+}
+
+.react-calendar__navigation{
+width: 100%;
+display: flex;
+align-items: start;
+padding-left: 16px;
+padding-right: 16px;
+}
+.react-calendar__navigation__next-button {
+  padding-bottom: 30px;
+}
+
+.react-calendar__tile {
+  overflow: visible !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+}
+
+.react-calendar__month-view__days {
+ gap: 16px; /* ajuste o valor conforme desejar */
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);}
+
 /* .input-container input[type="text"],
 .input-container input[type="password"],
 .input-container input[type="email"] {
