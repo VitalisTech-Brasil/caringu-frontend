@@ -130,10 +130,12 @@ const MenuLateral = () => {
         <path d="M27.5 15.6255H23.75C22.375 15.6255 21.25 16.7505 21.25 18.1255C21.25 19.5005 22.375 20.6255 23.75 20.6255H27.5" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>, label: "Planos", path: "/planos"
     },
-    { icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-gray-800" viewBox="0 0 30 30" fill="none">
-      <path d="M15 15.0005C18.4518 15.0005 21.25 12.2023 21.25 8.75049C21.25 5.29871 18.4518 2.50049 15 2.50049C11.5482 2.50049 8.75 5.29871 8.75 8.75049C8.75 12.2023 11.5482 15.0005 15 15.0005Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M25.7374 27.5005C25.7374 22.663 20.9249 18.7505 14.9999 18.7505C9.07495 18.7505 4.26245 22.663 4.26245 27.5005" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>, label: "Perfil", path: "/perfil" },
+    {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 text-gray-800" viewBox="0 0 30 30" fill="none">
+        <path d="M15 15.0005C18.4518 15.0005 21.25 12.2023 21.25 8.75049C21.25 5.29871 18.4518 2.50049 15 2.50049C11.5482 2.50049 8.75 5.29871 8.75 8.75049C8.75 12.2023 11.5482 15.0005 15 15.0005Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M25.7374 27.5005C25.7374 22.663 20.9249 18.7505 14.9999 18.7505C9.07495 18.7505 4.26245 22.663 4.26245 27.5005" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>, label: "Perfil", path: "/perfil"
+    },
   ];
 
   const toggleMenu = () => {
@@ -172,9 +174,9 @@ const MenuLateral = () => {
           className="p-2 text-gray-600 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 39 39" fill="none">
-            <path d="M4.875 11.375H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round"/>
-            <path d="M4.875 19.5H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round"/>
-            <path d="M4.875 27.625H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round"/>
+            <path d="M4.875 11.375H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M4.875 19.5H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M4.875 27.625H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
           </svg>
         </button>
       </div>
@@ -192,7 +194,7 @@ const MenuLateral = () => {
       </div>
 
       {/* Itens do Menu */}
-        <ul className="flex flex-col gap-4 p-4 border border-gray-300 border-t-0 border-l-0 flex-grow">
+      <ul className="flex flex-col gap-4 p-4 border border-gray-300 border-t-0 border-l-0 flex-grow">
         {menuItems.map((item, index) => (
           <li key={index} className="flex flex-col">
             <div
@@ -249,11 +251,10 @@ const MenuLateral = () => {
                     title={!isOpen ? child.label : ""}
                   >
                     <div className="flex items-center gap-2">
-                      {child.icon}
-                      <span
-                        className={`flex-grow ${!isOpen && "hidden"
-                          } whitespace-nowrap text-left`}
-                      >
+                      {React.cloneElement(child.icon, {
+                        className: `${child.icon.props.className ?? ""} ${location.pathname === child.path ? "filter invert" : ""}`
+                      })}
+                      <span className={`flex-grow ${!isOpen && "hidden"} whitespace-nowrap text-left`}>
                         {child.label}
                       </span>
                     </div>
@@ -271,11 +272,11 @@ const MenuLateral = () => {
           className="flex items-center gap-4 text-white p-2 w-full rounded cursor-pointer"
           onClick={handleLogout}
         >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 35 35" fill="none">
-          <path d="M25.4331 21.3207L29.1664 17.5873L25.4331 13.854" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M14.2334 17.5874H29.0646" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M17.1501 29.1668C10.7042 29.1668 5.4834 24.7918 5.4834 17.5002C5.4834 10.2085 10.7042 5.8335 17.1501 5.8335" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 35 35" fill="none">
+            <path d="M25.4331 21.3207L29.1664 17.5873L25.4331 13.854" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14.2334 17.5874H29.0646" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M17.1501 29.1668C10.7042 29.1668 5.4834 24.7918 5.4834 17.5002C5.4834 10.2085 10.7042 5.8335 17.1501 5.8335" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           <span className={`${!isOpen && "hidden"} whitespace-nowrap`}>
             Sair
           </span>
