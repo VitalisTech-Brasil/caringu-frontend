@@ -98,6 +98,7 @@ const PerfilPersonal = () => {
                             {planos.map((plano) => (
                                 <CardPlano
                                     key={plano.id}
+                                    showDropdown={false}
                                     showContratarPlano={true}
                                     onModalContratar={() => openModalContratar(plano.id)}
                                     textoBotao={

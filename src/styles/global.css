@@ -44,19 +44,18 @@ body {
 .react-calendar__navigation__label {
   font-size: 32px;
   font-weight: 400;
-  padding-bottom: 30px;
+  padding-bottom: 24px;
+    padding-top: 36px;
+
   
 }
 
 .react-calendar__navigation{
 width: 100%;
 display: flex;
-align-items: start;
 padding-left: 16px;
 padding-right: 16px;
-}
-.react-calendar__navigation__next-button {
-  padding-bottom: 30px;
+align-items: center;
 }
 
 .react-calendar__tile {
@@ -68,7 +67,7 @@ padding-right: 16px;
 }
 
 .react-calendar__month-view__days {
- gap: 16px; /* ajuste o valor conforme desejar */
+ gap: 12px; 
   display: grid !important;
   grid-template-columns: repeat(7, 1fr);}
 

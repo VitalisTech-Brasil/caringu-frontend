@@ -118,138 +118,118 @@ const Home = () => {
     },
   ];
 
-  const compromissos = [
-    {
-      id: 1,
-      horario: "9:00 - 10:00",
-      local: "Academia XYZ",
-      data: new Date().toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "João Silva",
-        foto: "https://via.placeholder.com/150",
-      },
+const compromissos = [
+  {
+    id: 1,
+    horario: "9:00 - 10:00",
+    local: "Academia XYZ",
+    data: "18/05/2025",
+    aluno: {
+      nome: "João Silva",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 2,
-      horario: "14:00 - 15:00",
-      local: "Academia ABC",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Maria Oliveira",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 2,
+    horario: "14:00 - 15:00",
+    local: "Academia ABC",
+    data: "22/05/2025",
+    aluno: {
+      nome: "Maria Oliveira",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 3,
-      horario: "10:00 - 11:00",
-      local: "Academia XYZ",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Carlos Souza",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 3,
+    horario: "10:00 - 11:00",
+    local: "Academia XYZ",
+    data: "22/05/2025",
+    aluno: {
+      nome: "Carlos Souza",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 4,
-      horario: "11:00 - 12:00",
-      local: "Academia ABC",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Ana Paula",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 4,
+    horario: "11:00 - 12:00",
+    local: "Academia ABC",
+    data: "20/05/2025",
+    aluno: {
+      nome: "Ana Paula",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 5,
-      horario: "15:00 - 16:00",
-      local: "Academia XYZ",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Lucas Mendes",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 5,
+    horario: "15:00 - 16:00",
+    local: "Academia XYZ",
+    data: "20/05/2025",
+    aluno: {
+      nome: "Lucas Mendes",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 6,
-      horario: "8:00 - 9:00",
-      local: "Academia XYZ",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Fernanda Lima",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 6,
+    horario: "8:00 - 9:00",
+    local: "Academia XYZ",
+    data: "21/05/2025",
+    aluno: {
+      nome: "Fernanda Lima",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 7,
-      horario: "9:00 - 10:00",
-      local: "Academia ABC",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Rafael Costa",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 7,
+    horario: "9:00 - 10:00",
+    local: "Academia ABC",
+    data: "21/05/2025",
+    aluno: {
+      nome: "Rafael Costa",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 8,
-      horario: "10:00 - 11:00",
-      local: "Academia XYZ",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Juliana Alves",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 10,
+    horario: "13:00 - 14:00",
+    local: "Academia XYZ",
+    data: "23/05/2025",
+    aluno: {
+      nome: "Mariana Silva",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 9,
-      horario: "11:00 - 12:00",
-      local: "Academia ABC",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Pedro Henrique",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 11,
+    horario: "14:00 - 15:00",
+    local: "Academia ABC",
+    data: "23/05/2025",
+    aluno: {
+      nome: "Gabriel Santos",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 10,
-      horario: "13:00 - 14:00",
-      local: "Academia XYZ",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Mariana Silva",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 12,
+    horario: "9:00 - 10:00",
+    local: "Academia XYZ",
+    data: "24/05/2025",
+    aluno: {
+      nome: "Beatriz Oliveira",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 11,
-      horario: "14:00 - 15:00",
-      local: "Academia ABC",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Gabriel Santos",
-        foto: "https://via.placeholder.com/150",
-      },
+  },
+  {
+    id: 13,
+    horario: "10:00 - 11:00",
+    local: "Academia ABC",
+    data: "24/05/2025",
+    aluno: {
+      nome: "Ricardo Lima",
+      foto: "https://via.placeholder.com/150",
     },
-    {
-      id: 12,
-      horario: "9:00 - 10:00",
-      local: "Academia XYZ",
-      data: "28/04/2025",
-      aluno: {
-        nome: "Beatriz Oliveira",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 13,
-      horario: "10:00 - 11:00",
-      local: "Academia ABC",
-      data: "03/05/2025",
-      aluno: {
-        nome: "Ricardo Lima",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-  ];
+  },
+];
 
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -298,7 +278,7 @@ const Home = () => {
               />
             </div>
             <div className="2xl:w-[50%] w-full">
-              <EstaSemana onDaySelect={setSelectedDay} />
+             <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} />
 
             </div>
 
