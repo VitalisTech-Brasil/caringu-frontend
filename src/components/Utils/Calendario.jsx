@@ -29,7 +29,7 @@ const Calendario = ({ compromissos, value, onChange }) => {
             locale="pt-BR"
             tileClassName={({ date, activeStartDate, view }) => {
                 if (view !== "month") return "w-10 h-10 text-base";
-                let classes = "w-full h-15 text-2xl flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300";
+                let classes = "w-full h-10 sm:h-15 text-base sm:text-2xl flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300";
                 if (date.getMonth() !== activeStartDate.getMonth()) {
                     classes += " relative text-[#15171B3D]";
                 } else if (isSameDay(date, hoje)) {
@@ -48,7 +48,7 @@ const Calendario = ({ compromissos, value, onChange }) => {
                 if (existeCompromisso(date) && date >= hoje.setHours(0, 0, 0, 0)) {
                     return (
                         <div className="absolute top-[-12px] left-[-10px]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="29" viewBox="0 0 34 29" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-5 sm:w-8.5 sm:h-7.5" viewBox="0 0 34 29" fill="none">
                                 <path d="M27.5241 6.42725H29.6387C30.2223 6.42725 30.696 7.03503 30.696 7.78391V21.3506C30.696 22.0995 30.2223 22.7072 29.6387 22.7072H27.5241C26.9405 22.7072 26.4668 22.0995 26.4668 21.3506V7.78391C26.4668 7.03503 26.9405 6.42725 27.5241 6.42725Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="1.75" />
                                 <path d="M23.2951 1H25.4097C25.9933 1 26.467 1.60779 26.467 2.35667V26.7767C26.467 27.5255 25.9933 28.1333 25.4097 28.1333H23.2951C22.7115 28.1333 22.2378 27.5255 22.2378 26.7767V2.35667C22.2378 1.60779 22.7115 1 23.2951 1Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="1.75" />
                                 <path d="M8.49334 1H10.6079C11.1916 1 11.6652 1.60779 11.6652 2.35667V26.7767C11.6652 27.5255 11.1916 28.1333 10.6079 28.1333H8.49334C7.90971 28.1333 7.43604 27.5255 7.43604 26.7767V2.35667C7.43604 1.60779 7.90971 1 8.49334 1Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="1.75" />
@@ -75,7 +75,7 @@ const Calendario = ({ compromissos, value, onChange }) => {
             nextLabel={<span className="text-[32px] font-semibold">ᐳ</span>}
             prev2Label={null}
             next2Label={null}
-            className="rounded-xl w-178 h-151 text-center"
+            className="rounded-xl w-[93%] 2xl:w-[83%] sm:h-151 h-120 text-center"
         />
     );
 };

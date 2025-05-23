@@ -56,81 +56,78 @@ const CompromissosAgenda = ({ compromissos, selectedDay }) => {
                         <path d="M13.7134 9.03789L15.1867 2.91797" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                         <path d="M23.2051 9.05258L24.5367 2.9043" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    <span className="text-xl font-normal text-[var(--azul-escuro)] ml-3">
-                        {isToday ? "hoje" : selectedDay?.day || "hoje"}, {formatarDataExtenso(selectedDay?.fullDate)}                
+                    <span className="text-base sm:text-xl font-normal text-[var(--azul-escuro)] ml-3">
+                        {isToday ? "hoje" : selectedDay?.day || "hoje"}, {formatarDataExtenso(selectedDay?.fullDate)}
 
                     </span>
                 </div>
             )}
+            <div className="flex-1 min-h-0 overflow-y-auto mt-2">
+                <div className=" flex flex-col items-center gap-6 pb-2">
 
-            {compromissosDoDia.length > 0 ? (
-                compromissosDoDia.map((compromisso, index) => {
-                    const compromissoDate = parseDate(compromisso.data);
-                    const diaSemana = diasDaSemana[compromissoDate.toLocaleDateString("en-US", { weekday: "long" })];
-                    return (
-                        <div
-                            key={`${compromisso.id}-${index}`}
-                            className="flex-1 min-h-0 overflow-y-auto mt-2"
-                        >
-                            <div className=" flex flex-col items-center gap-6 pb-2">
+                    {compromissosDoDia.length > 0 ? (
+                        compromissosDoDia.map((compromisso, index) => {
+                            const compromissoDate = parseDate(compromisso.data);
+                            const diaSemana = diasDaSemana[compromissoDate.toLocaleDateString("en-US", { weekday: "long" })];
+                            return (
                                 <div
-                                    className="flex items-center justify-start bg-[var(--azul-escuro)] rounded-md w-full py-4"
+                                    key={`${compromisso.id}-${index}`}
+                                    className="flex sm:flex-row flex-col items-center justify-start bg-[var(--azul-escuro)] rounded-md w-full py-4 sm:px-0 px-2 sm:gap-0 gap-4"
                                 >
-                                    <div className="flex flex-col items-center justify-center w-auto h-full border-r border-[var(--cor-secundaria)] px-5">
-                                        <span className="text-2xl font-normal text-[var(--cor-secundaria)]">{diaSemana}</span>
-                                        <span className="text-5xl font-bold text-[var(--cor-secundaria)]">
+                                    <div className="flex flex-col items-center justify-center w-auto h-full border-b sm:border-b-0 sm:border-r border-[var(--cor-secundaria)] sm:px-5 py-2">
+                                        <span className="text-xl 2xl:text-2xl font-normal text-[var(--cor-secundaria)]">{diaSemana}</span>
+                                        <span className="text-4xl 2xl:text-5xl font-bold text-[var(--cor-secundaria)]">
                                             {compromissoDate.getDate()}
                                         </span>
                                     </div>
-                                    <div className="flex flex-row items-center justify-between w-full h-auto">
+                                    <div className="flex sm:flex-row flex-col items-center justify-between w-full h-auto sm:gap-0 gap-4">
                                         <div className="flex flex-col justify-center gap-4 ml-4">
                                             <div className="text-white text-sm flex items-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 2xl:w-6 2xl:h-6 shrink-0" viewBox="0 0 25 25" fill="none">
                                                     <path d="M22.9168 12.4997C22.9168 18.2497 18.2502 22.9163 12.5002 22.9163C6.75016 22.9163 2.0835 18.2497 2.0835 12.4997C2.0835 6.74967 6.75016 2.08301 12.5002 2.08301C18.2502 2.08301 22.9168 6.74967 22.9168 12.4997Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
-                                                <span className="text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
+                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
                                             </div>
-                                            <div className="text-white text-sm flex items-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                                            <div className="text-white text-sm flex items-center gap-2 h-auto w-auto">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 2xl:w-6 2xl:h-6 shrink-0" viewBox="0 0 25 25" fill="none">
                                                     <path d="M3.77094 8.84343C5.82302 -0.177407 19.1876 -0.16699 21.2293 8.85384C22.4272 14.1455 19.1355 18.6247 16.2501 21.3955C14.1564 23.4163 10.8439 23.4163 8.73969 21.3955C5.86469 18.6247 2.57302 14.1351 3.77094 8.84343Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" />
                                                     <path d="M12.5 13.9902C14.2949 13.9902 15.75 12.5352 15.75 10.7402C15.75 8.94531 14.2949 7.49023 12.5 7.49023C10.7051 7.49023 9.25 8.94531 9.25 10.7402C9.25 12.5352 10.7051 13.9902 12.5 13.9902Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="1.5" />
                                                 </svg>
-                                                <span className="text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.local}</span>
+                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] break-words">{compromisso.local}</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-start justify-center gap-2 mr-4">
-                                            <div className="flex items-center gap-2">
+                                        <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
+                                            <div className="flex sm:flex-row flex-col items-center gap-2">
                                                 <img
                                                     src={"https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg"}
                                                     alt={"Ricardo Lima"}
-                                                    className="w-15 h-15 rounded-full object-cover"
+                                                    className="w-13 h-13 2xl:w-15 2xl:h-15 rounded-full object-cover"
                                                 />
-                                                <span className="text-[var(--cor-secundaria)] font-medium text-xl">
+                                                <span className="text-[var(--cor-secundaria)] font-medium text-base 2xl:text-xl">
                                                     {compromisso.aluno.nome}
                                                 </span>
                                             </div>
-                                            <button className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base font-normal rounded-md py-1 px-3 cursor-pointer">
+                                            <button className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer">
                                                 Marcar como feito
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-
-                            </div>
+                            );
+                        })
+                    ) : (
+                        <div className="w-full h-[95%] overflow-y-auto flex flex-col items-center justify-center gap-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 sm:w-40.5 sm:h-40.5" viewBox="0 0 162 162" fill="none">
+                                <path d="M81 0C36.369 0 0 36.369 0 81C0 125.631 36.369 162 81 162C125.631 162 162 125.631 162 81C162 36.369 125.631 0 81 0ZM108.216 99.63C110.565 101.979 110.565 105.867 108.216 108.216C107.001 109.431 105.462 109.998 103.923 109.998C102.384 109.998 100.845 109.431 99.63 108.216L81 89.586L62.37 108.216C61.155 109.431 59.616 109.998 58.077 109.998C56.538 109.998 54.999 109.431 53.784 108.216C51.435 105.867 51.435 101.979 53.784 99.63L72.414 81L53.784 62.37C51.435 60.021 51.435 56.133 53.784 53.784C56.133 51.435 60.021 51.435 62.37 53.784L81 72.414L99.63 53.784C101.979 51.435 105.867 51.435 108.216 53.784C110.565 56.133 110.565 60.021 108.216 62.37L89.586 81L108.216 99.63Z" fill="#E96E35" />
+                            </svg>
+                            <span className="text-xl sm:text-3xl font-normal text-[#15171BAD]">
+                                Não existem treinos agendados para o dia selecionado.
+                            </span>
                         </div>
-                    );
-                })
-            ) : (
-                <div className="w-full h-[95%] overflow-y-auto flex flex-col items-center justify-center gap-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="162" height="162" viewBox="0 0 162 162" fill="none">
-                        <path d="M81 0C36.369 0 0 36.369 0 81C0 125.631 36.369 162 81 162C125.631 162 162 125.631 162 81C162 36.369 125.631 0 81 0ZM108.216 99.63C110.565 101.979 110.565 105.867 108.216 108.216C107.001 109.431 105.462 109.998 103.923 109.998C102.384 109.998 100.845 109.431 99.63 108.216L81 89.586L62.37 108.216C61.155 109.431 59.616 109.998 58.077 109.998C56.538 109.998 54.999 109.431 53.784 108.216C51.435 105.867 51.435 101.979 53.784 99.63L72.414 81L53.784 62.37C51.435 60.021 51.435 56.133 53.784 53.784C56.133 51.435 60.021 51.435 62.37 53.784L81 72.414L99.63 53.784C101.979 51.435 105.867 51.435 108.216 53.784C110.565 56.133 110.565 60.021 108.216 62.37L89.586 81L108.216 99.63Z" fill="#E96E35" />
-                    </svg>
-                    <span className="text-3xl font-normal text-[#15171BAD]">
-                        Não existem treinos agendados para o dia selecionado.
-                    </span>
+                    )}
                 </div>
-            )}
+            </div>
         </>
     );
 }

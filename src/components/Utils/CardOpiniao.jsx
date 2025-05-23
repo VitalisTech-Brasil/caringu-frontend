@@ -17,7 +17,7 @@ const CardOpiniao = () => {
 
     return (
         <>
-            <div className="w-[95%] xl:w-[89%] h-[42rem] sm:h-[22rem] md:h-[18rem] lg:h-[15rem] xl:h-[20rem] 2xl:h-[21rem] rounded-md border-[2px] border-[#1D2D441C] border-solid flex flex-col items-start p-4 pr-[2rem]">
+            <div className="w-[95%] xl:w-[89%] h-[42rem] sm:h-[22rem] md:h-[18rem] lg:h-[15rem] xl:h-[20rem] 2xl:h-[21rem] rounded-md border-[4px] border-[#1D2D441C] border-solid flex flex-col items-start p-4 pr-[2rem]">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full h-auto">
                     <div className="flex flex-row items-center gap-6">
                         <img src="https://res.cloudinary.com/lptennis/image/upload/v1686091349/as2sdwupcq1dlskeiu9d.jpg" alt="Foto do Aluno" className="rounded-full h-[70px] w-[70px] md:h-[92px] md:w-[92px]" />

@@ -52,7 +52,7 @@ const Planos = () => {
                 } else if (screenWidth >= 640) {
                     setStyles({ fontSize: "16px", width: "33%" });
                 } else {
-                    setStyles({ fontSize: "14px", width: "50%" });
+                    setStyles({ fontSize: "12px", width: "50%" });
                 }
             };
 
@@ -165,7 +165,7 @@ const Planos = () => {
                             </div>
                             <div className="h-full w-[35rem] flex  justify-center flex-col items-center sm:flex-row sm:justify-start sm:items-end gap-[22px] ">
                                 <Button
-                                    texto="Solitações Pendentes"
+                                    texto="Solicitações pendentes"
                                     logo={relogioIcon}
                                     width="53%"
                                     height="50px"
@@ -387,11 +387,11 @@ const Planos = () => {
                                         <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                             <Button
                                                 texto="Cancelar"
-                                                corTexto="#B41F1F"
-                                                cor="var(--cor-secundaria)"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="#B41F1F"
                                                 height="2.75rem"
                                                 width="13.25rem"
-                                                corHover="#1D2D4417"
+                                                corHover="#B41F1F"
                                                 fontWeight="500"
                                                 ariaLabel={"Botão de Cancelar"}
                                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
@@ -576,11 +576,11 @@ const Planos = () => {
                                         <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                             <Button
                                                 texto="Cancelar"
-                                                corTexto="#B41F1F"
-                                                cor="var(--cor-secundaria)"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="#B41F1F"
                                                 height="2.75rem"
                                                 width="13.25rem"
-                                                corHover="#1D2D4417"
+                                                corHover="#B41F1F"
                                                 fontWeight="500"
                                                 ariaLabel={"Botão de Cancelar"}
                                                 onClick={() => setModalConfirmarCancelarVisivel(true)}

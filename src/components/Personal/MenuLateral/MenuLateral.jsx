@@ -146,143 +146,235 @@ const MenuLateral = () => {
   };
 
   return (
-    <aside
-      className={`sticky top-0 h-screen bg-[var(--cor-secundaria)] text-black transition-width duration-300 ${isOpen ? "w-64" : "w-18"
-        } flex flex-col`}
-      style={{
-        minWidth: isOpen ? "16rem" : "4.5rem",
-      }}
-    >
-      {/* Header do Menu */}
-      <div
-        className="flex items-center justify-between p-4 border-b border-gray-300"
-        style={{ minHeight: "4.8rem" }} // Adiciona uma altura mínima consistente
+    <>
+
+
+      <aside
+        className={`sticky h-screen  top-0 bg-[var(--cor-secundaria)] text-black transition-width duration-300 w-18 min-h-[4.5rem] flex flex-col z-10`}
       >
-        <div className="flex items-center gap-2">
-          {isOpen && (
-            <img src={logo} alt="Logo CaringU" className="h-10 w-10" />
-          )}
-          <h1
-            className={`text-2xl font-bold whitespace-nowrap ${!isOpen && "hidden"
-              }`}
-          >
-            CaringU
-          </h1>
-        </div>
-        <button
-          onClick={toggleMenu}
-          className="p-2 text-gray-600 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
+        {/* Header do Menu */}
+        <div
+          className="flex items-center justify-between p-4 border-b border-gray-300 min-h-[4.8rem]"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 39 39" fill="none">
-            <path d="M4.875 11.375H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
-            <path d="M4.875 19.5H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
-            <path d="M4.875 27.625H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Informações do Usuário */}
-      <div
-        className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
-        style={{ minHeight: "5rem" }}
-      >
-        <FaUserCircle size={40} className="flex-shrink-0" />
-        <div className={`${!isOpen && "hidden"} flex flex-col`}>
-          <p className="text-lg font-bold">{nomePessoa}</p>
-          <p className="text-sm">{tipoPessoa}</p>
+          <button
+            onClick={toggleMenu}
+            className="p-2 text-gray-600 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 39 39" fill="none">
+              <path d="M4.875 11.375H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M4.875 19.5H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M4.875 27.625H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
-      </div>
 
-      {/* Itens do Menu */}
-      <ul className="flex flex-col gap-4 p-4 border border-gray-300 border-t-0 border-l-0 flex-grow">
-        {menuItems.map((item, index) => (
-          <li key={index} className="flex flex-col">
-            <div
-              className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
-                ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                : "hover:bg-[#1D2D4417]"
-                }`}
-              onClick={() => {
-                if (item.label === "Treinos") {
-                  if (!isOpen) {
-                    setIsOpen(true); // Abre o menu lateral
-                    setIsTreinosOpen(true); // Abre o dropdown de Treinos
-                  } else {
-                    setIsTreinosOpen(!isTreinosOpen); // Alterna o estado do dropdown
+        {/* Informações do Usuário */}
+        <div
+          className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0 min-h-[5rem]"
+        >
+          <FaUserCircle size={40} className="flex-shrink-0" />
+        </div>
+
+        {/* Itens do Menu */}
+        <ul className="flex flex-col gap-4 p-4 border border-gray-300 border-t-0 border-l-0 flex-grow">
+          {menuItems.map((item, index) => (
+            <li key={index} className="flex flex-col items-center">
+              <div
+                className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
+                  ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                  : "hover:bg-[#1D2D4417]"
+                  }`}
+                onClick={() => {
+                  if (item.label === "Treinos") {
+                    setIsOpen(true);
+                    setIsTreinosOpen(true);
+                  } else if (!item.children) {
+                    navigate(item.path);
                   }
-                } else if (!item.children) {
-                  navigate(item.path);
-                }
-              }}
-              title={!isOpen ? item.label : ""}
+                }}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`${location.pathname === item.path ? "filter invert" : ""
+                      }`}
+                  >
+                    {item.icon}
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* Footer - Sair */}
+        <div className="mt-auto p-2 bg-[#B41F1F]">
+          <button
+            className="flex items-center gap-4 text-white p-2 w-full rounded cursor-pointer"
+            onClick={handleLogout}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 35 35" fill="none">
+              <path d="M25.4331 21.3207L29.1664 17.5873L25.4331 13.854" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M14.2334 17.5874H29.0646" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M17.1501 29.1668C10.7042 29.1668 5.4834 24.7918 5.4834 17.5002C5.4834 10.2085 10.7042 5.8335 17.1501 5.8335" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className={`${!isOpen && "hidden"} whitespace-nowrap`}>
+              Sair
+            </span>
+          </button>
+        </div>
+      </aside>
+
+
+      {/* Overlay para escurecer o fundo quando o menu está aberto */}
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-[#000000] opacity-50 z-40"
+            onClick={toggleMenu}
+          />
+          <aside
+            className={`
+        fixed top-0 left-0 h-screen 
+          bg-[var(--cor-secundaria)] text-black 
+          transition-all duration-300 ease-in-out 
+          w-64 z-50 shadow-xl
+          min-h-[16rem]
+          flex flex-col
+      `}
+          >
+            {/* Header do Menu */}
+            <div
+              className="flex items-center justify-between p-4 border-b border-gray-300"
+              style={{ minHeight: "4.8rem" }} // Adiciona uma altura mínima consistente
             >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`${location.pathname === item.path ? "filter invert" : ""
+              <div className="flex items-center gap-2">
+                {isOpen && (
+                  <img src={logo} alt="Logo CaringU" className="h-10 w-10" />
+                )}
+                <h1
+                  className={`text-2xl font-bold whitespace-nowrap ${!isOpen && "hidden"
                     }`}
                 >
-                  {item.icon}
-                </div>
-                <span className={`${!isOpen && "hidden"} whitespace-nowrap`}>
-                  {item.label}
-                </span>
+                  CaringU
+                </h1>
               </div>
-              {item.children &&
-                isOpen &&
-                (isTreinosOpen ? (
-                  <FaChevronUp size={16} />
-                ) : (
-                  <FaChevronDown size={16} />
-                ))}
-            </div>
-            {item.children && (
-              <ul
-                className={`ml-6 mt-2 overflow-hidden transition-[max-height] duration-300 ease-in-out ${isTreinosOpen && isOpen ? "max-h-40" : "max-h-0"
-                  }`}
+              <button
+                onClick={toggleMenu}
+                className="p-2 text-gray-600 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100"
               >
-                {item.children.map((child, childIndex) => (
-                  <li
-                    key={childIndex}
-                    className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 39 39" fill="none">
+                  <path d="M4.875 11.375H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M4.875 19.5H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M4.875 27.625H34.125" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Informações do Usuário */}
+            <div
+              className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
+              style={{ minHeight: "5rem" }}
+            >
+              <FaUserCircle size={40} className="flex-shrink-0" />
+              <div className={`${!isOpen && "hidden"} flex flex-col`}>
+                <p className="text-lg font-bold">{nomePessoa}</p>
+                <p className="text-sm">{tipoPessoa}</p>
+              </div>
+            </div>
+
+            {/* Itens do Menu */}
+            <ul className="flex flex-col gap-4 p-4 border border-gray-300 border-t-0 border-l-0 flex-grow">
+              {menuItems.map((item, index) => (
+                <li key={index} className="flex flex-col">
+                  <div
+                    className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
                       ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
                       : "hover:bg-[#1D2D4417]"
                       }`}
-                    onClick={() => navigate(child.path)}
-                    title={!isOpen ? child.label : ""}
+                    onClick={() => {
+                      if (item.label === "Treinos") {
+                        if (!isOpen) {
+                          setIsOpen(true); // Abre o menu lateral
+                          setIsTreinosOpen(true); // Abre o dropdown de Treinos
+                        } else {
+                          setIsTreinosOpen(!isTreinosOpen); // Alterna o estado do dropdown
+                        }
+                      } else if (!item.children) {
+                        navigate(item.path);
+                      }
+                    }}
+                    title={!isOpen ? item.label : ""}
                   >
-                    <div className="flex items-center gap-2">
-                      {React.cloneElement(child.icon, {
-                        className: `${child.icon.props.className ?? ""} ${location.pathname === child.path ? "filter invert" : ""}`
-                      })}
-                      <span className={`flex-grow ${!isOpen && "hidden"} whitespace-nowrap text-left`}>
-                        {child.label}
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`${location.pathname === item.path ? "filter invert" : ""
+                          }`}
+                      >
+                        {item.icon}
+                      </div>
+                      <span className={`${!isOpen && "hidden"} whitespace-nowrap`}>
+                        {item.label}
                       </span>
                     </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
+                    {item.children &&
+                      isOpen &&
+                      (isTreinosOpen ? (
+                        <FaChevronUp size={16} />
+                      ) : (
+                        <FaChevronDown size={16} />
+                      ))}
+                  </div>
+                  {item.children && (
+                    <ul
+                      className={`ml-6 mt-2 overflow-hidden transition-[max-height] duration-300 ease-in-out ${isTreinosOpen && isOpen ? "max-h-40" : "max-h-0"
+                        }`}
+                    >
+                      {item.children.map((child, childIndex) => (
+                        <li
+                          key={childIndex}
+                          className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
+                            ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                            : "hover:bg-[#1D2D4417]"
+                            }`}
+                          onClick={() => navigate(child.path)}
+                          title={!isOpen ? child.label : ""}
+                        >
+                          <div className="flex items-center gap-2">
+                            {React.cloneElement(child.icon, {
+                              className: `${child.icon.props.className ?? ""} ${location.pathname === child.path ? "filter invert" : ""}`
+                            })}
+                            <span className={`flex-grow ${!isOpen && "hidden"} whitespace-nowrap text-left`}>
+                              {child.label}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
 
-      {/* Footer - Sair */}
-      <div className="mt-auto p-2 bg-[#B41F1F]">
-        <button
-          className="flex items-center gap-4 text-white p-2 w-full rounded cursor-pointer"
-          onClick={handleLogout}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 35 35" fill="none">
-            <path d="M25.4331 21.3207L29.1664 17.5873L25.4331 13.854" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M14.2334 17.5874H29.0646" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M17.1501 29.1668C10.7042 29.1668 5.4834 24.7918 5.4834 17.5002C5.4834 10.2085 10.7042 5.8335 17.1501 5.8335" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span className={`${!isOpen && "hidden"} whitespace-nowrap`}>
-            Sair
-          </span>
-        </button>
-      </div>
-    </aside>
+            {/* Footer - Sair */}
+            <div className="mt-auto p-2 bg-[#B41F1F]">
+              <button
+                className="flex items-center gap-4 text-white p-2 w-full rounded cursor-pointer"
+                onClick={handleLogout}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 35 35" fill="none">
+                  <path d="M25.4331 21.3207L29.1664 17.5873L25.4331 13.854" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M14.2334 17.5874H29.0646" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M17.1501 29.1668C10.7042 29.1668 5.4834 24.7918 5.4834 17.5002C5.4834 10.2085 10.7042 5.8335 17.1501 5.8335" stroke="#FFFDF6" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span className={`${!isOpen && "hidden"} whitespace-nowrap`}>
+                  Sair
+                </span>
+              </button>
+            </div>
+          </aside>
+        </>
+      )}
+    </>
   );
 };
 
