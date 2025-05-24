@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Personal/Header/Header";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
@@ -14,31 +14,125 @@ import { useForm } from "react-hook-form";
 import info2 from "../../assets/images/info-2.svg";
 import iconCancelar from "../../assets/images/cancelar.png";
 import lixeira from "../../assets/images/trash.png";
-import alert from "../../assets/images/alert.svg";
+import alerta from "../../assets/images/alert.svg";
+import { caringuApi } from "../../provider/caringuApi";
 
 
 const Planos = () => {
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
-        defaultValues: {
-            plano: "",
-            duracao: "",
-            preco: "",
-            aulas: ""
-        },
-        mode: "onChange"
-    });
+
+
+    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm();
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [planos, setPlanos] = useState([])
+    const [planoIdParaDeletar, setPlanoIdParaDeletar] = useState(null);
     const [planoEditado, setPlanoEditado] = useState(null);
+
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
+
+    const pessoaId = sessionStorage.getItem("pessoaId");
+    const token = sessionStorage.getItem("authToken");
+
+
+
+    const fetchPlanos = async () => {
+        try {
+            const response = await caringuApi.get(`/planos/${pessoaId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setPlanos(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar planos:", error);
+            alert("Erro ao buscar planos");
+        }
+    };
+
+    useEffect(() => {
+        document.title = "Planos | Caringu";
+        fetchPlanos();
+    }, []);
+
+
+
+
+    const cadastrarPlano = async (data) => {
+        try {
+            const payload = {
+                nome: data.plano,
+                periodo: data.duracao,
+                quantidadeAulas: Number(data.aulas),
+                valorAulas: Number(data.preco),
+            };
+
+            await caringuApi.post(`/planos/${pessoaId}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            // Reutiliza a função para atualizar a lista
+            await fetchPlanos();
+
+            setShowCreateModal(false);
+        } catch (error) {
+            alert("Erro ao criar plano");
+            console.error(error);
+        }
+    };
+
+
+    const confirmDelete = async () => {
+        try {
+            await caringuApi.delete(`/planos/${pessoaId}/${planoIdParaDeletar}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            await fetchPlanos();
+            setModalDeletarVisivel(false);
+            setPlanoIdParaDeletar(null);
+        } catch (error) {
+            window.alert("Erro ao deletar plano");
+            console.error(error);
+        }
+    };
+
+    const editarPlano = async (data) => {
+        try {
+            const payload = {
+                nome: data.plano,
+                periodo: data.duracao,
+                quantidadeAulas: Number(data.aulas),
+                valorAulas: Number(data.preco),
+            };
+
+            await caringuApi.put(`/planos/${pessoaId}/${planoEditado.id}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            await fetchPlanos();
+            setShowEditModal(false);
+            setPlanoEditado(null);
+        } catch (error) {
+            window.alert("Erro ao editar plano");
+            console.error(error);
+        }
+    };
+
+
     function useResponsiveStyles() {
-    const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
+        const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
 
         useEffect(() => {
 
@@ -83,36 +177,36 @@ const Planos = () => {
         setIsSidebarOpen(!isSidebarOpen);
     }
 
-    const planos = [
-        { id: 1, nome: "Plano Básico", duracao: "MENSAL", preco: "50.00", aulas: "10" },
-        { id: 2, nome: "Plano Avançado", duracao: "SEMESTRAL", preco: "300.00", aulas: "60" },
-        { id: 3, nome: "Plano Avulso", duracao: "AVULSO", preco: "20.00", aulas: "1" },
-    ];
-
-    const handleOpenEditModal = (plano) => {
-    setPlanoEditado(plano); // Define os dados do plano a ser editado
-    setValue("plano", plano.nome); // Preenche o campo "plano" no hook-form
-    setValue("duracao", plano.duracao); // Preenche o campo "duracao"
-    setValue("preco", plano.preco); // Preenche o campo "preco"
-    setValue("aulas", plano.aulas); // Preenche o campo "aulas"
-    setShowEditModal(true); // Exibe o modal de edição
-};
 
     // Função para abrir o modal de exclusão
-    const openDeleteModal = () => {
+    const openDeleteModal = (planoId) => {
+        setPlanoIdParaDeletar(planoId);
         setModalDeletarVisivel(true);
     };
 
-    // Função para fechar o modal de exclusão
-    const confirmDelete = () => {
-        alert("Plano excluído!");
-        setModalDeletarVisivel(false);
+    // Função para abrir o modal de edição
+    const handleOpenEditModal = (plano) => {
+        setPlanoEditado(plano);
+        reset({
+            plano: plano.nome,
+            duracao: plano.periodo,
+            preco: plano.valorAulas,
+            aulas: plano.quantidadeAulas
+        });
+        setShowEditModal(true);
     };
+
 
 
 
     // Função para abrir o modal de criação
     const handleOpenModal = () => {
+        reset({
+            plano: "",
+            duracao: "",
+            preco: "",
+            aulas: ""
+        });
         setShowCreateModal(true);
     };
 
@@ -202,16 +296,20 @@ const Planos = () => {
                         </div>
                         <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                             <div className="flex gap-9 w-fit">
-                                {planos.map((plano) => (
+                                {planos.map((item) => (
                                     <CardPlano
-                                        key={plano.id}
-                                        onEditar={() => handleOpenEditModal(plano)} 
-                                        onDeletar={openDeleteModal}
+                                        key={item.id}
+                                        id={item.id}
+                                        nome={item.nome}
+                                        periodo={item.periodo}
+                                        quantidadeAulas={item.quantidadeAulas}
+                                        valorAulas={item.valorAulas}
+                                        valorPlano={item.valorPlano}
+                                        onEditar={() => handleOpenEditModal(item)}
+                                        onDeletar={() => openDeleteModal(item.id)}
                                         showContratarPlano={false}
                                     />
                                 ))}
-
-
                             </div>
                         </div>
                     </div>
@@ -259,7 +357,7 @@ const Planos = () => {
                                     </div>
 
                                     {/* Formulário */}
-                                    <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+                                    <form onSubmit={handleSubmit(cadastrarPlano)}>
                                         <div className="grid gap-4 mb-4">
                                             <div>
                                                 <Label
@@ -394,6 +492,7 @@ const Planos = () => {
                                                 corHover="#B41F1F"
                                                 fontWeight="500"
                                                 ariaLabel={"Botão de Cancelar"}
+                                                type="button"
                                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
                                             >
                                             </Button>
@@ -448,7 +547,8 @@ const Planos = () => {
                                     </div>
 
                                     {/* Formulário */}
-                                    <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+
+                                    <form onSubmit={handleSubmit(editarPlano)}>
                                         <div className="grid gap-4 mb-4">
                                             <div>
                                                 <Label
@@ -582,6 +682,7 @@ const Planos = () => {
                                                 width="13.25rem"
                                                 corHover="#B41F1F"
                                                 fontWeight="500"
+                                                type="button"
                                                 ariaLabel={"Botão de Cancelar"}
                                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
                                             >
@@ -606,19 +707,15 @@ const Planos = () => {
                         </div>
                     )}
 
-
-
-
-
                     <Modal
                         visivel={modalConfirmarCancelarVisivel}
                         fecharModal={() => setModalConfirmarCancelarVisivel(false)}
                         titulo="Tem certeza que deseja cancelar?"
                         descricao="Alterações que não forem salvas serão perdidas"
                         onConfirm={() => {
-                            setModalConfirmarCancelarVisivel(false); 
-                            setShowCreateModal(false); 
-                            setShowEditModal(false); 
+                            setModalConfirmarCancelarVisivel(false);
+                            setShowCreateModal(false);
+                            setShowEditModal(false);
                         }}
                         icone={iconCancelar}
                         textoBotaoConfirmar="Voltar"
@@ -642,7 +739,7 @@ const Planos = () => {
                         <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
                             <div className="bg-white rounded-lg p-6 max-w-md w-full">
                                 <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
-                                    <img src={alert} alt="Alerta" className="w-6 h-6" />
+                                    <img src={alerta} alt="Alerta" className="w-6 h-6" />
                                     <span>Acesso Negado</span>
                                 </h2>
                                 <p className="text-center mt-4">
