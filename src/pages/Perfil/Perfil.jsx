@@ -5,8 +5,11 @@ import { HiOutlineTrash, HiOutlineUpload } from "react-icons/hi";
 import Header from "../../components/Personal/Header/Header";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import ModalRemoverEspecialidade from "../../components/Utils/ModalRemoverEspecialidade";
+import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
+import { Avatar } from "flowbite-react";
 
 import { caringuApi } from '../../provider/caringuApi';
+import FotoPerfil from "../../components/Personal/FotoPerfil/FotoPerfil";
 
 const Perfil = () => {
 
@@ -16,16 +19,11 @@ const Perfil = () => {
         document.title = "Perfil | CaringU"
 
         const pessoaId = sessionStorage.getItem('pessoaId');
-        const token = sessionStorage.getItem('authToken');
 
         const fetchData = async () => {
             try {
-                const response = await caringuApi.get(`/personal-trainers/${pessoaId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const celularComMascara = formatarCelular(response.data.celular);
+                const response = await caringuApi.get(`/personal-trainers/${pessoaId}`);
+                const celularComMascara = MascaraTelefone(response.data.celular);
                 console.log(response.data);
                 setFormData({
                     ...response.data,
@@ -49,14 +47,9 @@ const Perfil = () => {
 
     const handleRemoveEspecialidade = async (idEspecialidade) => {
         const pessoaId = sessionStorage.getItem('pessoaId');
-        const token = sessionStorage.getItem('authToken');
 
         try {
-            await caringuApi.delete(`/personal-trainers/${pessoaId}/especialidades/${idEspecialidade}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            await caringuApi.delete(`/personal-trainers/${pessoaId}/especialidades/${idEspecialidade}`);
 
             setFormData((prev) => ({
                 ...prev,
@@ -88,7 +81,7 @@ const Perfil = () => {
 
             setFormData((prev) => ({
                 ...prev,
-                celular: formatarCelular(value),
+                celular: MascaraTelefone(value),
             }));
         } else {
             setFormData((prev) => ({
@@ -120,29 +113,12 @@ const Perfil = () => {
         }));
     };
 
-    const formatarCelular = (celular) => {
-        let digitos = celular.replace(/\D/g, "");
-
-        if (digitos.length > 11) digitos = digitos.slice(0, 11);
-
-        if (digitos.length > 7) {
-            return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
-        } else if (digitos.length > 2) {
-            return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
-        } else if (digitos.length > 0) {
-            return `(${digitos}`;
-        }
-
-        return celular;
-    }
-
     const removerMascara = (celular) => {
         return celular.replace(/\D/g, "");
     };
 
     const handleSave = async () => {
         const pessoaId = sessionStorage.getItem('pessoaId');
-        const token = sessionStorage.getItem('authToken');
 
         const celularSemMascara = removerMascara(formData.celular);
 
@@ -152,11 +128,7 @@ const Perfil = () => {
         };
 
         try {
-            const response = await caringuApi.patch(`/personal-trainers/${pessoaId}`, dataParaSalvar, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await caringuApi.patch(`/personal-trainers/${pessoaId}`, dataParaSalvar);
 
             console.log("Dados atualizados com sucesso:", response.data);
             window.location.reload(true);
@@ -167,14 +139,9 @@ const Perfil = () => {
 
     const handleDeletarConta = async () => {
         const pessoaId = sessionStorage.getItem('pessoaId');
-        const token = sessionStorage.getItem('authToken');
 
         try {
-            await caringuApi.delete(`/personal-trainers/${pessoaId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            await caringuApi.delete(`/personal-trainers/${pessoaId}`);
 
             navigate("/", { replace: true });
         } catch (error) {
@@ -212,195 +179,181 @@ const Perfil = () => {
                             {/* Conteúdo da aba Informações Pessoais */}
                             <div className="space-y-8">
                                 {/* Foto de Perfil */}
-                                <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-between">
-                                    {/* Imagem e Texto */}
-                                    <div className="flex items-center gap-4">
-                                        <img
-                                            src="https://via.placeholder.com/150"
-                                            alt="Foto de Perfil"
-                                            className="w-28 h-28 rounded-full object-cover"
-                                        />
-                                        <div>
-                                            <h3 className="text-[16px] font-semibold text-gray-800">
-                                                Foto de perfil
-                                            </h3>
-                                            <p className="text-[14px] text-gray-500">
-                                                PNG, JPEG, menos de 15MB
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Botões */}
-                                    <div className="flex gap-4">
-                                        <button className="flex items-center gap-2 px-4 py-2 text-[16px] text-gray-700 border border-gray-300 rounded-md">
-                                            <HiOutlineUpload className="w-5 h-5" />
-                                            Carregar foto
-                                        </button>
-                                        <button className="flex items-center gap-2 px-4 py-2 text-[16px] text-white bg-red-700 rounded-md">
-                                            <HiOutlineTrash className="w-5 h-5" />
-                                            Remover foto
-                                        </button>
-                                    </div>
-                                </div>
+                                <FotoPerfil />
 
                                 {/* Informações Profissionais */}
-                                <div className="bg-white shadow-md rounded-lg p-6">
-                                    <h2 className="text-[18px] font-bold text-gray-800 mb-4">
-                                        Informações Profissionais
-                                    </h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Nome completo
-                                            </label>
-                                            <input
-                                                name="nome"
-                                                type="text"
-                                                className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                                placeholder="Digite seu nome completo"
-                                                value={formData.nome || ""}
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Email
-                                            </label>
-                                            <input
-                                                name="email"
-                                                type="email"
-                                                className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                                placeholder="Digite seu email"
-                                                value={formData.email || ""}
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Especialidade
-                                            </label>
-                                            <div className="flex flex-wrap gap-2">
-                                                {formData.especialidades?.map((especialidade) => (
-                                                    <div key={especialidade.id} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
-                                                        {especialidade.nome}
-                                                        <button
-                                                            onClick={() => handleRemoveEspecialidade(especialidade.id)}
-                                                            className="text-red-600"
-                                                        >
-                                                            <HiOutlineTrash className="w-5 h-5" />
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                                <button
-                                                    className="text-[16px] text-blue-600"
-                                                    onClick={() => {
-                                                        const nomeEspecialidade = prompt("Digite a nova especialidade:");
-                                                        if (nomeEspecialidade) {
-                                                            setFormData((prev) => ({
-                                                                ...prev,
-                                                                especialidades: [
-                                                                    ...(prev.especialidades || []),
-                                                                    { id: null, nome: nomeEspecialidade },
-                                                                ],
-                                                            }));
-                                                        }
-                                                    }}
+                                <div className="bg-white shadow-md border-[#1d2d44] rounded-lg p-6 flex flex-col justify-center h-124.5">
+                                    <div className="flex justify-between items-center w-full p-2">
+                                        <h2 className="text-[24px] font-bold text-gray-800 flex justify-between items-center ">
+                                            Informações Profissionais
+                                        </h2>
+                                        {/* Botões Salvar e Cancelar */}
+                                        <div className="flex justify-end items-center gap-4">
+                                            {/* <span className="px-6 py-2 text-[16px] text-white bg-[#B41F1F] rounded-md hover:bg-red-800"
+                                                    onClick={() => setModalVisible(true)}
                                                 >
-                                                    + Adicionar
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Data de nascimento
-                                            </label>
-                                            <input
-                                                name="dataNascimento"
-                                                type="date"
-                                                className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                                value={formData.dataNascimento || ""}
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Gênero
-                                            </label>
-                                            <select name="genero" className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]" value={formData.genero || ""} onChange={handleInputChange}>
-                                                <option value="" disabled>Selecione</option>
-                                                <option value="HOMEM_CISGENERO">Homem cisgênero</option>
-                                                <option value="HOMEM_TRANSGENERO">Homem transgênero</option>
-                                                <option value="MULHER_CISGENERO">Mulher cisgênero</option>
-                                                <option value="MULHER_TRANSGENERO">Mulher transgênero</option>
-                                                <option value="NAO_BINARIO">Não binário</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Telefone
-                                            </label>
-                                            <input
-                                                name="celular"
-                                                type="tel"
-                                                className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                                placeholder="(XX) XXXXX-XXXX"
-                                                value={formData.celular || ""}
-                                                onChange={handleTelefoneChange}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                CREF
-                                            </label>
-                                            <input
-                                                name="cref"
-                                                type="text"
-                                                className="form-input border border-gray-300 text-gray-400 bg-gray-200 rounded-md p-3 w-full text-[16px] cursor-not-allowed"
-                                                placeholder="Digite seu CREF"
-                                                value={formData.cref || ""}
-                                                disabled={true}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Anos de experiência
-                                            </label>
-                                            <input
-                                                name="experiencia"
-                                                type="number"
-                                                className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                                placeholder="Digite os anos de experiência"
-                                                value={formData.experiencia || ""}
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-[16px] font-medium text-gray-700">
-                                                Cidade
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                                placeholder="Digite sua cidade"
-                                                value={formData.cidade || "São Paulo"}
-                                                onChange={handleInputChange}
-                                            />
+                                                    Deletar Conta
+                                                </span> */}
+                                            <button
+                                                className="flex items-center px-6 py-2 text-[16px] text-white bg-[#46982B] cursor-pointer rounded-md hover:bg-[#4d7b3e]"
+                                                onClick={handleSave}
+                                            >
+                                                Salvar
+                                            </button>
                                         </div>
                                     </div>
-
-                                    {/* Botões Salvar e Cancelar */}
-                                    <div className="flex justify-end gap-4 mt-6">
-                                        <span className="px-6 py-2 text-[16px] text-white bg-[#B41F1F] rounded-md hover:bg-red-800"
-                                            onClick={() => setModalVisible(true)}
-                                        >
-                                            Deletar Conta
-                                        </span>
-                                        <button
-                                            className="px-6 py-2 text-[16px] text-white bg-[#46982B] rounded-md hover:bg-green-700"
-                                            onClick={handleSave}
-                                        >
-                                            Salvar
-                                        </button>
+                                    <div className="bg-white border-[#1d2d44] rounded-lg p-6 overflow-auto">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Nome completo
+                                                </label>
+                                                <input
+                                                    name="nome"
+                                                    type="text"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    placeholder="Digite seu nome completo"
+                                                    value={formData.nome || ""}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Email
+                                                </label>
+                                                <input
+                                                    name="email"
+                                                    type="email"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    placeholder="Digite seu email"
+                                                    value={formData.email || ""}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Especialidade
+                                                </label>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {formData.especialidades?.map((especialidade) => (
+                                                        <div key={especialidade.id} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
+                                                            {especialidade.nome}
+                                                            <button
+                                                                onClick={() => handleRemoveEspecialidade(especialidade.id)}
+                                                                className="text-red-600"
+                                                            >
+                                                                <HiOutlineTrash className="w-5 h-5" />
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                    <button
+                                                        className="text-[16px] text-blue-600"
+                                                        onClick={() => {
+                                                            const nomeEspecialidade = prompt("Digite a nova especialidade:");
+                                                            if (nomeEspecialidade) {
+                                                                setFormData((prev) => ({
+                                                                    ...prev,
+                                                                    especialidades: [
+                                                                        ...(prev.especialidades || []),
+                                                                        { id: null, nome: nomeEspecialidade },
+                                                                    ],
+                                                                }));
+                                                            }
+                                                        }}
+                                                    >
+                                                        + Adicionar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Data de nascimento
+                                                </label>
+                                                <input
+                                                    name="dataNascimento"
+                                                    type="date"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    value={formData.dataNascimento || ""}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Gênero
+                                                </label>
+                                                <select name="genero" className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]" value={formData.genero || ""} onChange={handleInputChange}>
+                                                    <option value="" disabled>Selecione</option>
+                                                    <option value="HOMEM_CISGENERO">Homem cisgênero</option>
+                                                    <option value="HOMEM_TRANSGENERO">Homem transgênero</option>
+                                                    <option value="MULHER_CISGENERO">Mulher cisgênero</option>
+                                                    <option value="MULHER_TRANSGENERO">Mulher transgênero</option>
+                                                    <option value="NAO_BINARIO">Não binário</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Telefone
+                                                </label>
+                                                <input
+                                                    name="celular"
+                                                    type="tel"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    placeholder="(XX) XXXXX-XXXX"
+                                                    value={formData.celular || ""}
+                                                    onChange={handleTelefoneChange}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    CREF
+                                                </label>
+                                                <input
+                                                    name="cref"
+                                                    type="text"
+                                                    className="form-input border border-gray-300 text-gray-400 bg-gray-200 rounded-md p-3 w-full text-[16px] cursor-not-allowed"
+                                                    placeholder="Digite seu CREF"
+                                                    value={formData.cref || ""}
+                                                    disabled={true}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Anos de experiência
+                                                </label>
+                                                <input
+                                                    name="experiencia"
+                                                    type="number"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    placeholder="Digite os anos de experiência"
+                                                    value={formData.experiencia || ""}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Cidade
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    placeholder="Digite sua cidade"
+                                                    value={formData.cidade || "São Paulo"}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[16px] font-medium text-gray-700">
+                                                    Bairro
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                                    placeholder="Digite seu bairro"
+                                                    value={formData.bairro || "Vila Prudente"}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
