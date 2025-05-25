@@ -24,18 +24,28 @@ import "./styles/global.css";
 const AppRoutes = () => {
 
   const [sessaoExpirada, setSessaoExpirada] = useState(false);
+  const [modalMensagem, setModalMensagem] = useState("");
+  const [modalTitulo, setModalTitulo] = useState("");
 
   useEffect(() => {
     const handler = () => {
+      setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
+      setModalTitulo(sessionStorage.getItem("modalTitulo") || "");
       setSessaoExpirada(true);
     };
+
     window.addEventListener('sessaoExpirada', handler);
     return () => window.removeEventListener('sessaoExpirada', handler);
   }, []);
 
   return (
     <Router>
-      <SessaoExpiradaModal visible={sessaoExpirada} onClose={() => setSessaoExpirada(false)} />
+      <SessaoExpiradaModal
+        visible={sessaoExpirada}
+        onClose={() => setSessaoExpirada(false)}
+        titulo={modalTitulo}
+        mensagem={modalMensagem}
+      />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />

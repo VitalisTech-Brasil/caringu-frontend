@@ -41,6 +41,7 @@ const ColunaInputs = () => {
         sessionStorage.setItem('authToken', response.data.token);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
+        sessionStorage.setItem('email', email);
 
           toast.custom((t) => (
             <CustomToast t={t} type="success" message="Login realizado com sucesso!" />
