@@ -60,11 +60,8 @@ const GerenciarAlunos = () => {
 
     const fetchData = async () => {
       try {
-        const totalAlunosAtivos = await caringuApi.get(`/alunos/ativos/${personalId}`);
+        const totalAlunosAtivos = await caringuApi.get(`/alunos/detalhes-aluno-por-personal/${personalId}`);
         setAlunosAtivos(totalAlunosAtivos.data);
-
-        const totalPlanosVencimento = await caringuApi.get(`/planos-contratados/alunos-perto-do-fim/${personalId}`)
-        setPlanosVencimento(totalPlanosVencimento.data);
 
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
@@ -73,27 +70,6 @@ const GerenciarAlunos = () => {
 
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const personalId = sessionStorage.getItem('pessoaId');
-
-    const fetchData = async () => {
-      try {
-
-        const totalPresencaAlunos = await caringuApi.get(`/alunos/presenca/${personalId}`, {
-          params: {
-            periodo: filter
-          }
-        })
-        setPresencaAlunos(totalPresencaAlunos.data);
-
-      } catch (error) {
-        console.error("Erro ao buscar presenca de alunos:", error);
-      }
-    };
-
-    fetchData();
-  }, [filter]);
 
   // Componente do menu de ações do aluno
   const AlunoActionsMenu = ({ aluno }) => (
@@ -144,9 +120,9 @@ const GerenciarAlunos = () => {
   // Aplicar filtros e ordenação
   const filteredAlunos = alunosAtivos
     .filter((aluno) => {
-      if (anamnesesPendentes && aluno.temAnamnese) return false;
-      if (aguardandoTreino && aluno.temTreinos) return false;
-      if (searchTerm && !aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+      if (anamnesesPendentes && aluno.idAnamnese) return false;
+      if (aguardandoTreino && aluno.idAlunoTreino) return false;
+      if (searchTerm && !aluno.nomeAluno.toLowerCase().includes(searchTerm.toLowerCase()))
         return false;
       return true;
     })
@@ -231,16 +207,16 @@ const GerenciarAlunos = () => {
 
                   {filteredAlunos.map((aluno) => (
                     <div
-                      key={aluno.id}
+                      key={aluno.idAluno}
                       className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer"
                       onClick={() => redirectToPerfilAluno(aluno.id)}
                     >
                       <Avatar img={aluno.avatar} rounded />
 
                       <div className="flex-1">
-                        <p className="font-bold text-md">{aluno.nome}</p>
+                        <p className="font-bold text-md">{aluno.nomeAluno}</p>
                         <p className="text-sm text-gray-600 flex items-center gap-0.5">
-                          {aluno.objetivo ? (
+                          {aluno.objetivoTreino ? (
                             <>
                               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 28 28" fill="none">
                                 <path d="M14.175 19.25V21.7" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -250,7 +226,7 @@ const GerenciarAlunos = () => {
                                 <path d="M6.38155 13.5917C5.50655 13.3117 4.73655 12.7983 4.12988 12.1917C3.07988 11.025 2.37988 9.62501 2.37988 7.99168C2.37988 6.35835 3.66322 5.07501 5.29655 5.07501H6.05488C5.82155 5.61168 5.70488 6.20668 5.70488 6.82501V10.325C5.70488 11.4917 5.94988 12.5883 6.38155 13.5917Z" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M21.6184 13.5917C22.4934 13.3117 23.2634 12.7983 23.8701 12.1917C24.9201 11.025 25.6201 9.62501 25.6201 7.99168C25.6201 6.35835 24.3367 5.07501 22.7034 5.07501H21.9451C22.1784 5.61168 22.2951 6.20668 22.2951 6.82501V10.325C22.2951 11.4917 22.0501 12.5883 21.6184 13.5917Z" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
-                              <span className="text-sm text-gray-600">Objetivo: {aluno.objetivo}</span>
+                              <span className="text-sm text-gray-600">Objetivo: {aluno.objetivoTreino}</span>
                             </>
                           ) : (
                             <>
@@ -274,14 +250,14 @@ const GerenciarAlunos = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation(); // Prevent card click event
-                              setOpenMenuId(openMenuId === aluno.id ? null : aluno.id);
+                              setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
                             }}
                             className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                           >
                             <FaEllipsisV className="text-xl cursor-pointer" />
                           </button>
 
-                          {openMenuId === aluno.id && (
+                          {openMenuId === aluno.idAluno && (
                             <div
                               ref={menuRef}
                               onClick={(e) => e.stopPropagation()} // Prevent card click event
@@ -311,15 +287,15 @@ const GerenciarAlunos = () => {
                 </Dropdown>
                 <div className="space-y-2 overflow-y-auto max-h-[250px]">
                   {/* Conteúdo do widget */}
-                  {presencaAlunos.length == 0 && (
+                  {filteredAlunos.length == 0 && (
                     <div className="flex justify-center">
                       Sem alunos no momento.
                     </div>
                   )}
 
-                  {presencaAlunos.length > 0 && (
+                  {filteredAlunos.length > 0 && (
                     <>
-                      {presencaAlunos.map((aluno) => (
+                      {filteredAlunos.map((aluno) => (
                         <div
                           key={aluno.id}
                           className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
@@ -327,17 +303,17 @@ const GerenciarAlunos = () => {
                           <Avatar img={aluno.avatar} rounded />
                           {filter == "SEMANA" && (
                             <>
-                              {aluno.totalPresencas > 0 && (
+                              {aluno.treinosSemana > 0 && (
                                 <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} treinou {aluno.totalPresencas == 1 ? `${aluno.totalPresencas} vez` : `${aluno.totalPresencas} vezes`} essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada}x por semana</p>
+                                  <p className="font-bold text-md">{aluno.nomeAluno} treinou {aluno.treinosSemana == 1 ? `${aluno.treinosSemana} vez` : `${aluno.treinosSemana} vezes`} essa semana</p>
+                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino}x por semana</p>
                                 </div>
                               )}
 
-                              {aluno.totalPresencas == 0 && (
+                              {aluno.treinosSemana == 0 && (
                                 <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada}x por semana</p>
+                                  <p className="font-bold text-md">{aluno.nomeAluno} não treinou essa semana</p>
+                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino}x por semana</p>
                                 </div>
                               )}
                             </>
@@ -347,15 +323,15 @@ const GerenciarAlunos = () => {
                             <>
                               {aluno.totalPresencas > 0 && (
                                 <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} treinou {aluno.totalPresencas == 1 ? `${aluno.totalPresencas} vez` : `${aluno.totalPresencas} vezes`} esse mês</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada * 4}x por mês</p>
+                                  <p className="font-bold text-md">{aluno.nomeAluno} treinou {aluno.treinosSemana == 1 ? `${aluno.treinosSemana} vez` : `${aluno.treinosSemana} vezes`} esse mês</p>
+                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino * 4}x por mês</p>
                                 </div>
                               )}
 
                               {aluno.totalPresencas == 0 && (
                                 <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada * 4}x por mês</p>
+                                  <p className="font-bold text-md">{aluno.nomeAluno} não treinou essa semana</p>
+                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino * 4}x por mês</p>
                                 </div>
                               )}
                             </>

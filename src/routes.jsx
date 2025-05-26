@@ -29,8 +29,8 @@ const AppRoutes = () => {
 
   useEffect(() => {
     const handler = () => {
-      setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
-      setModalTitulo(sessionStorage.getItem("modalTitulo") || "");
+/*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
+      setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
       setSessaoExpirada(true);
     };
 
@@ -43,8 +43,8 @@ const AppRoutes = () => {
       <SessaoExpiradaModal
         visible={sessaoExpirada}
         onClose={() => setSessaoExpirada(false)}
-        titulo={modalTitulo}
-        mensagem={modalMensagem}
+        /* titulo={modalTitulo}
+        mensagem={modalMensagem} */
       />
       <Routes>
         <Route path="/" element={<Index />} />

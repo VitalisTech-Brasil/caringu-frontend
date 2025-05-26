@@ -56,7 +56,7 @@ export default function FotoPerfil() {
                     <button
                         type="button"
                         onClick={() => fileInputRef.current.click()}
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] text-gray-700 border border-gray-300 hover:bg-gray-100 rounded-md"
+                        className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] cursor-pointer text-gray-700 border border-gray-300 hover:bg-gray-100 rounded-md"
                     >
                         <HiOutlineUpload className="w-5 h-5" />
                         Carregar Foto
@@ -65,7 +65,7 @@ export default function FotoPerfil() {
                     <button
                         type="button"
                         onClick={() => setFileName("")}
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] text-white bg-red-700 hover:bg-red-800 rounded-md"
+                        className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] cursor-pointer text-white bg-red-700 hover:bg-red-800 rounded-md"
                     >
                         <HiOutlineTrash className="w-5 h-5" />
                         Remover foto

@@ -13,22 +13,6 @@ const Perfil = () => {
     const [deletarContaModal, setDeletarContaModal] = useState(false);
     const navigate = useNavigate();
 
-    const handleRemoveEspecialidade = async (idEspecialidade) => {
-        const pessoaId = sessionStorage.getItem('pessoaId');
-
-        try {
-            await caringuApi.delete(`/personal-trainers/${pessoaId}/especialidades/${idEspecialidade}`);
-
-            setFormData((prev) => ({
-                ...prev,
-                especialidades: prev.especialidades.filter(e => e.id !== idEspecialidade)
-            }));
-        } catch (error) {
-            console.error("Erro ao remover especialidade:", error);
-            alert("Não foi possível remover a especialidade. Tente novamente.");
-        }
-    };
-
     const handleCancelRemove = () => {
         setModalVisible(false);
         setEspecialidadeSelecionada(null);
