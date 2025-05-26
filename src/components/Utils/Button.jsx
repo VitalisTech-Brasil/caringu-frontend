@@ -1,48 +1,44 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Botton = ({ id,
-                  texto,
-                  onClick,
-                  cor,
-                  corTexto,
-                  corHover,
-                  width,
-                  height,
-                  type,
-                  fontSize,
-                  logo,
-                  logoSvg,
-                  disabled,
-                  ariaLabel,
-                  borderColor,
-                  borderStyle,
-                  borderWidth,
-                  fontWeight}) => {
-
-  const [bgColor, setBgColor] = useState(cor);
-
+const Botton = ({
+  id,
+  texto,
+  onClick,
+  cor,
+  corTexto,
+  corHover = "none",
+  width,
+  height,
+  type,
+  fontSize,
+  logo,
+  logoSvg,
+  disabled,
+  ariaLabel,
+  borderColor,
+  borderStyle,
+  borderWidth,
+  fontWeight,
+}) => {
   return (
     <button
       id={id}
       type={type}
       disabled={disabled || false}
       onClick={onClick}
-      onMouseEnter={() => setBgColor(corHover)}
-      onMouseLeave={() => setBgColor(cor)}
       aria-label={ariaLabel}
       style={{
-        backgroundColor: bgColor,
+        backgroundColor: cor,
         color: corTexto,
         width: width,
         height: height,
         fontSize: fontSize,
         fontWeight: fontWeight,
         borderColor: borderColor,
-        borderStyle: borderStyle || "none", 
-        borderWidth: borderWidth
-
+        borderStyle: borderStyle || "none",
+        borderWidth: borderWidth,
       }}
-      className="
+      className={`
         rounded-[6px]
         outline-none 
         cursor-pointer 
@@ -51,7 +47,8 @@ const Botton = ({ id,
         ease-in-out
         flex items-center justify-center
         gap-3
-      "
+        hover:brightness-90
+      `}
     >
       {logoSvg}
       {logo && <img src={logo} alt="Logo" />}

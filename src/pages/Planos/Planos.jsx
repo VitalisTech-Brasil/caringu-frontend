@@ -246,6 +246,40 @@ const Planos = () => {
         trigger("aulas");
     };
 
+
+    const alunosAtivos = [
+        {
+            urlImagem: "https://randomuser.me/api/portraits/men/1.jpg",
+            nome: "João Silva",
+            nomePlano: "Plano Mensal",
+            niverExperiencia: "AVANCADO"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/women/2.jpg",
+            nome: "Maria Souza",
+            nomePlano: "Plano Semestral",
+            niverExperiencia: "INICIANTE"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/men/3.jpg",
+            nome: "Carlos Pereira",
+            nomePlano: "Plano Avulso",
+            niverExperiencia: "AVANCADO"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/women/4.jpg",
+            nome: "Ana Costa",
+            nomePlano: "Plano Mensal",
+            niverExperiencia: "INICIANTE"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/men/5.jpg",
+            nome: "Pedro Santos",
+            nomePlano: "Plano Semestral",
+            niverExperiencia: "INICIANTE"
+        }
+    ];
+
     return (
         <>
             <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -319,11 +353,15 @@ const Planos = () => {
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com planos ativos</span>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
+                        {alunosAtivos.map((aluno, idx) => (
+                            <CardAlunoAtivos
+                                key={idx}
+                                urlImagem={aluno.urlImagem}
+                                nome={aluno.nome}
+                                nomePlano={aluno.nomePlano}
+                                niverExperiencia={aluno.niverExperiencia}
+                            />
+                        ))}
                     </div>
 
                     {/* Modal para criar */}
@@ -416,7 +454,7 @@ const Planos = () => {
                                                         <img src={info2} alt="Erro" className="w-4 h-4" />
                                                         <span>Selecione o Período de duração do plano</span>
                                                     </div>
-                                                )}{errors.genero?.message}
+                                                )}{errors.duracao?.message}
                                                 </span>
                                             </div>
                                             <div>
@@ -607,7 +645,7 @@ const Planos = () => {
                                                         <img src={info2} alt="Erro" className="w-4 h-4" />
                                                         <span>Selecione o Período de duração do plano</span>
                                                     </div>
-                                                )}{errors.genero?.message}
+                                                )}{errors.duracao?.message}
                                                 </span>
                                             </div>
                                             <div>

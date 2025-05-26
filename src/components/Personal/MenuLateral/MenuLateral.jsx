@@ -150,7 +150,7 @@ const MenuLateral = () => {
 
 
       <aside
-        className={`sticky h-screen  top-0 bg-[var(--cor-secundaria)] text-black transition-width duration-300 w-18 min-h-[4.5rem] flex flex-col z-10`}
+        className={`sticky h-[100dvh]  top-0 bg-[var(--cor-secundaria)] text-black transition-width duration-300 w-18 min-h-[4.5rem] flex flex-col z-10`}
       >
         {/* Header do Menu */}
         <div
@@ -234,7 +234,7 @@ const MenuLateral = () => {
           />
           <aside
             className={`
-        fixed top-0 left-0 h-screen 
+        fixed top-0 left-0 h-[100dvh] 
           bg-[var(--cor-secundaria)] text-black 
           transition-all duration-300 ease-in-out 
           w-64 z-50 shadow-xl
