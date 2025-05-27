@@ -51,6 +51,10 @@ const GerenciarAlunos = () => {
 
   const now = new Date();
 
+  const toggleMenu = () => {
+    setOpenMenuId(!openMenuId);
+  };
+
   const alunosFiltrados = alunosAtivos
     .filter((aluno) => aluno.frequenciaTreino != null)
     .map((aluno) => {
@@ -202,7 +206,7 @@ const GerenciarAlunos = () => {
         <main className="w-full overflow-y-auto max-h-screen">
           <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 m-8">
             <div className="col-span-3">
-              <div className="bg-white rounded-xl shadow-sm p-6 max-h-[85vh] ">
+              <div className="bg-white rounded-xl shadow-sm p-6 h-[84.5vh] ">
                 <h2 className="text-xl font-bold mb-4">Alunos Ativos</h2>
                 <div className="flex items-center gap-2 mb-4">
                   <input
@@ -273,7 +277,7 @@ const GerenciarAlunos = () => {
                     />
                   </div>
                 </div>
-                <div className="space-y-2 overflow-y-auto max-h-[25vh] md:max-h-[40vh] lg:max-h-[65vh] border border-gray-200 rounded-md p-4">
+                <div className="space-y-2 overflow-y-auto max-h-[65vh] md:max-h-[67vh]  border h-full border-gray-200 rounded-md p-4">
 
                   {filteredAlunos.map((aluno) => (
 
@@ -321,7 +325,7 @@ const GerenciarAlunos = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation(); // Prevent card click event
-                              setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
+                              toggleMenu();
                             }}
                             className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                           >
@@ -347,7 +351,7 @@ const GerenciarAlunos = () => {
             </div >
 
             {/* Seção Direita: Widgets */}
-            < div className="max-h-full gap-5 flex flex-col col-span-2" >
+            < div className="max-h-[84.5vh] gap-5 flex flex-col col-span-2" >
               <div className="bg-white rounded-xl shadow-sm p-6 h-1/2 ">
                 <h2 className="text-lg font-bold mb-4">
                   Presença de alunos por:
