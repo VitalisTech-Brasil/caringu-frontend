@@ -7,12 +7,13 @@ import {
 } from "react-icons/hi";
 import { FaEllipsisV } from "react-icons/fa";
 import { Avatar, Dropdown, Button, Popover, DropdownItem } from "flowbite-react";
+import { isSameWeek, isSameMonth, parse } from "date-fns";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { useNavigate } from "react-router-dom";
 
 import { caringuApi } from "../../provider/caringuApi";
-import { formatarTelefone } from "../../components/Utils/Functions/MascaraTelefone";
+import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,8 +29,40 @@ const GerenciarAlunos = () => {
   const buttonRef = useRef(null);
 
   const [alunosAtivos, setAlunosAtivos] = useState([]);
-  const [presencaAlunos, setPresencaAlunos] = useState([]);
-  const [planosVencimento, setPlanosVencimento] = useState([]);
+
+  const now = new Date();
+
+  const alunosFiltrados = alunosAtivos
+    .filter((aluno) => aluno.frequenciaTreino != null)
+    .map((aluno) => {
+      const horarios = Array.isArray(aluno.horariosFimTotal) ? aluno.horariosFimTotal : [];
+
+      const treinosSemana = horarios.filter((h) => {
+        if (!h || typeof h !== "string") return false;
+        try {
+          const data = parse(h, "yyyy-MM-dd HH:mm", new Date());
+          return isSameWeek(data, now, { weekStartsOn: 1 });
+        } catch {
+          return false;
+        }
+      }).length;
+
+      const treinosMes = horarios.filter((h) => {
+        if (!h || typeof h !== "string") return false;
+        try {
+          const data = parse(h, "yyyy-MM-dd HH:mm", new Date());
+          return isSameMonth(data, now);
+        } catch {
+          return false;
+        }
+      }).length;
+
+      return {
+        ...aluno,
+        treinosSemanaCalculado: treinosSemana,
+        treinosMesCalculado: treinosMes,
+      };
+    });
 
   useEffect(() => {
     document.title = "Gerenciar Alunos | CaringU"
@@ -60,12 +93,8 @@ const GerenciarAlunos = () => {
 
     const fetchData = async () => {
       try {
-        const totalAlunosAtivos = await caringuApi.get(`/alunos/ativos/${personalId}`);
+        const totalAlunosAtivos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
         setAlunosAtivos(totalAlunosAtivos.data);
-
-        const totalPlanosVencimento = await caringuApi.get(`/planos-contratados/alunos-perto-do-fim/${personalId}`)
-        setPlanosVencimento(totalPlanosVencimento.data);
-        console.log(totalPlanosVencimento.data);
 
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
@@ -74,27 +103,6 @@ const GerenciarAlunos = () => {
 
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const personalId = sessionStorage.getItem('pessoaId');
-
-    const fetchData = async () => {
-      try {
-
-        const totalPresencaAlunos = await caringuApi.get(`/alunos/presenca/${personalId}`, {
-          params: {
-            periodo: filter
-          }
-        })
-        setPresencaAlunos(totalPresencaAlunos.data);
-
-      } catch (error) {
-        console.error("Erro ao buscar presenca de alunos:", error);
-      }
-    };
-
-    fetchData();
-  }, [filter]);
 
   // Componente do menu de ações do aluno
   const AlunoActionsMenu = ({ aluno }) => (
@@ -145,15 +153,15 @@ const GerenciarAlunos = () => {
   // Aplicar filtros e ordenação
   const filteredAlunos = alunosAtivos
     .filter((aluno) => {
-      if (anamnesesPendentes && aluno.temAnamnese) return false;
-      if (aguardandoTreino && aluno.temTreinos) return false;
-      if (searchTerm && !aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+      if (anamnesesPendentes && aluno.idAnamnese) return false;
+      if (aguardandoTreino && aluno.idAlunoTreino) return false;
+      if (searchTerm && !aluno.nomeAluno.toLowerCase().includes(searchTerm.toLowerCase()))
         return false;
       return true;
     })
     .sort((a, b) => {
-      if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
-      if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+      if (sortOrder === "A-Z") return a.nomeAluno.localeCompare(b.nomeAluno);
+      if (sortOrder === "Z-A") return b.nomeAluno.localeCompare(a.nomeAluno);
       return 0;
     });
 
@@ -232,16 +240,16 @@ const GerenciarAlunos = () => {
 
                   {filteredAlunos.map((aluno) => (
                     <div
-                      key={aluno.id}
+                      key={aluno.idAluno}
                       className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer"
                       onClick={() => redirectToPerfilAluno(aluno.id)}
                     >
                       <Avatar img={aluno.avatar} rounded />
 
                       <div className="flex-1">
-                        <p className="font-bold text-md">{aluno.nome}</p>
+                        <p className="font-bold text-md">{aluno.nomeAluno}</p>
                         <p className="text-sm text-gray-600 flex items-center gap-0.5">
-                          {aluno.objetivo ? (
+                          {aluno.objetivoTreino ? (
                             <>
                               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 28 28" fill="none">
                                 <path d="M14.175 19.25V21.7" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -251,7 +259,7 @@ const GerenciarAlunos = () => {
                                 <path d="M6.38155 13.5917C5.50655 13.3117 4.73655 12.7983 4.12988 12.1917C3.07988 11.025 2.37988 9.62501 2.37988 7.99168C2.37988 6.35835 3.66322 5.07501 5.29655 5.07501H6.05488C5.82155 5.61168 5.70488 6.20668 5.70488 6.82501V10.325C5.70488 11.4917 5.94988 12.5883 6.38155 13.5917Z" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M21.6184 13.5917C22.4934 13.3117 23.2634 12.7983 23.8701 12.1917C24.9201 11.025 25.6201 9.62501 25.6201 7.99168C25.6201 6.35835 24.3367 5.07501 22.7034 5.07501H21.9451C22.1784 5.61168 22.2951 6.20668 22.2951 6.82501V10.325C22.2951 11.4917 22.0501 12.5883 21.6184 13.5917Z" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
-                              <span className="text-sm text-gray-600">Objetivo: {aluno.objetivo}</span>
+                              <span className="text-sm text-gray-600">Objetivo: {aluno.objetivoTreino}</span>
                             </>
                           ) : (
                             <>
@@ -265,7 +273,7 @@ const GerenciarAlunos = () => {
                           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 28 28" fill="none">
                             <path d="M25.6316 21.385C25.6316 21.805 25.5383 22.2366 25.3399 22.6566C25.1416 23.0766 24.8849 23.4733 24.5466 23.8466C23.9749 24.4766 23.3449 24.9316 22.6333 25.2233C21.9333 25.515 21.1749 25.6666 20.3583 25.6666C19.1683 25.6666 17.8966 25.3866 16.5549 24.815C15.2133 24.2433 13.8716 23.4733 12.5416 22.505C11.1999 21.525 9.92825 20.44 8.71492 19.2383C7.51325 18.025 6.42825 16.7533 5.45992 15.4233C4.50325 14.0933 3.73325 12.7633 3.17325 11.445C2.61325 10.115 2.33325 8.84331 2.33325 7.62998C2.33325 6.83665 2.47325 6.07831 2.75325 5.37831C3.03325 4.66665 3.47659 4.01331 4.09492 3.42998C4.84159 2.69498 5.65825 2.33331 6.52159 2.33331C6.84825 2.33331 7.17492 2.40331 7.46659 2.54331C7.76992 2.68331 8.03825 2.89331 8.24825 3.19665L10.9549 7.01165C11.1649 7.30331 11.3166 7.57165 11.4216 7.82831C11.5266 8.07331 11.5849 8.31831 11.5849 8.53998C11.5849 8.81998 11.5033 9.09998 11.3399 9.36831C11.1883 9.63665 10.9666 9.91665 10.6866 10.1966L9.79992 11.1183C9.67158 11.2466 9.61325 11.3983 9.61325 11.585C9.61325 11.6783 9.62492 11.76 9.64825 11.8533C9.68325 11.9466 9.71825 12.0166 9.74159 12.0866C9.95159 12.4716 10.3133 12.9733 10.8266 13.58C11.3516 14.1866 11.9116 14.805 12.5183 15.4233C13.1483 16.0416 13.7549 16.6133 14.3733 17.1383C14.9799 17.6516 15.4816 18.0016 15.8783 18.2116C15.9366 18.235 16.0066 18.27 16.0883 18.305C16.1816 18.34 16.2749 18.3516 16.3799 18.3516C16.5783 18.3516 16.7299 18.2816 16.8583 18.1533L17.7449 17.2783C18.0366 16.9866 18.3166 16.765 18.5849 16.625C18.8533 16.4616 19.1216 16.38 19.4133 16.38C19.6349 16.38 19.8683 16.4266 20.1249 16.5316C20.3816 16.6366 20.6499 16.7883 20.9416 16.9866L24.8033 19.7283C25.1066 19.9383 25.3166 20.1833 25.4449 20.475C25.5616 20.7666 25.6316 21.0583 25.6316 21.385Z" fill="#748CAB" />
                           </svg>
-                          {formatarTelefone(aluno.celular)}
+                          {MascaraTelefone(aluno.celular)}
                         </p>
                       </div>
 
@@ -275,14 +283,14 @@ const GerenciarAlunos = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation(); // Prevent card click event
-                              setOpenMenuId(openMenuId === aluno.id ? null : aluno.id);
+                              setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
                             }}
                             className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                           >
                             <FaEllipsisV className="text-xl cursor-pointer" />
                           </button>
 
-                          {openMenuId === aluno.id && (
+                          {openMenuId === aluno.idAluno && (
                             <div
                               ref={menuRef}
                               onClick={(e) => e.stopPropagation()} // Prevent card click event
@@ -312,58 +320,51 @@ const GerenciarAlunos = () => {
                 </Dropdown>
                 <div className="space-y-2 overflow-y-auto max-h-[250px]">
                   {/* Conteúdo do widget */}
-                  {presencaAlunos.length == 0 && (
+                  {alunosAtivos.length == 0 && (
                     <div className="flex justify-center">
                       Sem alunos no momento.
                     </div>
                   )}
 
-                  {presencaAlunos.length > 0 && (
+                  {alunosFiltrados.length > 0 && (
                     <>
-                      {presencaAlunos.map((aluno) => (
-                        <div
-                          key={aluno.id}
-                          className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
-                        >
-                          <Avatar img={aluno.avatar} rounded />
-                          {filter == "SEMANA" && (
-                            <>
-                              {aluno.totalPresencas > 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} treinou {aluno.totalPresencas == 1 ? `${aluno.totalPresencas} vez` : `${aluno.totalPresencas} vezes`} essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada}x por semana</p>
-                                </div>
-                              )}
+                      {alunosFiltrados.map((aluno) => {
+                        // Calcula a frequência mensal com base na frequência semanal (ou null/0)
+                        const frequenciaMediaMensal = aluno.frequenciaTreino
+                          ? Math.round(aluno.frequenciaTreino * 52 / 12)
+                          : 0;
 
-                              {aluno.totalPresencas == 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada}x por semana</p>
-                                </div>
-                              )}
-                            </>
-                          )}
+                        return (
+                          <div
+                            key={aluno.idAluno}
+                            className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                          >
+                            <Avatar img={aluno.avatar} rounded />
 
-                          {filter == "MES" && (
-                            <>
-                              {aluno.totalPresencas > 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} treinou {aluno.totalPresencas == 1 ? `${aluno.totalPresencas} vez` : `${aluno.totalPresencas} vezes`} esse mês</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada * 4}x por mês</p>
-                                </div>
-                              )}
+                            {filter === "SEMANA" && (
+                              <div className="flex-1">
+                                <p className="font-bold text-md">
+                                  {aluno.nomeAluno} {aluno.treinosSemanaCalculado === 0 ? "não treinou" : `treinou ${aluno.treinosSemanaCalculado}x`} essa semana
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Frequência determinada: {aluno.frequenciaTreino}x por semana
+                                </p>
+                              </div>
+                            )}
 
-                              {aluno.totalPresencas == 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada * 4}x por mês</p>
-                                </div>
-                              )}
-                            </>
-                          )}
-
-                        </div>
-                      ))}
+                            {filter === "MES" && (
+                              <div className="flex-1">
+                                <p className="font-bold text-md">
+                                  {aluno.nomeAluno} {aluno.treinosMesCalculado === 0 ? "não treinou" : `treinou ${aluno.treinosMesCalculado}x`} esse mês
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Frequência determinada: {frequenciaMediaMensal}x por mês
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </>
                   )}
                 </div>
@@ -374,20 +375,30 @@ const GerenciarAlunos = () => {
                 </h2>
                 <div className="space-y-2 overflow-y-auto max-h-[270px]">
                   {/* Conteúdo do widget */}
-                  {planosVencimento.map((aluno) => (
-                    <div
-                      key={aluno.id}
-                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
-                    >
-                      <Avatar img={aluno.avatar} rounded />
+                  {[...alunosAtivos]
+                    .filter(
+                      (aluno) => aluno.totalAulasContratadas - aluno.treinosTotal > 0
+                    )
+                    .sort((a, b) => {
+                      const aulasRestantesA = a.totalAulasContratadas - a.treinosTotal;
+                      const aulasRestantesB = b.totalAulasContratadas - b.treinosTotal;
+                      return aulasRestantesA - aulasRestantesB;
+                    })
+                    .map((aluno) => (
+                      <div
+                        key={aluno.id}
+                        className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                      >
+                        <Avatar img={aluno.avatar} rounded />
 
-                      <div className="flex-1">
-                        <p className="font-bold text-md">{aluno.nome}</p>
-                        <p className="text-sm text-gray-600">{aluno.aulasRestantes} aulas restantes</p>
+                        <div className="flex-1">
+                          <p className="font-bold text-md">{aluno.nomeAluno}</p>
+                          <p className="text-sm text-gray-600">
+                            {aluno.totalAulasContratadas - aluno.treinosTotal} aulas restantes
+                          </p>
+                        </div>
                       </div>
-                    </div>
-
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>

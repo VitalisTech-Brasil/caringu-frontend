@@ -1,6 +1,6 @@
 import React from 'react'
 
-export function formatarTelefone(telefone) {
+export default function MascaraTelefone(telefone) {
     if (!telefone) return "Sem Telefone";
     let numeros = telefone.replace(/\D/g, '');
 
