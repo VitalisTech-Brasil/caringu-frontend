@@ -199,7 +199,7 @@ const GerenciarAlunos = () => {
       <MenuLateral />
       <div className="flex-1 overflow-y-auto">
         <Header />
-        <main className="w-full h-auto">
+        <main className="w-full overflow-y-auto max-h-screen">
           <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 m-8">
             <div className="col-span-3">
               <div className="bg-white rounded-xl shadow-sm p-6 max-h-[85vh] ">
@@ -332,12 +332,7 @@ const GerenciarAlunos = () => {
                             <div
                               ref={menuRef}
                               onClick={(e) => e.stopPropagation()}
-                              style={{
-                                position: 'fixed',
-                                top: buttonRef.current?.getBoundingClientRect().top || 0,
-                                left: (buttonRef.current?.getBoundingClientRect().left || 0) - 180, // 180px é a largura aproximada do menu
-                              }}
-                              className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-[9999] min-w-[160px]"
+                              className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-2 min-w-[160px]"
                             >
                               <AlunoActionsMenu aluno={aluno} />
                             </div>
@@ -412,11 +407,11 @@ const GerenciarAlunos = () => {
                   )}
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2 ">
+              <div className="bg-white rounded-xl shadow-sm p-6 flex-1 overflow-hidden">
                 <h2 className="text-lg font-bold mb-4">
                   Alunos com o plano perto do fim:
                 </h2>
-                <div className="space-y-2 overflow-y-auto max-h-[80%] border border-[#E6E6E2] rounded-md">
+                <div className="space-y-2 overflow-y-auto max-h-full border border-[#E6E6E2] rounded-md">
                   {/* Conteúdo do widget */}
                   {[...alunosAtivos]
                     .filter(
@@ -429,7 +424,7 @@ const GerenciarAlunos = () => {
                     })
                     .map((aluno) => (
                       <div
-                        key={aluno.id}
+                        key={aluno.idAluno}
                         className="relative flex items-center justify-between bg-white border border-[#E6E6E2] p-4 gap-4 m-4"
                       >
                         <Avatar img={aluno.avatar} rounded />
@@ -457,10 +452,10 @@ const GerenciarAlunos = () => {
                               </h1>
                               <div className="flex gap-3 mt-2">
                                 <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M9.58984 11C12.3513 11 14.5898 8.76142 14.5898 6C14.5898 3.23858 12.3513 1 9.58984 1C6.82842 1 4.58984 3.23858 4.58984 6C4.58984 8.76142 6.82842 11 9.58984 11Z" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                  <path d="M18.18 21C18.18 17.13 14.33 14 9.59 14C4.85 14 1 17.13 1 21" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                  <path d="M9.58984 11C12.3513 11 14.5898 8.76142 14.5898 6C14.5898 3.23858 12.3513 1 9.58984 1C6.82842 1 4.58984 3.23858 4.58984 6C4.58984 8.76142 6.82842 11 9.58984 11Z" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                  <path d="M18.18 21C18.18 17.13 14.33 14 9.59 14C4.85 14 1 17.13 1 21" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
-                                <p>{alunoAtual.nome}</p>
+                                <p>{alunoAtual.nomeAluno}</p>
                               </div>
                             </div>
                             <button
