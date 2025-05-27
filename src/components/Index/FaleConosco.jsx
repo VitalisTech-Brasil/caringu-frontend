@@ -51,27 +51,27 @@ const FaleConosco = () => {
 
     return (
         <section id="fale" className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
-            <h1 className="text-[48px] font-bold">
+            <h1 className="text-[48px] font-bold max-[1000px]:text-[40px] max-[850px]:text-[38px] max-[700px]:text-[30px] max-[500px]:text-[26px] max-[420px]:text-[24px] max-[800px]:w-[650px] max-[700px]:w-[500px] max-[500px]:w-[400px] max-[420px]:w-[350px]">
                 Conecte-se, treine e evolua com a CaringU!
             </h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center justify-center gap-4 h-full">
-                <div className="flex flex-col items-center justify-center gap-4 bg-[var(--azul-escuro)] w-[900px] h-[550px] p-8 rounded-lg">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center justify-center gap-4 h-full min-[950px]:h-[650px] max-[950px]:h-[600px] max-[700px]:h-[500px]">
+                <div className="flex flex-col items-center justify-center gap-4 bg-[var(--azul-escuro)] w-[900px] mx-auto h-[550px] p-8 rounded-lg max-[950px]:w-[800px] max-[900px]:w-[700px] max-[950px]:h-[550px] max-[750px]:w-[600px] max-[700px]:h-[450px] max-[700px]:w-[500px] max-[535px]:w-[450px] max-[500px]:w-[380px] max-[415px]:w-[315px]">
                     <div className="flex items-center justify-start gap-4 w-full">
                         <p className="text-white text-[24px] font-bold">Fale Conosco</p>
                     </div>
-                    <div className="flex items-center justify-center gap-4 w-full">
-                        <div className="flex flex-col gap-1 w-full h-20">
-                            <label htmlFor="nome" className="text-[14px] text-white">*Nome Completo</label>
+                    <div className="flex flex-col min-[900px]:flex-row items-center justify-center gap-4 w-full min-[950px]:h-[150px] h-auto rounded-lg">
+                        <div className="flex flex-col gap-1 w-full h-20 max-[950px]:h-[60px] max-[700px]:h-[45px]">
+                            <label htmlFor="nome" className="text-[14px] text-white ">*Nome Completo</label>
                             <input
                                 id="nome"
                                 type="text"
                                 placeholder="Digite seu Nome"
                                 {...register("nome", { required: "Nome é obrigatório" })}
-                                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
+                                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black max-[950px]:w-[350px] max-[900px]:w-[625px] max-[750px]:w-[525px] max-[700px]:w-[425px] max-[700px]:h-[30px] max-[535px]:w-[375px] max-[500px]:w-[325px] max-[415px]:w-[250px]"
                             />
                             {errors.nome && <p className="text-red-500 text-sm">{errors.nome.message}</p>}
                         </div>
-                        <div className="flex flex-col gap-1 w-full h-20">
+                        <div className="flex flex-col gap-1 w-full h-20 max-[950px]:h-[60px] max-[700px]:h-[45px]">
                             <label htmlFor="telefone" className="text-[14px] text-white">Telefone para contato</label>
                             <input
                                 id="telefone"
@@ -80,11 +80,11 @@ const FaleConosco = () => {
                                 {...register("telefone")}
                                 onChange={handleTelefoneChange}
                                 value={telefone}
-                                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
+                                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black max-[950px]:w-[350px] max-[900px]:w-[625px] max-[750px]:w-[525px] max-[700px]:w-[425px] max-[700px]:h-[30px] max-[535px]:w-[375px] max-[500px]:w-[325px] max-[415px]:w-[250px]"
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col gap-1 w-full h-20">
+                    <div className="flex flex-col gap-1 w-full h-20 max-[950px]:h-[60px] max-[700px]:h-[45px]">
                         <label htmlFor="email" className="text-[14px] text-white">*Email</label>
                         <input
                             id="email"
@@ -97,31 +97,31 @@ const FaleConosco = () => {
                                     message: "Email inválido"
                                 }
                             })}
-                            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black"
+                            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black max-[950px]:w-[725px] max-[900px]:w-[625px] max-[750px]:w-[525px] max-[700px]:w-[425px] max-[700px]:h-[30px] max-[535px]:w-[375px] max-[500px]:w-[325px] max-[415px]:w-[250px]"
                         />
                         {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
                     </div>
-                    <div className="flex flex-col gap-1 w-full">
+                    <div className="flex flex-col gap-1 w-full max-[950px]:h-[100px] max-[700px]:h-[75px]">
                         <label htmlFor="mensagem" className="text-[14px] text-white">*Mensagem</label>
                         <textarea
                             id="mensagem"
                             placeholder="Digite sua mensagem"
                             {...register("mensagem", { required: "Mensagem é obrigatória" })}
-                            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black h-[100px]"
+                            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--azul-escuro)] bg-white text-black h-[100px] max-[950px]:w-[725px] max-[900px]:w-[625px] max-[750px]:w-[525px] max-[700px]:w-[425px] max-[535px]:w-[375px] max-[500px]:w-[325px] max-[415px]:w-[250px]"
                         />
                         {errors.mensagem && <p className="text-red-500 text-sm">{errors.mensagem.message}</p>}
                     </div>
                     <div className="flex items-center justify-start gap-4 w-full">
                         <p className="text-white text-[14px]">*Obrigatório</p>
                     </div>
-                    <div className="flex items-center justify-center gap-4">
+                    <div className="flex items-center justify-center gap-4 max-[750px]:w-[300px] max-[750px]:h-[20px] max-[950px]:text-[16px] max-[500px]:w-[250px] max-[480px]:h-[15px]">
                         <Button
                             texto={isSubmitting ? 'Enviando...' : responseMessage ? 'Enviado' : 'Enviar'}
                             cor="var(--azul-claro)"
                             corTexto="var(--cor-secundaria)"
                             corHover="#677e9c"
                             width="400px"
-                            height="50px"
+                            height="40px"
                             type="submit"
                             disabled={isSubmitting}
                         />

@@ -28,7 +28,7 @@ const ModalRemoverEspecialidade = ({
         {/* Texto de confirmação */}
         <div className="text-center">
           <h2 className="font-bold text-gray-900 text-[18px]">
-            Tem certeza que deseja remover a conta?
+            Tem certeza que deseja remover?
           </h2>
           <p className="text-gray-500 mt-2 text-[16px]">
             Você não poderá utilizá-la futuramente.
@@ -38,7 +38,7 @@ const ModalRemoverEspecialidade = ({
         {/* Botões de ação */}
         <div className="flex justify-center gap-4 mt-6">
           <button
-            onClick={() => onConfirm(especialidadeId)}
+            onClick={() => {onConfirm(especialidadeId), onCancel()}}
             className="text-red-600 font-semibold hover:underline bg-transparent text-[16px]"
           >
             Remover mesmo assim

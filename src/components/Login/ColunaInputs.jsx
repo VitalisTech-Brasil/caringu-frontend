@@ -41,6 +41,7 @@ const ColunaInputs = () => {
         sessionStorage.setItem('authToken', response.data.token);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
+        sessionStorage.setItem('email', email);
 
           toast.custom((t) => (
             <CustomToast t={t} type="success" message="Login realizado com sucesso!" />
@@ -78,7 +79,7 @@ const ColunaInputs = () => {
         </Link>
       </div>
 
-      <div className="h-[68%] w-[50%] flex flex-col justify-around items-center">
+      <div className="h-[68%] w-[50%] flex flex-col justify-around items-center max-[800px]:w-[400px] max-[450px]:w-[300px]">
         <header className="flex flex-col justify-center items-center gap-[5px] text-center">
           <h1 className="text-[clamp(1.5rem,5vw,3rem)] font-black">
             Pronto para continuar?
@@ -89,7 +90,7 @@ const ColunaInputs = () => {
         </header>
 
         <form className="h-[70%] w-[70%] gap-2 flex flex-col justify-center items-center mb-[2%]" onSubmit={handleSubmit(verificarUsuario)}>
-          <div className="inputs w-full">
+          <div className="inputs w-full max-[1050px]:w-[280px] max-[450px]:w-[250px]">
             <Input
               id="email"
               name="email"
@@ -145,7 +146,7 @@ const ColunaInputs = () => {
         </form>
 
         <footer className="justify-center items-center flex">
-          <p>
+          <p className='max-[900px]:w-[270px]'>
             Não tem uma conta? <Link className="inline-block text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100" to="/cadastro">Cadastrar-se</Link>
           </p>
         </footer>

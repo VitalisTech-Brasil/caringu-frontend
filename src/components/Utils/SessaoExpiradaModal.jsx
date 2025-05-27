@@ -2,14 +2,18 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import alert from "../../assets/images/alert.svg";
 
-export default function SessaoExpiradaModal({ visible, onClose }) {
+export default function SessaoExpiradaModal({
+    visible,
+    onClose,
+    titulo = "Sessão expirada",
+    mensagem = "Sua sessão expirou por inatividade ou tempo limite. Clique em \"Redirecionar\" para fazer login."
+}) {
     const navigate = useNavigate();
 
     if (!visible) return null;
 
     const handleLogout = () => {
-        sessionStorage.removeItem('jwt');
-
+        sessionStorage.clear();
         if (onClose) onClose();
 
         navigate('/login');
@@ -20,11 +24,12 @@ export default function SessaoExpiradaModal({ visible, onClose }) {
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
                 <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
                     <img src={alert} alt="Alerta" className="w-6 h-6" />
-                    <span>Sessão expirada</span>
+                    <span>{titulo}</span>
                 </h2>
                 <div className="text-center mt-4">
-                    <p>Sua sessão expirou por inatividade ou tempo limite.</p>
-                    <p>Clique em "Redirecionar" para fazer login.</p>
+                    {mensagem.split("\n").map((linha, index) => (
+                        <p key={index}>{linha}</p>
+                    ))}
                 </div>
                 <div className="flex justify-center mt-6">
                     <button
