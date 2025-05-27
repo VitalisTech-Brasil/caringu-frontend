@@ -62,6 +62,7 @@ const CriarTreino = () => {
     ];
 
     const adicionarExercicio = (exercicio) => {
+        setShowCreateModal(true);
         if (!exerciciosSelecionados.find(e => e.id === exercicio.id)) {
             setExerciciosSelecionados([...exerciciosSelecionados, exercicio]);
         }
@@ -275,7 +276,7 @@ const CriarTreino = () => {
                                             {/* Header */}
                                             <div className="flex justify-between items-center pb-4 mb-4 ">
                                                 <h3 className="text-4xl font-semibold text-[var(--cor-primaria)]">
-                                                    Atribuir Treino
+                                                    Personalizar exercício
                                                 </h3>
                                                 <button
                                                     type="button"
