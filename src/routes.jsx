@@ -19,6 +19,8 @@ import RegistroCorporal from "./pages/Relatorios/RegistroCorporal.jsx";
 import PerfilAluno from "./pages/GerenciarAlunos/PerfilAluno.jsx";
 import GerenciarTreinos from "./pages/GerenciarTreinos/GerenciarTreinos.jsx";
 import CriarTreino from "./pages/GerenciarTreinos/CriarTreino.jsx";
+import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
+import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios.jsx';
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -44,7 +46,9 @@ const AppRoutes = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
         <Route path="/gerenciar-treinos" element={<GerenciarTreinos />} />
+        <Route path="/gerenciar-exercicios" element={<GerenciarExercicios />} />
         <Route path="/criar-treino" element={<CriarTreino />} />
+        <Route path="/editar-treino/:id" element={<EditarTreino />} />
         <Route path="/relatorio-treino/:id" element={<RelatorioTreino />} />
         <Route path="/dashboard/:idAluno/:idTreino" element={<Dashboard />} />
         <Route path="/relatorios/registro-corporal/:idAluno" element={<RegistroCorporal />} />

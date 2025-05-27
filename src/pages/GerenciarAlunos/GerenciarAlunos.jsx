@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-
-import {
-  HiOutlineSearch,
-  HiOutlineFilter,
-  HiOutlineClock,
-} from "react-icons/hi";
+import { HiOutlineClock } from "react-icons/hi";
 import { FaEllipsisV } from "react-icons/fa";
-import { Avatar, Dropdown, Button, Popover, DropdownItem } from "flowbite-react";
+import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../components/Utils/Modal";
+import lixeira from "../../assets/images/trash.png";
+import iconCancelar from "../../assets/images/cancelar.png";
+import { useForm } from "react-hook-form";
+import Label from "../../components/Utils/Label";
+import InputPosLogin from "../../components/Utils/InputPosLogin";
+import ButtonInterno from "../../components/Utils/Button";
+
+import MenuFiltro from "../../components/Utils/MenuFiltro";
 
 import { caringuApi } from "../../provider/caringuApi";
 import { formatarTelefone } from "../../components/Utils/Functions/MascaraTelefone";
@@ -21,15 +25,40 @@ const GerenciarAlunos = () => {
   const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
   const [anamnesesPendentes, setAnamnesesPendentes] = useState(false);
   const [aguardandoTreino, setAguardandoTreino] = useState(false);
+  const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
+  const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [openFilterMenu, setOpenFilterMenu] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
+  const buttonRefFilter = useRef(null);
+
+  const [alunoAtual, setAlunoAtual] = useState(null)
+
+  const handleOpenModal = (aluno) => {
+    setAlunoAtual(aluno)
+    setShowCreateModal(true);
+    setOpenMenuId(false)
+  };
+
+  const rect = buttonRefFilter.current?.getBoundingClientRect();
 
   const [alunosAtivos, setAlunosAtivos] = useState([]);
   const [presencaAlunos, setPresencaAlunos] = useState([]);
   const [planosVencimento, setPlanosVencimento] = useState([]);
+
+  const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
+    defaultValues: {
+      plano: "",
+      duracao: "",
+      preco: "",
+      aulas: ""
+    },
+    mode: "onChange"
+  });
 
   useEffect(() => {
     document.title = "Gerenciar Alunos | CaringU"
@@ -99,7 +128,7 @@ const GerenciarAlunos = () => {
   // Componente do menu de ações do aluno
   const AlunoActionsMenu = ({ aluno }) => (
     <div className="flex flex-col text-sm font-medium min-w-[160px]">
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer">
+      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => handleOpenModal(aluno)}>
         Anamnese
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M21 22H3C2.59 22 2.25 21.66 2.25 21.25C2.25 20.84 2.59 20.5 3 20.5H21C21.41 20.5 21.75 20.84 21.75 21.25C21.75 21.66 21.41 22 21 22Z" fill="#738CAB" />
@@ -115,7 +144,7 @@ const GerenciarAlunos = () => {
           <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer">
+      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer " onClick={() => navigate(`/criar-treino`)}>
         Cadastrar treino
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -158,82 +187,91 @@ const GerenciarAlunos = () => {
     });
 
   return (
-    <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
+    <div className="flex min-h-screen bg-[#fdfbf7]">
       <MenuLateral />
-      <div className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         <Header />
-        <main className="p-6 font-sans space-y-6">
-          <div className="grid grid-cols-3 gap-6">
-            <div className="col-span-2">
-              <div className="bg-white rounded-xl shadow-sm p-6 h-full">
+        <main className="w-full h-auto">
+          <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 m-8">
+            <div className="col-span-3">
+              <div className="bg-white rounded-xl shadow-sm p-6 max-h-[85vh] ">
                 <h2 className="text-xl font-bold mb-4">Alunos Ativos</h2>
                 <div className="flex items-center gap-2 mb-4">
                   <input
                     type="text"
                     placeholder="Pesquisar aluno"
-                    className="flex-1 border border-gray-300 rounded-md p-2"
+                    className="flex-1 border border-gray-300 rounded-md p-2 w-40"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <Popover
-                    placement="bottom"
-                    trigger="click"
-                    content={
-                      <div className="p-4 space-y-4">
-                        <div className="flex gap-2">
-                          <Button
-                            color={sortOrder === "A-Z" ? "blue" : "gray"}
-                            onClick={() =>
-                              setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z"))
-                            }
-                          >
-                            A-Z
-                          </Button>
-                          <Button
-                            color={sortOrder === "Z-A" ? "blue" : "gray"}
-                            onClick={() =>
-                              setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A"))
-                            }
-                          >
-                            Z-A
-                          </Button>
-                        </div>
-                        <div className="flex gap-2 flex-wrap">
-                          <Button
-                            color={anamnesesPendentes ? "blue" : "gray"}
-                            onClick={() => setAnamnesesPendentes((prev) => !prev)}
-                          >
-                            <HiOutlineClock className="w-4 h-4 mr-1" />
-                            Anamneses Pendentes
-                          </Button>
-                          <Button
-                            /* color="none"
-                              className={`${aguardandoTreino
-                                  ? "bg-orange-500 hover:bg-orange-600 text-white"
-                                  : "bg-gray-300 hover:bg-gray-400 text-black"
-                                }`} SE QUISER CRIAR A SUA PROPRIA COR, DESCOMENTE */
-                            color={aguardandoTreino ? "blue" : "gray"}
-                            onClick={() => setAguardandoTreino((prev) => !prev)}
-                          >
-                            <HiOutlineClock className="w-4 h-4 mr-1" />
-                            Aguardando Treino
-                          </Button>
-                        </div>
-                      </div>
-                    }
-                  >
-                    <button className="p-2 bg-gray-200 rounded-md">
-                      <HiOutlineFilter className="w-5 h-5 text-gray-600" />
-                    </button>
-                  </Popover>
 
+                  <div className="flex justify-end items-center">
+                    <MenuFiltro
+                      buttonIcon={
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="text-xl cursor-pointer w-6"
+                          viewBox="0 0 35 35"
+                          fill="none"
+                        >
+                          <path
+                            d="M7.87504 3.0625H27.125C28.7292 3.0625 30.0417 4.375 30.0417 5.97917V9.1875C30.0417 10.3542 29.3125 11.8125 28.5834 12.5417L22.3125 18.0833C21.4375 18.8125 20.8542 20.2708 20.8542 21.4375V27.7083C20.8542 28.5833 20.2709 29.75 19.5417 30.1875L17.5 31.5C15.6042 32.6667 12.9792 31.3542 12.9792 29.0208V21.2917C12.9792 20.2708 12.3959 18.9583 11.8125 18.2292L6.27087 12.3958C5.54171 11.6667 4.95837 10.3542 4.95837 9.47917V6.125C4.95837 4.375 6.27087 3.0625 7.87504 3.0625Z"
+                            stroke="#1D2D44"
+                            strokeWidth="3"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M15.9396 3.0625L8.75 14.5833"
+                            stroke="#1D2D44"
+                            strokeWidth="3"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      }
+                      options={[
+                        {
+                          id: "az",
+                          label: "A-Z",
+                          active: sortOrder === "A-Z",
+                          onClick: () =>
+                            setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z")),
+                          width: "40%",
+                        },
+                        {
+                          id: "za",
+                          label: "Z-A",
+                          active: sortOrder === "Z-A",
+                          onClick: () =>
+                            setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A")),
+                          width: "40%",
+                        },
+                        {
+                          id: "anamnese",
+                          label: "Anamneses Pendentes",
+                          active: anamnesesPendentes,
+                          onClick: () => setAnamnesesPendentes((prev) => !prev),
+                        },
+                        {
+                          id: "treino",
+                          label: "Aguardando Treino",
+                          active: aguardandoTreino,
+                          onClick: () => setAguardandoTreino((prev) => !prev),
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-4 overflow-y-auto max-h-[620px]">
+                <div className="space-y-2 overflow-y-auto max-h-[25vh] md:max-h-[40vh] lg:max-h-[65vh] border border-gray-200 rounded-md p-4">
 
                   {filteredAlunos.map((aluno) => (
+
                     <div
                       key={aluno.id}
-                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer"
+                      className="relative flex items-center justify-between bg-white rounded-md p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer border border-gray-200 transition duration-200"
                       onClick={() => redirectToPerfilAluno(aluno.id)}
                     >
                       <Avatar img={aluno.avatar} rounded />
@@ -285,8 +323,13 @@ const GerenciarAlunos = () => {
                           {openMenuId === aluno.id && (
                             <div
                               ref={menuRef}
-                              onClick={(e) => e.stopPropagation()} // Prevent card click event
-                              className="absolute top-0 right-full mr-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-2"
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                position: 'fixed',
+                                top: buttonRef.current?.getBoundingClientRect().top || 0,
+                                left: (buttonRef.current?.getBoundingClientRect().left || 0) - 180, // 180px é a largura aproximada do menu
+                              }}
+                              className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-[9999] min-w-[160px]"
                             >
                               <AlunoActionsMenu aluno={aluno} />
                             </div>
@@ -298,19 +341,19 @@ const GerenciarAlunos = () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div >
 
             {/* Seção Direita: Widgets */}
-            <div className="space-y-4 max-h-full">
-              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2">
+            < div className="max-h-full gap-5 flex flex-col col-span-2" >
+              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2 ">
                 <h2 className="text-lg font-bold mb-4">
                   Presença de alunos por:
                 </h2>
-                <Dropdown label={valorSelecionado} inline className="mb-4">
+                <Dropdown label={valorSelecionado} inline>
                   <DropdownItem onClick={() => { setFilter("SEMANA"), setValorSelecionado("Semana") }}>Semana</DropdownItem>
                   <DropdownItem onClick={() => { setFilter("MES"), setValorSelecionado("Mês") }}>Mês</DropdownItem>
                 </Dropdown>
-                <div className="space-y-2 overflow-y-auto max-h-[250px]">
+                <div className="space-y-2 overflow-y-auto border border-[#E6E6E2] rounded-md mt-2 max-h-[70%]">
                   {/* Conteúdo do widget */}
                   {presencaAlunos.length == 0 && (
                     <div className="flex justify-center">
@@ -323,7 +366,7 @@ const GerenciarAlunos = () => {
                       {presencaAlunos.map((aluno) => (
                         <div
                           key={aluno.id}
-                          className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                          className="relative flex items-center justify-between bg-white border border-[#E6E6E2] rounded-md p-4 gap-4 m-4"
                         >
                           <Avatar img={aluno.avatar} rounded />
                           {filter == "SEMANA" && (
@@ -334,17 +377,18 @@ const GerenciarAlunos = () => {
                                   <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada}x por semana</p>
                                 </div>
                               )}
-
                               {aluno.totalPresencas == 0 && (
                                 <div className="flex-1">
                                   <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
                                   <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada}x por semana</p>
                                 </div>
                               )}
+
                             </>
                           )}
 
                           {filter == "MES" && (
+
                             <>
                               {aluno.totalPresencas > 0 && (
                                 <div className="flex-1">
@@ -352,7 +396,6 @@ const GerenciarAlunos = () => {
                                   <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaEsperada * 4}x por mês</p>
                                 </div>
                               )}
-
                               {aluno.totalPresencas == 0 && (
                                 <div className="flex-1">
                                   <p className="font-bold text-md">{aluno.nome} não treinou essa semana</p>
@@ -368,16 +411,16 @@ const GerenciarAlunos = () => {
                   )}
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2">
+              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2 ">
                 <h2 className="text-lg font-bold mb-4">
                   Alunos com o plano perto do fim:
                 </h2>
-                <div className="space-y-2 overflow-y-auto max-h-[270px]">
+                <div className="space-y-2 overflow-y-auto max-h-[80%] border border-[#E6E6E2] rounded-md">
                   {/* Conteúdo do widget */}
                   {planosVencimento.map((aluno) => (
                     <div
                       key={aluno.id}
-                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                      className="relative flex items-center justify-between bg-white rounded-md border border-[#E6E6E2] p-4 gap-4 m-4"
                     >
                       <Avatar img={aluno.avatar} rounded />
 
@@ -386,15 +429,287 @@ const GerenciarAlunos = () => {
                         <p className="text-sm text-gray-600">{aluno.aulasRestantes} aulas restantes</p>
                       </div>
                     </div>
-
                   ))}
+
+                  {showCreateModal && alunoAtual && (
+                    <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
+                      <div className="absolute inset-0 bg-[#000000] opacity-50"
+                        aria-label="Fundo Escurecido"
+                      ></div>
+                      <div className="relative p-4 w-full max-w-2xl">
+                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10 max-h-[80vh] flex flex-col p-4">
+                          <div className="flex justify-between items-center pb-4 mb-4">
+                            <div className="flex flex-col">
+                              <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">
+                                Anamnese
+                              </h1>
+                              <div className="flex gap-3 mt-2">
+                                <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M9.58984 11C12.3513 11 14.5898 8.76142 14.5898 6C14.5898 3.23858 12.3513 1 9.58984 1C6.82842 1 4.58984 3.23858 4.58984 6C4.58984 8.76142 6.82842 11 9.58984 11Z" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                  <path d="M18.18 21C18.18 17.13 14.33 14 9.59 14C4.85 14 1 17.13 1 21" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <p>{alunoAtual.nome}</p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setModalConfirmarCancelarVisivel(true)
+                              }}
+                              className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
+                            >
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                          <form className="overflow-y-auto max-h-full flex-1" onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+                            <div className="flex flex-col mb-4 gap-2">
+                              {/* Peso */}
+                              <Label id="peso" nomeLabel="Peso (KG)" fontSize="20px" fontWeight="500" />
+                              <InputPosLogin
+                                id="peso"
+                                name="peso"
+                                inputType="number"
+                                placeholder="Ex.: 60"
+                                fontSize="16px"
+                                fontWeight="400"
+                                fontSizeErro="16px"
+                                width="100%"
+                                {...register('peso', {
+                                  required: 'O Peso do aluno é obrigatório',
+                                  min: {
+                                    value: 20,
+                                    message: 'O peso deve ser maior que 20kg',
+                                  },
+                                  max: {
+                                    value: 300,
+                                    message: 'O peso deve ser menor que 300kg',
+                                  },
+                                })}
+                                isError={!!errors.peso}
+                                errorMessage={errors.peso?.message}
+                              />
+
+                              {/* Altura */}
+                              <Label id="altura" nomeLabel="Altura (m)" fontSize="20px" fontWeight="500" />
+                              <InputPosLogin
+                                id="altura"
+                                name="altura"
+                                inputType="number"
+                                placeholder="Ex.: 1.60"
+                                fontSize="16px"
+                                fontWeight="400"
+                                fontSizeErro="16px"
+                                width="100%"
+                                {...register('altura', {
+                                  required: 'A altura do aluno é obrigatória',
+                                  min: {
+                                    value: 1,
+                                    message: 'Altura mínima é 1 metro',
+                                  },
+                                  max: {
+                                    value: 2.5,
+                                    message: 'Altura máxima é 2.5 metros',
+                                  },
+                                })}
+                                isError={!!errors.altura}
+                                errorMessage={errors.altura?.message}
+                              />
+
+                              {/* Objetivo */}
+                              <Label id="objetivo" nomeLabel="Objetivo com o treino" fontSize="20px" fontWeight="500" />
+                              <InputPosLogin
+                                id="objetivo"
+                                name="objetivo"
+                                inputType="text"
+                                placeholder="Ex.: Saúde"
+                                fontSize="16px"
+                                fontWeight="400"
+                                fontSizeErro="16px"
+                                width="100%"
+                                {...register('objetivo', {
+                                  required: 'O objetivo do aluno é obrigatório',
+                                  minLength: {
+                                    value: 3,
+                                    message: 'O objetivo deve ter pelo menos 3 caracteres',
+                                  },
+                                })}
+                                isError={!!errors.objetivo}
+                                errorMessage={errors.objetivo?.message}
+                              />
+
+                              {/* Frequência Semanal */}
+                              <Label id="frequencia" nomeLabel="Frequência Semanal" fontSize="20px" fontWeight="500" />
+                              <div className="relative">
+                                <select
+                                  defaultValue=""
+                                  id="frequencia"
+                                  {...register("frequencia", {
+                                    required: 'Selecione uma quantidade de dias',
+                                  })}
+                                  className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                                >
+                                  <option disabled value="">Selecione uma quantidade de dias</option>
+                                  {[1, 2, 3, 4, 5, 6, 7].map(day => (
+                                    <option key={day} value={day}>{day}</option>
+                                  ))}
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 24 10" fill="none">
+                                    <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
+                                  </svg>
+                                </div>
+                              </div>
+                              {errors.frequencia && (
+                                <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-[16px]">
+                                  <img src={info2} alt="Erro" className="w-4 h-4" />
+                                  <span>{errors.frequencia.message}</span>
+                                </div>
+                              )}
+
+                              {/* Nível de Atividade */}
+                              <Label id="nivelAtividade" nomeLabel="Nível de atividade atual" fontSize="20px" fontWeight="500" />
+                              <div className="relative">
+                                <select
+                                  defaultValue=""
+                                  id="nivelAtividade"
+                                  {...register("nivelAtividade", {
+                                    required: 'Selecione um nível de atividade',
+                                  })}
+                                  className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                                >
+                                  <option disabled value="">Selecione um nível de atividade</option>
+                                  <option value="1">Sedentário</option>
+                                  <option value="2">Iniciante</option>
+                                  <option value="3">Intermediário</option>
+                                  <option value="4">Avançado</option>
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 24 10" fill="none">
+                                    <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
+                                  </svg>
+                                </div>
+                              </div>
+                              {errors.nivelAtividade && (
+                                <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-[16px]">
+                                  <img src={info2} alt="Erro" className="w-4 h-4" />
+                                  <span>{errors.nivelAtividade.message}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-4 mt-6">
+
+                              {/* Função auxiliar para gerar radio */}
+                              {[
+                                { id: 'dorArticulacao', label: 'Dor ou desconforto em alguma articulação?' },
+                                { id: 'lesao', label: 'Possui alguma lesão?' },
+                                { id: 'experienciaMusculacao', label: 'Possui experiência com musculação?' },
+                                { id: 'pinosPlacasProteses', label: 'Possui pinos, placas ou próteses?' },
+                                { id: 'doencaMetabolica', label: 'Possui alguma doença metabólica?' },
+                                { id: 'fumante', label: 'É fumante?' },
+                              ].map((pergunta) => (
+                                <div key={pergunta.id} className="flex flex-col">
+                                  <label className="text-[18px] font-medium mb-2" htmlFor={pergunta.id}>
+                                    {pergunta.label}
+                                  </label>
+                                  <div className="flex gap-6">
+                                    <label className="flex items-center gap-2">
+                                      <input
+                                        type="radio"
+                                        value="sim"
+                                        {...register(pergunta.id, { required: 'Campo obrigatório' })}
+                                      />
+                                      Sim
+                                    </label>
+                                    <label className="flex items-center gap-2">
+                                      <input
+                                        type="radio"
+                                        value="nao"
+                                        {...register(pergunta.id, { required: 'Campo obrigatório' })}
+                                      />
+                                      Não
+                                    </label>
+                                  </div>
+                                  {errors[pergunta.id] && (
+                                    <span className="text-[#D45C56] text-[16px] mt-1">
+                                      {errors[pergunta.id]?.message}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </form>
+                          {/* Botões */}
+                          <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
+                            <ButtonInterno
+                              texto="Cancelar"
+                              corTexto="#B41F1F"
+                              cor="var(--cor-secundaria)"
+                              height="2.75rem"
+                              width="13.25rem"
+                              corHover="#1D2D4417"
+                              fontWeight="500"
+                              aria-label={"Botão de Cancelar"}
+                              onClick={() => setModalConfirmarCancelarVisivel(true)}
+                            />
+                            <ButtonInterno
+                              texto="Salvar"
+                              corTexto="var(--cor-secundaria)"
+                              cor="#46982B"
+                              height="2.75rem"
+                              width="9.2rem"
+                              corHover="#46982BE5"
+                              fontWeight="600"
+                              aria-label={"Botão de Salvar"}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <Modal
+                    visivel={modalDeletarVisivel}
+                    fecharModal={() => setModalDeletarVisivel(false)}
+                    titulo="Tem certeza que deseja excluir esse treino?"
+                    descricao="Você não poderá disponibilizá-lo futuramente"
+                    onConfirm={() => {
+                      setModalConfirmarCancelarVisivel(false);
+                      setShowCreateModal(false);
+                    }}
+                    icone={lixeira}
+                    textoBotaoConfirmar="Manter Treino"
+                    textoBotaoCancelar="Deletar mesmo assim"
+                    aria-label="Modal de Exclusão de Treino"
+                  />
+
+                  <Modal
+                    visivel={modalConfirmarCancelarVisivel}
+                    fecharModal={() => setModalConfirmarCancelarVisivel(false)}
+                    titulo="Tem certeza que deseja cancelar?"
+                    descricao="Alterações que não forem salvas serão perdidas"
+                    onConfirm={() => {
+                      setModalConfirmarCancelarVisivel(false);
+                      setShowCreateModal(false);
+                      setShowEditModal(false);
+                    }}
+                    icone={iconCancelar}
+                    textoBotaoConfirmar="Voltar"
+                    textoBotaoCancelar="Cancelar mesmo assim"
+                    aria-label="Modal de Cancelamento"
+                  />
                 </div>
               </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
+            </div >
+          </div >
+        </main >
+      </div >
+    </div >
   );
 };
 
