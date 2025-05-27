@@ -7,6 +7,7 @@ import {
 } from "react-icons/hi";
 import { FaEllipsisV } from "react-icons/fa";
 import { Avatar, Dropdown, Button, Popover, DropdownItem } from "flowbite-react";
+import { isSameWeek, isSameMonth, parse } from "date-fns";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { useNavigate } from "react-router-dom";
@@ -28,8 +29,40 @@ const GerenciarAlunos = () => {
   const buttonRef = useRef(null);
 
   const [alunosAtivos, setAlunosAtivos] = useState([]);
-  const [presencaAlunos, setPresencaAlunos] = useState([]);
-  const [planosVencimento, setPlanosVencimento] = useState([]);
+
+  const now = new Date();
+
+  const alunosFiltrados = alunosAtivos
+    .filter((aluno) => aluno.frequenciaTreino != null)
+    .map((aluno) => {
+      const horarios = Array.isArray(aluno.horariosFimTotal) ? aluno.horariosFimTotal : [];
+
+      const treinosSemana = horarios.filter((h) => {
+        if (!h || typeof h !== "string") return false;
+        try {
+          const data = parse(h, "yyyy-MM-dd HH:mm", new Date());
+          return isSameWeek(data, now, { weekStartsOn: 1 });
+        } catch {
+          return false;
+        }
+      }).length;
+
+      const treinosMes = horarios.filter((h) => {
+        if (!h || typeof h !== "string") return false;
+        try {
+          const data = parse(h, "yyyy-MM-dd HH:mm", new Date());
+          return isSameMonth(data, now);
+        } catch {
+          return false;
+        }
+      }).length;
+
+      return {
+        ...aluno,
+        treinosSemanaCalculado: treinosSemana,
+        treinosMesCalculado: treinosMes,
+      };
+    });
 
   useEffect(() => {
     document.title = "Gerenciar Alunos | CaringU"
@@ -60,7 +93,7 @@ const GerenciarAlunos = () => {
 
     const fetchData = async () => {
       try {
-        const totalAlunosAtivos = await caringuApi.get(`/alunos/detalhes-aluno-por-personal/${personalId}`);
+        const totalAlunosAtivos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
         setAlunosAtivos(totalAlunosAtivos.data);
 
       } catch (error) {
@@ -127,8 +160,8 @@ const GerenciarAlunos = () => {
       return true;
     })
     .sort((a, b) => {
-      if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
-      if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+      if (sortOrder === "A-Z") return a.nomeAluno.localeCompare(b.nomeAluno);
+      if (sortOrder === "Z-A") return b.nomeAluno.localeCompare(a.nomeAluno);
       return 0;
     });
 
@@ -287,58 +320,51 @@ const GerenciarAlunos = () => {
                 </Dropdown>
                 <div className="space-y-2 overflow-y-auto max-h-[250px]">
                   {/* Conteúdo do widget */}
-                  {filteredAlunos.length == 0 && (
+                  {alunosAtivos.length == 0 && (
                     <div className="flex justify-center">
                       Sem alunos no momento.
                     </div>
                   )}
 
-                  {filteredAlunos.length > 0 && (
+                  {alunosFiltrados.length > 0 && (
                     <>
-                      {filteredAlunos.map((aluno) => (
-                        <div
-                          key={aluno.id}
-                          className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
-                        >
-                          <Avatar img={aluno.avatar} rounded />
-                          {filter == "SEMANA" && (
-                            <>
-                              {aluno.treinosSemana > 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nomeAluno} treinou {aluno.treinosSemana == 1 ? `${aluno.treinosSemana} vez` : `${aluno.treinosSemana} vezes`} essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino}x por semana</p>
-                                </div>
-                              )}
+                      {alunosFiltrados.map((aluno) => {
+                        // Calcula a frequência mensal com base na frequência semanal (ou null/0)
+                        const frequenciaMediaMensal = aluno.frequenciaTreino
+                          ? Math.round(aluno.frequenciaTreino * 52 / 12)
+                          : 0;
 
-                              {aluno.treinosSemana == 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nomeAluno} não treinou essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino}x por semana</p>
-                                </div>
-                              )}
-                            </>
-                          )}
+                        return (
+                          <div
+                            key={aluno.idAluno}
+                            className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                          >
+                            <Avatar img={aluno.avatar} rounded />
 
-                          {filter == "MES" && (
-                            <>
-                              {aluno.totalPresencas > 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nomeAluno} treinou {aluno.treinosSemana == 1 ? `${aluno.treinosSemana} vez` : `${aluno.treinosSemana} vezes`} esse mês</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino * 4}x por mês</p>
-                                </div>
-                              )}
+                            {filter === "SEMANA" && (
+                              <div className="flex-1">
+                                <p className="font-bold text-md">
+                                  {aluno.nomeAluno} {aluno.treinosSemanaCalculado === 0 ? "não treinou" : `treinou ${aluno.treinosSemanaCalculado}x`} essa semana
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Frequência determinada: {aluno.frequenciaTreino}x por semana
+                                </p>
+                              </div>
+                            )}
 
-                              {aluno.totalPresencas == 0 && (
-                                <div className="flex-1">
-                                  <p className="font-bold text-md">{aluno.nomeAluno} não treinou essa semana</p>
-                                  <p className="text-sm text-gray-600">Frequência determinada: {aluno.frequenciaTreino * 4}x por mês</p>
-                                </div>
-                              )}
-                            </>
-                          )}
-
-                        </div>
-                      ))}
+                            {filter === "MES" && (
+                              <div className="flex-1">
+                                <p className="font-bold text-md">
+                                  {aluno.nomeAluno} {aluno.treinosMesCalculado === 0 ? "não treinou" : `treinou ${aluno.treinosMesCalculado}x`} esse mês
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Frequência determinada: {frequenciaMediaMensal}x por mês
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </>
                   )}
                 </div>
@@ -349,20 +375,30 @@ const GerenciarAlunos = () => {
                 </h2>
                 <div className="space-y-2 overflow-y-auto max-h-[270px]">
                   {/* Conteúdo do widget */}
-                  {planosVencimento.map((aluno) => (
-                    <div
-                      key={aluno.id}
-                      className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
-                    >
-                      <Avatar img={aluno.avatar} rounded />
+                  {[...alunosAtivos]
+                    .filter(
+                      (aluno) => aluno.totalAulasContratadas - aluno.treinosTotal > 0
+                    )
+                    .sort((a, b) => {
+                      const aulasRestantesA = a.totalAulasContratadas - a.treinosTotal;
+                      const aulasRestantesB = b.totalAulasContratadas - b.treinosTotal;
+                      return aulasRestantesA - aulasRestantesB;
+                    })
+                    .map((aluno) => (
+                      <div
+                        key={aluno.id}
+                        className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                      >
+                        <Avatar img={aluno.avatar} rounded />
 
-                      <div className="flex-1">
-                        <p className="font-bold text-md">{aluno.nome}</p>
-                        <p className="text-sm text-gray-600">{aluno.aulasRestantes} aulas restantes</p>
+                        <div className="flex-1">
+                          <p className="font-bold text-md">{aluno.nomeAluno}</p>
+                          <p className="text-sm text-gray-600">
+                            {aluno.totalAulasContratadas - aluno.treinosTotal} aulas restantes
+                          </p>
+                        </div>
                       </div>
-                    </div>
-
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>
