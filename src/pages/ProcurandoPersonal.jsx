@@ -1,37 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Header from "../components/Personal/Header/Header";
-import MenuLateral from "../components/Personal/MenuLateral/MenuLateral";
 import Button from "../components/Utils/Button";
 import { useNavigate } from "react-router-dom";
 import Label from "../components/Utils/Label";
 import InputPosLogin from "../components/Utils/InputPosLogin";
 import { useForm } from "react-hook-form";
-
-const mockPersonalTrainers = [
-  {
-    nome: "Mônica Luiz Borges Moreno ",
-    especialidades: ["Treinamento para idosos", "Reabilitação e Prevenção de Lesões", "Alto rendimento"],
-    bairro: "SP",
-    cidade: "São Paulo",
-    experiencia: "2 Anos",
-    email: "monica.moreno@gmail.com",
-    contato: "11912345678",
-    imagem: "https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg",
-  },
-  {
-    nome: "João Pedro Silva",
-    especialidades: ["Musculação", "Crossfit", "Treinamento Funcional"],
-    bairro: "RJ",
-    cidade: "Rio de Janeiro",
-    experiencia: "5 Anos",
-    email: "joao.silva@gmail.com",
-    contato: "21987654321",
-    imagem: "https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg",
-  },
-  // Adicione mais objetos conforme necessário
-];
+import { caringuApi } from "../provider/caringuApi";
 
 const ProcurandoPersonal = () => {
 
@@ -40,16 +16,89 @@ const ProcurandoPersonal = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedCards, setExpandedCards] = useState([]);
   const { fontSize, width } = useResponsiveStyles();
-  const [filteredTrainers, setFilteredTrainers] = useState(mockPersonalTrainers);
+  const [allTrainers, setAllTrainers] = useState([]);
+  const [filteredTrainers, setFilteredTrainers] = useState([]);
+  const sugestaoRef = useRef(null);
+  const [cidadeInput, setCidadeInput] = useState("");
+  const [cidadesSugestao, setCidadesSugestao] = useState([]);
+  const [cidadeFocada, setCidadeFocada] = useState(false);
+  const [cidadesSelecionadas, setCidadesSelecionadas] = useState([]);
+
+
+  // Função para lidar com o foco no campo de cidade
+  const buscarCidades = async (query) => {
+    if (query.length < 2) {
+      setCidadesSugestao([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?countrycodes=br&format=json&q=${encodeURIComponent(query)}&featureType=city&addressdetails=1&limit=10&accept-language=pt`
+      );
+
+      const data = await res.json();
+
+      // Processar para extrair apenas nomes de cidades únicas
+      const nomesCidades = new Set();
+
+      data.forEach(item => {
+        const cidade = item.address?.city || item.address?.town ||
+          item.address?.village || item.address?.municipality;
+
+        if (cidade) {
+          nomesCidades.add(cidade);
+        }
+      });
+
+      // Converter o Set para array
+      setCidadesSugestao(Array.from(nomesCidades));
+    } catch (e) {
+      setCidadesSugestao([]);
+    }
+  };
+
 
   const [selectedFilters, setSelectedFilters] = useState({
     cidade: [],
     bairro: [],
     genero: "",
     especialidade: [],
-    periodoPlano: "",
-    faixaPreco: { min: "", max: "" },
+    duracao: "",
+    faixaPreco: { min: "", max: "" }
   });
+
+
+  const listarPersonais = async () => {
+    try {
+      const response = await caringuApi.get("personal-trainers/disponiveis");
+      setAllTrainers(response.data);
+      console.log("Personal Trainers disponíveis:", response.data);
+      setFilteredTrainers(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar personal trainers:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    listarPersonais();
+  }, []);
+
+  function redirecionarPerfilPersonal(trainer) {
+    navigate(`/perfil-personal/${trainer.id}`, {
+      state: {
+        nomePersonal: trainer.nomePersonal,
+        urlFotoPerfil: trainer.urlFotoPerfil,
+        cidade: trainer.cidade,
+        experiencia: trainer.experiencia,
+        celular: trainer.celular,
+        email: trainer.email,
+        especialidades: trainer.especialidades
+      }
+    });
+  }
+
 
   const navigate = useNavigate();
 
@@ -87,14 +136,12 @@ const ProcurandoPersonal = () => {
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-    const filtered = mockPersonalTrainers.filter(
+    const filtered = allTrainers.filter(
       (trainer) =>
-        trainer.nome.toLowerCase().includes(term) ||
-        trainer.especialidades.some((especialidade) => especialidade.toLowerCase().includes(term))
+        trainer.nomePersonal.toLowerCase().includes(term)
     );
     setFilteredTrainers(filtered);
   };
-
 
   // Filtra os personal trainers com base nos filtros selecionados
   const toggleCardExpansion = (index) => {
@@ -133,7 +180,6 @@ const ProcurandoPersonal = () => {
 
   return (
     <div className="flex min-h-screen bg-[#fffdf6]">
-      <MenuLateral />
       <div className="flex-1 overflow-y-auto">
         <Header />
         <main className="w-full h-auto">
@@ -165,6 +211,7 @@ const ProcurandoPersonal = () => {
             {filteredTrainers.length > 0 ? (
               filteredTrainers.map((trainer, index) => (
                 <div
+
                   key={index}
                   className="border-solid border-4 border-[#1D2D441C] rounded-md p-4 mb-4 w-full"
                   onClick={() => toggleCardExpansion(index)}
@@ -172,15 +219,24 @@ const ProcurandoPersonal = () => {
                   <div className="flex items-center">
                     <div className="flex flex-col md:flex-row items-center gap-4 w-[90%]">
                       <img
-                        src={trainer.imagem}
-                        alt={trainer.nome}
+                        src={trainer.urlFotoPerfil}
+                        alt={trainer.nomePersonal}
                         className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
                       />
                       <div className="flex flex-col md:flex-row items-start w-full gap-4">
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
                           <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
-                            <b className="font-bold">Nome:</b> {trainer.nome}
+                            <b className="font-bold">Nome:</b> {trainer.nomePersonal}
                           </h2>
+                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                            <b className="font-bold">Gênero: </b> {
+                              trainer.genero === "HOMEM_CISGENERO" ? "Masculino Cisgênero"
+                                : trainer.genero === "HOMEM_TRANSGENERO" ? "Masculino Transgênero"
+                                  : trainer.genero === "MULHER_CISGENERO" ? "Feminino Cisgênero"
+                                    : trainer.genero === "MULHER_TRANSGENERO" ? "Feminino Transgênero"
+                                      : "Não Binário"
+                            }
+                          </p>
                           <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Especialidades: </b>
                             {trainer.especialidades[0]}{" "}
@@ -196,19 +252,27 @@ const ProcurandoPersonal = () => {
                             <b className="font-bold">Bairro: </b> {trainer.bairro}
 
                           </p>
+                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                            <b className="font-bold">Experiência:</b>{" "}
+                            {trainer.experiencia < 1
+                              ? "menos de 1 ano"
+                              : `${trainer.experiencia} ${trainer.experiencia === 1 ? "ano" : "anos"}`}
+                          </h2>
 
                         </div>
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
                           <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
-                            <b className="font-bold">Experiência:</b> {trainer.experiencia}
+                            <b className="font-bold">Valor da aula:</b>
+                            {trainer.planos && trainer.planos.length > 0
+                              ? ` R$ ${Math.min(...trainer.planos.map(plano => plano.valorAulas))}`
+                              : " Não informado"}
                           </h2>
                           <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
                             <b className="break-words font-bold">Email: </b> {trainer.email}
 
                           </p>
                           <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
-                            <b className="font-bold">Contato: </b> {trainer.contato}
-
+                            <b className="font-bold">Contato: </b> {trainer.celular}
                           </p>
 
                         </div>
@@ -241,7 +305,7 @@ const ProcurandoPersonal = () => {
                       <div className="w-full h-auto flex flex-row items-center justify-center">
                         <Button
                           texto="Ver Planos do Personal"
-                          onClick={() => navigate("/perfil-personal")}
+                          onClick={() => redirecionarPerfilPersonal(trainer)}
                           cor="var(--azul-claro)"
                           corTexto="var(--cor-secundaria)"
                           fontWeight="600"
@@ -329,7 +393,7 @@ const ProcurandoPersonal = () => {
                         ))}
                       </div>
                     </div> */}
-                    <div>
+                    <div className="relative" ref={sugestaoRef}>
                       <Label
                         id="cidade"
                         nomeLabel="Cidade"
@@ -345,8 +409,62 @@ const ProcurandoPersonal = () => {
                         fontWeight="400"
                         fontSizeErro="16px"
                         width="100%"
+                        onChange={e => {
+                          setCidadeInput(e.target.value);
+                          buscarCidades(e.target.value);
+                        }}
+                        onFocus={() => setCidadeFocada(true)}
+                        onBlur={() => setTimeout(() => setCidadeFocada(false), 200)}
                       />
+
+                      {cidadeFocada && cidadesSugestao.length > 0 && (
+                        <ul className="absolute bg-white border w-full max-h-40 overflow-y-auto z-10">
+                          {cidadesSugestao.map((nomeCidade, index) => (
+                            <li
+                              key={`${nomeCidade}-${index}`}
+                              onClick={() => {
+                                if (!cidadesSelecionadas.includes(nomeCidade)) {
+                                  setCidadesSelecionadas([...cidadesSelecionadas, nomeCidade]);
+                                }
+                                setCidadeInput("");
+                                setCidadesSugestao([]);
+                              }}
+                              className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                            >
+                              {nomeCidade}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {cidadeFocada && cidadeInput.length >= 2 && cidadesSugestao.length === 0 && (
+                        <div className="absolute bg-white border w-full p-2 text-gray-500 z-10">
+                          Nenhuma cidade encontrada
+                        </div>
+                      )}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {cidadesSelecionadas.map((cidade, idx) => (
+                          <div
+                            key={cidade}
+                            className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                          >
+                            {cidade}
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                setCidadesSelecionadas(cidadesSelecionadas.filter(c => c !== cidade));
+                              }}
+                              className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+
+
 
                     {/* Bairro */}
                     {/* <div>
@@ -500,7 +618,7 @@ const ProcurandoPersonal = () => {
                     {/* Faixa de Preço */}
                     <div>
                       <label id="preco" className="text-[var(--cor-primaria)] font-medium text-xl mb-2">
-                        Faixa de preço
+                        Faixa de preço da aula
                       </label>
                       <div className="flex gap-4">
                         <input
@@ -515,7 +633,7 @@ const ProcurandoPersonal = () => {
                         <input
                           type="number"
                           placeholder="R$ max"
-                          value={selectedFilters.faixaPreco.max}
+                          // value={selectedFilters.faixaPreco.max}
                           // onChange={(e) =>
                           //   handleInputChange("max", e.target.value)
                           // }

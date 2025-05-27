@@ -1,18 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MenuLateral from "../components/Personal/MenuLateral/MenuLateral";
 import Header from "../components/Personal/Header/Header";
 import CardSolitacoes from "../components/Utils/CardSolitacoes";
 import { useNavigate } from "react-router-dom";
+import { caringuApi } from "../provider/caringuApi";
 
 const SolicitacoesPendentes = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [solicitacoesPendentes, setSolicitacoesPendentes] = useState([]);
 
     const navigate = useNavigate();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     }
+    const pessoaId = sessionStorage.getItem("pessoaId");
+    const token = sessionStorage.getItem("authToken");
+
+    const listarSolicitacoesPendentes = async () => {
+        try {
+            const response = await caringuApi.get(`/planos-contratados/solicitacoes-pendentes/${pessoaId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const pendentes = Array.isArray(response.data)
+                ? response.data.filter(solicitacao => solicitacao.status === "PENDENTE")
+                : [];
+            setSolicitacoesPendentes(pendentes);
+            console.log("Solicitações pendentes:", response.data);
+        } catch (error) {
+            console.error("Erro ao listar solicitações pendentes:", error);
+        }
+    }
+
+    const atualizarStatus = async (id, status) => {
+        try {
+            await caringuApi.patch(
+                `/planos-contratados/${id}/status`,
+                { status },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            listarSolicitacoesPendentes();
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+        }
+    };
+
+    useEffect(() => {
+        document.title = "Solicitações Pendentes | Caringu";
+        listarSolicitacoesPendentes();
+    }, []);
+
     return (
         <>
             <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -34,11 +78,25 @@ const SolicitacoesPendentes = () => {
 
                     </div>
                     <div className="grid grid-cols-1 gap-7 pt-2">
-                        <CardSolitacoes />
-                        <CardSolitacoes />
-                        <CardSolitacoes />
-                        <CardSolitacoes />
-                        <CardSolitacoes />
+                        {solicitacoesPendentes.length > 0 ? (
+                            solicitacoesPendentes.map((solicitacao) => (
+                                <CardSolitacoes
+                                    key={solicitacao.id}
+                                    nome={solicitacao.nomeAluno}
+                                    nomePlano={solicitacao.nomePlano}
+                                    telefone={solicitacao.celular}
+                                    valorPlano={solicitacao.quantidadeAulas * solicitacao.valorAulas}
+                                    confimarPagamento={() => atualizarStatus(solicitacao.id, "ATIVO")}
+                                    cancelarSolicitacao={() => atualizarStatus(solicitacao.id, "INATIVO")}
+                                />
+                            ))
+                        ) : (
+                            <div className="text-center text-lg text-[var(--cor-primaria)]">
+                                Nenhuma solicitação pendente encontrada.
+                            </div>
+                        )
+
+                        }
                     </div>
                 </div>
             </div>

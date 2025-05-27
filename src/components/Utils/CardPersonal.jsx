@@ -2,7 +2,16 @@ import React from "react";
 import Rating from 'react-rating'
 
 
-const CardPersonal = () => {
+const CardPersonal = ({
+    nomePersonal,
+    cidade,
+    experiencia,
+    celular,
+    email,
+    urlFoto,
+    especialidades = []
+
+}) => {
 
 
     const StarFull = () => (
@@ -21,12 +30,12 @@ const CardPersonal = () => {
     return (
         <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-4 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
             <div className="mt-9 lg:ml-0 ml-[31%]">
-                <img src="https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg" alt="Personal" className="w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33 rounded-full" />
+                <img src={urlFoto} alt="Personal" className="w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33 rounded-full" />
             </div>
             <div className="flex flex-col items-start justify-start  mt-11 w-58 sm:w-122 lg:w-100  xl:w-130" >
                 <div>
                     <h2 className="text-xl sm:text-[32px] lg:text-2xl xl:text-[28px] 2xl:text-[32px] text-[var(--cor-primaria)] font-semibold">
-                        Mônica Luiz Borges Moreno
+                        {nomePersonal}
                     </h2>
                 </div>
                 <div className="flex md:flex-row flex-col items-center justify-start w-full gap-4 md:gap-0">
@@ -37,7 +46,7 @@ const CardPersonal = () => {
                                 <path d="M12.5 13.9902C14.2949 13.9902 15.75 12.5352 15.75 10.7402C15.75 8.94531 14.2949 7.49023 12.5 7.49023C10.7051 7.49023 9.25 8.94531 9.25 10.7402C9.25 12.5352 10.7051 13.9902 12.5 13.9902Z" stroke="#1D2D44" strokeWidth="1.5" />
                             </svg>
                             <span className="text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl font-medium ml-3 w-[100%]">
-                                São Paulo - SP
+                                {cidade}
                             </span>
                         </div>
                         <div className="flex flex-row items-center justify-start text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl text-[var(--cor-primaria)] gap-1">
@@ -45,20 +54,24 @@ const CardPersonal = () => {
                                 Contato:
                             </span>
                             <span className="font-normal">
-                                1191234-5678
+                                {celular}
                             </span>
                         </div>
                     </div>
                     <div className="flex flex-col items-start justify-center gap-4  w-[100%] md:w-[50%]  h-auto">
                         <div className="flex flex-row items-center text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl text-[var(--cor-primaria)] gap-1  w-full">
                             <span className="font-normal h-auto break-all">
-                                <b className="font-semibold">Experiência:</b> 2 anos
+                                <b className="font-semibold">Experiência:</b>{" "}
+                                {experiencia < 1
+                                    ? "menos de 1 ano"
+                                    : `${experiencia} ${experiencia === 1 ? "ano" : "anos"}`}
+
                             </span>
 
                         </div>
                         <div className="flex flex-row items-start justify-start text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl text-[var(--cor-primaria)] gap-1   w-full">
                             <span className="font-normal h-auto break-all">
-                                <b className="font-semibold">Email:</b> monica@gmail.com
+                                <b className="font-semibold">Email:</b> {email}
                             </span>
                         </div>
                     </div>
@@ -68,18 +81,14 @@ const CardPersonal = () => {
                 <h3 className="text-xl sm:text-2xl lg:text-base xl:text-xl 2xl:text-2xl font-semibold mb-5">
                     Especialidades:
                 </h3>
-                <span className="font-normal text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl mb-4">
-                    Treinamento para Pessoas com Deficiência
-                </span>
-                <span className="font-normal text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl mb-4">
-                    Treinamento para Idosos
-                </span>
-                <span className="font-normal text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl mb-4">
-                    Treinamento Pré e Pós-Parto
-                </span>
-                <span className="font-normal text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl mb-4">
-                    HIIT (Treino Intervalado de Alta Intensidade)
-                </span>
+                {especialidades.map((esp, idx) => (
+                    <span
+                        key={idx}
+                        className="font-normal text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl mb-4"
+                    >
+                        {esp}
+                    </span>
+                ))}
 
             </div>
             <div className="flex flex-col justify-center items-start text-[var(--cor-primaria)] mt-11">
@@ -90,7 +99,7 @@ const CardPersonal = () => {
                 </div>
                 <div className="lg:mt-0 lg:mb-0 mt-2 mb-2">
                     <Rating
-                        initialRating={3.5}
+                        initialRating={4.5}
                         readonly
                         fractions={2}
                         stop={5}
@@ -104,10 +113,6 @@ const CardPersonal = () => {
                     </span>
                 </div>
             </div>
-
-
-
-
         </div>
     );
 

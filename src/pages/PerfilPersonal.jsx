@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MenuLateral from "../components/Personal/MenuLateral/MenuLateral";
 import Header from "../components/Personal/Header/Header";
 import CardPersonal from "../components/Utils/CardPersonal";
@@ -9,27 +9,219 @@ import barraProgresso from "../assets/images/barra-progresso.svg";
 import barraMetade from "../assets/images/barra-metade.svg";
 import barraCompleta from "../assets/images/barra-completa.svg";
 import Button from "../components/Utils/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { caringuApi } from "../provider/caringuApi";
+import { Toaster } from "react-hot-toast";
+import toast from 'react-hot-toast';
+import CustomToast from '../components/Utils/CustomToast';
 
 
 const PerfilPersonal = () => {
 
-        const navigate = useNavigate(); 
+    const opinioes = [
+        {
+            pontuacao: 5,
+            nome: "Lucas Andrade",
+            comentario: "Excelente profissional, sempre atento às necessidades dos alunos e com dicas valiosas para melhorar o desempenho nos treinos. Recomendo muito o trabalho dele!",
+            dataPublicacao: "2025-05-27",
+            urlFoto: "https://randomuser.me/api/portraits/men/1.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Mariana Silva",
+            comentario: "Gostei bastante das aulas, o acompanhamento é próximo e as explicações são claras. Poderia ter mais horários disponíveis, mas recomendo o personal.",
+            dataPublicacao: "2025-05-20",
+            urlFoto: "https://randomuser.me/api/portraits/women/2.jpg"
+        },
+        {
+            pontuacao: 3,
+            nome: "João Pereira",
+            comentario: "Bom personal, atencioso e dedicado, mas senti falta de mais flexibilidade nos horários para encaixar melhor na minha rotina de trabalho.",
+            dataPublicacao: "2025-05-15",
+            urlFoto: "https://randomuser.me/api/portraits/men/3.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Ana Costa",
+            comentario: "Amei o acompanhamento, sempre motivando e trazendo novos exercícios. Senti evolução rápida e me senti muito acolhida durante todo o processo.",
+            dataPublicacao: "2025-05-10",
+            urlFoto: "https://randomuser.me/api/portraits/women/4.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Pedro Santos",
+            comentario: "Ótimo personal, recomendo! Sempre disposto a ajudar e tirar dúvidas, além de ser muito pontual e organizado com os treinos.",
+            dataPublicacao: "2025-05-09",
+            urlFoto: "https://randomuser.me/api/portraits/men/5.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Juliana Rocha",
+            comentario: "Muito dedicada e atenciosa, sempre preocupada com o bem-estar dos alunos. As aulas são dinâmicas e motivadoras, adorei a experiência.",
+            dataPublicacao: "2025-05-08",
+            urlFoto: "https://randomuser.me/api/portraits/women/6.jpg"
+        },
+        {
+            pontuacao: 3,
+            nome: "Carlos Eduardo",
+            comentario: "Bom profissional, mas poderia melhorar os horários e oferecer mais opções de treinos para quem tem rotina corrida.",
+            dataPublicacao: "2025-05-07",
+            urlFoto: "https://randomuser.me/api/portraits/men/7.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Fernanda Lima",
+            comentario: "Gostei bastante do método de ensino, sempre trazendo novidades e adaptando os exercícios conforme minha evolução.",
+            dataPublicacao: "2025-05-06",
+            urlFoto: "https://randomuser.me/api/portraits/women/8.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Ricardo Gomes",
+            comentario: "Excelente profissional, super recomendo! Sempre motivando e acompanhando de perto cada etapa do meu progresso.",
+            dataPublicacao: "2025-05-05",
+            urlFoto: "https://randomuser.me/api/portraits/men/9.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Patrícia Souza",
+            comentario: "Muito simpática e competente, sempre pronta para ajudar e esclarecer dúvidas. As aulas são leves e produtivas.",
+            dataPublicacao: "2025-05-04",
+            urlFoto: "https://randomuser.me/api/portraits/women/10.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Bruno Oliveira",
+            comentario: "Resultados rápidos e eficientes, com treinos personalizados e acompanhamento constante. Recomendo para quem busca evolução.",
+            dataPublicacao: "2025-05-03",
+            urlFoto: "https://randomuser.me/api/portraits/men/11.jpg"
+        },
+        {
+            pontuacao: 3,
+            nome: "Gabriela Martins",
+            comentario: "Boa profissional, mas senti falta de mais flexibilidade nos horários e de um acompanhamento mais próximo nos treinos.",
+            dataPublicacao: "2025-05-02",
+            urlFoto: "https://randomuser.me/api/portraits/women/12.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Felipe Ramos",
+            comentario: "Gostei do acompanhamento, sempre atento às minhas necessidades e com dicas para melhorar o desempenho.",
+            dataPublicacao: "2025-05-01",
+            urlFoto: "https://randomuser.me/api/portraits/men/13.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Larissa Alves",
+            comentario: "Super recomendo, muito dedicada! Sempre traz novidades para os treinos e me ajudou a alcançar meus objetivos.",
+            dataPublicacao: "2025-04-30",
+            urlFoto: "https://randomuser.me/api/portraits/women/14.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Thiago Fernandes",
+            comentario: "Ótimo profissional, sempre disposto a ajudar e esclarecer dúvidas. Os treinos são bem planejados e eficientes.",
+            dataPublicacao: "2025-04-29",
+            urlFoto: "https://randomuser.me/api/portraits/men/15.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Amanda Dias",
+            comentario: "Muito atenciosa e competente, sempre preocupada com o bem-estar dos alunos. Recomendo para todos que buscam resultados.",
+            dataPublicacao: "2025-04-28",
+            urlFoto: "https://randomuser.me/api/portraits/women/16.jpg"
+        },
+        {
+            pontuacao: 3,
+            nome: "Rafael Costa",
+            comentario: "Bom, mas poderia ser mais pontual nos horários e oferecer mais opções de treinos para diferentes objetivos.",
+            dataPublicacao: "2025-04-27",
+            urlFoto: "https://randomuser.me/api/portraits/men/17.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Beatriz Figueiredo",
+            comentario: "Gostei do atendimento, sempre cordial e disposto a ajudar. Os treinos são bem explicados e adaptados ao meu ritmo.",
+            dataPublicacao: "2025-04-26",
+            urlFoto: "https://randomuser.me/api/portraits/women/18.jpg"
+        },
+        {
+            pontuacao: 5,
+            nome: "Gustavo Lima",
+            comentario: "Excelente, muito profissional e dedicado. Os resultados apareceram rápido e o acompanhamento foi fundamental.",
+            dataPublicacao: "2025-04-25",
+            urlFoto: "https://randomuser.me/api/portraits/men/19.jpg"
+        },
+        {
+            pontuacao: 4,
+            nome: "Camila Torres",
+            comentario: "Muito dedicada e simpática, sempre motivando durante os treinos. Gostei bastante da experiência e recomendo.",
+            dataPublicacao: "2025-04-24",
+            urlFoto: "https://randomuser.me/api/portraits/women/20.jpg"
+        }
+    ];
+    const navigate = useNavigate();
+    const { id } = useParams();
 
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [modalContratar, setModalContratar] = useState(false);
     const [planoSelecionado, setPlanoSelecionado] = useState(null);
+    const [planos, setPlanos] = useState([]);
+    const location = useLocation();
+
+    const { nomePersonal, cidade, experiencia, celular, email, especialidades, urlFoto } = location.state;
 
     // Estados por plano
     const [statusPagamento, setStatusPagamento] = useState({});
     const [botaoDesabilitado, setBotaoDesabilitado] = useState({});
 
-    const planos = [
-        { id: 1, nome: "Plano Básico", duracao: "MENSAL", preco: "50.00", aulas: "10" },
-        { id: 2, nome: "Plano Avançado", duracao: "SEMESTRAL", preco: "300.00", aulas: "60" },
-        { id: 3, nome: "Plano Avulso", duracao: "AVULSO", preco: "20.00", aulas: "1" },
-    ];
+
+    const fetchPlanos = async () => {
+        try {
+            const response = await caringuApi.get(`/planos/${id}`, {
+            });
+            setPlanos(response.data);
+            console.log("Planos:", response.data);
+        } catch (error) {
+            console.error("Erro ao buscar planos:", error);
+        }
+    };
+
+    const idAluno = sessionStorage.getItem('pessoaId');
+    const token = sessionStorage.getItem('authToken');
+
+    const contratarPlano = async (idPlano) => {
+
+        try {
+            const response = await caringuApi.post(
+                `/planos-contratados/contratarPlano/${idAluno}/${idPlano}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log("Plano contratado:", response.data);
+            // Abre o modal após contratar
+            openModalContratar(idPlano);
+            // Atualiza o status do botão para "Verificar Status"
+            setStatusPagamento(prev => ({ ...prev, [idPlano]: "confirmado" }));
+        } catch (error) {
+            console.error("Erro ao contratar plano:", error);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao ao contratar plano.Tente novamente mais tarde." />
+            ));
+        }
+    };
+
+
+
+
+
+    useEffect(() => {
+        fetchPlanos();
+    }, []);
 
     const openModalContratar = (id) => {
         setPlanoSelecionado(id);
@@ -46,9 +238,7 @@ const PerfilPersonal = () => {
         setBotaoDesabilitado(prev => ({ ...prev, [planoSelecionado]: true }));
     }
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    }
+
     const [rating, setRating] = React.useState(0.0);
 
     const ratingChanged = (newRating) => {
@@ -72,13 +262,12 @@ const PerfilPersonal = () => {
     return (
         <>
             <div className="flex min-h-screen bg-[#fdfbf7]">
-                <MenuLateral isOpen={isSidebarOpen} />
                 <div className="flex-1 overflow-y-auto">
-                    <Header onToggleSidebar={toggleSidebar} />
+                    <Header />
                     <div className="w-full h-auto">
                         <div className="pl-[2.5rem] pt-2 pb-2 w-full h-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53" fill="none"
-                             className="cursor-pointer"
+                                className="cursor-pointer"
                                 onClick={() => navigate("/procurando-personal")}>
                                 <path d="M21.1331 13.0957L7.72852 26.5003L21.1331 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M45.2717 26.5H8.10547" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -86,7 +275,15 @@ const PerfilPersonal = () => {
                         </div>
                     </div>
                     <div>
-                        <CardPersonal />
+                        <CardPersonal
+                            nomePersonal={nomePersonal}
+                            cidade={cidade}
+                            experiencia={experiencia}
+                            celular={celular}
+                            email={email}
+                            especialidades={especialidades}
+                            urlFoto={urlFoto}
+                        />
                     </div>
                     <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
                         <div className="h-full flex pl-[2.5rem] pt-3">
@@ -95,19 +292,31 @@ const PerfilPersonal = () => {
                     </div>
                     <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                         <div className="flex gap-9 w-fit">
-                            {planos.map((plano) => (
-                                <CardPlano
-                                    key={plano.id}
-                                    showDropdown={false}
-                                    showContratarPlano={true}
-                                    onModalContratar={() => openModalContratar(plano.id)}
-                                    textoBotao={
-                                        statusPagamento[plano.id] === "confirmado"
-                                            ? "Verificar Status"
-                                            : "Contratar Plano"
-                                    }
-                                />
-                            ))}
+                            {planos.length === 0 ? (
+                                <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
+                                    Nenhum plano disponível pelo personal.
+                                </div>
+                            ) : (
+                                planos.map((item) => (
+                                    <CardPlano
+                                        key={item.id}
+                                        id={item.id}
+                                        nome={item.nome}
+                                        periodo={item.periodo}
+                                        quantidadeAulas={item.quantidadeAulas}
+                                        valorAulas={item.valorAulas}
+                                        valorPlano={item.valorPlano}
+                                        showDropdown={false}
+                                        showContratarPlano={true}
+                                        onModalContratar={() => contratarPlano(item.id)}
+                                        textoBotao={
+                                            statusPagamento[item.id] === "confirmado"
+                                                ? "Verificar Status"
+                                                : "Contratar Plano"
+                                        }
+                                    />
+                                ))
+                            )}
                         </div>
                     </div>
                     <div className="flex flex-row w-full h-auto">
@@ -132,11 +341,24 @@ const PerfilPersonal = () => {
                                 </div>
                             </div>
                             <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full">
-                                <CardOpiniao />
-                                <CardOpiniao />
-                                <CardOpiniao />
-                                <CardOpiniao />
-                                <CardOpiniao />
+                                {(opinioes.filter(opiniao => rating === 0 || opiniao.pontuacao === rating).length === 0) ? (
+                                    <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                                        Nenhum aluno com plano ativo no momento.
+                                    </div>
+                                ) : (
+                                    opinioes
+                                        .filter(opiniao => rating === 0 || opiniao.pontuacao === rating)
+                                        .map((opiniao, index) => (
+                                            <CardOpiniao
+                                                key={index}
+                                                pontuacao={opiniao.pontuacao}
+                                                nome={opiniao.nome}
+                                                comentario={opiniao.comentario}
+                                                dataPublicacao={opiniao.dataPublicacao}
+                                                urlFoto={opiniao.urlFoto}
+                                            />
+                                        ))
+                                )}
                             </div>
                         </div>
                     </div>
@@ -228,6 +450,7 @@ const PerfilPersonal = () => {
                     )}
 
                 </div>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
 
         </>

@@ -16,7 +16,9 @@ import iconCancelar from "../../assets/images/cancelar.png";
 import lixeira from "../../assets/images/trash.png";
 import alerta from "../../assets/images/alert.svg";
 import { caringuApi } from "../../provider/caringuApi";
-
+import toast from 'react-hot-toast';
+import CustomToast from '../../components/Utils/CustomToast';
+import { Toaster } from 'react-hot-toast';
 
 const Planos = () => {
 
@@ -52,7 +54,6 @@ const Planos = () => {
             setPlanos(response.data);
         } catch (error) {
             console.error("Erro ao buscar planos:", error);
-            alert("Erro ao buscar planos");
         }
     };
 
@@ -79,12 +80,18 @@ const Planos = () => {
                 },
             });
 
-            // Reutiliza a função para atualizar a lista
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano criado com sucesso!" />
+            ));
+            
             await fetchPlanos();
 
             setShowCreateModal(false);
         } catch (error) {
-            alert("Erro ao criar plano");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao criar plano. Verifique os dados e tente novamente." />
+            ));
             console.error(error);
         }
     };
@@ -97,11 +104,16 @@ const Planos = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano deletado com sucesso!" />
+            ));
             await fetchPlanos();
             setModalDeletarVisivel(false);
             setPlanoIdParaDeletar(null);
         } catch (error) {
-            window.alert("Erro ao deletar plano");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao deletar plano. Tente novamente." />
+            ));
             console.error(error);
         }
     };
@@ -121,11 +133,17 @@ const Planos = () => {
                 },
             });
 
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano editado com sucesso!" />
+            ));
             await fetchPlanos();
             setShowEditModal(false);
             setPlanoEditado(null);
         } catch (error) {
-            window.alert("Erro ao editar plano");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao editar plano. Verifique os dados e tente novamente." />
+            ));
             console.error(error);
         }
     };
@@ -330,20 +348,26 @@ const Planos = () => {
                         </div>
                         <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                             <div className="flex gap-9 w-fit">
-                                {planos.map((item) => (
-                                    <CardPlano
-                                        key={item.id}
-                                        id={item.id}
-                                        nome={item.nome}
-                                        periodo={item.periodo}
-                                        quantidadeAulas={item.quantidadeAulas}
-                                        valorAulas={item.valorAulas}
-                                        valorPlano={item.valorPlano}
-                                        onEditar={() => handleOpenEditModal(item)}
-                                        onDeletar={() => openDeleteModal(item.id)}
-                                        showContratarPlano={false}
-                                    />
-                                ))}
+                                {planos.length === 0 ? (
+                                    <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
+                                        Nenhum plano cadastrado ainda.
+                                    </div>
+                                ) : (
+                                    planos.map((item) => (
+                                        <CardPlano
+                                            key={item.id}
+                                            id={item.id}
+                                            nome={item.nome}
+                                            periodo={item.periodo}
+                                            quantidadeAulas={item.quantidadeAulas}
+                                            valorAulas={item.valorAulas}
+                                            valorPlano={item.valorPlano}
+                                            onEditar={() => handleOpenEditModal(item)}
+                                            onDeletar={() => openDeleteModal(item.id)}
+                                            showContratarPlano={false}
+                                        />
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
@@ -353,15 +377,21 @@ const Planos = () => {
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com planos ativos</span>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                        {alunosAtivos.map((aluno, idx) => (
-                            <CardAlunoAtivos
-                                key={idx}
-                                urlImagem={aluno.urlImagem}
-                                nome={aluno.nome}
-                                nomePlano={aluno.nomePlano}
-                                niverExperiencia={aluno.niverExperiencia}
-                            />
-                        ))}
+                        {alunosAtivos.length === 0 ? (
+                            <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                                Nenhum aluno com plano ativo no momento.
+                            </div>
+                        ) : (
+                            alunosAtivos.map((aluno, idx) => (
+                                <CardAlunoAtivos
+                                    key={idx}
+                                    urlImagem={aluno.urlImagem}
+                                    nome={aluno.nome}
+                                    nomePlano={aluno.nomePlano}
+                                    niverExperiencia={aluno.niverExperiencia}
+                                />
+                            ))
+                        )}
                     </div>
 
                     {/* Modal para criar */}
@@ -796,6 +826,7 @@ const Planos = () => {
                         </div>
                     )}
                 </div>
+                 <Toaster position="top-right" reverseOrder={false} />
             </div>
         </>
     )

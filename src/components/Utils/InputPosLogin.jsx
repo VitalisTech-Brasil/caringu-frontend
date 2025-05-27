@@ -15,6 +15,8 @@ const InputPosLogin = ({
     fontSizeErro,
     inputMode,
     onChange,
+    onFocus,
+    onBlur,
     ...rest
  }) => {
     return (
@@ -22,6 +24,8 @@ const InputPosLogin = ({
         <div className="relative">
             <input
                 onChange={onChange}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 inputMode={inputMode}
                 type={inputType}
                 className='pb-1 pt-2 border-[#333] border-solid border-b-2 p-0 bg-transparent shadow-none outline-none peer text-[var(--cor-primaria)] placeholder:text-[#15171B87]'
