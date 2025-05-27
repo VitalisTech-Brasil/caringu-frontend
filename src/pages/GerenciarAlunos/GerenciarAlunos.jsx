@@ -42,7 +42,7 @@ const GerenciarAlunos = () => {
   const handleOpenModal = (aluno) => {
     setAlunoAtual(aluno)
     setShowCreateModal(true);
-    setOpenMenuId(false)
+    setOpenMenuId(null)
   };
 
   const rect = buttonRefFilter.current?.getBoundingClientRect();
@@ -50,10 +50,6 @@ const GerenciarAlunos = () => {
   const [alunosAtivos, setAlunosAtivos] = useState([]);
 
   const now = new Date();
-
-  const toggleMenu = () => {
-    setOpenMenuId(!openMenuId);
-  };
 
   const alunosFiltrados = alunosAtivos
     .filter((aluno) => aluno.frequenciaTreino != null)
@@ -112,11 +108,11 @@ const GerenciarAlunos = () => {
 
     const handleScroll = () => setOpenMenuId(null);
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
     };
   }, [openMenuId]);
@@ -277,7 +273,7 @@ const GerenciarAlunos = () => {
                     />
                   </div>
                 </div>
-                <div className="space-y-2 overflow-y-auto max-h-[65vh] md:max-h-[67vh]  border h-full border-gray-200 rounded-md p-4">
+                <div className="relative z-0 space-y-2 overflow-y-auto max-h-[65vh] md:max-h-[67vh]  border h-full border-gray-200 rounded-md p-4">
 
                   {filteredAlunos.map((aluno) => (
 
@@ -325,7 +321,7 @@ const GerenciarAlunos = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation(); // Prevent card click event
-                              toggleMenu();
+                              setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
                             }}
                             className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                           >
@@ -336,7 +332,7 @@ const GerenciarAlunos = () => {
                             <div
                               ref={menuRef}
                               onClick={(e) => e.stopPropagation()}
-                              className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-2 min-w-[160px]"
+                              className="absolute right-0 mt-2 z-[9999] bg-white border border-gray-200 rounded-md shadow-lg p-2 min-w-[160px]"
                             >
                               <AlunoActionsMenu aluno={aluno} />
                             </div>
