@@ -2,7 +2,7 @@ import React, { use } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import Button from '../../components/Utils/Button';
 import exportarPDF from '../../assets/images/exportar-PDF.svg';
@@ -10,8 +10,10 @@ import ReactApexChart from 'react-apexcharts';
 
 const Dashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const {idAluno , idTreino} = useParams();
+    const { idAluno, idTreino } = useParams();
     const [fontSize, setFontSize] = useState("16px");
+
+    const navigate = useNavigate();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -43,7 +45,7 @@ const Dashboard = () => {
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header toggleSidebar={toggleSidebar} />
-                <main className="p-10 md:p-8 font-sans space-y-8">
+                <main className="p-10 md:p-8 space-y-8">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] flex md:flex-row flex-col w-full">
                         <div className="flex flex-col justify-center w-full md:w-1/2">
                             <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5 max-h-7">
@@ -65,7 +67,7 @@ const Dashboard = () => {
                             <div className="flex flex-col justify-center items-center gap-5 mt-8">
                                 <div className='flex justify-between items-center w-full gap-4'>
                                     <Button
-                                        texto={"Exportar gráficos em PDF"}
+                                        texto={"Visualizar gráficos em PDF"}
                                         logo={exportarPDF}
                                         borderColor={"#E6E6E2"}
                                         borderWidth={"2px"}
@@ -75,6 +77,7 @@ const Dashboard = () => {
                                         fontSize={fontSize}
                                         corHover={"#E6E6E2"}
                                         cor={"#FFFDF6"}
+                                        onClick={() =>  navigate(`/visualizar-pdf/${idAluno}/${idTreino}`)}
                                     />
 
 
@@ -144,20 +147,31 @@ const Dashboard = () => {
                                                     type: 'area',
                                                     height: 350,
                                                     zoom: { enabled: false },
-                                                    toolbar: { show: false },
+                                                    toolbar: {
+                                                        show: true,
+                                                        tools: {
+                                                            download: true,
+                                                            selection: false,
+                                                            zoom: false,
+                                                            zoomin: false,
+                                                            zoomout: false,
+                                                            pan: false,
+                                                            reset: false,
+                                                        }
+                                                    },
                                                 },
                                                 dataLabels: { enabled: false },
                                                 stroke: {
                                                     curve: 'smooth',
                                                     width: 3,
-                                                    colors: ['#1D2D44'], // Cor da linha
+                                                    colors: ['#1D2D44'],
                                                 },
                                                 fill: {
                                                     type: 'gradient',
                                                     gradient: {
                                                         shade: 'light',
                                                         type: 'vertical',
-                                                        gradientToColors: ['#fdfbf7'], // cor inferior
+                                                        gradientToColors: ['#fdfbf7'],
                                                         shadeIntensity: 1,
                                                         inverseColors: false,
                                                         opacityFrom: 0.4,
@@ -165,7 +179,7 @@ const Dashboard = () => {
                                                         stops: [0, 100]
                                                     }
                                                 },
-                                                colors: ['#1D2D44'], // cor da linha
+                                                colors: ['#1D2D44'],
                                                 xaxis: {
                                                     categories: [
                                                         '01/03/2023', '03/03/2023', '05/03/2023', '07/03/2023',
@@ -202,6 +216,7 @@ const Dashboard = () => {
                                             type="area"
                                             height={300}
                                         />
+
                                     </div>
                                 </div>
                             </div>
@@ -222,7 +237,18 @@ const Dashboard = () => {
                                         options={{
                                             chart: {
                                                 type: 'bar',
-                                                toolbar: { show: false },
+                                                toolbar: {
+                                                    show: true,
+                                                    tools: {
+                                                        download: true,
+                                                        selection: false,
+                                                        zoom: false,
+                                                        zoomin: false,
+                                                        zoomout: false,
+                                                        pan: false,
+                                                        reset: false,
+                                                    }
+                                                },
                                             },
                                             plotOptions: {
                                                 bar: {
@@ -237,7 +263,7 @@ const Dashboard = () => {
                                                 width: 2,
                                                 colors: ['transparent'],
                                             },
-                                            colors: ['#748CAB', '#E96E35'], // Azul e Laranja
+                                            colors: ['#748CAB', '#E96E35'],
                                             xaxis: {
                                                 categories: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'],
                                             },
@@ -252,7 +278,7 @@ const Dashboard = () => {
                                             },
                                             legend: {
                                                 position: 'top',
-                                                horizontalAlign: 'right',
+                                                horizontalAlign: 'center',
                                                 markers: {
                                                     radius: 5,
                                                 },
@@ -287,7 +313,18 @@ const Dashboard = () => {
                                         options={{
                                             chart: {
                                                 type: 'bar',
-                                                toolbar: { show: false },
+                                                toolbar: {
+                                                    show: true,
+                                                    tools: {
+                                                        download: true,
+                                                        selection: false,
+                                                        zoom: false,
+                                                        zoomin: false,
+                                                        zoomout: false,
+                                                        pan: false,
+                                                        reset: false,
+                                                    }
+                                                },
                                             },
                                             plotOptions: {
                                                 bar: {
@@ -333,6 +370,7 @@ const Dashboard = () => {
                                         type="bar"
                                         height={215}
                                     />
+
                                 </div>
                             </div>
                         </div>

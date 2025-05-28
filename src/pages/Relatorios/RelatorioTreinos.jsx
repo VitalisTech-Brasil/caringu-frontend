@@ -104,7 +104,7 @@ const RelatorioTreinos = () => {
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header toggleSidebar={toggleSidebar} />
-                <main className="p-4 md:p-8 font-sans space-y-8 flex flex-col">
+                <main className="p-4 md:p-8 space-y-8 flex flex-col">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2]">
                         <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5">
                             <Link to="/gerenciar-alunos">
@@ -177,13 +177,17 @@ const RelatorioTreinos = () => {
                                         <ButtonInterno
                                             texto="Ver Relatório"
                                             type="submit"
-                                            cor="var(--azul-claro)"
-                                            corTexto="var(--cor-secundaria)"
-                                            corHover="#677e9c"
+                                            cor="transparent"
+                                            corTexto="var(--cor-primaria)"
+                                            corHover="var(--cor-primaria)"
                                             width="268px"
                                             height="50px"
-                                            font-size="14px"
+                                            font-size="20px"
                                             onClick={() => { irParaDash(treino.id) }}
+                                            borderStyle="solid"
+                                            borderWidth="4px"
+                                            borderColor="rgba(29, 45, 68, 0.11)"
+                                            fontWeight="600"
                                         />
                                     </div>
                                 </div>
