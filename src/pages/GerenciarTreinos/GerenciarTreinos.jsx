@@ -24,6 +24,8 @@ const GerenciarTreinos = () => {
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [origemFilter, setOrigemFilter] = useState("");
+    const [origemSelecionada, setOrigemSelecionada] = useState("");
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
     const params = useParams();
@@ -33,7 +35,7 @@ const GerenciarTreinos = () => {
         {
             id: 1,
             nome: "Treino de Braços",
-            dificuldade: "Iniciante",
+            dificuldade: "INICIANTE",
             quantidadeExercicios: 3,
             favorito: true,
             exercicios: [
@@ -69,7 +71,7 @@ const GerenciarTreinos = () => {
         {
             id: 2,
             nome: "Treino de Pernas",
-            dificuldade: "Avançado",
+            dificuldade: "AVANCADO",
             quantidadeExercicios: 3,
             favorito: false,
             exercicios: [
@@ -105,7 +107,7 @@ const GerenciarTreinos = () => {
         {
             id: 3,
             nome: "Treino de Peito",
-            dificuldade: "Intermediário",
+            dificuldade: "INTERMEDIARIO",
             quantidadeExercicios: 2,
             favorito: true,
             exercicios: [
@@ -132,7 +134,7 @@ const GerenciarTreinos = () => {
         {
             id: 4,
             nome: "Treino de Costas",
-            dificuldade: "Avançado",
+            dificuldade: "AVANCADO",
             quantidadeExercicios: 2,
             favorito: true,
             exercicios: [
@@ -159,7 +161,7 @@ const GerenciarTreinos = () => {
         {
             id: 5,
             nome: "Treino de Ombros",
-            dificuldade: "Iniciante",
+            dificuldade: "INICIANTE",
             quantidadeExercicios: 2,
             favorito: true,
             exercicios: [
@@ -186,7 +188,7 @@ const GerenciarTreinos = () => {
         {
             id: 6,
             nome: "Treino de Abdômen",
-            dificuldade: "Intermediário",
+            dificuldade: "INTERMEDIARIO",
             quantidadeExercicios: 2,
             favorito: false,
             descricao: "Treino para definição abdominal",
@@ -260,12 +262,21 @@ const GerenciarTreinos = () => {
         return styles;
     }
 
+    const handleOrigemSelect = (value) => {
+        setOrigemSelecionada(value);
+        setOrigemFilter(value);
+    };
+
     const filteredTreinos = treinos
         .filter((treino) => {
             if (searchTerm && !treino.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
                 return false;
             }
             if (difficultyFilter && treino.dificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
+                return false;
+            }
+            if (origemFilter && origemFilter !== "" &&
+                exercicio.origem.toLowerCase() !== origemFilter.toLowerCase()) {
                 return false;
             }
             if (showOnlyFavorites && !treino.favorito) {
@@ -342,7 +353,7 @@ const GerenciarTreinos = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <MenuFiltro
-                                menuWidth="280px"
+                                menuWidth="310px"
                                 buttonIcon={
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -383,17 +394,55 @@ const GerenciarTreinos = () => {
                                         onClick: () => setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A")),
                                         width: "40%",
                                     },
+                                    {
+                                        id: "favoritos",
+                                        label: "Favoritos",
+                                        width: "55%",
+                                        active: showOnlyFavorites == true,
+                                        className: "flex items-center justify-start gap-2 p-2",
+                                        icon: (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${showOnlyFavorites ? "stroke-white" : "stroke-[#E96E35]"}`
+                                            } viewBox="0 0 35 35" fill="none">
+                                                <path d="M20.0229 5.11885L22.5896 10.2522C22.9396 10.9668 23.8729 11.6522 24.6604 11.7834L29.3125 12.5563C32.2875 13.0522 32.9875 15.2105 30.8437 17.3397L27.2271 20.9563C26.6146 21.5688 26.2792 22.7501 26.4687 23.5959L27.5042 28.073C28.3208 31.6168 26.4396 32.9876 23.3042 31.1355L18.9437 28.5543C18.1562 28.0876 16.8583 28.0876 16.0562 28.5543L11.6958 31.1355C8.57499 32.9876 6.67916 31.6022 7.49582 28.073L8.53124 23.5959C8.72082 22.7501 8.38541 21.5688 7.77291 20.9563L4.15624 17.3397C2.02707 15.2105 2.71249 13.0522 5.68749 12.5563L10.3396 11.7834C11.1125 11.6522 12.0458 10.9668 12.3958 10.2522L14.9625 5.11885C16.3625 2.33343 18.6375 2.33343 20.0229 5.11885Z" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        ),
+                                        onClick: () => setShowOnlyFavorites((prev) => !prev),
+                                    },
+                                    {
+                                        type: "dropdown",
+                                        id: "origem",
+                                        label: "Origem",
+                                        width: "55%",
+                                        selected: origemSelecionada,
+                                        icon:
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" viewBox="0 0 29 25" fill="none">
+                                                <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" stroke-width="2" />
+                                                <path d="M19.9375 1H21.75C22.2502 1 22.6562 1.51284 22.6562 2.14474V22.75C22.6562 23.3819 22.2502 23.8947 21.75 23.8947H19.9375C19.4373 23.8947 19.0312 23.3819 19.0312 22.75V2.14474C19.0312 1.51284 19.4373 1 19.9375 1Z" stroke="#46982B" stroke-width="2" />
+                                                <path d="M7.25 1H9.0625C9.56275 1 9.96875 1.51284 9.96875 2.14474V22.75C9.96875 23.3819 9.56275 23.8947 9.0625 23.8947H7.25C6.74975 23.8947 6.34375 23.3819 6.34375 22.75V2.14474C6.34375 1.51284 6.74975 1 7.25 1Z" stroke="#46982B" stroke-width="2" />
+                                                <path d="M3.625 5.5791H5.4375C5.93775 5.5791 6.34375 6.09194 6.34375 6.72384V18.1712C6.34375 18.8031 5.93775 19.3159 5.4375 19.3159H3.625C3.12475 19.3159 2.71875 18.8031 2.71875 18.1712V6.72384C2.71875 6.09194 3.12475 5.5791 3.625 5.5791Z" stroke="#46982B" stroke-width="2" />
+                                                <path d="M26.2812 12.4473H29" stroke="#46982B" stroke-width="2" />
+                                                <path d="M9.96875 12.4473H19.0312" stroke="#46982B" stroke-width="2" />
+                                                <path d="M0 12.4473H2.71875" stroke="#46982B" stroke-width="2" />
+                                            </svg>,
+                                        items: [
+                                            { label: "Limpar filtro", value: "" },
+                                            { label: "Biblioteca CaringU", value: "Biblioteca CaringU" },
+                                            { label: "Criados por mim", value: "Criados por mim" },
+                                            { label: "Outro", value: "Outro" },
+                                        ],
+                                        onSelect: handleOrigemSelect,
+                                    },
 
                                     // 🎯 Dificuldade
                                     {
-                                        id: "iniciante",
-                                        label: "Dificuldade: Iniciante",
-                                        active: difficultyFilter === "Iniciante",
+                                        id: "INICIANTE",
+                                        label: "Dificuldade: INICIANTE",
+                                        active: difficultyFilter === "INICIANTE",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
-                                                className={`w-7 ${difficultyFilter === "Iniciante" ? "stroke-white" : "stroke-[#748CAB]"}`}
+                                                className={`w-7 ${difficultyFilter === "INICIANTE" ? "stroke-white" : "stroke-[#748CAB]"}`}
                                                 viewBox="0 0 31 31"
                                                 fill="none"
                                             >
@@ -413,53 +462,38 @@ const GerenciarTreinos = () => {
                                                 />
                                             </svg>
                                         ),
-                                        onClick: () => setDifficultyFilter(prev => (prev === "Iniciante" ? null : "Iniciante")),
+                                        onClick: () => setDifficultyFilter(prev => (prev === "INICIANTE" ? null : "INICIANTE")),
                                     },
                                     {
                                         id: "intermediario",
-                                        label: "Dificuldade: Intermediário",
-                                        active: difficultyFilter === "Intermediário",
+                                        label: "Dificuldade: INTERMEDIARIO",
+                                        active: difficultyFilter === "INTERMEDIARIO",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
-                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "Intermediário" ? "stroke-white" : "stroke-[#E8CD00]"}`
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "INTERMEDIARIO" ? "stroke-white" : "stroke-[#E8CD00]"}`
                                             } viewBox="0 0 31 31" fill="none">
                                                 <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                                 <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                         ),
                                         onClick: () =>
-                                            setDifficultyFilter((prev) => (prev === "Intermediário" ? null : "Intermediário")),
+                                            setDifficultyFilter((prev) => (prev === "INTERMEDIARIO" ? null : "INTERMEDIARIO")),
                                     },
                                     {
                                         id: "avancado",
-                                        label: "Dificuldade: Avançado",
-                                        active: difficultyFilter === "Avançado",
+                                        label: "Dificuldade: AVANCADO",
+                                        active: difficultyFilter === "AVANCADO",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
-                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "Avançado" ? "stroke-white" : "stroke-[#B41F1F]"}`
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "AVANCADO" ? "stroke-white" : "stroke-[#B41F1F]"}`
                                             } viewBox="0 0 31 31" fill="none">
                                                 <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                                 <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                         ),
                                         onClick: () =>
-                                            setDifficultyFilter((prev) => (prev === "Avançado" ? null : "Avançado")),
-                                    },
-
-                                    // ⭐️ Favoritos
-                                    {
-                                        id: "favoritos",
-                                        label: "Favoritos",
-                                        active: showOnlyFavorites == true,
-                                        className: "flex items-center justify-start gap-2 p-2",
-                                        icon: (
-                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${showOnlyFavorites ? "stroke-white" : "stroke-[#E96E35]"}`
-                                            } viewBox="0 0 35 35" fill="none">
-                                                <path d="M20.0229 5.11885L22.5896 10.2522C22.9396 10.9668 23.8729 11.6522 24.6604 11.7834L29.3125 12.5563C32.2875 13.0522 32.9875 15.2105 30.8437 17.3397L27.2271 20.9563C26.6146 21.5688 26.2792 22.7501 26.4687 23.5959L27.5042 28.073C28.3208 31.6168 26.4396 32.9876 23.3042 31.1355L18.9437 28.5543C18.1562 28.0876 16.8583 28.0876 16.0562 28.5543L11.6958 31.1355C8.57499 32.9876 6.67916 31.6022 7.49582 28.073L8.53124 23.5959C8.72082 22.7501 8.38541 21.5688 7.77291 20.9563L4.15624 17.3397C2.02707 15.2105 2.71249 13.0522 5.68749 12.5563L10.3396 11.7834C11.1125 11.6522 12.0458 10.9668 12.3958 10.2522L14.9625 5.11885C16.3625 2.33343 18.6375 2.33343 20.0229 5.11885Z" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        ),
-                                        onClick: () => setShowOnlyFavorites((prev) => !prev),
-                                    },
+                                            setDifficultyFilter((prev) => (prev === "AVANCADO" ? null : "AVANCADO")),
+                                    }
                                 ]}
                             />
                         </div>
