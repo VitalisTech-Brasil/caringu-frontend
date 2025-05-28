@@ -115,7 +115,7 @@ const Home = () => {
     {
       title: "Treinos próximos do vencimento",
       value: treinosVencimento,
-      description: "Treinos que expiram em breve.",
+      description: "Treinos que expiram em 2 semanas.",
       icon: <FaClock />,
       bgColor: "bg-[#E96E354F]",
       iconColor: "text-[#E96E35]",
