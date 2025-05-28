@@ -308,6 +308,7 @@ const GerenciarTreinos = () => {
     };
 
     const handleOpenModal = () => {
+        setOpenMenuId(false);
         setShowCreateModal(true);
     };
 
@@ -579,7 +580,7 @@ const GerenciarTreinos = () => {
                                                                     top: buttonRef.current?.getBoundingClientRect().top || 0,
                                                                     left: (buttonRef.current?.getBoundingClientRect().left || 0) - 180,
                                                                 }}
-                                                                className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-[9999] min-w-[160px]"
+                                                                className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-0 min-w-[160px]"
                                                             >
                                                                 <TreinoActionsMenu treino={treino} />
                                                             </div>
@@ -665,7 +666,7 @@ const GerenciarTreinos = () => {
                             </div>
                         ))}
                         {showCreateModal && (
-                            <div className="fixed inset-0 z-40 flex justify-center items-center overflow-y-auto">
+                            <div className="fixed inset-0 z-[49] flex justify-center items-center overflow-y-auto">
                                 <div className="absolute inset-0 bg-[#000000] opacity-50"
                                     aria-label="Fundo Escurecido"
                                 ></div>

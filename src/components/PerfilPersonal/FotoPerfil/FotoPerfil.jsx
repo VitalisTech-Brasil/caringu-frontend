@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { HiOutlineTrash, HiOutlineUpload } from "react-icons/hi";
 
-export default function FotoPerfil() {
-    const [fileName, setFileName] = React.useState("");
+export default function FotoPerfil(props) {
+    const [fileName, setFileName] = useState(props.urlFoto);
     const fileInputRef = React.useRef();
 
     const handleFileChange = (event) => {

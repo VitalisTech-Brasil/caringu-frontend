@@ -18,6 +18,7 @@ export default function InformacoesPessoais() {
     const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState([]);
     const [sugestoesEspecialidade, setSugestoesEspecialidade] = useState([]);
     const [especialidadesDisponiveis, setEspecialidadesDisponiveis] = useState([]);
+    const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
 
     const [nomeBairroAntigo, setNomeBairroAntigo] = useState("");
 
@@ -32,6 +33,7 @@ export default function InformacoesPessoais() {
                 const celularComMascara = MascaraTelefone(response.data.celular);
 
                 setNomeBairroAntigo(response.data.nomeBairro);
+                setUrlFotoPerfil(response.data.urlFotoPerfil);
 
                 setFormData({
                     ...response.data,
@@ -214,7 +216,7 @@ export default function InformacoesPessoais() {
             {/* Conteúdo da aba Informações Pessoais */}
             <div className="space-y-8">
                 {/* Foto de Perfil */}
-                <FotoPerfil />
+                <FotoPerfil urlFoto={urlFotoPerfil} />
 
                 {/* Informações Profissionais */}
                 <div className="bg-white shadow-md border-[#1d2d44] rounded-lg p-6 flex flex-col justify-center h-124.5">
