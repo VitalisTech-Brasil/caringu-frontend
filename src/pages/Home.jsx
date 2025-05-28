@@ -260,9 +260,8 @@ const Home = () => {
         nome: "Ricardo Lima",
         foto: "https://via.placeholder.com/150",
       },
-    },
-  },
-];
+    }
+  ]
 
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">

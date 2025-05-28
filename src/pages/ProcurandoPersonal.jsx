@@ -8,6 +8,7 @@ import Label from "../components/Utils/Label";
 import InputPosLogin from "../components/Utils/InputPosLogin";
 import { useForm } from "react-hook-form";
 import { caringuApi } from "../provider/caringuApi";
+import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 
 const ProcurandoPersonal = () => {
 
@@ -92,7 +93,7 @@ const ProcurandoPersonal = () => {
         urlFotoPerfil: trainer.urlFotoPerfil,
         cidade: trainer.cidade,
         experiencia: trainer.experiencia,
-        celular: trainer.celular,
+        celular: MascaraTelefone(trainer.celular),
         email: trainer.email,
         especialidades: trainer.especialidades
       }
@@ -272,7 +273,7 @@ const ProcurandoPersonal = () => {
 
                           </p>
                           <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
-                            <b className="font-bold">Contato: </b> {trainer.celular}
+                            <b className="font-bold">Contato: </b> {MascaraTelefone(trainer.celular)}
                           </p>
 
                         </div>
