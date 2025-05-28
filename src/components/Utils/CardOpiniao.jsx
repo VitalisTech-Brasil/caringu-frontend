@@ -1,7 +1,14 @@
+import { complex } from "framer-motion";
 import React from "react";
 import Rating from "react-rating";
 
-const CardOpiniao = () => {
+const CardOpiniao = ({
+    pontuacao,
+    nome,
+    comentario,
+    dataPublicacao,
+    urlFoto
+}) => {
 
     const StarFull = () => (
         <svg className="mx-0.5 w-6 h-6 sm:w-8 sm:h-8 lg:w-9 lg:h-9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
@@ -17,18 +24,18 @@ const CardOpiniao = () => {
 
     return (
         <>
-            <div className="w-[95%] xl:w-[89%] h-[34rem] sm:h-[22rem] md:h-[18rem] lg:h-[15rem] xl:h-[20rem] 2xl:h-[21rem] rounded-md border-[2px] border-[#1D2D441C] border-solid flex flex-col items-start p-4 pr-[2rem]">
+            <div className="w-[95%] xl:w-[89%] h-[42rem] sm:h-[22rem] md:h-[18rem] lg:h-[15rem] xl:h-[20rem] 2xl:h-[21rem] rounded-md border-[4px] border-[#1D2D441C] border-solid flex flex-col items-start p-4 pr-[2rem]">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full h-auto">
                     <div className="flex flex-row items-center gap-6">
-                        <img src="https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg" alt="Foto do Aluno" className="rounded-full h-[70px] w-[70px] md:h-[92px] md:w-[92px]" />
+                        <img src={urlFoto} alt="Foto do Aluno" className="rounded-full h-[70px] w-[70px] md:h-[92px] md:w-[92px]" />
                         <div className="flex flex-col items-start justify-start gap-1.5">
-                            <span className="text-[var(--cor-primaria)] font-semibold text-base sm:text-xl xl:text-base 2xl:text-xl">Maria Gladys Mello da Silva</span>
-                            <span className="text-[var(--cor-primaria)] font-normal text-sm">17/04/2025</span>
+                            <span className="text-[var(--cor-primaria)] font-semibold text-base sm:text-xl xl:text-base 2xl:text-xl">{nome}</span>
+                            <span className="text-[var(--cor-primaria)] font-normal text-sm">{dataPublicacao}</span>
                         </div>
                     </div>
                     <div className="h-auto w-auto md:pt-0 pt-3 flex flex-row items-center justify-center">
                         <Rating
-                            initialRating={3.5}
+                            initialRating={pontuacao}
                             readonly
                             fractions={2}
                             stop={5}
@@ -39,7 +46,8 @@ const CardOpiniao = () => {
                 </div>
                 <div className="flex w-full h-auto  pl-5 pt-6">
                     <p className="text-[var(--cor-primaria)] font-normal text-base sm:text-base  2xl:text-xl">
-Profissional incrível, extremamente atenciosa, educada e muito cuidadosa em cada detalhe! Demonstra empatia e dedicação em tudo o que faz. O atendimento foi impecável do início ao fim. Recomendo com total confiança! Pode contratar sem medo, é garantia de qualidade e carinho no serviço prestado.                                        </p>
+                        {comentario}
+                    </p>
                 </div>
             </div>
         </>

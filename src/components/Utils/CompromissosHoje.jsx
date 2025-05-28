@@ -43,7 +43,7 @@ const CompromissosHoje = ({ compromissos, selectedDay }) => {
 
   return (
     <div
-      className={`bg-[var(--cor-secundaria)] rounded-xl shadow-sm p-6 flex-1 transition-all duration-500 ease-in-out`}
+      className={`bg-[var(--cor-secundaria)] rounded-xl shadow-sm p-6 flex-1 transition-all duration-500 ease-in-out h-full`}
       style={{
         maxHeight: compromissosDoDia.length > 3 ? "631px" : "auto",
         overflowY: compromissosDoDia.length > 3 ? "auto" : "hidden",

@@ -42,15 +42,14 @@ const Header = () => {
       </svg>,
       label: "Gerenciar Exercícios",
     },
-
-    "/calendario": {
+    "/agenda": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 30 30" fill="none">
         <path d="M27.4124 8.45001L23.1999 25.3625C22.8999 26.625 21.7749 27.5 20.4749 27.5H4.04992C2.16242 27.5 0.812438 25.6499 1.37494 23.8374L6.63743 6.93756C6.99993 5.76256 8.08745 4.94995 9.31245 4.94995H24.6874C25.8749 4.94995 26.8624 5.67496 27.2749 6.67496C27.5124 7.21246 27.5624 7.82501 27.4124 8.45001Z" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" />
         <path d="M20 27.5H25.975C27.5875 27.5 28.85 26.1375 28.7375 24.525L27.5 7.5" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M12.1001 7.97513L13.4001 2.5752" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M20.4751 7.98746L21.6501 2.5625" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
       </svg>,
-      label: "Calendário",
+      label: "Agenda",
     },
     "/planos": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 30 30" fill="none">
@@ -60,7 +59,17 @@ const Header = () => {
       </svg>,
       label: "Planos",
     },
-    "/perfil-personal": {
+    "/procurando-personal": {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 45" fill="none">
+        <path d="M22.5 22.5C27.6777 22.5 31.875 18.3027 31.875 13.125C31.875 7.94733 27.6777 3.75 22.5 3.75C17.3223 3.75 13.125 7.94733 13.125 13.125C13.125 18.3027 17.3223 22.5 22.5 22.5Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.39453 41.25C6.39453 33.9938 13.6133 28.125 22.5008 28.125" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M34.125 40.125C37.4387 40.125 40.125 37.4387 40.125 34.125C40.125 30.8113 37.4387 28.125 34.125 28.125C30.8113 28.125 28.125 30.8113 28.125 34.125C28.125 37.4387 30.8113 40.125 34.125 40.125Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M41.25 41.25L39.375 39.375" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Personal Trainers",
+
+    },
+    "/perfil-personal/:id": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 30 30" fill="none">
         <path d="M27.5 15.0005V21.2505C27.5 25.0005 25 27.5005 21.25 27.5005H8.75C5 27.5005 2.5 25.0005 2.5 21.2505V15.0005C2.5 11.6005 4.55 9.22549 7.7375 8.82549C8.0625 8.77549 8.4 8.75049 8.75 8.75049H21.25C21.575 8.75049 21.8875 8.76297 22.1875 8.81297C25.4125 9.18797 27.5 11.5755 27.5 15.0005Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M22.1893 8.81299C21.8893 8.76299 21.5768 8.7505 21.2518 8.7505H8.75176C8.40176 8.7505 8.06426 8.7755 7.73926 8.8255C7.91426 8.4755 8.16426 8.1505 8.46426 7.8505L12.5268 3.77549C14.2393 2.07549 17.0143 2.07549 18.7268 3.77549L20.9143 5.98801C21.7143 6.77551 22.1393 7.77549 22.1893 8.81299Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -139,10 +148,16 @@ const Header = () => {
     // Tenta encontrar uma correspondência exata
     if (pageConfig[path]) return pageConfig[path];
 
-    // Tenta encontrar por prefixo (para rotas com parâmetros dinâmicos)
-    const matchKey = Object.keys(pageConfig).find((key) =>
-      key.endsWith("/*") && path.startsWith(key.replace("/*", ""))
-    );
+    const matchKey = Object.keys(pageConfig).find((key) => {
+      if (key.endsWith("/*")) {
+        return path.startsWith(key.replace("/*", ""));
+      }
+      if (key.includes("/:")) {
+        const base = key.split("/:")[0];
+        return path.startsWith(base + "/");
+      }
+      return false;
+    });
 
     return matchKey ? pageConfig[matchKey] : { icon: null, label: "Página Desconhecida" };
   };

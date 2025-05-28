@@ -33,6 +33,74 @@ body {
   position: relative;
 }
 
+.react-calendar__month-view__weekdays {
+  font-size:24px;
+  font-weight: 400;    
+  color: #1D2D448C;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.react-calendar__navigation__label {
+  font-size: 32px;
+  font-weight: 400;
+  padding-bottom: 24px;
+  padding-top: 36px;
+}
+
+.react-calendar__navigation{
+width: 100%;
+display: flex;
+padding-left: 16px;
+padding-right: 16px;
+align-items: center;
+}
+
+.react-calendar__navigation__arrow {
+  cursor: pointer !important;
+}
+
+.react-calendar__tile {
+  overflow: visible !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+}
+
+.react-calendar__tile--active{
+  border: 3px solid black !important;
+}
+
+.react-calendar__month-view__days {
+ gap: 12px; 
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+@media (max-width: 650px) {
+  .react-calendar__navigation__label__labelText,
+  .react-calendar__navigation__label__labelText--from {
+    font-size: 24px;
+  }
+  .react-calendar__navigation__arrow {
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .react-calendar__tile--active{
+  border: 1px solid black !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+  font-size: 16px !important;
+}
+
+
+}
+
 /* .input-container input[type="text"],
 .input-container input[type="password"],
 .input-container input[type="email"] {

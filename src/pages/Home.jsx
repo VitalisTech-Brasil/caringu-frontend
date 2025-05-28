@@ -41,7 +41,6 @@ const Home = () => {
 
         const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
         setAnamnesesPendentes(totalAnamnesePendentes.data);
-
       } catch (error) {
         console.error("Erro ao informações das KPIs:", error);
       }
@@ -262,7 +261,8 @@ const Home = () => {
         foto: "https://via.placeholder.com/150",
       },
     },
-  ];
+  },
+];
 
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -303,12 +303,18 @@ const Home = () => {
           </div>
 
           {/* Seção de Compromissos */}
-          <div className="flex flex-col md:flex-row gap-6">
-            <CompromissosHoje
-              compromissos={compromissos}
-              selectedDay={selectedDay}
-            />
-            <EstaSemana onDaySelect={setSelectedDay} />
+          <div className="flex flex-col 2xl:flex-row gap-6">
+            <div className="2xl:w-[50%] w-full">
+              <CompromissosHoje
+                compromissos={compromissos}
+                selectedDay={selectedDay}
+              />
+            </div>
+            <div className="2xl:w-[50%] w-full">
+             <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} />
+
+            </div>
+
           </div>
 
         </main>

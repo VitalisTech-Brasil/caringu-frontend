@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Personal/Header/Header";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
@@ -14,31 +14,143 @@ import { useForm } from "react-hook-form";
 import info2 from "../../assets/images/info-2.svg";
 import iconCancelar from "../../assets/images/cancelar.png";
 import lixeira from "../../assets/images/trash.png";
-import alert from "../../assets/images/alert.svg";
-
+import alerta from "../../assets/images/alert.svg";
+import { caringuApi } from "../../provider/caringuApi";
+import toast from 'react-hot-toast';
+import CustomToast from '../../components/Utils/CustomToast';
+import { Toaster } from 'react-hot-toast';
 
 const Planos = () => {
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
-        defaultValues: {
-            plano: "",
-            duracao: "",
-            preco: "",
-            aulas: ""
-        },
-        mode: "onChange"
-    });
+
+
+    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm();
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [planos, setPlanos] = useState([])
+    const [planoIdParaDeletar, setPlanoIdParaDeletar] = useState(null);
     const [planoEditado, setPlanoEditado] = useState(null);
+
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
+
+    const pessoaId = sessionStorage.getItem("pessoaId");
+    const token = sessionStorage.getItem("authToken");
+
+
+
+    const fetchPlanos = async () => {
+        try {
+            const response = await caringuApi.get(`/planos/${pessoaId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setPlanos(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar planos:", error);
+        }
+    };
+
+    useEffect(() => {
+        document.title = "Planos | Caringu";
+        fetchPlanos();
+    }, []);
+
+
+
+
+    const cadastrarPlano = async (data) => {
+        try {
+            const payload = {
+                nome: data.plano,
+                periodo: data.duracao,
+                quantidadeAulas: Number(data.aulas),
+                valorAulas: Number(data.preco),
+            };
+
+            await caringuApi.post(`/planos/${pessoaId}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano criado com sucesso!" />
+            ));
+            
+            await fetchPlanos();
+
+            setShowCreateModal(false);
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao criar plano. Verifique os dados e tente novamente." />
+            ));
+            console.error(error);
+        }
+    };
+
+
+    const confirmDelete = async () => {
+        try {
+            await caringuApi.delete(`/planos/${pessoaId}/${planoIdParaDeletar}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano deletado com sucesso!" />
+            ));
+            await fetchPlanos();
+            setModalDeletarVisivel(false);
+            setPlanoIdParaDeletar(null);
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao deletar plano. Tente novamente." />
+            ));
+            console.error(error);
+        }
+    };
+
+    const editarPlano = async (data) => {
+        try {
+            const payload = {
+                nome: data.plano,
+                periodo: data.duracao,
+                quantidadeAulas: Number(data.aulas),
+                valorAulas: Number(data.preco),
+            };
+
+            await caringuApi.put(`/planos/${pessoaId}/${planoEditado.id}`, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano editado com sucesso!" />
+            ));
+            await fetchPlanos();
+            setShowEditModal(false);
+            setPlanoEditado(null);
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao editar plano. Verifique os dados e tente novamente." />
+            ));
+            console.error(error);
+        }
+    };
+
+
     function useResponsiveStyles() {
-    const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
+        const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
 
         useEffect(() => {
 
@@ -52,7 +164,7 @@ const Planos = () => {
                 } else if (screenWidth >= 640) {
                     setStyles({ fontSize: "16px", width: "33%" });
                 } else {
-                    setStyles({ fontSize: "14px", width: "50%" });
+                    setStyles({ fontSize: "12px", width: "50%" });
                 }
             };
 
@@ -83,36 +195,36 @@ const Planos = () => {
         setIsSidebarOpen(!isSidebarOpen);
     }
 
-    const planos = [
-        { id: 1, nome: "Plano Básico", duracao: "MENSAL", preco: "50.00", aulas: "10" },
-        { id: 2, nome: "Plano Avançado", duracao: "SEMESTRAL", preco: "300.00", aulas: "60" },
-        { id: 3, nome: "Plano Avulso", duracao: "AVULSO", preco: "20.00", aulas: "1" },
-    ];
-
-    const handleOpenEditModal = (plano) => {
-    setPlanoEditado(plano); // Define os dados do plano a ser editado
-    setValue("plano", plano.nome); // Preenche o campo "plano" no hook-form
-    setValue("duracao", plano.duracao); // Preenche o campo "duracao"
-    setValue("preco", plano.preco); // Preenche o campo "preco"
-    setValue("aulas", plano.aulas); // Preenche o campo "aulas"
-    setShowEditModal(true); // Exibe o modal de edição
-};
 
     // Função para abrir o modal de exclusão
-    const openDeleteModal = () => {
+    const openDeleteModal = (planoId) => {
+        setPlanoIdParaDeletar(planoId);
         setModalDeletarVisivel(true);
     };
 
-    // Função para fechar o modal de exclusão
-    const confirmDelete = () => {
-        alert("Plano excluído!");
-        setModalDeletarVisivel(false);
+    // Função para abrir o modal de edição
+    const handleOpenEditModal = (plano) => {
+        setPlanoEditado(plano);
+        reset({
+            plano: plano.nome,
+            duracao: plano.periodo,
+            preco: plano.valorAulas,
+            aulas: plano.quantidadeAulas
+        });
+        setShowEditModal(true);
     };
+
 
 
 
     // Função para abrir o modal de criação
     const handleOpenModal = () => {
+        reset({
+            plano: "",
+            duracao: "",
+            preco: "",
+            aulas: ""
+        });
         setShowCreateModal(true);
     };
 
@@ -152,6 +264,40 @@ const Planos = () => {
         trigger("aulas");
     };
 
+
+    const alunosAtivos = [
+        {
+            urlImagem: "https://randomuser.me/api/portraits/men/1.jpg",
+            nome: "João Silva",
+            nomePlano: "Plano Mensal",
+            niverExperiencia: "AVANCADO"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/women/2.jpg",
+            nome: "Maria Souza",
+            nomePlano: "Plano Semestral",
+            niverExperiencia: "INICIANTE"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/men/3.jpg",
+            nome: "Carlos Pereira",
+            nomePlano: "Plano Avulso",
+            niverExperiencia: "AVANCADO"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/women/4.jpg",
+            nome: "Ana Costa",
+            nomePlano: "Plano Mensal",
+            niverExperiencia: "INICIANTE"
+        },
+        {
+            urlImagem: "https://randomuser.me/api/portraits/men/5.jpg",
+            nome: "Pedro Santos",
+            nomePlano: "Plano Semestral",
+            niverExperiencia: "INICIANTE"
+        }
+    ];
+
     return (
         <>
             <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -165,7 +311,7 @@ const Planos = () => {
                             </div>
                             <div className="h-full w-[35rem] flex  justify-center flex-col items-center sm:flex-row sm:justify-start sm:items-end gap-[22px] ">
                                 <Button
-                                    texto="Solitações Pendentes"
+                                    texto="Solicitações pendentes"
                                     logo={relogioIcon}
                                     width="53%"
                                     height="50px"
@@ -202,16 +348,26 @@ const Planos = () => {
                         </div>
                         <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                             <div className="flex gap-9 w-fit">
-                                {planos.map((plano) => (
-                                    <CardPlano
-                                        key={plano.id}
-                                        onEditar={() => handleOpenEditModal(plano)} 
-                                        onDeletar={openDeleteModal}
-                                        showContratarPlano={false}
-                                    />
-                                ))}
-
-
+                                {planos.length === 0 ? (
+                                    <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
+                                        Nenhum plano cadastrado ainda.
+                                    </div>
+                                ) : (
+                                    planos.map((item) => (
+                                        <CardPlano
+                                            key={item.id}
+                                            id={item.id}
+                                            nome={item.nome}
+                                            periodo={item.periodo}
+                                            quantidadeAulas={item.quantidadeAulas}
+                                            valorAulas={item.valorAulas}
+                                            valorPlano={item.valorPlano}
+                                            onEditar={() => handleOpenEditModal(item)}
+                                            onDeletar={() => openDeleteModal(item.id)}
+                                            showContratarPlano={false}
+                                        />
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>
@@ -221,11 +377,21 @@ const Planos = () => {
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com planos ativos</span>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
-                        <CardAlunoAtivos />
+                        {alunosAtivos.length === 0 ? (
+                            <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                                Nenhum aluno com plano ativo no momento.
+                            </div>
+                        ) : (
+                            alunosAtivos.map((aluno, idx) => (
+                                <CardAlunoAtivos
+                                    key={idx}
+                                    urlImagem={aluno.urlImagem}
+                                    nome={aluno.nome}
+                                    nomePlano={aluno.nomePlano}
+                                    niverExperiencia={aluno.niverExperiencia}
+                                />
+                            ))
+                        )}
                     </div>
 
                     {/* Modal para criar */}
@@ -259,7 +425,7 @@ const Planos = () => {
                                     </div>
 
                                     {/* Formulário */}
-                                    <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+                                    <form onSubmit={handleSubmit(cadastrarPlano)}>
                                         <div className="grid gap-4 mb-4">
                                             <div>
                                                 <Label
@@ -318,7 +484,7 @@ const Planos = () => {
                                                         <img src={info2} alt="Erro" className="w-4 h-4" />
                                                         <span>Selecione o Período de duração do plano</span>
                                                     </div>
-                                                )}{errors.genero?.message}
+                                                )}{errors.duracao?.message}
                                                 </span>
                                             </div>
                                             <div>
@@ -387,13 +553,14 @@ const Planos = () => {
                                         <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                             <Button
                                                 texto="Cancelar"
-                                                corTexto="#B41F1F"
-                                                cor="var(--cor-secundaria)"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="#B41F1F"
                                                 height="2.75rem"
                                                 width="13.25rem"
-                                                corHover="#1D2D4417"
+                                                corHover="#B41F1F"
                                                 fontWeight="500"
                                                 ariaLabel={"Botão de Cancelar"}
+                                                type="button"
                                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
                                             >
                                             </Button>
@@ -448,7 +615,8 @@ const Planos = () => {
                                     </div>
 
                                     {/* Formulário */}
-                                    <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+
+                                    <form onSubmit={handleSubmit(editarPlano)}>
                                         <div className="grid gap-4 mb-4">
                                             <div>
                                                 <Label
@@ -507,7 +675,7 @@ const Planos = () => {
                                                         <img src={info2} alt="Erro" className="w-4 h-4" />
                                                         <span>Selecione o Período de duração do plano</span>
                                                     </div>
-                                                )}{errors.genero?.message}
+                                                )}{errors.duracao?.message}
                                                 </span>
                                             </div>
                                             <div>
@@ -576,12 +744,13 @@ const Planos = () => {
                                         <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                             <Button
                                                 texto="Cancelar"
-                                                corTexto="#B41F1F"
-                                                cor="var(--cor-secundaria)"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="#B41F1F"
                                                 height="2.75rem"
                                                 width="13.25rem"
-                                                corHover="#1D2D4417"
+                                                corHover="#B41F1F"
                                                 fontWeight="500"
+                                                type="button"
                                                 ariaLabel={"Botão de Cancelar"}
                                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
                                             >
@@ -606,19 +775,15 @@ const Planos = () => {
                         </div>
                     )}
 
-
-
-
-
                     <Modal
                         visivel={modalConfirmarCancelarVisivel}
                         fecharModal={() => setModalConfirmarCancelarVisivel(false)}
                         titulo="Tem certeza que deseja cancelar?"
                         descricao="Alterações que não forem salvas serão perdidas"
                         onConfirm={() => {
-                            setModalConfirmarCancelarVisivel(false); 
-                            setShowCreateModal(false); 
-                            setShowEditModal(false); 
+                            setModalConfirmarCancelarVisivel(false);
+                            setShowCreateModal(false);
+                            setShowEditModal(false);
                         }}
                         icone={iconCancelar}
                         textoBotaoConfirmar="Voltar"
@@ -642,7 +807,7 @@ const Planos = () => {
                         <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
                             <div className="bg-white rounded-lg p-6 max-w-md w-full">
                                 <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
-                                    <img src={alert} alt="Alerta" className="w-6 h-6" />
+                                    <img src={alerta} alt="Alerta" className="w-6 h-6" />
                                     <span>Acesso Negado</span>
                                 </h2>
                                 <p className="text-center mt-4">
@@ -661,6 +826,7 @@ const Planos = () => {
                         </div>
                     )}
                 </div>
+                 <Toaster position="top-right" reverseOrder={false} />
             </div>
         </>
     )

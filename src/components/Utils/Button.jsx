@@ -6,7 +6,7 @@ const Botton = ({
   onClick,
   cor,
   corTexto,
-  corHover,
+  corHover = "none",
   width,
   height,
   type,
@@ -51,7 +51,6 @@ const Botton = ({
         hover:brightness-90
         ${classNameExtra}
       `}
-
     >
       {logoSvg}
       {logo && <img src={logo} alt="Logo" />}

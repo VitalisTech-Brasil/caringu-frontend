@@ -67,11 +67,11 @@ function Modal({
               <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                 <Button
                   texto={textoBotaoCancelar}
-                  corTexto="#B41F1F"
-                  cor="var(--cor-secundaria)"
+                  corTexto="var(--cor-secundaria)"
+                  cor="#B41F1F"
                   height="2.75rem"
                   width="13.25rem"
-                  corHover="#1D2D4417"
+                  corHover="#B41F1F"
                   fontWeight="500"
                   onClick={onConfirm}
                   ariaLabel={"Botão de Cancelar"}
