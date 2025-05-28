@@ -4,6 +4,11 @@
 @source "../../.flowbite-react/class-list.json";
 
 :root {
+
+  --color-zinc-900: #18181b !important;
+  --color-cyan-700: #0e7490 !important;
+  --color-lime-700: #65a30d !important;
+
   --cor-primaria: #15171b;
   --cor-secundaria: #fffdf6;
   --azul-claro: #748cab;
