@@ -45,8 +45,8 @@ const GerenciarExercicios = () => {
         {
             id: 1,
             nome: "Rosca Direta",
-            grupoMuscular: "Bíceps",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "BRACO",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=rosca-direta",
             observacoes: "Focar na execução e postura."
@@ -54,17 +54,17 @@ const GerenciarExercicios = () => {
         {
             id: 2,
             nome: "Rosca Martelo",
-            grupoMuscular: "Bíceps",
-            origem: "Criados por mim",
+            grupoMuscular: "BRACO",
+            origem: "PERSONAL",
             favorito: false,
             url: "https://www.youtube.com/watch?v=rosca-martelo",
             observacoes: "Manter os cotovelos fixos."
         },
         {
             id: 3,
-            nome: "Tríceps Testa",
-            grupoMuscular: "Tríceps",
-            origem: "Biblioteca CaringU",
+            nome: "BRACO Testa",
+            grupoMuscular: "BRACO",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=triceps-testa",
             observacoes: "Evitar abrir demais os cotovelos."
@@ -72,8 +72,8 @@ const GerenciarExercicios = () => {
         {
             id: 4,
             nome: "Agachamento Livre",
-            grupoMuscular: "Pernas",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "PERNAS",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=agachamento-livre",
             observacoes: "Descer até 90 graus mantendo a coluna neutra."
@@ -81,8 +81,8 @@ const GerenciarExercicios = () => {
         {
             id: 5,
             nome: "Leg Press",
-            grupoMuscular: "Pernas",
-            origem: "Criados por mim",
+            grupoMuscular: "PERNAS",
+            origem: "PERSONAL",
             favorito: false,
             url: "https://www.youtube.com/watch?v=leg-press",
             observacoes: "Não estender completamente os joelhos."
@@ -90,8 +90,8 @@ const GerenciarExercicios = () => {
         {
             id: 6,
             nome: "Cadeira Extensora",
-            grupoMuscular: "Quadríceps",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "PERNA",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=cadeira-extensora",
             observacoes: "Segurar 2 segundos no topo do movimento."
@@ -99,8 +99,8 @@ const GerenciarExercicios = () => {
         {
             id: 7,
             nome: "Supino Reto",
-            grupoMuscular: "Peitoral",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "PEITORAL",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=supino-reto",
             observacoes: "Controle na descida e pés firmes no chão."
@@ -108,26 +108,26 @@ const GerenciarExercicios = () => {
         {
             id: 8,
             nome: "Crucifixo",
-            grupoMuscular: "Peitoral",
-            origem: "Criados por mim",
+            grupoMuscular: "PEITORAL",
+            origem: "PERSONAL",
             favorito: false,
             url: "https://www.youtube.com/watch?v=crucifixo",
-            observacoes: "Não deixar os braços descerem além da linha dos ombros."
+            observacoes: "Não deixar os BRACO descerem além da linha dos OMBRO."
         },
         {
             id: 9,
             nome: "Remada Curvada",
-            grupoMuscular: "Costas",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "COSTAS",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=remada-curvada",
-            observacoes: "Manter a coluna neutra e abdômen contraído."
+            observacoes: "Manter a coluna neutra e CORE contraído."
         },
         {
             id: 10,
             nome: "Puxada Frontal",
-            grupoMuscular: "Costas",
-            origem: "Criados por mim",
+            grupoMuscular: "COSTAS",
+            origem: "PERSONAL",
             favorito: false,
             url: "https://www.youtube.com/watch?v=puxada-frontal",
             observacoes: "Concentrar na ativação das dorsais."
@@ -135,17 +135,17 @@ const GerenciarExercicios = () => {
         {
             id: 11,
             nome: "Desenvolvimento",
-            grupoMuscular: "Ombros",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "OMBRO",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=desenvolvimento",
-            observacoes: "Não deixar os cotovelos baixar abaixo da linha dos ombros."
+            observacoes: "Não deixar os cotovelos baixar abaixo da linha dos OMBRO."
         },
         {
             id: 12,
             nome: "Elevação Lateral",
-            grupoMuscular: "Ombros",
-            origem: "Criados por mim",
+            grupoMuscular: "OMBRO",
+            origem: "PERSONAL",
             favorito: false,
             url: "https://www.youtube.com/watch?v=elevacao-lateral",
             observacoes: "Executar lentamente, foco no deltoide lateral."
@@ -153,20 +153,20 @@ const GerenciarExercicios = () => {
         {
             id: 13,
             nome: "Abdominal Infra",
-            grupoMuscular: "Abdômen",
-            origem: "Biblioteca CaringU",
+            grupoMuscular: "CORE",
+            origem: "BIBLIOTECA",
             favorito: true,
             url: "https://www.youtube.com/watch?v=abdominal-infra",
-            observacoes: "Não utilizar o balanço das pernas."
+            observacoes: "Não utilizar o balanço das PERNAS."
         },
         {
             id: 14,
             nome: "Prancha",
-            grupoMuscular: "Abdômen",
-            origem: "Criados por mim",
+            grupoMuscular: "CORE",
+            origem: "PERSONAL",
             favorito: false,
             url: "https://www.youtube.com/watch?v=prancha",
-            observacoes: "Manter o abdômen contraído e a lombar neutra."
+            observacoes: "Manter o CORE contraído e a lombar neutra."
         }
     ]);
 
@@ -448,9 +448,8 @@ const GerenciarExercicios = () => {
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
-                                            { label: "Biblioteca CaringU", value: "Biblioteca CaringU" },
-                                            { label: "Criados por mim", value: "Criados por mim" },
-                                            { label: "Outro", value: "Outro" },
+                                            { label: "BIBLIOTECA", value: "BIBLIOTECA" },
+                                            { label: "PERSONAL", value: "PERSONAL" },
                                         ],
                                         onSelect: handleOrigemSelect,
                                     },
@@ -471,10 +470,13 @@ const GerenciarExercicios = () => {
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
-                                            { label: "Peitoral", value: "Peitoral" },
-                                            { label: "Costas", value: "Costas" },
-                                            { label: "Pernas", value: "Pernas" },
-                                            { label: "Braços", value: "Braços" },
+                                            { label: "PEITORAL", value: "PEITORAL" },
+                                            { label: "COSTAS", value: "COSTAS" },
+                                            { label: "PERNAS", value: "PERNAS" },
+                                            { label: "OMBRO", value: "OMBRO" },
+                                            { label: "BRACO", value: "BRACO" },
+                                            { label: "CORE", value: "CORE" },
+                                            { label: "CARDIO", value: "CARDIO" },
                                         ],
                                         onSelect: handleGrupoMuscularSelect,
                                     }
@@ -715,7 +717,7 @@ const GerenciarExercicios = () => {
                                                     id="grupoMuscular"
                                                     name="grupoMuscular"
                                                     inputType="text"
-                                                    placeholder="Ex: Peitoral"
+                                                    placeholder="Ex: PEITORAL"
                                                     fontSize="16px"
                                                     fontWeight="400"
                                                     fontSizeErro="16px"
@@ -880,7 +882,7 @@ const GerenciarExercicios = () => {
                                                     id="grupoMuscular"
                                                     name="grupoMuscular"
                                                     inputType="text"
-                                                    placeholder="Ex: Peitoral"
+                                                    placeholder="Ex: PEITORAL"
                                                     fontSize="16px"
                                                     fontWeight="400"
                                                     fontSizeErro="16px"
