@@ -41,7 +41,7 @@ const Perfil = () => {
                 {/* Cabeçalho */}
                 <Header />
 
-                <main className="flex-grow p-4 md:p-8 space-y-8 w-full">
+                <main className="flex-grow p-4 md:p-8 space-y-8 w-full h-[90vh]">
                     {/* Modal de confirmação */}
                     {modalVisible && (
                         <ModalRemoverEspecialidade

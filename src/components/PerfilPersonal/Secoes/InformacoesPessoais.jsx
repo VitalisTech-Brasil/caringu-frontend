@@ -5,6 +5,9 @@ import MascaraTelefone from '../../Utils/Functions/MascaraTelefone';
 import { HiOutlineTrash } from 'react-icons/hi';
 import ModalRemoverEspecialidade from '../../Utils/ModalRemoverEspecialidade';
 
+import { toast, Toaster } from 'react-hot-toast';
+import CustomToast from '../../Utils/CustomToast';
+
 export default function InformacoesPessoais() {
 
     const [formData, setFormData] = useState({});
@@ -185,28 +188,45 @@ export default function InformacoesPessoais() {
         try {
             await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvar);
 
-            await caringuApi.patch(`/personal-trainers/${personalId}/bairro`, {
-                bairroId: formData.idBairro,
-                novoNomeBairro: formData.bairro,
-                cidadeId: formData.idCidade,
-                novoNomeCidade: formData.cidade
-            });
+            if (formData.idBairro) {
+                // PATCH - Atualiza bairro existente
+                await caringuApi.patch(`/personal-trainers/${personalId}/bairro`, {
+                    bairroId: formData.idBairro,
+                    novoNomeBairro: formData.bairro,
+                    cidadeId: formData.idCidade,
+                    novoNomeCidade: formData.cidade,
+                });
 
-            /* console.log("Dados atualizados com sucesso:", response.data);
-
-            if (dataParaSalvar.email !== emailAnterior) {
-                sessionStorage.clear();
-                sessionStorage.setItem("modalMensagem", "Seu e-mail foi alterado. Por segurança, você será desconectado.");
-                sessionStorage.setItem("modalTitulo", "Alteração de e-mail");
-
-                window.dispatchEvent(new Event("sessaoExpirada"));
-
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
+                ));
             } else {
-                } */
+                // POST - Cria novo bairro e associa ao personal
+
+                if (!formData.bairro || !formData.cidade) {
+                    toast.custom((t) => (
+                        <CustomToast t={t} type="error" message="Preencha o bairro e a cidade para continuar." />
+                    ));
+                    return;
+                }
+
+                await caringuApi.post(`/personal-trainers/${personalId}/bairros`, {
+                    nomeBairro: formData.bairro,
+                    cidadeId: formData.idCidade,
+                    nomeCidade: formData.cidade,
+                });
+
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
+                ));
+            }
 
             window.location.reload(true);
 
         } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />
+            ));
             console.error("Erro ao atualizar informações:", error);
         }
     };
@@ -476,6 +496,7 @@ export default function InformacoesPessoais() {
                         </div>
                     </div>
                 </div>
+                <Toaster position='top-right' reverseOrder={false} />
             </div>
         </>
     )
