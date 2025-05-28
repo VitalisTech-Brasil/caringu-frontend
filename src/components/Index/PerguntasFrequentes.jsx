@@ -46,18 +46,21 @@ export default function PerguntasFrequentes() {
     }, [openIndex]);
 
     return (
-        <div className="w-300 mx-auto px-4 py-10">
+        <div className="w-300 mx-auto px-4 py-10 max-[700px]:py-0 max-[700px]:px-0 max-[1350px]:w-[830px] max-[900px]:w-[630px] max-[700px]:w-[430px] max-[700px]:h-[600px] max-[700px]mx-10px max-[550px]:w-[330px]">
             {faqs.map((faq, index) => (
                 <div
                     key={index}
-                    className={`rounded-md border mb-4 shadow-sm transition-all w-full ${openIndex === index ? "bg-[var(--azul-escuro)] text-white" : "bg-white text-black"
-                        }`}
+                    className={`rounded-md border mb-4 shadow-sm transition-all w-full
+                        ${openIndex === index
+                            ? "bg-[var(--azul-escuro)] text-white min-[900px]:h-[180px] max-[700px]:h-[250px] max-[550px]:h-[270px]"
+                            : "bg-white text-black max-[1350px]:w-[800px] max-[900px]:w-[600px] max-[700px]:w-[430px] max-[700px]:h-[90px] max-[600px]:h-[75px] max-[550px]:w-[330px]"}`
+                    }
                 >
                     <button
                         onClick={() => toggle(index)}
-                        className="w-full flex items-center justify-between p-5 text-left"
+                        className="w-full flex items-center justify-between p-5 text-left max-[1350px]:w-[800px] max-[900px]:w-[600px] max-[700px]:w-[425px] max-[550px]:w-[325px]"
                     >
-                        <span className="font-medium text-lg">{faq.question}</span>
+                        <span className="font-medium text-lg max-[550px]:text-[14px]">{faq.question}</span>
                         <FaChevronDown
                             className={`transform transition-transform duration-300 ${openIndex === index ? "rotate-180" : ""
                                 }`}
@@ -68,7 +71,7 @@ export default function PerguntasFrequentes() {
                         className="overflow-hidden transition-all duration-500 px-5"
                         style={{ maxHeight: "0px" }}
                     >
-                        <div className="py-5">
+                        <div className="py-5 max-[700px]:py-0 max-[700px]:text-[14px]">
                             {faq.answer}
                         </div>
                     </div>

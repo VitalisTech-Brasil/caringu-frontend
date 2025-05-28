@@ -132,6 +132,13 @@ const Header = () => {
       </svg>,
       label: "Gerenciar Alunos",
     },
+    "/editar-treino/*": {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 30 31" fill="none">
+        <path d="M27.5 14.25V21.75C27.5 26.75 26.25 28 21.25 28H8.75C3.75 28 2.5 26.75 2.5 21.75V9.25C2.5 4.25 3.75 3 8.75 3H10.625C12.5 3 12.9125 3.55 13.625 4.5L15.5 7C15.975 7.625 16.25 8 17.5 8H21.25C26.25 8 27.5 9.25 27.5 14.25Z" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" />
+        <path d="M10 3H21.25C23.75 3 25 4.25 25 6.75V8.475" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Gerenciar Alunos",
+    },
   };
 
   // Função auxiliar para encontrar a rota correspondente

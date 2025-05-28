@@ -19,6 +19,7 @@ const Botton = ({
   borderStyle,
   borderWidth,
   fontWeight,
+  classNameExtra = "", // aceita className como prop
 }) => {
   return (
     <button
@@ -48,6 +49,7 @@ const Botton = ({
         flex items-center justify-center
         gap-3
         hover:brightness-90
+        ${classNameExtra}
       `}
     >
       {logoSvg}
@@ -56,5 +58,6 @@ const Botton = ({
     </button>
   );
 };
+
 
 export default Botton;
