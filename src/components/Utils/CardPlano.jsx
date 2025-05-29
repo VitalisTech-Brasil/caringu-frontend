@@ -85,7 +85,7 @@ const CardPlano = ({
 
   return (
     <>
-      <div className="w-[250px] sm:w-[450px] 2xl:w-[560px] h-auto rounded-md border-[4px] border-[#1D2D441C] sm:p-4 sm:pl-10 p-6 relative flex flex-col justify-center ">
+      <div className="w-[250px] sm:w-[450px] 2xl:w-[560px] h-auto rounded-md border-[2px] border-[#1D2D441C] sm:p-4 sm:pl-10 p-6 relative flex flex-col justify-center ">
         <div className="h-auto  flex flex-row items-end justify-between">
           <h5 className="break-all text-sm sm:text-[32px] 2xl:text-[40px] font-medium text-[var(--cor-primaria)] 2xl:w-[56%] ">{nome}</h5>
           <div className="h-full flex flex-row justify-end w-[12rem] gap-[0.3rem]">

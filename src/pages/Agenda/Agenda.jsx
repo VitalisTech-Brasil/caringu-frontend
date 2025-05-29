@@ -5,6 +5,7 @@ import EstaSemana from "../../components/Utils/EstaSemana";
 import CompromissosAgenda from "../../components/Utils/CompromissosAgenda";
 import Calendario from "../../components/Utils/Calendario";
 import { isSameDay } from "date-fns";
+import { caringuApi } from "../../provider/caringuApi";
 
 
 
@@ -12,6 +13,7 @@ const Agenda = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
     const [value, setValue] = useState(new Date());
+    const [treinosFinalizados, setTreinosFinalizados] = useState([]);
 
 
     useEffect(() => {
@@ -32,177 +34,51 @@ const Agenda = () => {
         });
     }, []);
 
+    const pessoaId = sessionStorage.getItem("pessoaId");
+
+
+
+    const exibirTreinos = async () => {
+        try {
+            const response = await caringuApi.get(`/treinos-finalizados/personal/${pessoaId}`);
+            setTreinosFinalizados(response.data);
+            console.log("Treinos finalizados:", response.data);
+        } catch (error) {
+            console.error("Erro ao exibir treinos:", error);
+        }
+    }
+
+    function formatarHora(isoString) {
+        const data = new Date(isoString);
+        return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatarData(isoString) {
+        const data = new Date(isoString);
+        return data.toLocaleDateString('pt-BR');
+    }
+
+    const compromissos = treinosFinalizados.map(item => ({
+        id: item.id,
+        horario: `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`,
+        data: formatarData(item.dataHorarioInicio),
+        aluno: {
+            nome: item.nomeAluno,
+            foto: item.urlFotoPerfil,
+        },
+        finalizado: item.finalizado,
+    }));
+
+    useEffect(() => {
+        document.title = "Agenda | Caringu";
+        exibirTreinos();
+    }, []);
 
 
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
-
-    const compromissos = [
-        {
-            id: 1,
-            horario: "9:00 - 10:00",
-            local: "Academia XYZ",
-            data: "18/05/2025",
-            aluno: {
-                nome: "João Silva",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 2,
-            horario: "14:00 - 15:00",
-            local: "Academia ABC",
-            data: "22/05/2025",
-            aluno: {
-                nome: "Maria Oliveira",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 3,
-            horario: "10:00 - 11:00",
-            local: "Academia XYZ",
-            data: "22/05/2025",
-            aluno: {
-                nome: "Igor Daniel Mamani Jimenez",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        ,
-        {
-            id: 53,
-            horario: "10:00 - 11:00",
-            local: "Academia XYZ",
-            data: "22/05/2025",
-            aluno: {
-                nome: "Igor Daniel Mamani Jimenez",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        ,
-        {
-            id: 63,
-            horario: "10:00 - 11:00",
-            local: "Academia smart fitchfioteo efsifsehiuZ",
-            data: "22/05/2025",
-            aluno: {
-                nome: "Igor Daniel Mamani Jimenez",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 4,
-            horario: "11:00 - 12:00",
-            local: "Academia ABC",
-            data: "20/05/2025",
-            aluno: {
-                nome: "Ana Paula",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 5,
-            horario: "15:00 - 16:00",
-            local: "Academia XYZ",
-            data: "20/05/2025",
-            aluno: {
-                nome: "Lucas Mendes",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 6,
-            horario: "8:00 - 9:00",
-            local: "Academia XYZ",
-            data: "21/05/2025",
-            aluno: {
-                nome: "Fernanda Lima",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 7,
-            horario: "9:00 - 10:00",
-            local: "Academia ABC",
-            data: "21/05/2025",
-            aluno: {
-                nome: "Rafael Costa",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 10,
-            horario: "13:00 - 14:00",
-            local: "Academia XYZ",
-            data: "23/05/2025",
-            aluno: {
-                nome: "Mariana Silva",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 11,
-            horario: "14:00 - 15:00",
-            local: "Academia ABC",
-            data: "23/05/2025",
-            aluno: {
-                nome: "Gabriel Santos",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 12,
-            horario: "9:00 - 10:00",
-            local: "Academia XYZ",
-            data: "24/05/2025",
-            aluno: {
-                nome: "Beatriz Oliveira",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 13,
-            horario: "10:00 - 11:00",
-            local: "Academia ABC",
-            data: "24/05/2025",
-            aluno: {
-                nome: "Ricardo Lima",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 14,
-            horario: "11:00 - 12:00",
-            local: "Academia XYZ",
-            data: "24/04/2025",
-            aluno: {
-                nome: "Juliana Almeida",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 15,
-            horario: "12:00 - 13:00",
-            local: "Academia ABC",
-            data: "24/03/2025",
-            aluno: {
-                nome: "Felipe Martins",
-                foto: "https://via.placeholder.com/150",
-            },
-        },
-        {
-            id: 16,
-            horario: "13:00 - 14:00",
-            local: "Academia XYZ",
-            data: "30/05/2025",
-            aluno: {
-                nome: "Tatiane Ferreira",
-                foto: "https://via.placeholder.com/150",
-            },
-        }
-    ];
 
     return (
         <div className="flex min-h-screen bg-[#fdfbf7]">

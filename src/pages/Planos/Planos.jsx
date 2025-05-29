@@ -10,7 +10,7 @@ import CardAlunoAtivos from "../../components/Utils/CardAlunoAtivos";
 import Modal from "../../components/Utils/Modal";
 import InputPosLogin from "../../components/Utils/InputPosLogin";
 import Label from "../../components/Utils/Label";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import info2 from "../../assets/images/info-2.svg";
 import iconCancelar from "../../assets/images/cancelar.png";
 import lixeira from "../../assets/images/trash.png";
@@ -23,7 +23,8 @@ import { Toaster } from 'react-hot-toast';
 const Planos = () => {
 
 
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm();
+    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset, control } = useForm();
+
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -34,32 +35,63 @@ const Planos = () => {
     const [planos, setPlanos] = useState([])
     const [planoIdParaDeletar, setPlanoIdParaDeletar] = useState(null);
     const [planoEditado, setPlanoEditado] = useState(null);
+    const [alunosAtivos, setAlunosAtivos] = useState([]);
+    const duracaoValue = useWatch({ control, name: "duracao" })
 
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
 
     const pessoaId = sessionStorage.getItem("pessoaId");
-    const token = sessionStorage.getItem("authToken");
 
 
 
     const fetchPlanos = async () => {
         try {
-            const response = await caringuApi.get(`/planos/${pessoaId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await caringuApi.get(`/planos/${pessoaId}`);
             setPlanos(response.data);
         } catch (error) {
             console.error("Erro ao buscar planos:", error);
         }
     };
 
+    const alunosPlanosAtivos = async () => {
+        try {
+            const response = await caringuApi.get(`/alunos/detalhes/personal/${pessoaId}`)
+            setAlunosAtivos(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar alunos com planos ativos:", error);
+        }
+    }
+
+    function formatarNivelExperiencia(nivel) {
+        switch (nivel) {
+            case 'INICIANTE':
+                return 'Iniciante';
+            case 'INTERMEDIARIO':
+                return 'Intermediário';
+            case 'AVANCADO':
+                return 'Avançado';
+            default:
+                return nivel;
+        }
+    }
+
+    useEffect(() => {
+        if (duracaoValue === "AVULSO") {
+            setValue("aulas", "1");
+            trigger("aulas");
+        } else if (duracaoValue && duracaoValue !== "AVULSO") {
+            setValue("aulas", "");
+            trigger("aulas");
+        }
+    }, [duracaoValue, setValue, trigger]);
+
+
     useEffect(() => {
         document.title = "Planos | Caringu";
         fetchPlanos();
+        alunosPlanosAtivos();
     }, []);
 
 
@@ -74,17 +106,13 @@ const Planos = () => {
                 valorAulas: Number(data.preco),
             };
 
-            await caringuApi.post(`/planos/${pessoaId}`, payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await caringuApi.post(`/planos/${pessoaId}`, payload);
 
 
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Plano criado com sucesso!" />
             ));
-            
+
             await fetchPlanos();
 
             setShowCreateModal(false);
@@ -99,11 +127,7 @@ const Planos = () => {
 
     const confirmDelete = async () => {
         try {
-            await caringuApi.delete(`/planos/${pessoaId}/${planoIdParaDeletar}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await caringuApi.delete(`/planos/${pessoaId}/${planoIdParaDeletar}`);
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Plano deletado com sucesso!" />
             ));
@@ -127,11 +151,7 @@ const Planos = () => {
                 valorAulas: Number(data.preco),
             };
 
-            await caringuApi.put(`/planos/${pessoaId}/${planoEditado.id}`, payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await caringuApi.put(`/planos/${pessoaId}/${planoEditado.id}`, payload);
 
 
             toast.custom((t) => (
@@ -233,22 +253,20 @@ const Planos = () => {
     const handlePrecoChange = (e) => {
         let input = e.target.value;
 
-        let digitos = input.replace(/\D/g, "");
-
-        if (digitos.length > 10) digitos = digitos.slice(0, 10);
+        // Permite no máximo 8 dígitos (6 inteiros + 2 decimais)
+        let digitos = input.replace(/\D/g, "").slice(0, 6);
 
         let formatted = "";
 
         if (digitos.length <= 2) {
-
             const padded = digitos.padStart(2, "0");
             formatted = `0.${padded}`;
         } else {
             const reais = digitos.slice(0, -2);
             const centavos = digitos.slice(-2);
-            formatted = `${parseInt(reais, 10)}.${centavos}`;
+            // Limita os reais a 6 dígitos
+            formatted = `${parseInt(reais.slice(0, 4), 10)}.${centavos}`;
         }
-
 
         setValue("preco", formatted);
         trigger("preco");
@@ -263,40 +281,6 @@ const Planos = () => {
         setValue("aulas", digitos);
         trigger("aulas");
     };
-
-
-    const alunosAtivos = [
-        {
-            urlImagem: "https://randomuser.me/api/portraits/men/1.jpg",
-            nome: "João Silva",
-            nomePlano: "Plano Mensal",
-            niverExperiencia: "AVANCADO"
-        },
-        {
-            urlImagem: "https://randomuser.me/api/portraits/women/2.jpg",
-            nome: "Maria Souza",
-            nomePlano: "Plano Semestral",
-            niverExperiencia: "INICIANTE"
-        },
-        {
-            urlImagem: "https://randomuser.me/api/portraits/men/3.jpg",
-            nome: "Carlos Pereira",
-            nomePlano: "Plano Avulso",
-            niverExperiencia: "AVANCADO"
-        },
-        {
-            urlImagem: "https://randomuser.me/api/portraits/women/4.jpg",
-            nome: "Ana Costa",
-            nomePlano: "Plano Mensal",
-            niverExperiencia: "INICIANTE"
-        },
-        {
-            urlImagem: "https://randomuser.me/api/portraits/men/5.jpg",
-            nome: "Pedro Santos",
-            nomePlano: "Plano Semestral",
-            niverExperiencia: "INICIANTE"
-        }
-    ];
 
     return (
         <>
@@ -384,11 +368,12 @@ const Planos = () => {
                         ) : (
                             alunosAtivos.map((aluno, idx) => (
                                 <CardAlunoAtivos
+                                    idAlunos={aluno.idAluno}
                                     key={idx}
-                                    urlImagem={aluno.urlImagem}
-                                    nome={aluno.nome}
+                                    urlImagem={aluno.urlFotoPerfil}
+                                    nome={aluno.nomeAluno}
                                     nomePlano={aluno.nomePlano}
-                                    niverExperiencia={aluno.niverExperiencia}
+                                    niverExperiencia={formatarNivelExperiencia(aluno.nivelExperiencia)}
                                 />
                             ))
                         )}
@@ -536,6 +521,7 @@ const Planos = () => {
                                                     fontSizeErro="16px"
                                                     width="100%"
                                                     inputMode="numeric"
+                                                    disabled={duracaoValue === "AVULSO"}
                                                     {...register('aulas', {
                                                         required: 'Quantidade de aulas é obrigatória',
                                                         pattern: {
@@ -826,7 +812,7 @@ const Planos = () => {
                         </div>
                     )}
                 </div>
-                 <Toaster position="top-right" reverseOrder={false} />
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </>
     )

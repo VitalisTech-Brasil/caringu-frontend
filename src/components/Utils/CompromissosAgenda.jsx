@@ -89,13 +89,6 @@ const CompromissosAgenda = ({ compromissos, selectedDay }) => {
                                                 </svg>
                                                 <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
                                             </div>
-                                            <div className="text-white text-sm flex items-center gap-2 h-auto w-auto">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 2xl:w-6 2xl:h-6 shrink-0" viewBox="0 0 25 25" fill="none">
-                                                    <path d="M3.77094 8.84343C5.82302 -0.177407 19.1876 -0.16699 21.2293 8.85384C22.4272 14.1455 19.1355 18.6247 16.2501 21.3955C14.1564 23.4163 10.8439 23.4163 8.73969 21.3955C5.86469 18.6247 2.57302 14.1351 3.77094 8.84343Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" />
-                                                    <path d="M12.5 13.9902C14.2949 13.9902 15.75 12.5352 15.75 10.7402C15.75 8.94531 14.2949 7.49023 12.5 7.49023C10.7051 7.49023 9.25 8.94531 9.25 10.7402C9.25 12.5352 10.7051 13.9902 12.5 13.9902Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="1.5" />
-                                                </svg>
-                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] break-words">{compromisso.local}</span>
-                                            </div>
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
                                             <div className="flex sm:flex-row flex-col items-center gap-2">

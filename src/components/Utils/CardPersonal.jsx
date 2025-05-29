@@ -28,7 +28,7 @@ const CardPersonal = ({
 
 
     return (
-        <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-4 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
+        <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-2 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
             <div className="mt-9 lg:ml-0 ml-[31%]">
                 <img src={urlFoto} alt="Personal" className="w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33 rounded-full" />
             </div>

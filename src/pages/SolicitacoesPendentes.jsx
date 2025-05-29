@@ -21,14 +21,9 @@ const SolicitacoesPendentes = () => {
     const listarSolicitacoesPendentes = async () => {
         try {
             const response = await caringuApi.get(`/planos-contratados/solicitacoes-pendentes/${pessoaId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+
             });
-            const pendentes = Array.isArray(response.data)
-                ? response.data.filter(solicitacao => solicitacao.status === "PENDENTE")
-                : [];
-            setSolicitacoesPendentes(pendentes);
+            setSolicitacoesPendentes(response.data);
             console.log("Solicitações pendentes:", response.data);
         } catch (error) {
             console.error("Erro ao listar solicitações pendentes:", error);
@@ -40,11 +35,6 @@ const SolicitacoesPendentes = () => {
             await caringuApi.patch(
                 `/planos-contratados/${id}/status`,
                 { status },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
             );
             listarSolicitacoesPendentes();
         } catch (error) {
@@ -84,7 +74,7 @@ const SolicitacoesPendentes = () => {
                                     key={solicitacao.id}
                                     nome={solicitacao.nomeAluno}
                                     nomePlano={solicitacao.nomePlano}
-                                    telefone={solicitacao.celular}
+                                    telefone={solicitacao.celular ? solicitacao.celular : "Telefone não informado"}
                                     valorPlano={solicitacao.quantidadeAulas * solicitacao.valorAulas}
                                     confimarPagamento={() => atualizarStatus(solicitacao.id, "ATIVO")}
                                     cancelarSolicitacao={() => atualizarStatus(solicitacao.id, "INATIVO")}

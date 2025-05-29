@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import MenuLateral from "../components/Personal/MenuLateral/MenuLateral";
 import Header from "../components/Personal/Header/Header";
 import CardPersonal from "../components/Utils/CardPersonal";
 import CardPlano from "../components/Utils/CardPlano";
@@ -9,7 +8,7 @@ import barraProgresso from "../assets/images/barra-progresso.svg";
 import barraMetade from "../assets/images/barra-metade.svg";
 import barraCompleta from "../assets/images/barra-completa.svg";
 import Button from "../components/Utils/Button";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { caringuApi } from "../provider/caringuApi";
 import { Toaster } from "react-hot-toast";
 import toast from 'react-hot-toast';
@@ -161,46 +160,38 @@ const PerfilPersonal = () => {
         }
     ];
     const navigate = useNavigate();
-    const { id } = useParams();
 
 
     const [modalContratar, setModalContratar] = useState(false);
     const [planoSelecionado, setPlanoSelecionado] = useState(null);
-    const [planos, setPlanos] = useState([]);
-    const location = useLocation();
+    const [infoPersonal, setInfoPersonal] = useState({ planos: [] });
 
-    const { nomePersonal, cidade, experiencia, celular, email, especialidades, urlFoto } = location.state;
-
-    // Estados por plano
     const [statusPagamento, setStatusPagamento] = useState({});
     const [botaoDesabilitado, setBotaoDesabilitado] = useState({});
+
+    const { id } = useParams();
+    const idAluno = sessionStorage.getItem('pessoaId');
+    const token = sessionStorage.getItem('authToken');
 
 
     const fetchPlanos = async () => {
         try {
-            const response = await caringuApi.get(`/planos/${id}`, {
+            const response = await caringuApi.get(`/personal-trainers/disponiveis/${id}`, {
             });
-            setPlanos(response.data);
+            setInfoPersonal(response.data);
             console.log("Planos:", response.data);
         } catch (error) {
             console.error("Erro ao buscar planos:", error);
         }
     };
 
-    const idAluno = sessionStorage.getItem('pessoaId');
-    const token = sessionStorage.getItem('authToken');
+
 
     const contratarPlano = async (idPlano) => {
 
         try {
             const response = await caringuApi.post(
                 `/planos-contratados/contratarPlano/${idAluno}/${idPlano}`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
             );
             console.log("Plano contratado:", response.data);
             // Abre o modal após contratar
@@ -276,13 +267,13 @@ const PerfilPersonal = () => {
                     </div>
                     <div>
                         <CardPersonal
-                            nomePersonal={nomePersonal}
-                            cidade={cidade}
-                            experiencia={experiencia}
-                            celular={celular}
-                            email={email}
-                            especialidades={especialidades}
-                            urlFoto={urlFoto}
+                            nomePersonal={infoPersonal.nomePersonal}
+                            cidade={infoPersonal.cidade}
+                            experiencia={infoPersonal.experiencia}
+                            celular={infoPersonal.celular}
+                            email={infoPersonal.email}
+                            especialidades={infoPersonal.especialidades}
+                            urlFoto={infoPersonal.urlFotoPerfil}
                         />
                     </div>
                     <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
@@ -292,12 +283,12 @@ const PerfilPersonal = () => {
                     </div>
                     <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                         <div className="flex gap-9 w-fit">
-                            {planos.length === 0 ? (
+                            {infoPersonal.planos.length === 0 ? (
                                 <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
-                                    Nenhum plano disponível pelo personal.
+                                     Ainda não existe nenhuma opinião ou comentário de usuários para este personal.
                                 </div>
                             ) : (
-                                planos.map((item) => (
+                                infoPersonal.planos.map((item) => (
                                     <CardPlano
                                         key={item.id}
                                         id={item.id}
@@ -320,12 +311,12 @@ const PerfilPersonal = () => {
                         </div>
                     </div>
                     <div className="flex flex-row w-full h-auto">
-                        <div className="flex flex-col w-[95%] h-auto mt-3 mb-6 ml-[2.5rem] pt-5 border-solid border-[#1D2D441C] border-4 rounded-md">
+                        <div className="flex flex-col w-[95%] h-auto mt-3 mb-6 ml-[2.5rem] pt-5 border-solid border-[#1D2D441C] border-2 rounded-md">
                             <div className="w-[95%] h-auto flex flex-col lg:flex-row items-start gap-3 lg:gap-0 lg:items-center justify-between pl-[10%] sm:pl-[5rem]">
                                 <span className="text-[var(--cor-primaria)] text-base xl:text-[28px] 2xl:text-[32px] font-medium">
                                     Opiniões sobre o personal:
                                 </span>
-                                <div className="gap-5 pl-4 pr-4 pt-4 md:pt-0 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-4 text-base sm:text-xl lg:text-base xl:text-xl font-light">
+                                <div className="gap-5 pl-4 pr-4 pt-4 md:pt-0 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
                                     <span>
                                         Ordernar por avaliação
                                     </span>

@@ -87,17 +87,7 @@ const ProcurandoPersonal = () => {
   }, []);
 
   function redirecionarPerfilPersonal(trainer) {
-    navigate(`/perfil-personal/${trainer.id}`, {
-      state: {
-        nomePersonal: trainer.nomePersonal,
-        urlFotoPerfil: trainer.urlFotoPerfil,
-        cidade: trainer.cidade,
-        experiencia: trainer.experiencia,
-        celular: MascaraTelefone(trainer.celular),
-        email: trainer.email,
-        especialidades: trainer.especialidades
-      }
-    });
+    navigate(`/perfil-personal/${trainer.id}`);
   }
 
 
@@ -214,7 +204,7 @@ const ProcurandoPersonal = () => {
                 <div
 
                   key={index}
-                  className="border-solid border-4 border-[#1D2D441C] rounded-md p-4 mb-4 w-full"
+                  className="border-solid border-2 border-[#1D2D441C] rounded-md p-4 mb-4 w-full"
                   onClick={() => toggleCardExpansion(index)}
                 >
                   <div className="flex items-center">

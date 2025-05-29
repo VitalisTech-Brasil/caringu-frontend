@@ -1,6 +1,7 @@
 import React from "react";
 
 const CardAlunoAtivos = ({
+    idAlunos,
     urlImagem,
     nome,
     nomePlano,
@@ -8,7 +9,8 @@ const CardAlunoAtivos = ({
 }) => {
     return (
         <>
-            <div className="w-[90%] h-[9.5rem] rounded-md border-[4px] border-[#1D2D441C] border-solid flex flex-col justify-around items-start ml-10 p-2 pr-[3rem]">
+            <div id={idAlunos}
+            className="w-[90%] h-[9.5rem] rounded-md border-[2px] border-[#1D2D441C] border-solid flex flex-col justify-around items-start ml-10 p-2 pr-[3rem]">
                 <div className="flex flex-row items-center justify-between w-full h-auto pl-2">
                     <div className="flex flex-row items-center gap-6">
                         <img src={urlImagem} alt="Foto do Aluno" className="rounded-full h-[45px] w-[45px] md:h-[62px] md:w-[62px]" />
