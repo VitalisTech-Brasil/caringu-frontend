@@ -7,6 +7,7 @@ import ModalRemoverEspecialidade from '../../Utils/ModalRemoverEspecialidade';
 
 import { toast, Toaster } from 'react-hot-toast';
 import CustomToast from '../../Utils/CustomToast';
+import CidadeInput from '../../Utils/InputCidade/CidadeInput';
 
 export default function InformacoesPessoais() {
 
@@ -467,19 +468,7 @@ export default function InformacoesPessoais() {
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            <div>
-                                <label className="block text-[16px] font-medium text-gray-700">
-                                    Cidade
-                                </label>
-                                <input
-                                    type="text"
-                                    name="cidade"
-                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                    placeholder="Digite sua cidade"
-                                    value={formData.cidade || ""}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+                            <CidadeInput formData={formData} setFormData={setFormData} />
                             <div>
                                 <label className="block text-[16px] font-medium text-gray-700">
                                     Bairro
