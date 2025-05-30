@@ -31,11 +31,10 @@ const Perfil = () => {
     };
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-[#fdfcf9]">
+        <div className="flex md:flex-row min-h-screen bg-[#fdfcf9]">
             {/* Menu Lateral visível apenas em telas médias para cima */}
-            <div className="hidden md:block">
-                <MenuLateral isOpen={true} />
-            </div>
+            
+            <MenuLateral isOpen={true} />
 
             <div className="flex-1 flex flex-col w-full">
                 {/* Cabeçalho */}
