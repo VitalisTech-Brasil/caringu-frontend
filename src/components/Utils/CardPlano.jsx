@@ -12,7 +12,8 @@ const CardPlano = ({
   valorAulas,
   valorPlano,
   showDropdown = true,
-  showContratarPlano = true
+  showContratarPlano = true,
+  disabled = false
 
 }) => {
 
@@ -254,7 +255,7 @@ const CardPlano = ({
           </ul>
           {showContratarPlano && (
             <>
-              <div className=" 2xl:w-55 lg:w-35 md:w-35 sm:w-38 w-full sm:h-auto h-10 flex flex-row items-end justify-center">
+              <div className="session 2xl:w-55 lg:w-35 md:w-35 sm:w-38 w-full sm:h-auto h-10 flex flex-row items-end justify-center">
                 <Button
                   id={"btn-contratar-plano"}
                   texto={textoBotao}
@@ -267,6 +268,7 @@ const CardPlano = ({
                   fontSize={fontSize}
                   fontWeight="600"
                   onClick={handleContratar}
+                  disabled={disabled}
                 />
               </div>
             </>

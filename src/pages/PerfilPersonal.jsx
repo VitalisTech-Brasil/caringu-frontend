@@ -5,6 +5,7 @@ import CardPlano from "../components/Utils/CardPlano";
 import CardOpiniao from "../components/Utils/CardOpiniao";
 import Rating from 'react-rating'
 import barraProgresso from "../assets/images/barra-progresso.svg";
+import barraProgresso2 from "../assets/images/barra-progresso-2.svg";
 import barraMetade from "../assets/images/barra-metade.svg";
 import barraCompleta from "../assets/images/barra-completa.svg";
 import Button from "../components/Utils/Button";
@@ -13,6 +14,7 @@ import { caringuApi } from "../provider/caringuApi";
 import { Toaster } from "react-hot-toast";
 import toast from 'react-hot-toast';
 import CustomToast from '../components/Utils/CustomToast';
+import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 
 
 const PerfilPersonal = () => {
@@ -165,50 +167,36 @@ const PerfilPersonal = () => {
     const [modalContratar, setModalContratar] = useState(false);
     const [planoSelecionado, setPlanoSelecionado] = useState(null);
     const [infoPersonal, setInfoPersonal] = useState({ planos: [] });
+    const [verfificaStatus, setVerificaStatus] = useState(null);
+    const [statusEtapa, setStatusEtapa] = useState("");
 
-    const [statusPagamento, setStatusPagamento] = useState({});
-    const [botaoDesabilitado, setBotaoDesabilitado] = useState({});
+
 
     const { id } = useParams();
     const idAluno = sessionStorage.getItem('pessoaId');
-    const token = sessionStorage.getItem('authToken');
 
 
     const fetchPlanos = async () => {
         try {
-            const response = await caringuApi.get(`/personal-trainers/disponiveis/${id}`, {
-            });
+            const response = await caringuApi.get(`/personal-trainers/disponiveis/${id}`);
             setInfoPersonal(response.data);
             console.log("Planos:", response.data);
+
+            const planoEmProcesso = await caringuApi.get(`planos-contratados/alunos/${idAluno}/contratacao-pendente`);
+            const planoPendente = Array.isArray(planoEmProcesso.data) && planoEmProcesso.data.length > 0
+                ? planoEmProcesso.data[0]
+                : null;
+            setVerificaStatus(planoPendente);
+            console.log("Plano em processo:", planoPendente);
         } catch (error) {
             console.error("Erro ao buscar planos:", error);
         }
     };
 
 
-
-    const contratarPlano = async (idPlano) => {
-
-        try {
-            const response = await caringuApi.post(
-                `/planos-contratados/contratarPlano/${idAluno}/${idPlano}`,
-            );
-            console.log("Plano contratado:", response.data);
-            // Abre o modal após contratar
-            openModalContratar(idPlano);
-            // Atualiza o status do botão para "Verificar Status"
-            setStatusPagamento(prev => ({ ...prev, [idPlano]: "confirmado" }));
-        } catch (error) {
-            console.error("Erro ao contratar plano:", error);
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Erro ao ao contratar plano.Tente novamente mais tarde." />
-            ));
-        }
+    const contratarPlano = (idPlano) => {
+        openModalContratar(idPlano);
     };
-
-
-
-
 
     useEffect(() => {
         fetchPlanos();
@@ -224,10 +212,44 @@ const PerfilPersonal = () => {
         setPlanoSelecionado(null);
     }
 
-    const handleConfirmarPagamento = () => {
-        setStatusPagamento(prev => ({ ...prev, [planoSelecionado]: "confirmado" }));
-        setBotaoDesabilitado(prev => ({ ...prev, [planoSelecionado]: true }));
-    }
+    const handleJaCombinei = async () => {
+        try {
+            await caringuApi.post(
+                `/planos-contratados/contratarPlano/${idAluno}/${planoSelecionado}`
+            );
+            setStatusEtapa("PENDENTE");
+            fetchPlanos();
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao combinar com o personal." />
+            ));
+        }
+    };
+
+    const handleConfirmarPagamento = async () => {
+        try {
+            await caringuApi.patch(
+                `/planos-contratados/${verfificaStatus.id}/status`,
+                { status: "EM_PROCESSO" }
+            );
+            setStatusEtapa("COMBINADO"); 
+            fetchPlanos();
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao confirmar pagamento." />
+            ));
+        }
+    };
+
+    useEffect(() => {
+        if (modalContratar && verfificaStatus && planoSelecionado === verfificaStatus.planoId) {
+            if (verfificaStatus.status === "PENDENTE") setStatusEtapa("PENDENTE");
+            else if (verfificaStatus.status === "EM_PROCESSO") setStatusEtapa("COMBINADO");
+            else if (verfificaStatus.status === "ATIVO") setStatusEtapa("PAGO");
+        } else if (modalContratar) {
+            setStatusEtapa("INICIAL");
+        }
+    }, [modalContratar, verfificaStatus, planoSelecionado]);
 
 
     const [rating, setRating] = React.useState(0.0);
@@ -270,7 +292,7 @@ const PerfilPersonal = () => {
                             nomePersonal={infoPersonal.nomePersonal}
                             cidade={infoPersonal.cidade}
                             experiencia={infoPersonal.experiencia}
-                            celular={infoPersonal.celular}
+                            celular={MascaraTelefone(infoPersonal.celular)}
                             email={infoPersonal.email}
                             especialidades={infoPersonal.especialidades}
                             urlFoto={infoPersonal.urlFotoPerfil}
@@ -278,17 +300,18 @@ const PerfilPersonal = () => {
                     </div>
                     <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
                         <div className="h-full flex pl-[2.5rem] pt-3">
-                            <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]">Planos</span>
+                            <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]"> Planos</span>
                         </div>
                     </div>
                     <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
+                        {console.log("verfificaStatus:", verfificaStatus)}
                         <div className="flex gap-9 w-fit">
-                            {infoPersonal.planos.length === 0 ? (
-                                <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
-                                     Ainda não existe nenhuma opinião ou comentário de usuários para este personal.
-                                </div>
-                            ) : (
-                                infoPersonal.planos.map((item) => (
+                            {infoPersonal.planos.map((item) => {
+                                const existePlanoContratado = verfificaStatus && ["PENDENTE", "EM_PROCESSO", "ATIVO"].includes(verfificaStatus.status);
+                                const isPlanoContratado = existePlanoContratado && item.id === verfificaStatus.planoId;
+                                const disabled = existePlanoContratado ? !isPlanoContratado : false;
+
+                                return (
                                     <CardPlano
                                         key={item.id}
                                         id={item.id}
@@ -296,18 +319,26 @@ const PerfilPersonal = () => {
                                         periodo={item.periodo}
                                         quantidadeAulas={item.quantidadeAulas}
                                         valorAulas={item.valorAulas}
-                                        valorPlano={item.valorPlano}
+                                        valorPlano={item.valorAulas * item.quantidadeAulas}
                                         showDropdown={false}
                                         showContratarPlano={true}
-                                        onModalContratar={() => contratarPlano(item.id)}
+                                        onModalContratar={() => {
+                                            if (!existePlanoContratado || isPlanoContratado) {
+                                                contratarPlano(item.id);
+                                            }
+                                        }}
                                         textoBotao={
-                                            statusPagamento[item.id] === "confirmado"
+                                            isPlanoContratado
                                                 ? "Verificar Status"
                                                 : "Contratar Plano"
                                         }
+                                        disabled={disabled}
+                                        className={disabled ? "card-plano-disabled" : ""
+
+                                        }
                                     />
-                                ))
-                            )}
+                                );
+                            })}
                         </div>
                     </div>
                     <div className="flex flex-row w-full h-auto">
@@ -334,7 +365,7 @@ const PerfilPersonal = () => {
                             <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full">
                                 {(opinioes.filter(opiniao => rating === 0 || opiniao.pontuacao === rating).length === 0) ? (
                                     <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
-                                        Nenhum aluno com plano ativo no momento.
+                                        Ainda não existe nenhuma opinião ou comentário de usuários para este personal.
                                     </div>
                                 ) : (
                                     opinioes
@@ -379,11 +410,19 @@ const PerfilPersonal = () => {
                                     <div className="w-auto h-auto flex flex-row items-start justify-start gap-10 pl-0 md:pl-5">
                                         <img
                                             src={
-                                                statusPagamento[planoSelecionado] === "confirmado"
-                                                    ? barraMetade
-                                                    : barraProgresso
+                                                statusEtapa === "INICIAL"
+                                                    ? barraProgresso
+                                                    : statusEtapa === "PENDENTE"
+                                                        ? barraProgresso2
+                                                        : statusEtapa === "COMBINADO"
+                                                            ? barraMetade
+                                                            : statusEtapa === "PAGO"
+                                                                ? barraCompleta
+                                                                : barraProgresso
                                             }
-                                            alt="" className="pt-4 h-135 sm:h-115" />
+                                            alt="Status de contratação de plano"
+                                            className="pt-4 h-135 sm:h-115"
+                                        />
                                         <div className="flex flex-col items-start justify-start sm:gap-8">
                                             <div>
                                                 <h2 className="text-[var(--cor-primaria)]  font-semibold text-base sm:text-xl">
@@ -417,23 +456,48 @@ const PerfilPersonal = () => {
 
                                     </div>
                                     <div aria-label="Opções de Botões" className="flex flex-col items-center pt-15 w-full justify-center">
-
-
-                                        <Button
-                                            texto="Confirmar pagamento"
-                                            corTexto="var(--cor-secundaria)"
-                                            cor={botaoDesabilitado[planoSelecionado] ? "#D9D9D9" : "var(--azul-claro)"}
-                                            height="3rem"
-                                            width="45%"
-                                            corHover="var(--azul-claro)"
-                                            fontWeight="600"
-                                            ariaLabel={"Botão de Pagamento"}
-                                            fontSize="16px"
-                                            onClick={handleConfirmarPagamento}
-                                            disabled={botaoDesabilitado[planoSelecionado]}
-                                        >
-                                        </Button>
-
+                                        {statusEtapa === "INICIAL" && (
+                                            <Button
+                                                texto="Já conversei com o personal"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="var(--azul-claro)"
+                                                height="3rem"
+                                                width="45%"
+                                                corHover="var(--azul-claro)"
+                                                fontWeight="600"
+                                                ariaLabel="Já conversei com o personal"
+                                                fontSize="16px"
+                                                onClick={handleJaCombinei}
+                                            />
+                                        )}
+                                        {statusEtapa === "PENDENTE" && (
+                                            <Button
+                                                texto="Confirmar pagamento"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="var(--azul-claro)"
+                                                height="3rem"
+                                                width="45%"
+                                                corHover="var(--azul-claro)"
+                                                fontWeight="600"
+                                                ariaLabel="Confirmar pagamento"
+                                                fontSize="16px"
+                                                onClick={handleConfirmarPagamento}
+                                            />
+                                        )}
+                                        {statusEtapa === "COMBINADO" && (
+                                            <Button
+                                                texto="Confirmar pagamento"
+                                                corTexto="var(--cor-secundaria)"
+                                                cor="#D9D9D9"
+                                                height="3rem"
+                                                width="45%"
+                                                corHover="#D9D9D9"
+                                                fontWeight="600"
+                                                ariaLabel="Confirmar pagamento"
+                                                fontSize="16px"
+                                                disabled={true}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                             </div>

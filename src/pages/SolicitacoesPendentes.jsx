@@ -4,6 +4,7 @@ import Header from "../components/Personal/Header/Header";
 import CardSolitacoes from "../components/Utils/CardSolitacoes";
 import { useNavigate } from "react-router-dom";
 import { caringuApi } from "../provider/caringuApi";
+import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 
 const SolicitacoesPendentes = () => {
 
@@ -74,10 +75,10 @@ const SolicitacoesPendentes = () => {
                                     key={solicitacao.id}
                                     nome={solicitacao.nomeAluno}
                                     nomePlano={solicitacao.nomePlano}
-                                    telefone={solicitacao.celular ? solicitacao.celular : "Telefone não informado"}
+                                    telefone={solicitacao.celular ? MascaraTelefone(solicitacao.celular) : "Telefone não informado"}
                                     valorPlano={solicitacao.quantidadeAulas * solicitacao.valorAulas}
                                     confimarPagamento={() => atualizarStatus(solicitacao.id, "ATIVO")}
-                                    cancelarSolicitacao={() => atualizarStatus(solicitacao.id, "INATIVO")}
+                                    cancelarSolicitacao={() => atualizarStatus(solicitacao.id, "CANCELADO")}
                                 />
                             ))
                         ) : (
