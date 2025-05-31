@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
+import { caringuApi } from "../../../provider/caringuApi";
 
 
 
@@ -17,6 +18,28 @@ const MenuLateral = () => {
 
   const [nomePessoa, setNomePessoa] = useState("");
   const [tipoPessoa, setTipoPessoa] = useState("");
+
+  const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
+  const [imgErro, setImgErro] = useState(false);
+
+  const personalId = sessionStorage.getItem('pessoaId');
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const response = await caringuApi.get(`/personal-trainers/${personalId}`);
+
+        setUrlFotoPerfil(response.data.urlFotoPerfil);
+
+      } catch (error) {
+        console.error("Erro ao buscar personal trainer:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   useEffect(() => {
     const usuario = sessionStorage.getItem("usuario");
@@ -172,7 +195,16 @@ const MenuLateral = () => {
         <div
           className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0 min-h-[5rem]"
         >
-          <FaUserCircle size={40} className="flex-shrink-0" />
+          {urlFotoPerfil && !imgErro ? (
+            <img
+              src={urlFotoPerfil}
+              alt="Foto de perfil"
+              className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+              onError={() => setImgErro(true)}
+            />
+          ) : (
+            <FaUserCircle size={40} className="flex-shrink-0" />
+          )}
         </div>
 
         {/* Itens do Menu */}
@@ -275,7 +307,16 @@ const MenuLateral = () => {
               className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
               style={{ minHeight: "5rem" }}
             >
-              <FaUserCircle size={40} className="flex-shrink-0" />
+              {urlFotoPerfil && !imgErro ? (
+                <img
+                  src={urlFotoPerfil}
+                  alt="Foto de perfil"
+                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  onError={() => setImgErro(true)}
+                />
+              ) : (
+                <FaUserCircle size={40} className="flex-shrink-0" />
+              )}
               <div className={`${!isOpen && "hidden"} flex flex-col`}>
                 <p className="text-lg font-bold">{nomePessoa}</p>
                 <p className="text-sm">{tipoPessoa}</p>

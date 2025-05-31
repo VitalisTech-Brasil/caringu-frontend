@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
 import Header from "../components/Personal/Header/Header";
 import Button from "../components/Utils/Button";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,9 @@ const ProcurandoPersonal = () => {
 
   const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const [errosImagem, setErrosImagem] = useState({});
+
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedCards, setExpandedCards] = useState([]);
   const { fontSize, width } = useResponsiveStyles();
@@ -25,6 +28,13 @@ const ProcurandoPersonal = () => {
   const [cidadeFocada, setCidadeFocada] = useState(false);
   const [cidadesSelecionadas, setCidadesSelecionadas] = useState([]);
 
+
+  const lidarErroImagem = (id) => {
+    setErrosImagem((prev) => ({
+      ...prev,
+      [id]: true,
+    }));
+  };
 
   // Função para lidar com o foco no campo de cidade
   const buscarCidades = async (query) => {
@@ -219,11 +229,17 @@ const ProcurandoPersonal = () => {
                 >
                   <div className="flex items-center">
                     <div className="flex flex-col md:flex-row items-center gap-4 w-[90%]">
-                      <img
-                        src={trainer.urlFotoPerfil}
-                        alt={trainer.nomePersonal}
-                        className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
-                      />
+                      {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
+                        <img
+                          src={trainer.urlFotoPerfil}
+                          alt={trainer.nomePersonal}
+                          className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
+                          onError={() => lidarErroImagem(trainer.email)}
+                        />
+                      ) : (
+                        <FaUserCircle size={40} className="flex-shrink-0" />
+                      )}
+
                       <div className="flex flex-col md:flex-row items-start w-full gap-4">
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
                           <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
