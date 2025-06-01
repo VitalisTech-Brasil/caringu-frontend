@@ -20,16 +20,16 @@ const GerenciarExercicios = () => {
 
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const [openMenuId, setOpenMenuId] = useState(null);
-    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
-    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false)
+    
+    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
+    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
-
+    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
     const [origemSelecionada, setOrigemSelecionada] = useState("");
     const [grupoMuscularSelecionado, setGrupoMuscularSelecionado] = useState("");
 
@@ -436,6 +436,7 @@ const GerenciarExercicios = () => {
                                         label: "Origem",
                                         width: "55%",
                                         selected: origemSelecionada,
+                                        active: origemFilter === origemSelecionada,
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" viewBox="0 0 29 25" fill="none">
                                                 <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" stroke-width="2" />

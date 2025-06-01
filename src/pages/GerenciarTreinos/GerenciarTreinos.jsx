@@ -36,6 +36,7 @@ const GerenciarTreinos = () => {
             id: 1,
             nome: "Treino de Braços",
             dificuldade: "INICIANTE",
+            origem: "BIBLIOTECA",
             quantidadeExercicios: 3,
             favorito: true,
             exercicios: [
@@ -72,6 +73,7 @@ const GerenciarTreinos = () => {
             id: 2,
             nome: "Treino de Pernas",
             dificuldade: "AVANCADO",
+            origem: "PERSONAL",
             quantidadeExercicios: 3,
             favorito: false,
             exercicios: [
@@ -108,6 +110,7 @@ const GerenciarTreinos = () => {
             id: 3,
             nome: "Treino de Peito",
             dificuldade: "INTERMEDIARIO",
+            origem: "BIBLIOTECA",
             quantidadeExercicios: 2,
             favorito: true,
             exercicios: [
@@ -135,6 +138,7 @@ const GerenciarTreinos = () => {
             id: 4,
             nome: "Treino de Costas",
             dificuldade: "AVANCADO",
+            origem: "PERSONAL",
             quantidadeExercicios: 2,
             favorito: true,
             exercicios: [
@@ -162,6 +166,7 @@ const GerenciarTreinos = () => {
             id: 5,
             nome: "Treino de Ombros",
             dificuldade: "INICIANTE",
+            origem: "BIBLIOTECA",
             quantidadeExercicios: 2,
             favorito: true,
             exercicios: [
@@ -189,6 +194,7 @@ const GerenciarTreinos = () => {
             id: 6,
             nome: "Treino de Abdômen",
             dificuldade: "INTERMEDIARIO",
+            origem: "PERSONAL",
             quantidadeExercicios: 2,
             favorito: false,
             descricao: "Treino para definição abdominal",
@@ -275,8 +281,7 @@ const GerenciarTreinos = () => {
             if (difficultyFilter && treino.dificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
                 return false;
             }
-            if (origemFilter && origemFilter !== "" &&
-                exercicio.origem.toLowerCase() !== origemFilter.toLowerCase()) {
+            if (origemFilter && origemFilter !== "" && treino.origem.toLowerCase() !== origemFilter.toLowerCase()) {
                 return false;
             }
             if (showOnlyFavorites && !treino.favorito) {
@@ -289,8 +294,6 @@ const GerenciarTreinos = () => {
             if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
             return 0;
         });
-
-    const idAluno = params.id;
 
     const openDeleteModal = () => {
         setModalDeletarVisivel(true);
@@ -427,9 +430,8 @@ const GerenciarTreinos = () => {
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
-                                            { label: "Biblioteca CaringU", value: "Biblioteca CaringU" },
-                                            { label: "Criados por mim", value: "Criados por mim" },
-                                            { label: "Outro", value: "Outro" },
+                                            { label: "BIBLIOTECA", value: "BIBLIOTECA" },
+                                            { label: "PERSONAL", value: "PERSONAL" },
                                         ],
                                         onSelect: handleOrigemSelect,
                                     },
@@ -597,6 +599,7 @@ const GerenciarTreinos = () => {
                                             </div>
                                             <div className="md:col-span-1 text-sm md:text-lg ">
                                                 <p><b>Dificuldade: </b>{treino.dificuldade}</p>
+                                                <p><b>Origem: </b>{treino.origem}</p>
                                             </div>
                                         </div>
                                     </div>

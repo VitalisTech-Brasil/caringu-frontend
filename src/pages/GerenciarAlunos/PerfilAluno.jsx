@@ -25,8 +25,8 @@ const PerfilAluno = () => {
                     </div>
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] md:max-h-[780px] overflow-y-auto">
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter']">Dados Pessoais</h1>
-                        <div className="flex flex-col max-h-full overflow-y-auto">
-                            <div className="flex flex-col md:flex-row items-center md:gap-[100px] mt-4 p-10 border-2 border-[#E6E6E2] rounded-lg">
+                        <div className="flex flex-col max-h-60 overflow-y-auto">
+                            <div className="flex flex-col md:flex-row items-center md:gap-[100px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
                                 <img src={Image} alt="" className='h-[116px]' />
                                 <div className='flex flex-col md:flex-row items-start mt-4 gap-4'>
 
@@ -45,33 +45,61 @@ const PerfilAluno = () => {
                             </div>
                         </div>
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] mt-5">Dados Físicos</h1>
-                        <div className="flex flex-col max-h-full overflow-y-auto">
-                            <div className="flex flex-col items-start md:flex-row md:items-center md:gap-[100px] mt-4 p-10 border-2 border-[#E6E6E2] rounded-lg">
-
-                                <div className='flex flex-col gap-4 justify-start'>
-                                    <p><b>Deficiência ou condição especial:</b> Doenças neuromusculares</p>
-                                    <p><b>Condição médica:</b> Asma</p>
+                        <div className="flex flex-col max-h-40 overflow-y-auto p-5 border-2 border-[#E6E6E2] rounded-lg justify-start">
+                            <div className='mx-2 w-5xl flex gap-10 grid-cols-2'>
+                                <div className='cols-span-1'>
+                                    <p><b>Peso:</b></p>
+                                    <p>100 Kg</p>
                                 </div>
-
-                                <div className='flex flex-col mt-4 gap-4'>
-                                    <p><b>Lesão:</b> Doenças neuromusculares</p>
+                                <div className='cols-span-1'>
+                                    <p><b>Altura:</b></p>
+                                    <p>1.79 m</p>
                                 </div>
-
+                            </div>
+                            <div className='m-2 flex gap-10 grid-cols-3'>
+                                <div className='cols-span-1'>
+                                    <p><b>Desconforto:</b></p>
+                                    <p>Dor na articulação do cotovelo</p>
+                                </div>
+                                <div className='cols-span-1'>
+                                    <p><b>Lesão:</b></p>
+                                    <p>Doenças Neuromusculares</p>
+                                </div>
+                                <div className='cols-span-1'>
+                                    <p><b>Doenças Metabólicas:</b></p>
+                                    <p>N/A</p>
+                                </div>
                             </div>
                         </div>
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] mt-5">Atividade física e Recursos</h1>
-                        <div className="flex flex-col max-h-full overflow-y-auto">
-                            <div className="flex flex-col items-start md:flex-row md:items-center md:gap-[100px] mt-4 p-10 border-2 border-[#E6E6E2] rounded-lg">
-
-                                <div className='flex flex-col gap-4'>
-                                    <p><b>Objetivo:</b> Emagrecimento</p>
-                                    <p><b>Frequência de treino desejada:</b> 4x na semana</p>
+                        <div className="flex flex-col max-h-50 overflow-y-auto p-5 border-2 border-[#E6E6E2] rounded-lg justify-start">
+                            <div className='flex grid-cols-2'>
+                                <div className='mx-2 w-2xl flex gap-5 cols-span-1 flex-col'>
+                                    <div>
+                                        <p><b>Frequência de treino desejada:</b></p>
+                                        <p>4x na semana</p>
+                                    </div>
+                                    <div className='flex gap-10'>
+                                        <div>
+                                            <p><b>Objetivo:</b></p>
+                                            <p>Emagrecimento</p>
+                                        </div>
+                                        <div>
+                                            <p><b>Nível de atividade atual:</b></p>
+                                            <p>Levemente ativo</p>
+                                        </div>
+                                        <div>
+                                            <p><b>Doenças Metabólicas:</b></p>
+                                            <p>N/A</p>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div className='flex flex-col mt-4'>
-                                    <p><b>Nível de atividade atual:</b> Levemente ativo</p>
+                                <div className='cols-span-1 h-full w-1/2 flex justify-start'>
+                                    <div className='w-sm'>
+                                        <p><b>Experiência:</b></p>
+                                        <p>Treinei por 2 anos em academia com foco em hipertrofia, acompanhado por personal. Fiz uma pausa de 1 ano e agora estou voltando para emagrecer.</p>
+                                    </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
