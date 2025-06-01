@@ -42,7 +42,6 @@ const Agenda = () => {
         try {
             const response = await caringuApi.get(`/treinos-finalizados/personal/${pessoaId}`);
             setTreinosFinalizados(response.data);
-            console.log("Treinos finalizados:", response.data);
         } catch (error) {
             console.error("Erro ao exibir treinos:", error);
         }

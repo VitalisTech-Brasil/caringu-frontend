@@ -180,14 +180,12 @@ const PerfilPersonal = () => {
         try {
             const response = await caringuApi.get(`/personal-trainers/disponiveis/${id}`);
             setInfoPersonal(response.data);
-            console.log("Planos:", response.data);
 
             const planoEmProcesso = await caringuApi.get(`planos-contratados/alunos/${idAluno}/contratacao-pendente`);
             const planoPendente = Array.isArray(planoEmProcesso.data) && planoEmProcesso.data.length > 0
                 ? planoEmProcesso.data[0]
                 : null;
             setVerificaStatus(planoPendente);
-            console.log("Plano em processo:", planoPendente);
         } catch (error) {
             console.error("Erro ao buscar planos:", error);
         }
@@ -304,7 +302,6 @@ const PerfilPersonal = () => {
                         </div>
                     </div>
                     <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
-                        {console.log("verfificaStatus:", verfificaStatus)}
                         <div className="flex gap-9 w-fit">
                             {infoPersonal.planos.map((item) => {
                                 const existePlanoContratado = verfificaStatus && ["PENDENTE", "EM_PROCESSO", "ATIVO"].includes(verfificaStatus.status);

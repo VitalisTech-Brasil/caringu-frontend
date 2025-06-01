@@ -78,14 +78,15 @@ const Planos = () => {
     }
 
     useEffect(() => {
-        if (duracaoValue === "AVULSO") {
-            setValue("aulas", "1");
-            trigger("aulas");
-        } else if (duracaoValue && duracaoValue !== "AVULSO") {
-            setValue("aulas", "");
-            trigger("aulas");
-        }
-    }, [duracaoValue, setValue, trigger]);
+    if (!showCreateModal) return; 
+    if (duracaoValue === "AVULSO") {
+        setValue("aulas", "1");
+        trigger("aulas");
+    } else if (duracaoValue && duracaoValue !== "AVULSO") {
+        setValue("aulas", "");
+        trigger("aulas");
+    }
+}, [duracaoValue, setValue, trigger, showCreateModal]);
 
 
     useEffect(() => {
