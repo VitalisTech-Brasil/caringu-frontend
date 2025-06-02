@@ -59,13 +59,21 @@ const Agenda = () => {
 
     const compromissos = treinosFinalizados.map(item => ({
         id: item.id,
-        horario: `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`,
+        horario: item.dataHorarioFim
+            ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
+            : `${formatarHora(item.dataHorarioInicio)}`,
         data: formatarData(item.dataHorarioInicio),
         aluno: {
             nome: item.nomeAluno,
             foto: item.urlFotoPerfil,
         },
         finalizado: item.finalizado,
+
+        dataHorarioFim: item.dataHorarioFim,
+        dataHorarioInicio: item.dataHorarioInicio,
+        nomeAluno: item.nomeAluno,
+        urlFotoPerfil: item.urlFotoPerfil,
+        idAluno: item.idAluno
     }));
 
     useEffect(() => {
@@ -156,6 +164,8 @@ const Agenda = () => {
                             <CompromissosAgenda
                                 compromissos={compromissos}
                                 selectedDay={selectedDay}
+                                    atualizarTreinos={exibirTreinos}
+
                             />
 
                         </div>

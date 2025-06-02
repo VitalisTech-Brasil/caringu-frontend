@@ -1,4 +1,33 @@
-const CompromissosAgenda = ({ compromissos, selectedDay }) => {
+import { FaUserCircle } from "react-icons/fa";
+import { useState } from "react";
+import { caringuApi } from "../../provider/caringuApi";
+
+const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
+
+    const [errosImagem, setErrosImagem] = useState({});
+
+    const lidarErroImagem = (id) => {
+        setErrosImagem((prev) => ({
+            ...prev,
+            [id]: true,
+        }));
+    };
+
+    const marcarComoConcluido = async (idTreinoFinalizado) => {
+        try {
+            await caringuApi.patch(
+                `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
+                {
+                    dataHorarioFim: new Date().toISOString()
+                }
+            );
+            if (atualizarTreinos) atualizarTreinos();
+        } catch (error) {
+            console.error("Erro ao marcar compromisso como concluído:", error);
+        }
+    };
+
+
 
     const today = new Date();
     const todayFormatted = today.toLocaleDateString("pt-BR", {
@@ -92,18 +121,28 @@ const CompromissosAgenda = ({ compromissos, selectedDay }) => {
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
                                             <div className="flex sm:flex-row flex-col items-center gap-2">
-                                                <img
-                                                    src={"https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg"}
-                                                    alt={"Ricardo Lima"}
-                                                    className="w-13 h-13 2xl:w-15 2xl:h-15 rounded-full object-cover"
-                                                />
+                                                {compromisso.urlFotoPerfil && !errosImagem[compromisso.idAluno] ? (
+                                                    <img
+                                                        src={compromisso.urlFotoPerfil}
+                                                        alt={compromisso.nomeAluno}
+                                                        className="w-13 h-13 2xl:w-15 2xl:h-15 rounded-full object-cover"
+                                                        onError={() => lidarErroImagem(compromisso.idAluno)}
+                                                    />
+                                                ) : (
+                                                    <FaUserCircle className="w-13 h-13 2xl:w-15 2xl:h-15 text-[var(--cor-secundaria)]" />
+                                                )}
                                                 <span className="text-[var(--cor-secundaria)] font-medium text-base 2xl:text-xl">
                                                     {compromisso.aluno.nome}
                                                 </span>
                                             </div>
-                                            <button className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer">
-                                                Marcar como feito
-                                            </button>
+                                            {compromisso.dataHorarioFim === null && (
+                                                <button
+                                                    onClick={() => marcarComoConcluido(compromisso.id)}
+                                                    className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
+                                                >
+                                                    Marcar como feito
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

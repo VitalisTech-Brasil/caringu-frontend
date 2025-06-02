@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
 import Header from "../components/Personal/Header/Header";
 import Button from "../components/Utils/Button";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { caringuApi } from "../provider/caringuApi";
 import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 import axios from "axios";
-import CidadeInput from "../components/Utils/InputCidade/CidadeInput";
 
 const ProcurandoPersonal = () => {
 
@@ -26,17 +25,21 @@ const ProcurandoPersonal = () => {
   const [sugestoes, setSugestoes] = useState([]);
   const [todasCidadesSP, setTodasCidadesSP] = useState([]);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [cidadesSelecionadas, setCidadesSelecionadas] = useState([]);
   const [bairroQuery, setBairroQuery] = useState("");
   const [bairroSugestoes, setBairroSugestoes] = useState([]);
   const [bairrosSelecionados, setBairrosSelecionados] = useState([]); const [especialidades, setEspecialidades] = useState([]);
   const [especialidadeQuery, setEspecialidadeQuery] = useState("");
   const [especialidadeSugestoes, setEspecialidadeSugestoes] = useState([]);
-  const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState([]);
-  const [duracoesSelecionadas, setDuracoesSelecionadas] = useState([]);
-  const [generosSelecionados, setGenerosSelecionados] = useState([]);
-  const [faixaPrecoSelecionada, setFaixaPrecoSelecionada] = useState({ min: "", max: "" });
+  const [errosImagem, setErrosImagem] = useState({});
+
+
+  useEffect(() => {
+  const filtrosSalvos = localStorage.getItem("filtrosPersonal");
+  if (filtrosSalvos) {
+    setAppliedFilters(JSON.parse(filtrosSalvos));
+    setDraftFilters(JSON.parse(filtrosSalvos));
+  }
+}, []);
 
   useEffect(() => {
     const fetchCidadesSP = async () => {
@@ -111,12 +114,23 @@ const ProcurandoPersonal = () => {
   };
 
   const handleSelectBairro = (bairro) => {
-    if (!bairrosSelecionados.includes(bairro)) {
-      setBairrosSelecionados([...bairrosSelecionados, bairro]);
+    if (!draftFilters.bairrosSelecionados.includes(bairro)) {
+      setDraftFilters((prev) => ({
+        ...prev,
+        bairrosSelecionados: [...prev.bairrosSelecionados, bairro],
+      }));
     }
     setValue("bairro", "");
     setBairroQuery("");
     setBairroSugestoes([]);
+  };
+
+
+  const handleRemoveBairro = (bairro) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      bairrosSelecionados: prev.bairrosSelecionados.filter((b) => b !== bairro),
+    }));
   };
 
   const handleEspecialidadeInputChange = (e) => {
@@ -126,44 +140,68 @@ const ProcurandoPersonal = () => {
   const handleBairroInputChange = (e) => {
     setBairroQuery(e.target.value);
   };
+
   const handleGeneroChange = (e) => {
     const value = e.target.value;
     if (value === "TODOS") {
-      setGenerosSelecionados(["TODOS"]);
+      setDraftFilters((prev) => ({
+        ...prev,
+        generosSelecionados: ["TODOS"],
+      }));
     } else {
-      setGenerosSelecionados((prev) => {
-        const filtered = prev.filter((g) => g !== "TODOS");
+      setDraftFilters((prev) => {
+        let filtered = prev.generosSelecionados.filter((g) => g !== "TODOS");
         if (filtered.includes(value)) {
-          return filtered.filter((g) => g !== value);
+          return { ...prev, generosSelecionados: filtered.filter((g) => g !== value) };
         } else {
-          return [...filtered, value];
+          return { ...prev, generosSelecionados: [...filtered, value] };
         }
       });
     }
   };
 
+
+  const handleRemoveGenero = (genero) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      generosSelecionados: prev.generosSelecionados.filter((g) => g !== genero),
+    }));
+  };
+
+
   const handleDuracaoChange = (e) => {
     const value = e.target.value;
-
     if (value === "TODOS") {
-      setDuracoesSelecionadas(["TODOS"])
+      setDraftFilters((prev) => ({
+        ...prev,
+        duracoesSelecionadas: ["TODOS"],
+      }));
     } else {
-      setDuracoesSelecionadas((prev) => {
-        const filtered = prev.filter((d) => d !== "TODOS")
+      setDraftFilters((prev) => {
+        const filtered = prev.duracoesSelecionadas.filter((d) => d !== "TODOS");
         if (filtered.includes(value)) {
-          return filtered.filter((d) => d !== value);
+          return { ...prev, duracoesSelecionadas: filtered.filter((d) => d !== value) };
         } else {
-          return [...filtered, value]
+          return { ...prev, duracoesSelecionadas: [...filtered, value] };
         }
-      })
+      });
     }
-  }
+  };
+  const handleRemoveDuracao = (duracao) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      duracoesSelecionadas: prev.duracoesSelecionadas.filter((d) => d !== duracao),
+    }));
+  };
 
   const handleFaixaPrecoChange = (e) => {
     const { name, value } = e.target;
-    setFaixaPrecoSelecionada((prev) => ({
+    setDraftFilters((prev) => ({
       ...prev,
-      [name]: value
+      faixaPrecoSelecionada: {
+        ...prev.faixaPrecoSelecionada,
+        [name]: value,
+      },
     }));
   };
 
@@ -189,17 +227,30 @@ const ProcurandoPersonal = () => {
   }, [cidadeQuery, todasCidadesSP]);
 
   const handleSelectSuggestion = (cidadeNome) => {
-    if (!cidadesSelecionadas.includes(cidadeNome)) {
-      setCidadesSelecionadas([...cidadesSelecionadas, cidadeNome]);
+    if (!draftFilters.cidadesSelecionadas.includes(cidadeNome)) {
+      setDraftFilters((prev) => ({
+        ...prev,
+        cidadesSelecionadas: [...prev.cidadesSelecionadas, cidadeNome],
+      }));
     }
     setValue("cidade", "");
     setCidadeQuery("");
     setSugestoes([]);
   };
 
+  const handleRemoveCidade = (cidade) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      cidadesSelecionadas: prev.cidadesSelecionadas.filter((c) => c !== cidade),
+    }));
+  };
+
   const handleSelectEspecialidade = (especialidade) => {
-    if (!especialidadesSelecionadas.some(e => e.id === especialidade.id)) {
-      setEspecialidadesSelecionadas([...especialidadesSelecionadas, especialidade]);
+    if (!draftFilters.especialidadesSelecionadas.some((e) => e.id === especialidade.id)) {
+      setDraftFilters((prev) => ({
+        ...prev,
+        especialidadesSelecionadas: [...prev.especialidadesSelecionadas, especialidade],
+      }));
     }
     setValue("especialidade", "");
     setEspecialidadeQuery("");
@@ -207,14 +258,50 @@ const ProcurandoPersonal = () => {
   };
 
 
-  const [selectedFilters, setSelectedFilters] = useState({
-    cidade: [],
-    bairro: [],
-    genero: "",
-    especialidade: [],
-    duracao: "",
-    faixaPreco: { min: "", max: "" }
+  const handleRemoveEspecialidade = (esp) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      especialidadesSelecionadas: prev.especialidadesSelecionadas.filter((e2) => e2.id !== esp.id),
+    }));
+  };
+
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    cidadesSelecionadas: [],
+    bairrosSelecionados: [],
+    generosSelecionados: [],
+    especialidadesSelecionadas: [],
+    duracoesSelecionadas: [],
+    faixaPrecoSelecionada: { min: "", max: "" }
   });
+  const [draftFilters, setDraftFilters] = useState({ ...appliedFilters });
+
+  const handleSaveFilters = () => {
+    setAppliedFilters({ ...draftFilters });
+    localStorage.setItem("filtrosPersonal", JSON.stringify(draftFilters));
+    setIsFilterOpen(false);
+  };
+
+  const handleCancelFilters = () => {
+    setDraftFilters({
+      cidadesSelecionadas: [],
+      bairrosSelecionados: [],
+      generosSelecionados: [],
+      especialidadesSelecionadas: [],
+      duracoesSelecionadas: [],
+      faixaPrecoSelecionada: { min: "", max: "" }
+    });
+    setAppliedFilters({
+      cidadesSelecionadas: [],
+      bairrosSelecionados: [],
+      generosSelecionados: [],
+      especialidadesSelecionadas: [],
+      duracoesSelecionadas: [],
+      faixaPrecoSelecionada: { min: "", max: "" }
+    });
+    setIsFilterOpen(false);
+  };
+
 
 
   const listarPersonais = async () => {
@@ -268,6 +355,9 @@ const ProcurandoPersonal = () => {
   }
 
   const toggleFilterModal = () => {
+    if (!isFilterOpen) {
+      setDraftFilters({ ...appliedFilters });
+    }
     setIsFilterOpen((prev) => !prev);
   };
 
@@ -294,20 +384,32 @@ const ProcurandoPersonal = () => {
     // Só filtra se já carregou os personais
     if (!allTrainers.length) return;
 
+    const {
+      cidadesSelecionadas,
+      bairrosSelecionados,
+      generosSelecionados,
+      especialidadesSelecionadas,
+      duracoesSelecionadas,
+      faixaPrecoSelecionada
+    } = appliedFilters;
+
     const filtrar = () => {
       return allTrainers.filter((trainer) => {
         // Gênero
         let generoOk = true;
         if (generosSelecionados.length > 0 && !generosSelecionados.includes("TODOS")) {
-          if (generosSelecionados.includes("MASCULINO")) {
-            generoOk = ["HOMEM_CISGENERO", "HOMEM_TRANSGENERO"].includes(trainer.genero);
-          } else if (generosSelecionados.includes("FEMININO")) {
-            generoOk = ["MULHER_CISGENERO", "MULHER_TRANSGENERO"].includes(trainer.genero);
-          } else if (generosSelecionados.includes("NAO_BINARIO")) {
-            generoOk = trainer.genero === "NAO_BINARIO";
-          } else {
-            generoOk = false;
-          }
+          generoOk = generosSelecionados.some((g) => {
+            if (g === "MASCULINO") {
+              return ["HOMEM_CISGENERO", "HOMEM_TRANSGENERO"].includes(trainer.genero);
+            }
+            if (g === "FEMININO") {
+              return ["MULHER_CISGENERO", "MULHER_TRANSGENERO"].includes(trainer.genero);
+            }
+            if (g === "NAO_BINARIO") {
+              return trainer.genero === "NAO_BINARIO";
+            }
+            return false;
+          });
         }
 
         // Duração
@@ -354,19 +456,15 @@ const ProcurandoPersonal = () => {
     };
 
     setFilteredTrainers(filtrar());
-  }, [
-    allTrainers,
-    generosSelecionados,
-    duracoesSelecionadas,
-    cidadesSelecionadas,
-    bairrosSelecionados,
-    especialidadesSelecionadas,
-    faixaPrecoSelecionada,
+  }, [allTrainers, appliedFilters
   ]);
 
-
-
-
+  const lidarErroImagem = (id) => {
+    setErrosImagem((prev) => ({
+      ...prev,
+      [id]: true,
+    }));
+  };
 
 
 
@@ -411,11 +509,17 @@ const ProcurandoPersonal = () => {
                 >
                   <div className="flex items-center">
                     <div className="flex flex-col md:flex-row items-center gap-4 w-[90%]">
-                      <img
-                        src={trainer.urlFotoPerfil}
-                        alt={trainer.nomePersonal}
-                        className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
-                      />
+                      {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
+                        <img
+                          src={trainer.urlFotoPerfil}
+                          alt={trainer.nomePersonal}
+                          className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
+                          onError={() => lidarErroImagem(trainer.email)}
+                        />
+                      ) : (
+                        <FaUserCircle className="flex-shrink-0 w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22" />
+                      )}
+
                       <div className="flex flex-col md:flex-row items-start w-full gap-4">
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
                           <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
@@ -541,7 +645,7 @@ const ProcurandoPersonal = () => {
                   </h3>
                   <button
                     type="button"
-                    onClick={toggleFilterModal}
+                    onClick={handleCancelFilters}
                     className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -555,7 +659,7 @@ const ProcurandoPersonal = () => {
                 </div>
 
 
-                <form>
+<form onSubmit={handleSubmit(handleSaveFilters)}>
                   {/* depois mudar aqui */}
                   <div className="grid grid-cols-2 gap-12">
                     {/* Cidade */}
@@ -594,7 +698,7 @@ const ProcurandoPersonal = () => {
                       )}
 
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {cidadesSelecionadas.map((cidade, idx) => (
+                        {draftFilters.cidadesSelecionadas.map((cidade, idx) => (
                           <div
                             key={cidade}
                             className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -603,7 +707,7 @@ const ProcurandoPersonal = () => {
                             <button
                               onClick={e => {
                                 e.stopPropagation();
-                                setCidadesSelecionadas(cidadesSelecionadas.filter(c => c !== cidade));
+                                handleRemoveCidade(cidade);
                               }}
                               className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
@@ -672,7 +776,7 @@ const ProcurandoPersonal = () => {
                         </div>
                       )}
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {bairrosSelecionados.map((bairro, idx) => (
+                        {draftFilters.bairrosSelecionados.map((bairro, idx) => (
                           <div
                             key={bairro}
                             className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -681,7 +785,7 @@ const ProcurandoPersonal = () => {
                             <button
                               onClick={e => {
                                 e.stopPropagation();
-                                setBairrosSelecionados(bairrosSelecionados.filter(b => b !== bairro));
+                                handleRemoveBairro(bairro);
                               }}
                               className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
@@ -721,7 +825,7 @@ const ProcurandoPersonal = () => {
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {generosSelecionados.map((genero) => (
+                        {draftFilters.generosSelecionados.map((genero) => (
                           <div
                             key={genero}
                             className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -736,7 +840,7 @@ const ProcurandoPersonal = () => {
                             <button
                               onClick={e => {
                                 e.stopPropagation();
-                                setGenerosSelecionados(generosSelecionados.filter(g => g !== genero));
+                                handleRemoveGenero(genero);
                               }}
                               className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
@@ -789,7 +893,7 @@ const ProcurandoPersonal = () => {
                         </div>
                       )}
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {especialidadesSelecionadas.map((esp) => (
+                        {draftFilters.especialidadesSelecionadas.map((esp) => (
                           <div
                             key={esp.id}
                             className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -798,7 +902,7 @@ const ProcurandoPersonal = () => {
                             <button
                               onClick={e => {
                                 e.stopPropagation();
-                                setEspecialidadesSelecionadas(especialidadesSelecionadas.filter(e2 => e2.id !== esp.id));
+                                handleRemoveEspecialidade(esp);
                               }}
                               className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
@@ -838,7 +942,7 @@ const ProcurandoPersonal = () => {
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {duracoesSelecionadas.map((duracao) => (
+                        {draftFilters.duracoesSelecionadas.map((duracao) => (
                           <div
                             key={duracao}
                             className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -853,7 +957,7 @@ const ProcurandoPersonal = () => {
                             <button
                               onClick={e => {
                                 e.stopPropagation();
-                                setDuracoesSelecionadas(duracoesSelecionadas.filter(d => d !== duracao));
+                                handleRemoveDuracao(duracao);
                               }}
                               className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
@@ -876,7 +980,7 @@ const ProcurandoPersonal = () => {
                           type="number"
                           name="min"
                           placeholder="R$ min"
-                          value={faixaPrecoSelecionada.min}
+                          value={draftFilters.faixaPrecoSelecionada.min}
                           onChange={handleFaixaPrecoChange}
                           className="border border-gray-300 rounded-md p-2 w-full text-[#1D2D44]"
                         />
@@ -884,7 +988,7 @@ const ProcurandoPersonal = () => {
                           type="number"
                           name="max"
                           placeholder="R$ max"
-                          value={faixaPrecoSelecionada.max}
+                          value={draftFilters.faixaPrecoSelecionada.max}
                           onChange={handleFaixaPrecoChange}
                           className="border border-gray-300 rounded-md p-2 w-full text-[#1D2D44]"
                         />
@@ -904,7 +1008,7 @@ const ProcurandoPersonal = () => {
                       fontWeight="500"
                       ariaLabel={"Botão de Cancelar"}
                       type="button"
-                      onClick={toggleFilterModal}
+                      onClick={handleCancelFilters}
                     >
                     </Button>
 
@@ -917,6 +1021,7 @@ const ProcurandoPersonal = () => {
                       corHover="#46982BE5"
                       fontWeight="600"
                       ariaLabel={"Botão de Salvar"}
+                      type="submit"
                     >
                     </Button>
 

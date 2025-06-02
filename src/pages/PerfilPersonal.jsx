@@ -19,6 +19,7 @@ import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 
 const PerfilPersonal = () => {
 
+
     const opinioes = [
         {
             pontuacao: 5,
@@ -230,7 +231,7 @@ const PerfilPersonal = () => {
                 `/planos-contratados/${verfificaStatus.id}/status`,
                 { status: "EM_PROCESSO" }
             );
-            setStatusEtapa("COMBINADO"); 
+            setStatusEtapa("COMBINADO");
             fetchPlanos();
         } catch (error) {
             toast.custom((t) => (
@@ -293,7 +294,9 @@ const PerfilPersonal = () => {
                             celular={MascaraTelefone(infoPersonal.celular)}
                             email={infoPersonal.email}
                             especialidades={infoPersonal.especialidades}
-                            urlFoto={infoPersonal.urlFotoPerfil}
+                            urlFoto={
+                                infoPersonal.urlFotoPerfil
+                            }
                         />
                     </div>
                     <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
