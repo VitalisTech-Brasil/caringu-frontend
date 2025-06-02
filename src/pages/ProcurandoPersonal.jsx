@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
 import Header from "../components/Personal/Header/Header";
 import Button from "../components/Utils/Button";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import InputPosLogin from "../components/Utils/InputPosLogin";
 import { useForm } from "react-hook-form";
 import { caringuApi } from "../provider/caringuApi";
 import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
+import axios from "axios";
 
 const ProcurandoPersonal = () => {
 
@@ -20,61 +21,293 @@ const ProcurandoPersonal = () => {
   const [allTrainers, setAllTrainers] = useState([]);
   const [filteredTrainers, setFilteredTrainers] = useState([]);
   const sugestaoRef = useRef(null);
-  const [cidadeInput, setCidadeInput] = useState("");
-  const [cidadesSugestao, setCidadesSugestao] = useState([]);
-  const [cidadeFocada, setCidadeFocada] = useState(false);
-  const [cidadesSelecionadas, setCidadesSelecionadas] = useState([]);
+  const [cidadeQuery, setCidadeQuery] = useState("");
+  const [sugestoes, setSugestoes] = useState([]);
+  const [todasCidadesSP, setTodasCidadesSP] = useState([]);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const [bairroQuery, setBairroQuery] = useState("");
+  const [bairroSugestoes, setBairroSugestoes] = useState([]);
+  const [bairrosSelecionados, setBairrosSelecionados] = useState([]); const [especialidades, setEspecialidades] = useState([]);
+  const [especialidadeQuery, setEspecialidadeQuery] = useState("");
+  const [especialidadeSugestoes, setEspecialidadeSugestoes] = useState([]);
+  const [errosImagem, setErrosImagem] = useState({});
 
 
-  // Função para lidar com o foco no campo de cidade
-  const buscarCidades = async (query) => {
-    if (query.length < 2) {
-      setCidadesSugestao([]);
+  useEffect(() => {
+  const filtrosSalvos = localStorage.getItem("filtrosPersonal");
+  if (filtrosSalvos) {
+    setAppliedFilters(JSON.parse(filtrosSalvos));
+    setDraftFilters(JSON.parse(filtrosSalvos));
+  }
+}, []);
+
+  useEffect(() => {
+    const fetchCidadesSP = async () => {
+      try {
+        const response = await axios.get(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados/SP/municipios"
+        );
+        const nomesCidades = response.data.map((cidade) => cidade.nome);
+        setTodasCidadesSP(nomesCidades);
+      } catch (error) {
+        console.error("Erro ao buscar cidades do IBGE:", error);
+      }
+    };
+
+    fetchCidadesSP();
+  }, []);
+
+  useEffect(() => {
+    if (!bairroQuery || bairroQuery.trim().length < 2) {
+      setBairroSugestoes([]);
       return;
     }
 
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?countrycodes=br&format=json&q=${encodeURIComponent(query)}&featureType=city&addressdetails=1&limit=10&accept-language=pt`
-      );
+    const timeout = setTimeout(async () => {
+      try {
+        const response = await axios.get(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(bairroQuery)},São Paulo,Brasil&format=json&polygon_geojson=1`
+        );
+        const bairros = response.data
+          .filter(item =>
+            item.type === "suburb" || item.type === "neighbourhood"
+          )
+          .map(item => item.display_name.split(",")[0].trim());
+        setBairroSugestoes([...new Set(bairros)]);
+      } catch (error) {
+        setBairroSugestoes([]);
+      }
+    }, 500);
 
-      const data = await res.json();
+    return () => clearTimeout(timeout);
+  }, [bairroQuery]);
 
-      // Processar para extrair apenas nomes de cidades únicas
-      const nomesCidades = new Set();
+  useEffect(() => {
+    const fetchEspecialidades = async () => {
+      try {
+        const response = await caringuApi.get("/especialidades");
+        setEspecialidades(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar especialidades:", error);
+      }
+    };
 
-      data.forEach(item => {
-        const cidade = item.address?.city || item.address?.town ||
-          item.address?.village || item.address?.municipality;
+    fetchEspecialidades();
+  }, []);
 
-        if (cidade) {
-          nomesCidades.add(cidade);
+  useEffect(() => {
+    if (!especialidadeQuery || especialidadeQuery.trim().length < 2) {
+      setEspecialidadeSugestoes([]);
+      return;
+    }
+    const filtro = especialidadeQuery.toLowerCase();
+    const filtradas = especialidades.filter(e =>
+      e.nome.toLowerCase().includes(filtro)
+    );
+    setEspecialidadeSugestoes(filtradas);
+  }, [especialidadeQuery, especialidades])
+
+  const handleInputChange = (e) => {
+    if (e.target.name === "cidade") {
+      setCidadeQuery(e.target.value);
+    }
+  };
+
+  const handleSelectBairro = (bairro) => {
+    if (!draftFilters.bairrosSelecionados.includes(bairro)) {
+      setDraftFilters((prev) => ({
+        ...prev,
+        bairrosSelecionados: [...prev.bairrosSelecionados, bairro],
+      }));
+    }
+    setValue("bairro", "");
+    setBairroQuery("");
+    setBairroSugestoes([]);
+  };
+
+
+  const handleRemoveBairro = (bairro) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      bairrosSelecionados: prev.bairrosSelecionados.filter((b) => b !== bairro),
+    }));
+  };
+
+  const handleEspecialidadeInputChange = (e) => {
+    setEspecialidadeQuery(e.target.value);
+  };
+
+  const handleBairroInputChange = (e) => {
+    setBairroQuery(e.target.value);
+  };
+
+  const handleGeneroChange = (e) => {
+    const value = e.target.value;
+    if (value === "TODOS") {
+      setDraftFilters((prev) => ({
+        ...prev,
+        generosSelecionados: ["TODOS"],
+      }));
+    } else {
+      setDraftFilters((prev) => {
+        let filtered = prev.generosSelecionados.filter((g) => g !== "TODOS");
+        if (filtered.includes(value)) {
+          return { ...prev, generosSelecionados: filtered.filter((g) => g !== value) };
+        } else {
+          return { ...prev, generosSelecionados: [...filtered, value] };
         }
       });
-
-      // Converter o Set para array
-      setCidadesSugestao(Array.from(nomesCidades));
-    } catch (e) {
-      setCidadesSugestao([]);
     }
   };
 
 
-  const [selectedFilters, setSelectedFilters] = useState({
-    cidade: [],
-    bairro: [],
-    genero: "",
-    especialidade: [],
-    duracao: "",
-    faixaPreco: { min: "", max: "" }
+  const handleRemoveGenero = (genero) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      generosSelecionados: prev.generosSelecionados.filter((g) => g !== genero),
+    }));
+  };
+
+
+  const handleDuracaoChange = (e) => {
+    const value = e.target.value;
+    if (value === "TODOS") {
+      setDraftFilters((prev) => ({
+        ...prev,
+        duracoesSelecionadas: ["TODOS"],
+      }));
+    } else {
+      setDraftFilters((prev) => {
+        const filtered = prev.duracoesSelecionadas.filter((d) => d !== "TODOS");
+        if (filtered.includes(value)) {
+          return { ...prev, duracoesSelecionadas: filtered.filter((d) => d !== value) };
+        } else {
+          return { ...prev, duracoesSelecionadas: [...filtered, value] };
+        }
+      });
+    }
+  };
+  const handleRemoveDuracao = (duracao) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      duracoesSelecionadas: prev.duracoesSelecionadas.filter((d) => d !== duracao),
+    }));
+  };
+
+  const handleFaixaPrecoChange = (e) => {
+    const { name, value } = e.target;
+    setDraftFilters((prev) => ({
+      ...prev,
+      faixaPrecoSelecionada: {
+        ...prev.faixaPrecoSelecionada,
+        [name]: value,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    if (!cidadeQuery || cidadeQuery.trim().length < 2) {
+      setSugestoes([]);
+      return;
+    }
+
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+    const timeout = setTimeout(() => {
+      const filtro = cidadeQuery.toLowerCase();
+      const filtradas = todasCidadesSP.filter((cidade) =>
+        cidade.toLowerCase().startsWith(filtro)
+      );
+      setSugestoes(filtradas);
+    }, 500);
+
+    setDebounceTimeout(timeout);
+
+    return () => clearTimeout(timeout);
+  }, [cidadeQuery, todasCidadesSP]);
+
+  const handleSelectSuggestion = (cidadeNome) => {
+    if (!draftFilters.cidadesSelecionadas.includes(cidadeNome)) {
+      setDraftFilters((prev) => ({
+        ...prev,
+        cidadesSelecionadas: [...prev.cidadesSelecionadas, cidadeNome],
+      }));
+    }
+    setValue("cidade", "");
+    setCidadeQuery("");
+    setSugestoes([]);
+  };
+
+  const handleRemoveCidade = (cidade) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      cidadesSelecionadas: prev.cidadesSelecionadas.filter((c) => c !== cidade),
+    }));
+  };
+
+  const handleSelectEspecialidade = (especialidade) => {
+    if (!draftFilters.especialidadesSelecionadas.some((e) => e.id === especialidade.id)) {
+      setDraftFilters((prev) => ({
+        ...prev,
+        especialidadesSelecionadas: [...prev.especialidadesSelecionadas, especialidade],
+      }));
+    }
+    setValue("especialidade", "");
+    setEspecialidadeQuery("");
+    setEspecialidadeSugestoes([]);
+  };
+
+
+  const handleRemoveEspecialidade = (esp) => {
+    setDraftFilters((prev) => ({
+      ...prev,
+      especialidadesSelecionadas: prev.especialidadesSelecionadas.filter((e2) => e2.id !== esp.id),
+    }));
+  };
+
+
+  const [appliedFilters, setAppliedFilters] = useState({
+    cidadesSelecionadas: [],
+    bairrosSelecionados: [],
+    generosSelecionados: [],
+    especialidadesSelecionadas: [],
+    duracoesSelecionadas: [],
+    faixaPrecoSelecionada: { min: "", max: "" }
   });
+  const [draftFilters, setDraftFilters] = useState({ ...appliedFilters });
+
+  const handleSaveFilters = () => {
+    setAppliedFilters({ ...draftFilters });
+    localStorage.setItem("filtrosPersonal", JSON.stringify(draftFilters));
+    setIsFilterOpen(false);
+  };
+
+  const handleCancelFilters = () => {
+    setDraftFilters({
+      cidadesSelecionadas: [],
+      bairrosSelecionados: [],
+      generosSelecionados: [],
+      especialidadesSelecionadas: [],
+      duracoesSelecionadas: [],
+      faixaPrecoSelecionada: { min: "", max: "" }
+    });
+    setAppliedFilters({
+      cidadesSelecionadas: [],
+      bairrosSelecionados: [],
+      generosSelecionados: [],
+      especialidadesSelecionadas: [],
+      duracoesSelecionadas: [],
+      faixaPrecoSelecionada: { min: "", max: "" }
+    });
+    setIsFilterOpen(false);
+  };
+
 
 
   const listarPersonais = async () => {
     try {
       const response = await caringuApi.get("personal-trainers/disponiveis");
       setAllTrainers(response.data);
-      console.log("Personal Trainers disponíveis:", response.data);
       setFilteredTrainers(response.data);
     } catch (error) {
       console.error("Erro ao buscar personal trainers:", error);
@@ -86,20 +319,11 @@ const ProcurandoPersonal = () => {
     listarPersonais();
   }, []);
 
-  function redirecionarPerfilPersonal(trainer) {
-    navigate(`/perfil-personal/${trainer.id}`, {
-      state: {
-        nomePersonal: trainer.nomePersonal,
-        urlFotoPerfil: trainer.urlFotoPerfil,
-        cidade: trainer.cidade,
-        experiencia: trainer.experiencia,
-        celular: MascaraTelefone(trainer.celular),
-        email: trainer.email,
-        especialidades: trainer.especialidades
-      }
-    });
-  }
 
+
+  function redirecionarPerfilPersonal(trainer) {
+    navigate(`/perfil-personal/${trainer.id}`);
+  }
 
   const navigate = useNavigate();
 
@@ -131,6 +355,9 @@ const ProcurandoPersonal = () => {
   }
 
   const toggleFilterModal = () => {
+    if (!isFilterOpen) {
+      setDraftFilters({ ...appliedFilters });
+    }
     setIsFilterOpen((prev) => !prev);
   };
 
@@ -151,31 +378,94 @@ const ProcurandoPersonal = () => {
     );
   };
 
-  // // Atualiza os filtros selecionados
-  // const handleInputChange = (field, value) => {
-  //   setSelectedFilters((prev) => ({
-  //     ...prev,
-  //     faixaPreco: { ...prev.faixaPreco, [field]: value },
-  //   }));
-  // };
 
+  //filtro
+  useEffect(() => {
+    // Só filtra se já carregou os personais
+    if (!allTrainers.length) return;
 
-  // // Atualiza os filtros selecionados para dropdowns
-  // const handleDropdownChange = (category, value) => {
-  //   setSelectedFilters((prev) => ({
-  //     ...prev,
-  //     [category]: value,
-  //   }));
-  // };
+    const {
+      cidadesSelecionadas,
+      bairrosSelecionados,
+      generosSelecionados,
+      especialidadesSelecionadas,
+      duracoesSelecionadas,
+      faixaPrecoSelecionada
+    } = appliedFilters;
 
+    const filtrar = () => {
+      return allTrainers.filter((trainer) => {
+        // Gênero
+        let generoOk = true;
+        if (generosSelecionados.length > 0 && !generosSelecionados.includes("TODOS")) {
+          generoOk = generosSelecionados.some((g) => {
+            if (g === "MASCULINO") {
+              return ["HOMEM_CISGENERO", "HOMEM_TRANSGENERO"].includes(trainer.genero);
+            }
+            if (g === "FEMININO") {
+              return ["MULHER_CISGENERO", "MULHER_TRANSGENERO"].includes(trainer.genero);
+            }
+            if (g === "NAO_BINARIO") {
+              return trainer.genero === "NAO_BINARIO";
+            }
+            return false;
+          });
+        }
 
-  // // Remove um filtro específico (chip) da lista de filtros selecionados
-  // const handleRemoveChip = (category, value) => {
-  //   setSelectedFilters((prev) => ({
-  //     ...prev,
-  //     [category]: prev[category].filter((item) => item !== value),
-  //   }));
-  // };
+        // Duração
+        const duracaoOk =
+          duracoesSelecionadas.length === 0 ||
+          duracoesSelecionadas.includes("TODOS") ||
+          (trainer.planos &&
+            trainer.planos.some((plano) =>
+              duracoesSelecionadas.includes(plano.periodo)
+            ));
+
+        // Cidade/Bairro (OU)
+        let localizacaoOk = true;
+        if (cidadesSelecionadas.length > 0 && bairrosSelecionados.length > 0) {
+          localizacaoOk =
+            cidadesSelecionadas.includes(trainer.cidade) ||
+            bairrosSelecionados.includes(trainer.bairro);
+        } else if (cidadesSelecionadas.length > 0) {
+          localizacaoOk = cidadesSelecionadas.includes(trainer.cidade);
+        } else if (bairrosSelecionados.length > 0) {
+          localizacaoOk = bairrosSelecionados.includes(trainer.bairro);
+        }
+
+        // Especialidade (OU)
+        const especialidadeOk =
+          especialidadesSelecionadas.length === 0 ||
+          trainer.especialidades.some((esp) =>
+            especialidadesSelecionadas.some((sel) => sel.nome === esp)
+          );
+
+        // Faixa de preço
+        const min = faixaPrecoSelecionada.min ? Number(faixaPrecoSelecionada.min) : null;
+        const max = faixaPrecoSelecionada.max ? Number(faixaPrecoSelecionada.max) : null;
+        let precoOk = true;
+        if (min !== null || max !== null) {
+          if (!trainer.planos || trainer.planos.length === 0) return false;
+          const menorValor = Math.min(...trainer.planos.map((p) => p.valorAulas));
+          if (min !== null && menorValor < min) precoOk = false;
+          if (max !== null && menorValor > max) precoOk = false;
+        }
+
+        return generoOk && duracaoOk && localizacaoOk && especialidadeOk && precoOk;
+      });
+    };
+
+    setFilteredTrainers(filtrar());
+  }, [allTrainers, appliedFilters
+  ]);
+
+  const lidarErroImagem = (id) => {
+    setErrosImagem((prev) => ({
+      ...prev,
+      [id]: true,
+    }));
+  };
+
 
 
 
@@ -214,16 +504,22 @@ const ProcurandoPersonal = () => {
                 <div
 
                   key={index}
-                  className="border-solid border-4 border-[#1D2D441C] rounded-md p-4 mb-4 w-full"
+                  className="border-solid border-2 border-[#1D2D441C] rounded-md p-4 mb-4 w-full"
                   onClick={() => toggleCardExpansion(index)}
                 >
                   <div className="flex items-center">
                     <div className="flex flex-col md:flex-row items-center gap-4 w-[90%]">
-                      <img
-                        src={trainer.urlFotoPerfil}
-                        alt={trainer.nomePersonal}
-                        className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
-                      />
+                      {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
+                        <img
+                          src={trainer.urlFotoPerfil}
+                          alt={trainer.nomePersonal}
+                          className="w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22 rounded-full"
+                          onError={() => lidarErroImagem(trainer.email)}
+                        />
+                      ) : (
+                        <FaUserCircle className="flex-shrink-0 w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22" />
+                      )}
+
                       <div className="flex flex-col md:flex-row items-start w-full gap-4">
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
                           <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
@@ -349,7 +645,7 @@ const ProcurandoPersonal = () => {
                   </h3>
                   <button
                     type="button"
-                    onClick={toggleFilterModal}
+                    onClick={handleCancelFilters}
                     className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -363,38 +659,11 @@ const ProcurandoPersonal = () => {
                 </div>
 
 
-                <form>
+<form onSubmit={handleSubmit(handleSaveFilters)}>
                   {/* depois mudar aqui */}
                   <div className="grid grid-cols-2 gap-12">
                     {/* Cidade */}
-                    {/* <div>
-                      <label className="block text-sm font-medium text-[#1D2D44] mb-2">
-                        Cidade
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Digite para buscar..."
-                        className="w-full border-b border-gray-300 focus:outline-none focus:border-[#1D2D44] mb-2"
-                      />
-                      <div className="flex flex-wrap gap-2">
-                        {selectedFilters.cidade.map((cidade) => (
-                          <div
-                            key={cidade}
-                            className="flex items-center bg-[#E96E35] text-white px-3 py-1 rounded-full"
-                          >
-                            {cidade}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveChip("cidade", cidade)}
-                              className="ml-2 text-white"
-                            >
-                              -
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div> */}
-                    <div className="relative" ref={sugestaoRef}>
+                    <div className="relative">
                       <Label
                         id="cidade"
                         nomeLabel="Cidade"
@@ -410,40 +679,26 @@ const ProcurandoPersonal = () => {
                         fontWeight="400"
                         fontSizeErro="16px"
                         width="100%"
-                        onChange={e => {
-                          setCidadeInput(e.target.value);
-                          buscarCidades(e.target.value);
-                        }}
-                        onFocus={() => setCidadeFocada(true)}
-                        onBlur={() => setTimeout(() => setCidadeFocada(false), 200)}
-                      />
+                        {...register("cidade")}
+                        onChange={handleInputChange}
 
-                      {cidadeFocada && cidadesSugestao.length > 0 && (
-                        <ul className="absolute bg-white border w-full max-h-40 overflow-y-auto z-10">
-                          {cidadesSugestao.map((nomeCidade, index) => (
+                      />
+                      {sugestoes.length > 0 && (
+                        <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
+                          {sugestoes.map((cidade, idx) => (
                             <li
-                              key={`${nomeCidade}-${index}`}
-                              onClick={() => {
-                                if (!cidadesSelecionadas.includes(nomeCidade)) {
-                                  setCidadesSelecionadas([...cidadesSelecionadas, nomeCidade]);
-                                }
-                                setCidadeInput("");
-                                setCidadesSugestao([]);
-                              }}
-                              className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                              key={idx}
+                              className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => handleSelectSuggestion(cidade)}
                             >
-                              {nomeCidade}
+                              {cidade}
                             </li>
                           ))}
                         </ul>
                       )}
-                      {cidadeFocada && cidadeInput.length >= 2 && cidadesSugestao.length === 0 && (
-                        <div className="absolute bg-white border w-full p-2 text-gray-500 z-10">
-                          Nenhuma cidade encontrada
-                        </div>
-                      )}
+
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {cidadesSelecionadas.map((cidade, idx) => (
+                        {draftFilters.cidadesSelecionadas.map((cidade, idx) => (
                           <div
                             key={cidade}
                             className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -452,7 +707,7 @@ const ProcurandoPersonal = () => {
                             <button
                               onClick={e => {
                                 e.stopPropagation();
-                                setCidadesSelecionadas(cidadesSelecionadas.filter(c => c !== cidade));
+                                handleRemoveCidade(cidade);
                               }}
                               className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
@@ -464,39 +719,9 @@ const ProcurandoPersonal = () => {
                         ))}
                       </div>
                     </div>
-
-
-
                     {/* Bairro */}
-                    {/* <div>
-                      <label className="block text-sm font-medium text-[#1D2D44] mb-2">
-                        Bairro
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Digite para buscar..."
-                        className="w-full border-b border-gray-300 focus:outline-none focus:border-[#1D2D44] mb-2"
-                      />
-                      <div className="flex flex-wrap gap-2">
-                        {selectedFilters.bairro.map((bairro) => (
-                          <div
-                            key={bairro}
-                            className="flex items-center bg-[#E96E35] text-white px-3 py-1 rounded-full"
-                          >
-                            {bairro}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveChip("bairro", bairro)}
-                              className="ml-2 text-white"
-                            >
-                              -
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div> */}
 
-                    <div>
+                    <div className="relative">
                       <Label
                         id="bairro"
                         nomeLabel="Bairro"
@@ -512,7 +737,65 @@ const ProcurandoPersonal = () => {
                         fontWeight="400"
                         fontSizeErro="16px"
                         width="100%"
+                        {...register("bairro")}
+                        onChange={handleBairroInputChange}
                       />
+                      {bairroSugestoes.length > 0 && (
+                        <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
+                          {bairroSugestoes.map((bairro, idx) => (
+                            <li
+                              key={idx}
+                              className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => handleSelectBairro(bairro)}
+                            >
+                              {bairro}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {bairroQuery.length >= 2 && bairroSugestoes.length === 0 && (
+                        <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 p-2 text-gray-500 text-sm flex justify-between items-center">
+                          Nenhum bairro encontrado
+                          <button
+                            type="button"
+                            className="ml-2 text-orange-600 underline text-xs"
+                            onClick={() => {
+                              if (
+                                bairroQuery.trim() &&
+                                !bairrosSelecionados.includes(bairroQuery.trim())
+                              ) {
+                                setBairrosSelecionados([...bairrosSelecionados, bairroQuery.trim()]);
+                                setValue("bairro", "");
+                                setBairroQuery("");
+                                setBairroSugestoes([]);
+                              }
+                            }}
+                          >
+                            Adicionar "{bairroQuery.trim()}"
+                          </button>
+                        </div>
+                      )}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {draftFilters.bairrosSelecionados.map((bairro, idx) => (
+                          <div
+                            key={bairro}
+                            className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                          >
+                            {bairro}
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleRemoveBairro(bairro);
+                              }}
+                              className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Gênero do Personal */}
@@ -526,7 +809,9 @@ const ProcurandoPersonal = () => {
                       <div className="relative">
                         <select defaultValue=""
                           id="genero"
-                          className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]">
+                          className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                          onChange={handleGeneroChange}
+                        >
                           <option disabled className="text-[#15171B87]" value="">Selecione um ou mais gêneros desejados</option>
                           <option value="TODOS">Todos</option>
                           <option value="MASCULINO">Masculino</option>
@@ -539,39 +824,38 @@ const ProcurandoPersonal = () => {
                           </svg>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Especialidade */}
-                    {/* <div>
-                      <label className="block text-sm font-medium text-[#1D2D44] mb-2">
-                        Especialidade
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Digite para buscar..."
-                        className="w-full border-b border-gray-300 focus:outline-none focus:border-[#1D2D44] mb-2"
-                      />
-                      <div className="flex flex-wrap gap-2">
-                        {selectedFilters.especialidade.map((especialidade) => (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {draftFilters.generosSelecionados.map((genero) => (
                           <div
-                            key={especialidade}
-                            className="flex items-center bg-[#E96E35] text-white px-3 py-1 rounded-full"
+                            key={genero}
+                            className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
                           >
-                            {especialidade}
+                            {genero === "TODOS"
+                              ? "Todos"
+                              : genero === "MASCULINO"
+                                ? "Masculino"
+                                : genero === "FEMININO"
+                                  ? "Feminino"
+                                  : "Não Binário"}
                             <button
-                              type="button"
-                              onClick={() =>
-                                handleRemoveChip("especialidade", especialidade)
-                              }
-                              className="ml-2 text-white"
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleRemoveGenero(genero);
+                              }}
+                              className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                             >
-                              -
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
                             </button>
                           </div>
                         ))}
                       </div>
-                    </div> */}
-                    <div>
+                    </div>
+
+                    {/* Especialidade */}
+
+                    <div className="relative">
                       <Label
                         id="especialidade"
                         nomeLabel="Especialidade"
@@ -587,7 +871,48 @@ const ProcurandoPersonal = () => {
                         fontWeight="400"
                         fontSizeErro="16px"
                         width="100%"
+                        {...register("especialidade")}
+                        onChange={handleEspecialidadeInputChange}
                       />
+                      {especialidadeSugestoes.length > 0 && (
+                        <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
+                          {especialidadeSugestoes.map((esp) => (
+                            <li
+                              key={esp.id}
+                              className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                              onClick={() => handleSelectEspecialidade(esp)}
+                            >
+                              {esp.nome}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {especialidadeQuery.length >= 2 && especialidadeSugestoes.length === 0 && (
+                        <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 p-2 text-gray-500 text-sm">
+                          Nenhuma especialidade encontrada
+                        </div>
+                      )}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {draftFilters.especialidadesSelecionadas.map((esp) => (
+                          <div
+                            key={esp.id}
+                            className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                          >
+                            {esp.nome}
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleRemoveEspecialidade(esp);
+                              }}
+                              className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Período de Plano Desejado */}
@@ -601,7 +926,9 @@ const ProcurandoPersonal = () => {
                       <div className="relative">
                         <select defaultValue=""
                           id="duracao"
-                          className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]">
+                          className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                          onChange={handleDuracaoChange}
+                        >
                           <option disabled className="text-[#15171B87]" value="">Selecione o período</option>
                           <option value="TODOS">Todos</option>
                           <option value="MENSAL">Mensal</option>
@@ -614,6 +941,33 @@ const ProcurandoPersonal = () => {
                           </svg>
                         </div>
                       </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {draftFilters.duracoesSelecionadas.map((duracao) => (
+                          <div
+                            key={duracao}
+                            className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                          >
+                            {duracao === "TODOS"
+                              ? "Todos"
+                              : duracao === "MENSAL"
+                                ? "Mensal"
+                                : duracao === "SEMESTRAL"
+                                  ? "Semestral"
+                                  : "Avulso"}
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleRemoveDuracao(duracao);
+                              }}
+                              className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Faixa de Preço */}
@@ -624,20 +978,18 @@ const ProcurandoPersonal = () => {
                       <div className="flex gap-4">
                         <input
                           type="number"
+                          name="min"
                           placeholder="R$ min"
-                          // value={selectedFilters.faixaPreco.min}
-                          // onChange={(e) =>
-                          //   handleInputChange("min", e.target.value)
-                          // }
+                          value={draftFilters.faixaPrecoSelecionada.min}
+                          onChange={handleFaixaPrecoChange}
                           className="border border-gray-300 rounded-md p-2 w-full text-[#1D2D44]"
                         />
                         <input
                           type="number"
+                          name="max"
                           placeholder="R$ max"
-                          // value={selectedFilters.faixaPreco.max}
-                          // onChange={(e) =>
-                          //   handleInputChange("max", e.target.value)
-                          // }
+                          value={draftFilters.faixaPrecoSelecionada.max}
+                          onChange={handleFaixaPrecoChange}
                           className="border border-gray-300 rounded-md p-2 w-full text-[#1D2D44]"
                         />
                       </div>
@@ -656,7 +1008,7 @@ const ProcurandoPersonal = () => {
                       fontWeight="500"
                       ariaLabel={"Botão de Cancelar"}
                       type="button"
-                      onClick={toggleFilterModal}
+                      onClick={handleCancelFilters}
                     >
                     </Button>
 
@@ -669,6 +1021,7 @@ const ProcurandoPersonal = () => {
                       corHover="#46982BE5"
                       fontWeight="600"
                       ariaLabel={"Botão de Salvar"}
+                      type="submit"
                     >
                     </Button>
 

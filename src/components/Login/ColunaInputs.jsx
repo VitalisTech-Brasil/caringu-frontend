@@ -24,11 +24,6 @@ const ColunaInputs = () => {
 
     const { email, senha } = data;
 
-    // if (!email || !senha) {
-    //   alert('Por favor, preencha todos os campos!');
-    //   return;
-    // }
-
     try {
       const response = await api.post('/login', { email, senha }, {
         headers: {
@@ -48,9 +43,14 @@ const ColunaInputs = () => {
           ));
         
   
-        setTimeout(() => {
-          navigate('/home');
-        }, 1000);
+       
+  setTimeout(() => {
+    if (response.data.tipo === "PERSONAL") {
+      navigate('/home');
+    } else {
+      navigate('/procurando-personal');
+    }
+  }, 1000);
       } else {
         throw new Error('Ops! Ocorreu um erro interno.');
       }

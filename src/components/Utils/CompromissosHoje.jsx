@@ -75,14 +75,11 @@ const CompromissosHoje = ({ compromissos, selectedDay }) => {
 
               {/* Bloco Central */}
               <div className="flex flex-col justify-center gap-1 ml-4">
-                <div className="text-white text-sm flex items-center gap-2">
+                <div className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] flex items-center gap-2">
                   <HiOutlineClock />
                   <span>{compromisso.horario}</span>
                 </div>
-                <div className="text-white text-sm flex items-center gap-2">
-                  <HiOutlineLocationMarker />
-                  <span>{compromisso.local}</span>
-                </div>
+               
               </div>
 
               {/* Bloco da Pessoa + Botão */}
@@ -93,7 +90,7 @@ const CompromissosHoje = ({ compromissos, selectedDay }) => {
                     alt={compromisso.aluno.nome}
                     className="w-8 h-8 rounded-full object-cover"
                   />
-                  <span className="text-white font-medium text-sm">
+                  <span className="text-[var(--cor-secundaria)] font-medium text-base 2xl:text-xl">
                     {compromisso.aluno.nome}
                   </span>
                 </div>

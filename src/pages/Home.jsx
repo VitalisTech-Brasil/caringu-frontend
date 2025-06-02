@@ -22,6 +22,8 @@ const Home = () => {
   const [treinosVencimento, setTreinosVencimento] = useState(0);
   const [treinosCriados, setTreinosCriados] = useState(0);
   const [anamnesesPendentes, setAnamnesesPendentes] = useState(0);
+  const [treinosFinalizados, setTreinosFinalizados] = useState([]);
+
 
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ const Home = () => {
       try {
         const totalAlunosAtivos = await caringuApi.get(`/planos-contratados/kpis/alunos-ativos/${personalId}`);
         setAlunosAtivos(totalAlunosAtivos.data);
-        
+
         const totalTreinosVencimento = await caringuApi.get(`/alunos-treinos/kpis/proximos-vencimento/${personalId}`);
         setTreinosVencimento(totalTreinosVencimento.data);
 
@@ -41,13 +43,39 @@ const Home = () => {
 
         const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
         setAnamnesesPendentes(totalAnamnesePendentes.data);
+
+        const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
+        setTreinosFinalizados(treinosFinalizadosResponse.data);
+        console.log("Treinos finalizados:", treinosFinalizadosResponse.data);
+
       } catch (error) {
-        console.error("Erro ao informações das KPIs:", error);
+        console.error("Erro ao carrefae as informações da kpi e agenda:", error);
       }
     };
 
     fetchData();
   }, []);
+
+  function formatarHora(isoString) {
+    const data = new Date(isoString);
+    return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function formatarData(isoString) {
+    const data = new Date(isoString);
+    return data.toLocaleDateString('pt-BR');
+  }
+
+  const compromissos = treinosFinalizados.map(item => ({
+    id: item.id,
+    horario: `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`,
+    data: formatarData(item.dataHorarioInicio),
+    aluno: {
+      nome: item.nomeAluno,
+      foto: item.urlFotoPerfil,
+    },
+    finalizado: item.finalizado,
+  }));
 
   // Define o dia atual como padrão ao carregar a página
   useEffect(() => {
@@ -74,19 +102,39 @@ const Home = () => {
 
   const atalhos = [
     {
-      icon: <GoPersonAdd />,
-      label: "Adicionar Aluno",
-      onClick: () => console.log("Adicionar Aluno clicado"),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-7 h-7 text-gray-800 group-hover:text-white transition-colors"
+          viewBox="0 0 30 30"
+          fill="none"
+        >
+          <path d="M27.5 15.0005V21.2505C27.5 25.0005 25 27.5005 21.25 27.5005H8.75C5 27.5005 2.5 25.0005 2.5 21.2505V15.0005C2.5 11.6005 4.55 9.22549 7.7375 8.82549C8.0625 8.77549 8.4 8.75049 8.75 8.75049H21.25C21.575 8.75049 21.8875 8.76297 22.1875 8.81297C25.4125 9.18797 27.5 11.5755 27.5 15.0005Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M22.1893 8.81299C21.8893 8.76299 21.5768 8.7505 21.2518 8.7505H8.75176C8.40176 8.7505 8.06426 8.7755 7.73926 8.8255C7.91426 8.4755 8.16426 8.1505 8.46426 7.8505L12.5268 3.77549C14.2393 2.07549 17.0143 2.07549 18.7268 3.77549L20.9143 5.98801C21.7143 6.77551 22.1393 7.77549 22.1893 8.81299Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M27.5 15.6255H23.75C22.375 15.6255 21.25 16.7505 21.25 18.1255C21.25 19.5005 22.375 20.6255 23.75 20.6255H27.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+      label: "Visualizar Planos",
+      onClick: () => navigate("/planos"),
     },
     {
       icon: <CiMedicalCase />,
       label: "Adicionar Treino",
-      onClick: () => console.log("Adicionar Treino clicado"),
+      onClick: () => navigate("/gerenciar-treinos"),
     },
     {
-      icon: <TbReportAnalytics />,
-      label: "Acessar Relatório",
-      onClick: () => console.log("Acessar Relatório clicado"),
+      icon: <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-7 h-7 text-gray-800 group-hover:text-white transition-colors"
+        viewBox="0 0 30 31"
+        fill="none">
+        <path d="M25 10.8125V23C25 26.75 22.7625 28 20 28H10C7.2375 28 5 26.75 5 23V10.8125C5 6.75 7.2375 5.8125 10 5.8125C10 6.5875 10.3125 7.2875 10.825 7.8C11.3375 8.3125 12.0375 8.625 12.8125 8.625H17.1875C18.7375 8.625 20 7.3625 20 5.8125C22.7625 5.8125 25 6.75 25 10.8125Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20 5.8125C20 7.3625 18.7375 8.625 17.1875 8.625H12.8125C12.0375 8.625 11.3375 8.3125 10.825 7.8C10.3125 7.2875 10 6.5875 10 5.8125C10 4.2625 11.2625 3 12.8125 3H17.1875C17.9625 3 18.6625 3.3125 19.175 3.825C19.6875 4.3375 20 5.0375 20 5.8125Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 16.75H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 21.75H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Criar Exercício",
+      onClick: () => navigate("/gerenciar-exercicios"),
     },
     {
       icon: <VscFeedback />,
@@ -130,138 +178,6 @@ const Home = () => {
     },
   ];
 
-  const compromissos = [
-    {
-      id: 1,
-      horario: "9:00 - 10:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate())).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "João Silva",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 2,
-      horario: "14:00 - 15:00",
-      local: "Academia ABC",
-      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Maria Oliveira",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 3,
-      horario: "10:00 - 11:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Carlos Souza",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 4,
-      horario: "11:00 - 12:00",
-      local: "Academia ABC",
-      data: new Date(new Date().setDate(new Date().getDate())).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Ana Paula",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 5,
-      horario: "15:00 - 16:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate())).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Lucas Mendes",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 6,
-      horario: "8:00 - 9:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Fernanda Lima",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 7,
-      horario: "9:00 - 10:00",
-      local: "Academia ABC",
-      data: new Date(new Date().setDate(new Date().getDate() + 6)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Rafael Costa",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 8,
-      horario: "10:00 - 11:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate() + 5)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Juliana Alves",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 9,
-      horario: "11:00 - 12:00",
-      local: "Academia ABC",
-      data: new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Pedro Henrique",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 10,
-      horario: "13:00 - 14:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Mariana Silva",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 11,
-      horario: "14:00 - 15:00",
-      local: "Academia ABC",
-      data: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Gabriel Santos",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 12,
-      horario: "9:00 - 10:00",
-      local: "Academia XYZ",
-      data: new Date(new Date().setDate(new Date().getDate() + 4)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Beatriz Oliveira",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 13,
-      horario: "10:00 - 11:00",
-      local: "Academia ABC",
-      data: new Date(new Date().setDate(new Date().getDate() + 3)).toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "Ricardo Lima",
-        foto: "https://via.placeholder.com/150",
-      },
-    }
-  ]
 
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -310,7 +226,7 @@ const Home = () => {
               />
             </div>
             <div className="2xl:w-[50%] w-full">
-             <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} />
+              <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} />
 
             </div>
 
