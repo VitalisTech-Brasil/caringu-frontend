@@ -18,6 +18,7 @@ import MenuFiltro from "../../components/Utils/MenuFiltro";
 
 import { caringuApi } from "../../provider/caringuApi";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
+import FormularioAnamnese from "./AnamneseForm";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +38,10 @@ const GerenciarAlunos = () => {
   const buttonRef = useRef(null);
   const buttonRefFilter = useRef(null);
 
+  const [respostas, setRespostas] = useState({});
+  const [respostasBack, setRespostasBack] = useState({});
+  const [alunosAtivos, setAlunosAtivos] = useState([]);
+  const [respostasPorAluno, setRespostasPorAluno] = useState({});
   const [alunoAtual, setAlunoAtual] = useState(null)
 
   const handleOpenModal = (aluno) => {
@@ -45,9 +50,36 @@ const GerenciarAlunos = () => {
     setOpenMenuId(null)
   };
 
+  const handleRadioChange = (id, value) => {
+    setRespostas(prev => ({ ...prev, [id]: value }));
+  };
+
   const rect = buttonRefFilter.current?.getBoundingClientRect();
 
-  const [alunosAtivos, setAlunosAtivos] = useState([]);
+  const {
+    register1,
+    handleSubmit1,
+    setValue1,
+    reset,
+    watch,
+    formState: { errors1 }
+  } = useForm({
+    defaultValues: {
+      fumante: '',
+      dorArticulacao: '',
+      dorArticulacaoDescricao: '',
+      lesao: '',
+      lesaoDescricao: '',
+      experienciaMusculacao: '',
+      experienciaMusculacaoDescricao: '',
+      pinosPlacasProteses: '',
+      pinosPlacasProtesesDescricao: '',
+      doencaMetabolica: '',
+      doencaMetabolicaDescricao: '',
+      deficiencia: '',
+      deficienciaDescricao: ''
+    }
+  });
 
   const now = new Date();
 
@@ -122,8 +154,11 @@ const GerenciarAlunos = () => {
 
     const fetchData = async () => {
       try {
-        const totalAlunosAtivos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
-        setAlunosAtivos(totalAlunosAtivos.data);
+        const response = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
+        const aluno = response.data;
+
+        setAlunosAtivos(aluno);
+        console.log(aluno);
 
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
@@ -440,242 +475,24 @@ const GerenciarAlunos = () => {
 
                   {showCreateModal && alunoAtual && (
                     <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
-                      <div className="absolute inset-0 bg-[#000000] opacity-50"
-                        aria-label="Fundo Escurecido"
-                      ></div>
+                      <div className="absolute inset-0 bg-[#000000] opacity-50" aria-label="Fundo Escurecido" />
                       <div className="relative p-4 w-full max-w-2xl">
-                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10 max-h-[80vh] flex flex-col p-4">
+                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:p-10 max-h-[80vh] flex flex-col">
                           <div className="flex justify-between items-center pb-4 mb-4">
-                            <div className="flex flex-col">
-                              <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">
-                                Anamnese
-                              </h1>
-                              <div className="flex gap-3 mt-2">
-                                <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M9.58984 11C12.3513 11 14.5898 8.76142 14.5898 6C14.5898 3.23858 12.3513 1 9.58984 1C6.82842 1 4.58984 3.23858 4.58984 6C4.58984 8.76142 6.82842 11 9.58984 11Z" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                  <path d="M18.18 21C18.18 17.13 14.33 14 9.59 14C4.85 14 1 17.13 1 21" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                <p>{alunoAtual.nomeAluno}</p>
-                              </div>
+                            <div>
+                              <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">Anamnese</h1>
+                              <p className="mt-2">{alunoAtual.nomeAluno}</p>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setModalConfirmarCancelarVisivel(true)
-                              }}
-                              className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
-                            >
-                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                  fillRule="evenodd"
-                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </button>
+                            <button onClick={() => setShowCreateModal(false)} className="text-xl">✕</button>
                           </div>
-                          <form className="overflow-y-auto max-h-full flex-1" onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
-                            <div className="flex flex-col mb-4 gap-2">
-                              {/* Peso */}
-                              <Label id="peso" nomeLabel="Peso (KG)" fontSize="20px" fontWeight="500" />
-                              <InputPosLogin
-                                id="peso"
-                                name="peso"
-                                inputType="number"
-                                placeholder="Ex.: 60"
-                                fontSize="16px"
-                                fontWeight="400"
-                                fontSizeErro="16px"
-                                width="100%"
-                                {...register('peso', {
-                                  required: 'O Peso do aluno é obrigatório',
-                                  min: {
-                                    value: 20,
-                                    message: 'O peso deve ser maior que 20kg',
-                                  },
-                                  max: {
-                                    value: 300,
-                                    message: 'O peso deve ser menor que 300kg',
-                                  },
-                                })}
-                                isError={!!errors.peso}
-                                errorMessage={errors.peso?.message}
-                              />
 
-                              {/* Altura */}
-                              <Label id="altura" nomeLabel="Altura (m)" fontSize="20px" fontWeight="500" />
-                              <InputPosLogin
-                                id="altura"
-                                name="altura"
-                                inputType="number"
-                                placeholder="Ex.: 1.60"
-                                fontSize="16px"
-                                fontWeight="400"
-                                fontSizeErro="16px"
-                                width="100%"
-                                {...register('altura', {
-                                  required: 'A altura do aluno é obrigatória',
-                                  min: {
-                                    value: 1,
-                                    message: 'Altura mínima é 1 metro',
-                                  },
-                                  max: {
-                                    value: 2.5,
-                                    message: 'Altura máxima é 2.5 metros',
-                                  },
-                                })}
-                                isError={!!errors.altura}
-                                errorMessage={errors.altura?.message}
-                              />
-
-                              {/* Objetivo */}
-                              <Label id="objetivo" nomeLabel="Objetivo com o treino" fontSize="20px" fontWeight="500" />
-                              <InputPosLogin
-                                id="objetivo"
-                                name="objetivo"
-                                inputType="text"
-                                placeholder="Ex.: Saúde"
-                                fontSize="16px"
-                                fontWeight="400"
-                                fontSizeErro="16px"
-                                width="100%"
-                                {...register('objetivo', {
-                                  required: 'O objetivo do aluno é obrigatório',
-                                  minLength: {
-                                    value: 3,
-                                    message: 'O objetivo deve ter pelo menos 3 caracteres',
-                                  },
-                                })}
-                                isError={!!errors.objetivo}
-                                errorMessage={errors.objetivo?.message}
-                              />
-
-                              {/* Frequência Semanal */}
-                              <Label id="frequencia" nomeLabel="Frequência Semanal" fontSize="20px" fontWeight="500" />
-                              <div className="relative">
-                                <select
-                                  defaultValue=""
-                                  id="frequencia"
-                                  {...register("frequencia", {
-                                    required: 'Selecione uma quantidade de dias',
-                                  })}
-                                  className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
-                                >
-                                  <option disabled value="">Selecione uma quantidade de dias</option>
-                                  {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                                    <option key={day} value={day}>{day}</option>
-                                  ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 24 10" fill="none">
-                                    <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                                  </svg>
-                                </div>
-                              </div>
-                              {errors.frequencia && (
-                                <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-[16px]">
-                                  <img src={info2} alt="Erro" className="w-4 h-4" />
-                                  <span>{errors.frequencia.message}</span>
-                                </div>
-                              )}
-
-                              {/* Nível de Atividade */}
-                              <Label id="nivelAtividade" nomeLabel="Nível de atividade atual" fontSize="20px" fontWeight="500" />
-                              <div className="relative">
-                                <select
-                                  defaultValue=""
-                                  id="nivelAtividade"
-                                  {...register("nivelAtividade", {
-                                    required: 'Selecione um nível de atividade',
-                                  })}
-                                  className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
-                                >
-                                  <option disabled value="">Selecione um nível de atividade</option>
-                                  <option value="1">Sedentário</option>
-                                  <option value="2">Iniciante</option>
-                                  <option value="3">Intermediário</option>
-                                  <option value="4">Avançado</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 24 10" fill="none">
-                                    <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                                  </svg>
-                                </div>
-                              </div>
-                              {errors.nivelAtividade && (
-                                <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-[16px]">
-                                  <img src={info2} alt="Erro" className="w-4 h-4" />
-                                  <span>{errors.nivelAtividade.message}</span>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="flex flex-col gap-4 mt-6">
-
-                              {/* Função auxiliar para gerar radio */}
-                              {[
-                                { id: 'dorArticulacao', label: 'Dor ou desconforto em alguma articulação?' },
-                                { id: 'lesao', label: 'Possui alguma lesão?' },
-                                { id: 'experienciaMusculacao', label: 'Possui experiência com musculação?' },
-                                { id: 'pinosPlacasProteses', label: 'Possui pinos, placas ou próteses?' },
-                                { id: 'doencaMetabolica', label: 'Possui alguma doença metabólica?' },
-                                { id: 'fumante', label: 'É fumante?' },
-                              ].map((pergunta) => (
-                                <div key={pergunta.id} className="flex flex-col">
-                                  <label className="text-[18px] font-medium mb-2" htmlFor={pergunta.id}>
-                                    {pergunta.label}
-                                  </label>
-                                  <div className="flex gap-6">
-                                    <label className="flex items-center gap-2">
-                                      <input
-                                        type="radio"
-                                        value="sim"
-                                        {...register(pergunta.id, { required: 'Campo obrigatório' })}
-                                      />
-                                      Sim
-                                    </label>
-                                    <label className="flex items-center gap-2">
-                                      <input
-                                        type="radio"
-                                        value="nao"
-                                        {...register(pergunta.id, { required: 'Campo obrigatório' })}
-                                      />
-                                      Não
-                                    </label>
-                                  </div>
-                                  {errors[pergunta.id] && (
-                                    <span className="text-[#D45C56] text-[16px] mt-1">
-                                      {errors[pergunta.id]?.message}
-                                    </span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </form>
-                          {/* Botões */}
-                          <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
-                            <ButtonInterno
-                              texto="Cancelar"
-                              corTexto="#B41F1F"
-                              cor="var(--cor-secundaria)"
-                              height="2.75rem"
-                              width="13.25rem"
-                              corHover="#1D2D4417"
-                              fontWeight="500"
-                              aria-label={"Botão de Cancelar"}
-                              onClick={() => setModalConfirmarCancelarVisivel(true)}
-                            />
-                            <ButtonInterno
-                              texto="Salvar"
-                              corTexto="var(--cor-secundaria)"
-                              cor="#46982B"
-                              height="2.75rem"
-                              width="9.2rem"
-                              corHover="#46982BE5"
-                              fontWeight="600"
-                              aria-label={"Botão de Salvar"}
-                            />
-                          </div>
+                          <FormularioAnamnese
+                            aluno={alunoAtual}
+                            respostasBack={respostasBack}
+                            onSubmit={(data) => console.log("Salvar anamnese:", data)}
+                            onCancelar={() => setShowCreateModal(false)}
+                          />
+                          
                         </div>
                       </div>
                     </div>
@@ -703,7 +520,6 @@ const GerenciarAlunos = () => {
                     onConfirm={() => {
                       setModalConfirmarCancelarVisivel(false);
                       setShowCreateModal(false);
-                      setShowEditModal(false);
                     }}
                     icone={iconCancelar}
                     textoBotaoConfirmar="Voltar"
