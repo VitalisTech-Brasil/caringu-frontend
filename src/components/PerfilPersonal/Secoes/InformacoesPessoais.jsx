@@ -7,6 +7,7 @@ import ModalRemoverEspecialidade from '../../Utils/ModalRemoverEspecialidade';
 
 import { toast, Toaster } from 'react-hot-toast';
 import CustomToast from '../../Utils/CustomToast';
+import CidadeInput from '../../Utils/InputCidade/CidadeInput';
 
 export default function InformacoesPessoais() {
 
@@ -42,6 +43,8 @@ export default function InformacoesPessoais() {
                     ...response.data,
                     celular: celularComMascara,
                 });
+
+                
 
                 console.log(response.data);
             } catch (error) {
@@ -189,7 +192,7 @@ export default function InformacoesPessoais() {
             await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvar);
 
             if (formData.idBairro) {
-                // PATCH - Atualiza bairro existente
+
                 await caringuApi.patch(`/personal-trainers/${personalId}/bairro`, {
                     bairroId: formData.idBairro,
                     novoNomeBairro: formData.bairro,
@@ -201,7 +204,6 @@ export default function InformacoesPessoais() {
                     <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
                 ));
             } else {
-                // POST - Cria novo bairro e associa ao personal
 
                 if (!formData.bairro || !formData.cidade) {
                     toast.custom((t) => (
@@ -374,7 +376,7 @@ export default function InformacoesPessoais() {
                                                                             prev.filter((_, i) => i !== index)
                                                                         )
                                                                     }
-                                                                    className="text-red-600 font-bold"
+                                                                    className="text-red-600 font-bold cursor-pointer h-3.5 flex justify-center items-center"
                                                                 >
                                                                     &times;
                                                                 </button>
@@ -392,7 +394,7 @@ export default function InformacoesPessoais() {
                                                     </button>
                                                     <button
                                                         onClick={handleAdicionarEspecialidades}
-                                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"
+                                                        className="px-4 py-2 bg-[#E96E35] hover:bg-orange-500 text-white rounded-md cursor-pointer"
                                                     >
                                                         Adicionar
                                                     </button>
@@ -467,19 +469,7 @@ export default function InformacoesPessoais() {
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            <div>
-                                <label className="block text-[16px] font-medium text-gray-700">
-                                    Cidade
-                                </label>
-                                <input
-                                    type="text"
-                                    name="cidade"
-                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                    placeholder="Digite sua cidade"
-                                    value={formData.cidade || ""}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+                            <CidadeInput formData={formData} setFormData={setFormData} />
                             <div>
                                 <label className="block text-[16px] font-medium text-gray-700">
                                     Bairro

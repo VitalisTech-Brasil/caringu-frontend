@@ -7,6 +7,7 @@ const InputPosLogin = ({
     inputType,
     placeholder,
     required = false,
+    value,
     fontSize,
     fontWeight,
     width,
@@ -27,6 +28,7 @@ const InputPosLogin = ({
                 onFocus={onFocus}
                 onBlur={onBlur}
                 inputMode={inputMode}
+                value={value}
                 type={inputType}
                 className='pb-1 pt-2 border-[#333] border-solid border-b-2 p-0 bg-transparent shadow-none outline-none peer text-[var(--cor-primaria)] placeholder:text-[#15171B87]'
                 id={id}
