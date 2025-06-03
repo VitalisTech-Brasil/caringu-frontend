@@ -20,16 +20,16 @@ const GerenciarExercicios = () => {
 
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const [openMenuId, setOpenMenuId] = useState(null);
-    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
-    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false)
+    
+    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
+    const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
-
+    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
     const [origemSelecionada, setOrigemSelecionada] = useState("");
     const [grupoMuscularSelecionado, setGrupoMuscularSelecionado] = useState("");
 
@@ -86,87 +86,6 @@ const GerenciarExercicios = () => {
             favorito: false,
             url: "https://www.youtube.com/watch?v=leg-press",
             observacoes: "Não estender completamente os joelhos."
-        },
-        {
-            id: 6,
-            nome: "Cadeira Extensora",
-            grupoMuscular: "PERNA",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=cadeira-extensora",
-            observacoes: "Segurar 2 segundos no topo do movimento."
-        },
-        {
-            id: 7,
-            nome: "Supino Reto",
-            grupoMuscular: "PEITORAL",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=supino-reto",
-            observacoes: "Controle na descida e pés firmes no chão."
-        },
-        {
-            id: 8,
-            nome: "Crucifixo",
-            grupoMuscular: "PEITORAL",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=crucifixo",
-            observacoes: "Não deixar os BRACO descerem além da linha dos OMBRO."
-        },
-        {
-            id: 9,
-            nome: "Remada Curvada",
-            grupoMuscular: "COSTAS",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=remada-curvada",
-            observacoes: "Manter a coluna neutra e CORE contraído."
-        },
-        {
-            id: 10,
-            nome: "Puxada Frontal",
-            grupoMuscular: "COSTAS",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=puxada-frontal",
-            observacoes: "Concentrar na ativação das dorsais."
-        },
-        {
-            id: 11,
-            nome: "Desenvolvimento",
-            grupoMuscular: "OMBRO",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=desenvolvimento",
-            observacoes: "Não deixar os cotovelos baixar abaixo da linha dos OMBRO."
-        },
-        {
-            id: 12,
-            nome: "Elevação Lateral",
-            grupoMuscular: "OMBRO",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=elevacao-lateral",
-            observacoes: "Executar lentamente, foco no deltoide lateral."
-        },
-        {
-            id: 13,
-            nome: "Abdominal Infra",
-            grupoMuscular: "CORE",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=abdominal-infra",
-            observacoes: "Não utilizar o balanço das PERNAS."
-        },
-        {
-            id: 14,
-            nome: "Prancha",
-            grupoMuscular: "CORE",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=prancha",
-            observacoes: "Manter o CORE contraído e a lombar neutra."
         }
     ]);
 
@@ -196,8 +115,6 @@ const GerenciarExercicios = () => {
         const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
 
         useEffect(() => {
-
-            document.title = "Gerenciar Exercícios | CaringU"
 
             const updateStyles = () => {
                 const screenWidth = window.innerWidth;
@@ -369,7 +286,7 @@ const GerenciarExercicios = () => {
                         </div>
                     </div>
                 </div>
-                <div className="bg-[var(--cor-secundaria)] rounded-lg p-6 md:p-6 border border-[#E6E6E2] max-h-135 md:h-[65%] mx-8">
+                <div className="bg-[var(--cor-secundaria)] rounded-lg p-6 md:p-6 border border-[#E6E6E2] max-h-[70%] md:h-[85%] mx-8">
                     <h1 className="text-zinc-900 md:text-3xl font-semibold font-['Inter']">Gerenciamento de Exercícios</h1>
                     <div className="flex flex-col md:flex-row items-center gap-2 mt-5 justify-between max-w-full">
                         <div className="flex items-center gap-2 md:w-full">
@@ -438,6 +355,7 @@ const GerenciarExercicios = () => {
                                         label: "Origem",
                                         width: "55%",
                                         selected: origemSelecionada,
+                                        active: origemFilter === origemSelecionada,
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" viewBox="0 0 29 25" fill="none">
                                                 <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" stroke-width="2" />
