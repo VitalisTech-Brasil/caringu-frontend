@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Label from "../../components/Utils/Label";
-import InputAnamnese from "../../pages/GerenciarAlunos/InputAnamnese";
+import InputAnamnese from "./InputAnamnese";
 import ButtonInterno from "../../components/Utils/Button";
+import info2 from '../../assets/images/info-2.svg';
 
 const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
 
   const perguntas = [
     { id: 'fumante', label: 'É fumante?' },
-    { id: 'dorArticulacao', label: 'Dor ou desconforto em alguma articulação?', placeholder: "Descreva a dor ou desconforto" },
+    { id: 'desconforto', label: 'Dor ou desconforto em alguma articulação?', placeholder: "Descreva a dor ou desconforto" },
     { id: 'lesao', label: 'Possui alguma lesão?', placeholder: "Descreva a lesão" },
-    { id: 'experienciaMusculacao', label: 'Possui experiência com musculação?', placeholder: "Descreva a sua experiência com musculação" },
-    { id: 'pinosPlacasProteses', label: 'Possui pinos, placas ou próteses?', placeholder: "Descreva os pinos, placas ou próteses" },
+    { id: 'experiencia', label: 'Possui experiência com musculação?', placeholder: "Descreva a sua experiência com musculação" },
+    { id: 'proteses', label: 'Possui pinos, placas ou próteses?', placeholder: "Descreva os pinos, placas ou próteses" },
     { id: 'doencaMetabolica', label: 'Possui alguma doença metabólica?', placeholder: "Descreva a(s) doenças metabólicas" },
     { id: 'deficiencia', label: 'Possui alguma deficiência?', placeholder: "Descreva a deficiência" },
   ];
-
-  const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
 
   const {
     register,
@@ -24,7 +23,9 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
     watch,
     reset,
     formState: { errors }
-  } = useForm();
+  } = useForm({
+    mode: "onChange"
+  });
 
   const respostas = watch();
 
@@ -38,19 +39,20 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
         nivelAtividade: aluno.nivelAtividade || '',
         nivelExperiencia: aluno.nivelExperiencia || '',
 
-        fumante: aluno.fumante || '',
-        desconforto: aluno.desconforto || '',
-        desconfortoDescricao: aluno.desconfortoDescricao || '',
-        lesao: aluno.lesao || '',
-        experiencia: aluno.experiencia || '',
-        experienciaDescricao: aluno.experienciaDescricao || '',
-        proteses: aluno.proteses || '',
-        protesesDescricao: aluno.protesesDescricao || '',
-        doencaMetabolica: aluno.doencaMetabolica || '',
-        doencaMetabolicaDescricao: aluno.doencaMetabolicaDescricao || '',
-        deficiencia: aluno.deficiencia || '',
-        deficienciaDescricao: aluno.deficienciaDescricao || '',
+        fumante: aluno.fumante === true ? 'true' : aluno.fumante === false ? 'false' : '',
+        desconforto: aluno.desconforto === true ? 'true' : aluno.desconforto === false ? 'false' : '',
+        lesao: aluno.lesao === true ? 'true' : aluno.lesao === false ? 'false' : '',
+        experiencia: aluno.experiencia === true ? 'true' : aluno.experiencia === false ? 'false' : '',
+        proteses: aluno.proteses === true ? 'true' : aluno.proteses === false ? 'false' : '',
+        doencaMetabolica: aluno.doencaMetabolica === true ? 'true' : aluno.doencaMetabolica === false ? 'false' : '',
+        deficiencia: aluno.deficiencia === true ? 'true' : aluno.deficiencia === false ? 'false' : '',
 
+        desconfortoDescricao: aluno.desconfortoDescricao || '',
+        lesaoDescricao: aluno.lesaoDescricao || '',
+        experienciaDescricao: aluno.experienciaDescricao || '',
+        protesesDescricao: aluno.protesesDescricao || '',
+        doencaMetabolicaDescricao: aluno.doencaMetabolicaDescricao || '',
+        deficienciaDescricao: aluno.deficienciaDescricao || '',
 
         ...respostasBack
       };
@@ -67,14 +69,33 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
           <div className="flex flex-col overflow-y-auto mb-4 gap-2">
             {/* Campos padrão */}
             <Label id="peso" nomeLabel="Peso (KG)" />
-            <InputAnamnese id="peso" inputType="text" placeholder="Ex.: 60" maxLength={3}
-              {...register('peso', { required: 'Peso obrigatório', min: 20, max: 300 })}
+            <InputAnamnese
+              id="peso"
+              inputType="number"
+              placeholder="Ex.: 60"
+              step="any"
+              maxLength={3}
+              {...register('peso', {
+                required: 'Campo Obrigatório',
+                min: { value: 20, message: 'Peso mínimo é 20kg' },
+                max: { value: 300, message: 'Peso máximo é 300kg' },
+                valueAsNumber: true
+              })}
               isError={!!errors.peso} errorMessage={errors.peso?.message}
             />
 
             <Label id="altura" nomeLabel="Altura (m)" />
-            <InputAnamnese id="altura" inputType="number" placeholder="Ex.: 1.60"
-              {...register('altura', { required: 'Altura obrigatória', min: 1, max: 2.5 })}
+            <InputAnamnese
+              id="altura"
+              inputType="number"
+              placeholder="Ex.: 1.60"
+              step="any"
+              {...register('altura', {
+                required: 'Campo Obrigatório',
+                min: { value: 1, message: 'Altura mínima é 1 metro' },
+                max: { value: 2.5, message: 'Altura máxima é 2 metros e meio' },
+                valueAsNumber: true
+              })}
               isError={!!errors.altura} errorMessage={errors.altura?.message}
             />
 
@@ -83,23 +104,31 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
               id="objetivo"
               inputType="text"
               placeholder="Ex.: Saúde"
-              className="w-full pb-1 pt-2 border-[#333] border-solid border-b-2 p-0 bg-transparent shadow-none outline-none peer text-[var(--cor-primaria)] placeholder:text-[#15171B87]"
-              {...register('objetivo', { required: 'Objetivo obrigatório', minLength: 3 })}
+              {...register('objetivo', { required: 'Campo Obrigatório', minLength: 3 })}
               isError={!!errors.objetivo} errorMessage={errors.objetivo?.message}
             />
 
             <Label id="frequencia" nomeLabel="Frequência semanal" />
-            <select {...register("frequencia", { required: 'Obrigatório' })}
+            <select {...register("frequencia", { required: 'Campo Obrigatório' })}
               className="border-b-2 border-[var(--cor-primaria)] outline-none">
               <option value="" disabled={true}>Selecione</option>
               {[1, 2, 3, 4, 5, 6, 7].map((dia) => (
                 <option key={dia} value={dia}>{dia}</option>
               ))}
             </select>
-            {errors.frequencia && <p className="text-red-500 text-sm">{errors.frequencia.message}</p>}
+            {errors.frequencia && (
+              <div className="flex gap-2 items-center">
+                <img
+                  src={info2}
+                  alt="Erro"
+                  className="w-4 h-4"
+                />
+                <p className="text-red-500">{errors.frequencia.message}</p>
+              </div>
+            )}
 
             <Label id="nivelAtividade" nomeLabel="Nível de atividade atual" />
-            <select {...register("nivelAtividade", { required: 'Obrigatório' })}
+            <select {...register("nivelAtividade", { required: 'Campo Obrigatório' })}
               className="border-b-2 border-[var(--cor-primaria)] outline-none">
               <option value="" disabled={true}>Selecione</option>
               <option value="SEDENTARIO">Sedentário</option>
@@ -108,17 +137,36 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
               <option value="MUITO_ATIVO">Muito Ativo</option>
               <option value="EXTREMAMENTE_ATIVO">Extremamente Ativo</option>
             </select>
-            {errors.nivelAtividade && <p className="text-red-500 text-sm">{errors.nivelAtividade.message}</p>}
+            {errors.nivelAtividade && (
+              <div className="flex gap-2 items-center">
+                <img
+                  src={info2}
+                  alt="Erro"
+                  className="w-4 h-4"
+                />
+                <p className="text-red-500">{errors.nivelAtividade.message}</p>
+              </div>
+            )}
 
             <Label id="nivelExperiencia" nomeLabel="Nível de experiência atual" />
-            <select {...register("nivelExperiencia", { required: 'Obrigatório' })}
+            <select {...register("nivelExperiencia", { required: 'Campo Obrigatório' })}
               className="border-b-2 border-[var(--cor-primaria)] outline-none">
               <option value="" disabled={true}>Selecione</option>
               <option value="INICIANTE">Iniciante</option>
               <option value="INTERMEDIARIO">Intermediário</option>
               <option value="AVANCADO">Avançado</option>
             </select>
-            {errors.nivelExperiencia && <p className="text-red-500 text-sm">{errors.nivelExperiencia.message}</p>}
+
+            {errors.nivelExperiencia && (
+              <div className="flex gap-2 items-center">
+                <img
+                  src={info2}
+                  alt="Erro"
+                  className="w-4 h-4"
+                />
+                <p className="text-red-500">{errors.nivelExperiencia.message}</p>
+              </div>
+            )}
           </div>
 
           {/* Perguntas com radios */}
@@ -132,24 +180,45 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
                   <label className="text-[18px] font-medium mb-2" htmlFor={pergunta.id}>{pergunta.label}</label>
                   <div className="flex gap-6">
                     <label className="flex items-center gap-2">
-                      <input type="radio" value="true" {...register(pergunta.id, { required: 'Campo obrigatório' })} />
+                      <input type="radio" value="true" {...register(pergunta.id, { required: 'Campo Obrigatório' })} />
                       Sim
                     </label>
                     <label className="flex items-center gap-2">
-                      <input type="radio" value="false" {...register(pergunta.id, { required: 'Campo obrigatório' })} />
+                      <input type="radio" value="false" {...register(pergunta.id, { required: 'Campo Obrigatório' })} />
                       Não
                     </label>
                   </div>
+
                   {errors[pergunta.id] && (
-                    <span className="text-[#D45C56] text-sm mt-1">{errors[pergunta.id]?.message}</span>
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={info2}
+                        alt="Erro"
+                        className="w-4 h-4"
+                      />
+                      <span className="text-[#D45C56] mt-1">{errors[pergunta.id]?.message}</span>
+                    </div>
                   )}
                   {pergunta.placeholder && respostaSelecionada && (
                     <input
                       type="text"
                       placeholder={pergunta.placeholder}
                       className="mt-3 p-2 border-b-2 outline-none"
-                      {...register(`${pergunta.id}Descricao`, { required: false })}
+                      {...register(`${pergunta.id}Descricao`, {
+                        validate: (value) =>
+                          respostaSelecionada ? (value?.trim() ? true : 'Campo obrigatório') : true
+                      })}
                     />
+                  )}
+                  {errors[`${pergunta.id}Descricao`] && (
+                    <div className="flex gap-2 items-center">
+                      <img
+                        src={info2}
+                        alt="Erro"
+                        className="w-4 h-4"
+                      />
+                      <span className="text-[#D45C56] mt-1">{errors[`${pergunta.id}Descricao`]?.message}</span>
+                    </div>
                   )}
                 </div>
               )
@@ -158,7 +227,7 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
         </div>
 
         {/* Botões fixos no fim */}
-        <div className="flex justify-center gap-4 bg-white pt-4 pb-6 sticky bottom-0 z-20 shadow-[0_-2px_10px_-2px_rgba(0,0,0,0.1)]">
+        <div className="flex justify-center gap-4 bg-[var(--cor-secundaria)] pt-4 pb-6 sticky bottom-0 z-20 ">
           <ButtonInterno
             texto="Cancelar"
             corTexto="#B41F1F"
@@ -167,8 +236,9 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
             width="13.25rem"
             corHover="#1D2D4417"
             fontWeight="500"
-            aria-label={"Botão de Cancelar"}
-            onClick={() => setModalConfirmarCancelarVisivel(true)}
+            aria-label="Botão de Cancelar"
+            type="button"
+            onClick={() => onCancelar(true)}
           />
           <ButtonInterno
             texto="Salvar"
@@ -181,8 +251,8 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
             aria-label={"Botão de Salvar"}
           />
         </div>
-      </form>
-    </div>
+      </form >
+    </div >
   );
 };
 

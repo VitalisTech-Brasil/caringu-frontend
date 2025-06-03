@@ -18,7 +18,8 @@ import MenuFiltro from "../../components/Utils/MenuFiltro";
 
 import { caringuApi } from "../../provider/caringuApi";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
-import FormularioAnamnese from "./AnamneseForm";
+import FormularioAnamnese from "./FormularioAnamnese";
+import toast, { Toaster } from "react-hot-toast";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,31 +56,6 @@ const GerenciarAlunos = () => {
   };
 
   const rect = buttonRefFilter.current?.getBoundingClientRect();
-
-  const {
-    register1,
-    handleSubmit1,
-    setValue1,
-    reset,
-    watch,
-    formState: { errors1 }
-  } = useForm({
-    defaultValues: {
-      fumante: '',
-      dorArticulacao: '',
-      dorArticulacaoDescricao: '',
-      lesao: '',
-      lesaoDescricao: '',
-      experienciaMusculacao: '',
-      experienciaMusculacaoDescricao: '',
-      pinosPlacasProteses: '',
-      pinosPlacasProtesesDescricao: '',
-      doencaMetabolica: '',
-      doencaMetabolicaDescricao: '',
-      deficiencia: '',
-      deficienciaDescricao: ''
-    }
-  });
 
   const now = new Date();
 
@@ -170,33 +146,45 @@ const GerenciarAlunos = () => {
 
   // Componente do menu de ações do aluno
   const AlunoActionsMenu = ({ aluno }) => (
-    <div className="flex flex-col text-sm font-medium min-w-[160px]">
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => handleOpenModal(aluno)}>
-        Anamnese
+    <div className="flex flex-col text-sm font-medium min-w-[160px] max-w-[220px] w-full">
+      <button
+        className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
+        onClick={() => handleOpenModal(aluno)}
+      >
+        <span className="truncate">
+          {aluno.idAnamnese ? 'Editar Anamnese' : 'Criar Anamnese'}
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M21 22H3C2.59 22 2.25 21.66 2.25 21.25C2.25 20.84 2.59 20.5 3 20.5H21C21.41 20.5 21.75 20.84 21.75 21.25C21.75 21.66 21.41 22 21 22Z" fill="#738CAB" />
           <path d="M19.0201 3.47967C17.0801 1.53967 15.1801 1.48967 13.1901 3.47967L11.9801 4.68967C11.8801 4.78967 11.8401 4.94967 11.8801 5.08967C12.6401 7.73967 14.7601 9.85967 17.4101 10.6197C17.4501 10.6297 17.4901 10.6397 17.5301 10.6397C17.6401 10.6397 17.7401 10.5997 17.8201 10.5197L19.0201 9.30967C20.0101 8.32967 20.4901 7.37967 20.4901 6.41967C20.5001 5.42967 20.0201 4.46967 19.0201 3.47967Z" fill="#738CAB" />
           <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
         </svg>
       </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => redirectToRelatorio(aluno.idAluno)}>
-        Ver relatórios
+      <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => redirectToRelatorio(aluno.idAluno)}>
+        <span className="truncate">
+          Ver relatórios
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M16.5 9.5L12.3 13.7L10.7 11.3L7.5 14.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M14.5 9.5H16.5V11.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer " onClick={() => navigate(`/criar-treino`)}>
-        Cadastrar treino
+      {/* <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer " onClick={() => navigate(`/criar-treino`)}>
+
+        <span className="truncate">
+          Cadastrar treino
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M8 12H16" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M12 16V8" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.idAluno}`)}>
-        Progressão corporal
+      </button> */}
+      <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.idAluno}`)}>
+        <span className="truncate">
+          Progressão corporal
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M2.77017 18.25C2.89017 20.31 4.00017 22 6.76017 22H17.2402C20.0002 22 21.1002 20.31 21.2302 18.25L21.7502 9.99C21.8902 7.83 20.1702 6 18.0002 6C17.3902 6 16.8302 5.65 16.5502 5.11L15.8302 3.66C15.3702 2.75 14.1702 2 13.1502 2H10.8602C9.83017 2 8.63017 2.75 8.17017 3.66L7.45017 5.11C7.17017 5.65 6.61017 6 6.00017 6C3.83017 6 2.11017 7.83 2.25017 9.99L2.51017 14.06" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M10.5002 8H13.5002" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -481,22 +469,98 @@ const GerenciarAlunos = () => {
                           <div className="flex justify-between items-center pb-4 mb-4">
                             <div>
                               <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">Anamnese</h1>
-                              <p className="mt-2">{alunoAtual.nomeAluno}</p>
+                              <div className="flex gap-3 mt-2">
+                                <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M9.58984 11C12.3513 11 14.5898 8.76142 14.5898 6C14.5898 3.23858 12.3513 1 9.58984 1C6.82842 1 4.58984 3.23858 4.58984 6C4.58984 8.76142 6.82842 11 9.58984 11Z" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                  <path d="M18.18 21C18.18 17.13 14.33 14 9.59 14C4.85 14 1 17.13 1 21" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                <p>{alunoAtual.nomeAluno}</p>
+                              </div>
                             </div>
-                            <button onClick={() => setShowCreateModal(false)} className="text-xl">✕</button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setModalConfirmarCancelarVisivel(true)
+                              }}
+                              className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
+                            >
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                  fillRule="evenodd"
+                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                            </button>
                           </div>
 
                           <FormularioAnamnese
                             aluno={alunoAtual}
                             respostasBack={respostasBack}
-                            onSubmit={(data) => console.log("Salvar anamnese:", data)}
-                            onCancelar={() => setShowCreateModal(false)}
+                            onSubmit={async (data) => {
+                              try {
+                                const alunoId = alunoAtual.idAluno;
+                                const idAnamnese = alunoAtual.idAnamnese;
+
+                                // 1. Separa os campos físicos
+                                const dadosFisicos = {
+                                  peso: parseFloat(data.peso),
+                                  altura: parseFloat(data.altura),
+                                  nivelAtividade: data.nivelAtividade,
+                                  nivelExperiencia: data.nivelExperiencia
+                                };
+
+                                // 2. Separa os campos da anamnese
+                                const dadosAnamnese = {
+                                  objetivoTreino: data.objetivo,
+                                  frequenciaTreino: data.frequencia,
+                                  fumante: data.fumante === 'true',
+                                  desconforto: data.desconforto === 'true',
+                                  desconfortoDescricao: data.desconfortoDescricao || null,
+                                  lesao: data.lesao === 'true',
+                                  lesaoDescricao: data.lesaoDescricao || null,
+                                  experiencia: data.experiencia === 'true',
+                                  experienciaDescricao: data.experienciaDescricao || null,
+                                  proteses: data.proteses === 'true',
+                                  protesesDescricao: data.protesesDescricao || null,
+                                  doencaMetabolica: data.doencaMetabolica === 'true',
+                                  doencaMetabolicaDescricao: data.doencaMetabolicaDescricao || null,
+                                  deficiencia: data.deficiencia === 'true',
+                                  deficienciaDescricao: data.deficienciaDescricao || null
+                                };
+
+                                // 3. Atualiza dados físicos do aluno (sempre)
+                                await caringuApi.patch(`/alunos/${alunoId}/dados-fisicos`, dadosFisicos);
+
+                                // 4. Criação ou edição da anamnese
+                                if (idAnamnese) {
+                                  // Edição
+                                  await caringuApi.patch(`/anamnese/${idAnamnese}`, dadosAnamnese);
+                                  toast.success("Anamnese atualizada com sucesso!");
+                                  window.location.reload(true);
+                                } else {
+                                  // Criação
+                                  await caringuApi.post(`/anamnese`, { alunoId, ...dadosAnamnese });
+                                  toast.success("Anamnese criada com sucesso!");
+                                  window.location.reload(true);
+                                }
+
+                                setShowCreateModal(false);
+
+                              } catch (error) {
+                                console.error("Erro ao salvar anamnese:", error);
+                                toast.error("Erro ao salvar anamnese. Tente novamente.");
+                              }
+                            }}
+                            onCancelar={() => setModalConfirmarCancelarVisivel(true)}
                           />
-                          
+
                         </div>
                       </div>
                     </div>
                   )}
+
+                  <Toaster position="top-right" reverseOrder={false} />
                   <Modal
                     visivel={modalDeletarVisivel}
                     fecharModal={() => setModalDeletarVisivel(false)}
