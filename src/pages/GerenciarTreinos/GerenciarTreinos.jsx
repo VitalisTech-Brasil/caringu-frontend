@@ -240,6 +240,8 @@ const GerenciarTreinos = () => {
 
         useEffect(() => {
 
+            document.title = "Gerenciar Treinos | CaringU"
+
             const updateStyles = () => {
                 const screenWidth = window.innerWidth;
 

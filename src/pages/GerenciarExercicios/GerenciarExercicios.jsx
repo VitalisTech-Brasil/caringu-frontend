@@ -197,6 +197,8 @@ const GerenciarExercicios = () => {
 
         useEffect(() => {
 
+            document.title = "Gerenciar Exercícios | CaringU"
+
             const updateStyles = () => {
                 const screenWidth = window.innerWidth;
 
