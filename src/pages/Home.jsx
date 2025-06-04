@@ -26,9 +26,10 @@ const Home = () => {
 
 
   const navigate = useNavigate();
+  const personalId = sessionStorage.getItem('pessoaId');
+
 
   useEffect(() => {
-    const personalId = sessionStorage.getItem('pessoaId');
 
     const fetchData = async () => {
       try {
@@ -44,9 +45,6 @@ const Home = () => {
         const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
         setAnamnesesPendentes(totalAnamnesePendentes.data);
 
-        const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
-        setTreinosFinalizados(treinosFinalizadosResponse.data);
-        console.log("Treinos finalizados:", treinosFinalizadosResponse.data);
 
       } catch (error) {
         console.error("Erro ao carrefae as informações da kpi e agenda:", error);
@@ -54,7 +52,19 @@ const Home = () => {
     };
 
     fetchData();
+    fetchTreinosFinalizados();
   }, []);
+
+
+  const fetchTreinosFinalizados = async () => {
+    try {
+      const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
+      setTreinosFinalizados(treinosFinalizadosResponse.data);
+      console.log("Treinos finalizados:", treinosFinalizadosResponse.data);
+    } catch (error) {
+      console.error("Erro ao buscar treinos finalizados:", error);
+    }
+  }
 
   function formatarHora(isoString) {
     const data = new Date(isoString);
@@ -68,13 +78,21 @@ const Home = () => {
 
   const compromissos = treinosFinalizados.map(item => ({
     id: item.id,
-    horario: `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`,
+    horario: item.dataHorarioFim
+      ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
+      : `${formatarHora(item.dataHorarioInicio)}`,
     data: formatarData(item.dataHorarioInicio),
     aluno: {
       nome: item.nomeAluno,
       foto: item.urlFotoPerfil,
     },
     finalizado: item.finalizado,
+
+    dataHorarioFim: item.dataHorarioFim,
+    dataHorarioInicio: item.dataHorarioInicio,
+    nomeAluno: item.nomeAluno,
+    urlFotoPerfil: item.urlFotoPerfil,
+    idAluno: item.idAluno
   }));
 
   // Define o dia atual como padrão ao carregar a página
@@ -223,6 +241,7 @@ const Home = () => {
               <CompromissosHoje
                 compromissos={compromissos}
                 selectedDay={selectedDay}
+                listarTreinosFinalizados={fetchTreinosFinalizados}
               />
             </div>
             <div className="2xl:w-[50%] w-full">

@@ -1,6 +1,7 @@
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import { caringuApi } from "../../provider/caringuApi";
+import { format } from "date-fns";
 
 const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
 
@@ -13,14 +14,17 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         }));
     };
 
+    const  treinoFim =  format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");;    
+
     const marcarComoConcluido = async (idTreinoFinalizado) => {
         try {
             await caringuApi.patch(
                 `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
                 {
-                    dataHorarioFim: new Date().toISOString()
+                    dataHorarioFim: treinoFim,
                 }
             );
+
             if (atualizarTreinos) atualizarTreinos();
         } catch (error) {
             console.error("Erro ao marcar compromisso como concluído:", error);
