@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Label from "../../components/Utils/Label";
+import Label from "../Label";
 import InputAnamnese from "./InputAnamnese";
-import ButtonInterno from "../../components/Utils/Button";
-import info2 from '../../assets/images/info-2.svg';
+import ButtonInterno from "../Button";
+import info2 from '../../../assets/images/info-2.svg';
 
 const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
 

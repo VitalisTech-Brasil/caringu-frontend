@@ -10,15 +10,11 @@ import Modal from "../../components/Utils/Modal";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import { useForm } from "react-hook-form";
-import Label from "../../components/Utils/Label";
-import InputPosLogin from "../../components/Utils/InputPosLogin";
-import ButtonInterno from "../../components/Utils/Button";
-
 import MenuFiltro from "../../components/Utils/MenuFiltro";
 
 import { caringuApi } from "../../provider/caringuApi";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
-import FormularioAnamnese from "./FormularioAnamnese";
+import FormularioAnamnese from "../../components/Utils/GerenciarAlunos/FormularioAnamnese";
 import toast, { Toaster } from "react-hot-toast";
 
 const GerenciarAlunos = () => {

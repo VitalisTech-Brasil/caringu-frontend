@@ -1,5 +1,5 @@
 import React from "react";
-import info2 from '../../assets/images/info-2.svg';
+import info2 from '../../../assets/images/info-2.svg';
 
 const InputAnamnese = ({
   id,
