@@ -14,7 +14,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         }));
     };
 
-    const  treinoFim =  format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");;    
+    const  treinoFim =  format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");  
 
     const marcarComoConcluido = async (idTreinoFinalizado) => {
         try {

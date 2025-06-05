@@ -60,7 +60,6 @@ const Home = () => {
     try {
       const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
       setTreinosFinalizados(treinosFinalizadosResponse.data);
-      console.log("Treinos finalizados:", treinosFinalizadosResponse.data);
     } catch (error) {
       console.error("Erro ao buscar treinos finalizados:", error);
     }
