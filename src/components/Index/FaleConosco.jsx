@@ -50,7 +50,7 @@ const FaleConosco = () => {
     };
 
     return (
-        <section id="fale" className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
+        <section id="fale" className="mb-10 h-160 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-start">
             <h1 className="text-[48px] font-bold max-[1000px]:text-[40px] max-[850px]:text-[38px] max-[700px]:text-[30px] max-[500px]:text-[26px] max-[420px]:text-[24px] max-[800px]:w-[650px] max-[700px]:w-[500px] max-[500px]:w-[400px] max-[420px]:w-[350px]">
                 Conecte-se, treine e evolua com a CaringU!
             </h1>
