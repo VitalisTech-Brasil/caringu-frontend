@@ -11,7 +11,7 @@ import Button from "../components/Utils/Button";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FaleConosco from "../components/Index/FaleConosco";
-import MenuLateral from "../components/Index/MenuLateralIndex";
+import MenuLateralIndex from "../components/Index/MenuLateralIndex";
 
 import logoLaranjaCaringu from '../assets/logos/caringu-logo-branco-fundo-laranja.svg';
 import githubLogo from '../assets/logos/github-logo.svg';
@@ -34,13 +34,13 @@ export default function HomePage() {
   };
   return (
     <>
-      {/* Menu Lateral visível apenas em telas menores que 800px */}
-      <MenuLateral />
+      {/* Menu Lateral visível apenas em telas menores que 800px  */}
+      <MenuLateralIndex />
 
       {/* Header principal (desktop) */}
-      <header className="absolute top-0 left-0 z-11 w-full h-[80px] flex items-center justify-between text-white px-8 pl-20 pr-20">
+      <header className="max-[800px]:fixed min-[800px]:absolute top-0 left-0 z-11 w-full h-[80px] flex items-center bg-[#000001] justify-between text-white px-8 pl-20 pr-20">
         {/* Menu de navegação — some abaixo de 800px */}
-        <nav className="hidden min-[800px]:flex gap-8 m-4 justify-center items-center bg-[#15171B] h-16 w-[400px] rounded-[6px]
+        <nav className="hidden min-[800px]:flex gap-8 m-4 justify-center items-center h-16 w-[400px] rounded-[6px]
                         max-[1050px]:gap-4 max-[1050px]:w-[320px] max-[1050px]:text-[12px] max-[1050px]:h-[48px] max-[900px]:w-[300px] max-[900px]:text-[10px] 
                         max-[900px]:gap-2">
           <a className="hover:underline font-bold text-[14px] cursor-pointer transition-all max-[1050px]:text-[12px]"
@@ -160,7 +160,7 @@ export default function HomePage() {
           <h1 className="text-[48px] font-bold max-[850px]:text-[40px] max-[580px]:text-[32px]">
             Nossas soluções
           </h1>
-          <p className="text-[24px] text-center max-w-4xl max-[850px]:text-[20px] max-[850px]:w-[650px] max-[680px]:text-[18px] max-[680px]:w-[550px] max-[580px]:text-[16px] max-[580px]:w-[430px] max-[400px]:text-[16px] max-[400px]:w-[280px]">As soluções implementadas na CaringU foram construídas sob medida para auxiliar os Personal Trainers em suas dores do dia a dia.</p>
+          <p className="text-center max-w-4xl text-base lg:text-[24px] md:text-[20px] max-[850px]:w-[650px]  max-[680px]:w-[550px] max-[580px]:w-[430px]  max-[400px]:w-[280px]">As soluções implementadas na CaringU foram construídas sob medida para auxiliar os Personal Trainers em suas dores do dia a dia.</p>
         </div>
         <div className="w-full h-1/3 flex justify-center items-center">
           <Carrossel />
@@ -174,40 +174,43 @@ export default function HomePage() {
           <PerguntasFrequentes />
         </div>
       </section>
-      <FaleConosco/>
-      <footer className="h-[350px] w-full bg-[var(--azul-escuro)] px-20 flex items-center justify-center flex-col">
-        <div className="flex items-center">
-          <div className="flex flex-col items-start justify-center h-full w-[1500px] gap-5
-      max-[1700px]:w-[1200px] max-[1500px]:w-[1000px] max-[1400px]:w-[900px] max-[1200px]:w-[750px] max-[1000px]:w-[650px] max-[800px]:w-[600px]  max-[700px]:w-[400px] max-[550px]:w-[300px] max-[400px]:w-[275px]">
-            <img src={logoLaranjaCaringu} alt="Logo CaringU" className="h-[90px] w-[350px]
-        max-[1700px]:h-[70px] max-[1700px]:w-[250px] max-[1400px]:h-[60px] max-[1400px]:w-[180px] max-[1000px]:h-[40px] max-[1000px]:w-[120px]" />
-            <div className="w-[500px] max-[1700px]:w-[350px] max-[1500px]:w-[250px] max-[1400px]:w-[250px] max-[1000px]:w-[200px]">
-              <h1 className="text-white text-[20px] font-bold max-[1700px]:text-[18px] max-[1400px]:text-[16px] max-[1000px]:text-[14px]">Transforme seu treino com mais facilidade</h1>
-              <p className="text-white text-[14px] max-[1700px]:text-[12px]">
+      <FaleConosco />
+      <footer className="h-auto py-8 lg:px-20 px-12 w-full bg-[var(--azul-escuro)] flex items-center justify-center flex-col">
+        <div className="flex items-center md:flex-row flex-col w-full gap-10 md:gap-0 justify-between">
+          <div className="lg:w-[80%] md:w-[65%] w-full">
+            <div>
+              <img src={logoLaranjaCaringu} alt="Logo CaringU" className="w-[200px] lg:h-[90px] lg:w-[350px]" />
+            </div>
+            <div className="flex flex-col gap-2 mt-4 ">
+              <h1 className="text-white text-xl font-bold w-full md:w-90 lg:w-138 ">Transforme seu treino com mais facilidade</h1>
+              <p className="text-white text-base w-full md:w-90 lg:w-138">
                 Elevamos sua experiência fitness, conectando você ao personal ideal para seus objetivos, tornando sua jornada mais eficiente e motivadora.
               </p>
             </div>
           </div>
-          <div className="flex flex-col items-start justify-center h-full w-[150px] gap-3 mr-20  max-[1400px]:gap-1.5 max-[1400px]:mr-10
-      max-[1700px]:w-[120px] max-[1400px]:w-[90px] max-[1000px]:w-[70px] max-[1000px]:mr-4" id="navegacao">
-            <h1 className="text-white text-[20px] font-bold max-[1700px]:text-[16px] max-[1400px]:text-[14px] max-[1000px]:text-[12px]">
-              Navegação
-            </h1>
-            <a onClick={() => scrollToSection('home')}>Home</a>
-            <a onClick={() => scrollToSection('sobre')}>Sobre nós</a>
-            <a onClick={() => scrollToSection('servicos')}>Serviços</a>
-            <a onClick={() => scrollToSection('fale')}>Fale conosco</a>
-            <Link to="/login" >Entrar</Link>
-            <Link to="/cadastro">Inscreva-se</Link>
-          </div>
-          <div className="flex flex-col items-start justify-center h-full w-[40px] gap-5
-      max-[1700px]:w-[32px] max-[1400px]:w-[28px] max-[1000px]:w-[20px] max-[500px]:hidden">
-            <img src={githubLogo} alt="Logo Github" className="h-[30px] w-[30px] max-[1700px]:h-[24px] max-[1700px]:w-[24px] max-[1400px]:h-[20px] max-[1400px]:w-[20px] max-[1000px]:h-[16px] max-[1000px]:w-[16px] cursor-pointer transition-all hover:scale-110" />
-            <img src={linkedinLogo} alt="Logo Linkedin" className="h-[30px] w-[30px] max-[1700px]:h-[24px] max-[1700px]:w-[24px] max-[1400px]:h-[20px] max-[1400px]:w-[20px] max-[1000px]:h-[16px] max-[1000px]:w-[16px] cursor-pointer transition-all hover:scale-110" />
-            <img src={instaLogo} alt="Logo Instagram" className="h-[30px] w-[30px] max-[1700px]:h-[24px] max-[1700px]:w-[24px] max-[1400px]:h-[20px] max-[1400px]:w-[20px] max-[1000px]:h-[16px] max-[1000px]:w-[16px] cursor-pointer transition-all hover:scale-110" />
+          <div className="flex flex-row items-center md:gap-0 gap-20  md:justify-between lg:w-[20%] md:w-[35%] w-full h-full ">
+            <div className="flex flex-col gap-3">
+              <h1 className="text-white text-xl font-bold ">
+                Navegação
+              </h1>
+              <div className="flex flex-col items-start justify-center text-base gap-3">
+                <a onClick={() => scrollToSection('home')}>Home</a>
+                <a onClick={() => scrollToSection('sobre')}>Sobre nós</a>
+                <a onClick={() => scrollToSection('servicos')}>Serviços</a>
+                <a onClick={() => scrollToSection('fale')}>Fale conosco</a>
+                <Link to="/login" >Entrar</Link>
+                <Link to="/cadastro">Inscreva-se</Link>
+              </div>
+            </div>
+            <div className="flex flex-col items-start  gap-5">
+              <img src={githubLogo} alt="Logo Github" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110 flex-shrink-0" />
+              <img src={linkedinLogo} alt="Logo Linkedin" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+              <img src={instaLogo} alt="Logo Instagram" className="h-[30px] w-[30px] cursor-pointer transition-all hover:scale-110" />
+            </div>
           </div>
         </div>
-        <p className="text-white text-[14px] mt-3 max-[1700px]:text-[12px] max-[1400px]:text-[10px] max-[1000px]:text-[9px]">Copyright © CaringU. All Rights Reserved.</p>
+        <p className="text-white text-base mt-3 ">Copyright © CaringU. All Rights Reserved.</p>
+
       </footer>
     </>
   );

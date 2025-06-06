@@ -46,7 +46,8 @@ export default function PerguntasFrequentes() {
     }, [openIndex]);
 
   return (
-    <div className="mx-80 px-4 py-10 max-[1350px]:w-[830px] max-[900px]:w-[630px] max-[700px]:w-[430px] max-[550px]:w-[330px]">
+    <div className="max-[1350px]:mx-0 px-4 py-10 mx-80
+     max-[1350px]:w-[830px] max-[900px]:w-[630px] max-[700px]:w-[430px] max-[550px]:w-[330px]">
         {faqs.map((faq, index) => (
             <div
                 key={index}
