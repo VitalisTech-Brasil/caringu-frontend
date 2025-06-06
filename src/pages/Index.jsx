@@ -11,7 +11,7 @@ import Button from "../components/Utils/Button";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FaleConosco from "../components/Index/FaleConosco";
-import MenuLateral from "../components/Index/MenuLateralIndex";
+import MenuLateralIndex from "../components/Index/MenuLateralIndex";
 
 import logoLaranjaCaringu from '../assets/logos/caringu-logo-branco-fundo-laranja.svg';
 import githubLogo from '../assets/logos/github-logo.svg';
@@ -35,7 +35,7 @@ export default function HomePage() {
   return (
     <>
       {/* Menu Lateral visível apenas em telas menores que 800px  */}
-      <MenuLateral />
+      <MenuLateralIndex />
 
       {/* Header principal (desktop) */}
       <header className="max-[800px]:fixed min-[800px]:absolute top-0 left-0 z-11 w-full h-[80px] flex items-center bg-[#000001] justify-between text-white px-8 pl-20 pr-20">

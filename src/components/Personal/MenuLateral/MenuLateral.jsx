@@ -9,7 +9,7 @@ import logo from "../../../assets/logos/caringu-logo-light.svg";
 
 
 
-const MenuLateral = () => {
+const MenuLateralIndex = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const navigate = useNavigate();
@@ -378,4 +378,4 @@ const MenuLateral = () => {
   );
 };
 
-export default MenuLateral;
+export default MenuLateralIndex;
