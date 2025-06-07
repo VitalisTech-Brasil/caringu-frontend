@@ -5,15 +5,21 @@ import ButtonInterno from '../../components/Utils/Button'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Popover, Button } from "flowbite-react";
-import { HiOutlineFilter } from "react-icons/hi";
+import MenuFiltro from '../../components/Utils/MenuFiltro'
+import { caringuApi } from '../../provider/caringuApi'
 
 const RelatorioTreinos = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+
     const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
+    const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
+    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
+    const [treinos, setTreinos] = useState([]);
+
     const params = useParams();
     const navigate = useNavigate();
+    const idAluno = params.id;
 
 
     const toggleSidebar = () => {
@@ -25,76 +31,61 @@ const RelatorioTreinos = () => {
         // pegarExercicios(params.id)
     }, [])
 
-    // const pegarExercicios = async (id) => {
-    //     try {
-    //         const response = await caringuApi.get(`/treinos/${id}`, {
-    //             headers: {
-    //                 'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`,
-    //             },
-    //         });
 
-    //         if (response.status === 200) {
-    //             console.log('Treinos obtidos com sucesso:', response.data);
-    //             // Aqui você pode atualizar o estado com os treinos recebidos
-    //             // Exemplo: setTreinos(response.data);
-    //         } else {
-    //             throw new Error('Erro ao obter os treinos.');
-    //         }
-    //     } catch (error) {
-    //         console.error('Erro ao buscar os treinos:', error);
-    //         toast.custom((t) => (
-    //             <CustomToast t={t} type="error" message="Erro ao buscar os treinos. Tente novamente mais tarde." />
-    //         ));
-    //     }
-    // };
+    useEffect(() => {
+        const relatoriosTreinosAluno = async () => {
+            try {
+                const response = await caringuApi.get(`/treinos-exercicios/aluno/${idAluno}`);
+                console.log('Treinos obtidos com sucesso:', response.data);
+                setTreinos(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar os treinos:', error);
+            }
+        }
+        relatoriosTreinosAluno();
+    }, []);
 
-    const treinos = [
-        {
-            id: 1,
-            nome: "Treino de Braços",
-            quantidadeExercicios: 8,
-        },
-        {
-            id: 2,
-            nome: "Treino de Pernas",
-            quantidadeExercicios: 10,
-        },
-        {
-            id: 3,
-            nome: "Treino de Peito",
-            quantidadeExercicios: 6,
-        },
-        {
-            id: 4,
-            nome: "Treino de Costas",
-            quantidadeExercicios: 7,
-        },
-        {
-            id: 5,
-            nome: "Treino de Ombros",
-            quantidadeExercicios: 5,
-        },
-        {
-            id: 6,
-            nome: "Treino de Abdômen",
-            quantidadeExercicios: 6,
-        },
-    ];
+    function formatarDificuldade(valor) {
+        switch (valor) {
+            case "INICIANTE":
+                return "Iniciante";
+            case "INTERMEDIARIO":
+                return "Intermediário";
+            case "AVANCADO":
+                return "Avançado";
+            default:
+                return valor;
+        }
+    }
+
+
+
+
+    const handleGrupoMuscularSelect = (value) => {
+        setGrupoMuscularSelecionado(value);
+        setGrupoMuscularFilter(value);
+    };
+
 
     const filteredTreinos = treinos
         .filter((treino) => {
-            if (searchTerm && !treino.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
+            if (searchTerm && !treino.nomeTreino.toLowerCase().includes(searchTerm.toLowerCase())) {
                 return false;
             }
+            if (difficultyFilter && treino.grauDificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
+                return false;
+            }
+
+
             return true;
         })
         .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
-            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nomeTreino);
+            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nomeTreino);
             return 0;
         });
 
-    const idAluno = params.id;
+
     const irParaDash = (idTreino) => {
         navigate(`/dashboard/${idAluno}/${idTreino}`);
     }
@@ -105,7 +96,7 @@ const RelatorioTreinos = () => {
             <div className="flex-1 flex flex-col">
                 <Header toggleSidebar={toggleSidebar} />
                 <main className="p-4 md:p-8 space-y-8 flex flex-col">
-                    <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2]">
+                    <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border-2 border-[#E6E6E2]">
                         <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5">
                             <Link to="/gerenciar-alunos">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
@@ -119,45 +110,121 @@ const RelatorioTreinos = () => {
                             <input
                                 type="text"
                                 placeholder="Pesquisar treino"
-                                className="flex-1 border border-gray-300 rounded-md p-2"
+                                className="flex-1 border-2 border-gray-300 rounded-md p-2"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <Popover
-                                placement="bottom"
-                                trigger="click"
-                                content={
-                                    <div className="p-4 space-y-4 ">
-                                        <div className="flex gap-2">
-                                            <Button
-                                                color={sortOrder === "A-Z" ? "blue" : "gray"}
-                                                onClick={() =>
-                                                    setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z"))
-                                                }
+                            <MenuFiltro
+                                menuWidth="300px"
+                                buttonIcon={
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="text-xl cursor-pointer w-6"
+                                        viewBox="0 0 35 35"
+                                        fill="none"
+                                    >
+                                        <path
+                                            d="M7.87504 3.0625H27.125C28.7292 3.0625 30.0417 4.375 30.0417 5.97917V9.1875C30.0417 10.3542 29.3125 11.8125 28.5834 12.5417L22.3125 18.0833C21.4375 18.8125 20.8542 20.2708 20.8542 21.4375V27.7083C20.8542 28.5833 20.2709 29.75 19.5417 30.1875L17.5 31.5C15.6042 32.6667 12.9792 31.3542 12.9792 29.0208V21.2917C12.9792 20.2708 12.3959 18.9583 11.8125 18.2292L6.27087 12.3958C5.54171 11.6667 4.95837 10.3542 4.95837 9.47917V6.125C4.95837 4.375 6.27087 3.0625 7.87504 3.0625Z"
+                                            stroke="#1D2D44"
+                                            strokeWidth="3"
+                                            strokeMiterlimit="10"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                        <path
+                                            d="M15.9396 3.0625L8.75 14.5833"
+                                            stroke="#1D2D44"
+                                            strokeWidth="3"
+                                            strokeMiterlimit="10"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                    </svg>}
+                                options={[
+                                    {
+                                        id: "az",
+                                        label: "A-Z",
+                                        width: '50%',
+                                        active: sortOrder === "A-Z",
+                                        onClick: () => setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z")),
+                                    },
+                                    {
+                                        id: "za",
+                                        label: "Z-A",
+                                        width: '50%',
+                                        active: sortOrder === "Z-A",
+                                        onClick: () => setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A")),
+                                    },
+
+                                    // 🎯 Dificuldade
+                                    {
+                                        id: "INICIANTE",
+                                        label: "Dificuldade: INICIANTE",
+                                        active: difficultyFilter === "INICIANTE",
+                                        className: "flex items-center justify-start gap-2 p-2",
+                                        icon: (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className={`w-7 ${difficultyFilter === "INICIANTE" ? "stroke-white" : "stroke-[#748CAB]"}`}
+                                                viewBox="0 0 31 31"
+                                                fill="none"
                                             >
-                                                A-Z
-                                            </Button>
-                                            <Button
-                                                color={sortOrder === "Z-A" ? "blue" : "gray"}
-                                                onClick={() =>
-                                                    setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A"))
-                                                }
-                                            >
-                                                Z-A
-                                            </Button>
-                                        </div>
-                                    </div>
-                                }
-                            >
-                                <button className="p-2 bg-gray-200 rounded-md">
-                                    <HiOutlineFilter className="w-5 h-5 text-gray-600" />
-                                </button>
-                            </Popover>
+                                                <path
+                                                    d="M6.6521 2.58325V28.4166"
+                                                    strokeWidth="2.5"
+                                                    strokeMiterlimit="10"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                                <path
+                                                    d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521"
+                                                    strokeWidth="2.5"
+                                                    strokeMiterlimit="10"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+                                        ),
+                                        onClick: () => setDifficultyFilter(prev => (prev === "INICIANTE" ? null : "INICIANTE")),
+                                    },
+                                    {
+                                        id: "intermediario",
+                                        label: "Dificuldade: INTERMEDIARIO",
+                                        active: difficultyFilter === "INTERMEDIARIO",
+                                        className: "flex items-center justify-start gap-2 p-2",
+                                        icon: (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "INTERMEDIARIO" ? "stroke-white" : "stroke-[#E8CD00]"}`
+                                            } viewBox="0 0 31 31" fill="none">
+                                                <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        ),
+                                        onClick: () =>
+                                            setDifficultyFilter((prev) => (prev === "INTERMEDIARIO" ? null : "INTERMEDIARIO")),
+                                    },
+                                    {
+                                        id: "avancado",
+                                        label: "Dificuldade: AVANCADO",
+                                        active: difficultyFilter === "AVANCADO",
+                                        className: "flex items-center justify-start gap-2 p-2",
+                                        icon: (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "AVANCADO" ? "stroke-white" : "stroke-[#B41F1F]"}`
+                                            } viewBox="0 0 31 31" fill="none">
+                                                <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        ),
+                                        onClick: () =>
+                                            setDifficultyFilter((prev) => (prev === "   " ? null : "AVANCADO")),
+                                    }
+
+                                ]}
+                            />
                         </div>
-                        <div className="flex flex-col items-center gap-4 mt-5 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-140 overflow-y-auto overflow-x-hidden">
+                        <div className="flex flex-col items-center gap-4 mt-5 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-140 overflow-y-auto overflow-x-hidden border-2 border-[#E6E6E2]">
 
                             {filteredTreinos.map((treino) => (
-                                <div key={treino.id} className="w-full bg-[var(--cor-secundaria)] border border-[#E6E6E2] flex flex-wrap items-center rounded-lg justify-between p-4">
+                                <div key={treino.treinoId} className="w-full bg-[var(--cor-secundaria)] border-2 border-[#E6E6E2] flex flex-wrap items-center rounded-lg justify-between p-4">
                                     <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 w-full">
                                         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                                             <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 md:w-15 md:h-15" viewBox="0 0 60 49" fill="none">
@@ -169,9 +236,14 @@ const RelatorioTreinos = () => {
                                                 <path d="M20.4648 24.5H39.069" stroke="#E96E35" strokeWidth="2" />
                                                 <path d="M0 24.5H5.58125" stroke="#E96E35" strokeWidth="2" />
                                             </svg>
-                                            <div>
-                                                <p><b>Treino: </b>{treino.nome}</p>
-                                                <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
+                                            <div className='grid grid-cols-2 gap-4'>
+                                                <div>
+                                                    <p><b>Treino: </b>{treino.nomeTreino}</p>
+                                                    <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
+                                                </div>
+                                                <div>
+                                                   <p><b>Dificuldade: </b>{formatarDificuldade(treino.grauDificuldade)}</p>
+                                                </div>
                                             </div>
                                         </div>
                                         <ButtonInterno
@@ -183,9 +255,9 @@ const RelatorioTreinos = () => {
                                             width="268px"
                                             height="50px"
                                             font-size="20px"
-                                            onClick={() => { irParaDash(treino.id) }}
+                                            onClick={() => { irParaDash(treino.treinoId) }}
                                             borderStyle="solid"
-                                            borderWidth="4px"
+                                            borderWidth="2px"
                                             borderColor="rgba(29, 45, 68, 0.11)"
                                             fontWeight="600"
                                         />

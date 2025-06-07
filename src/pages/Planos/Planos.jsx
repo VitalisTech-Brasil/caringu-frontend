@@ -37,14 +37,12 @@ const Planos = () => {
     const [planoEditado, setPlanoEditado] = useState(null);
     const [alunosAtivos, setAlunosAtivos] = useState([]);
     const duracaoValue = useWatch({ control, name: "duracao" })
-
+    const [errosImagem, setErrosImagem] = useState({});
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
 
     const pessoaId = sessionStorage.getItem("pessoaId");
-
-
 
     const fetchPlanos = async () => {
         try {
@@ -78,15 +76,15 @@ const Planos = () => {
     }
 
     useEffect(() => {
-    if (!showCreateModal) return; 
-    if (duracaoValue === "AVULSO") {
-        setValue("aulas", "1");
-        trigger("aulas");
-    } else if (duracaoValue && duracaoValue !== "AVULSO") {
-        setValue("aulas", "");
-        trigger("aulas");
-    }
-}, [duracaoValue, setValue, trigger, showCreateModal]);
+        if (!showCreateModal) return;
+        if (duracaoValue === "AVULSO") {
+            setValue("aulas", "1");
+            trigger("aulas");
+        } else if (duracaoValue && duracaoValue !== "AVULSO") {
+            setValue("aulas", "");
+            trigger("aulas");
+        }
+    }, [duracaoValue, setValue, trigger, showCreateModal]);
 
 
     useEffect(() => {
@@ -290,7 +288,7 @@ const Planos = () => {
                 <div className="flex-1 overflow-y-auto">
                     <Header toggleSidebar={toggleSidebar} />
                     <div className="w-full h-auto">
-                        <div className="flex flex-row items-end justify-between flex-nowrap h-[170px] sm:h-[80px] w-full relative z-10">
+                        <div className="flex flex-row items-end justify-between flex-nowrap h-[170px] sm:h-[80px] w-full relative">
                             <div className="h-full flex flex-row items-center sm:items-end pl-[2.5rem]">
                                 <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]">Planos criados </span>
                             </div>

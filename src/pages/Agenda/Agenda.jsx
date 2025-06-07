@@ -164,8 +164,7 @@ const Agenda = () => {
                             <CompromissosAgenda
                                 compromissos={compromissos}
                                 selectedDay={selectedDay}
-                                    atualizarTreinos={exibirTreinos}
-
+                                atualizarTreinos={exibirTreinos}
                             />
 
                         </div>

@@ -26,9 +26,10 @@ const Home = () => {
 
 
   const navigate = useNavigate();
+  const personalId = sessionStorage.getItem('pessoaId');
+
 
   useEffect(() => {
-    const personalId = sessionStorage.getItem('pessoaId');
 
     const fetchData = async () => {
       try {
@@ -44,9 +45,6 @@ const Home = () => {
         const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
         setAnamnesesPendentes(totalAnamnesePendentes.data);
 
-        const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
-        setTreinosFinalizados(treinosFinalizadosResponse.data);
-        console.log("Treinos finalizados:", treinosFinalizadosResponse.data);
 
       } catch (error) {
         console.error("Erro ao carrefae as informações da kpi e agenda:", error);
@@ -54,7 +52,18 @@ const Home = () => {
     };
 
     fetchData();
+    fetchTreinosFinalizados();
   }, []);
+
+
+  const fetchTreinosFinalizados = async () => {
+    try {
+      const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
+      setTreinosFinalizados(treinosFinalizadosResponse.data);
+    } catch (error) {
+      console.error("Erro ao buscar treinos finalizados:", error);
+    }
+  }
 
   function formatarHora(isoString) {
     const data = new Date(isoString);
@@ -68,13 +77,21 @@ const Home = () => {
 
   const compromissos = treinosFinalizados.map(item => ({
     id: item.id,
-    horario: `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`,
+    horario: item.dataHorarioFim
+      ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
+      : `${formatarHora(item.dataHorarioInicio)}`,
     data: formatarData(item.dataHorarioInicio),
     aluno: {
       nome: item.nomeAluno,
       foto: item.urlFotoPerfil,
     },
     finalizado: item.finalizado,
+
+    dataHorarioFim: item.dataHorarioFim,
+    dataHorarioInicio: item.dataHorarioInicio,
+    nomeAluno: item.nomeAluno,
+    urlFotoPerfil: item.urlFotoPerfil,
+    idAluno: item.idAluno
   }));
 
   // Define o dia atual como padrão ao carregar a página
@@ -145,7 +162,7 @@ const Home = () => {
 
   const kpis = [
     {
-      title: "Alunos ativos",
+      title: "Alunos Ativos",
       value: alunosAtivos,
       description: "Número total de alunos ativos.",
       icon: <FaUsers />,
@@ -153,7 +170,7 @@ const Home = () => {
       iconColor: "text-[#748CAB]",
     },
     {
-      title: "Treinos criados",
+      title: "Treinos Criados",
       value: treinosCriados,
       description: "Treinos criados recentemente.",
       icon: <FaDumbbell />,
@@ -161,7 +178,7 @@ const Home = () => {
       iconColor: "text-[#46982B]",
     },
     {
-      title: "Treinos próximos do vencimento",
+      title: "Treinos Próximos do Vencimento",
       value: treinosVencimento,
       description: "Treinos que expiram em 2 semanas.",
       icon: <FaClock />,
@@ -169,7 +186,7 @@ const Home = () => {
       iconColor: "text-[#E96E35]",
     },
     {
-      title: "Anamneses pendentes",
+      title: "Anamneses Pendentes",
       value: anamnesesPendentes,
       description: "Anamneses aguardando preenchimento.",
       icon: <FaClipboardList />,
@@ -223,6 +240,7 @@ const Home = () => {
               <CompromissosHoje
                 compromissos={compromissos}
                 selectedDay={selectedDay}
+                listarTreinosFinalizados={fetchTreinosFinalizados}
               />
             </div>
             <div className="2xl:w-[50%] w-full">

@@ -1,9 +1,43 @@
 import React from "react";
+import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { format } from "date-fns";
+import { caringuApi } from "../../provider/caringuApi";
 import { HiOutlineClock, HiOutlineLocationMarker } from "react-icons/hi";
 import { PiCalendarCheckLight } from "react-icons/pi";
 import "../../styles/compromissos.css"; // Importando o arquivo compromissos.css
 
-const CompromissosHoje = ({ compromissos, selectedDay }) => {
+
+
+const CompromissosHoje = ({ compromissos, selectedDay, listarTreinosFinalizados }) => {
+
+  const [errosImagem, setErrosImagem] = useState({});
+
+  const lidarErroImagem = (id) => {
+    setErrosImagem((prev) => ({
+      ...prev,
+      [id]: true,
+    }));
+  };
+
+
+  const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+  const marcarComoConcluido = async (idTreinoFinalizado) => {
+    try {
+      await caringuApi.patch(
+        `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
+        {
+          dataHorarioFim: treinoFim,
+        }
+      );
+
+      if (listarTreinosFinalizados) listarTreinosFinalizados();
+    } catch (error) {
+      console.error("Erro ao marcar compromisso como concluído:", error);
+    }
+  };
+
   // Obter a data atual formatada
   const today = new Date();
   const todayFormatted = today.toLocaleDateString("pt-BR", {
@@ -50,7 +84,7 @@ const CompromissosHoje = ({ compromissos, selectedDay }) => {
       }}
     >
       <h2 className="text-[28px] font-bold text-gray-900">
-        Compromissos de {isToday ? "hoje" : selectedDay?.day || "hoje"}
+        Compromissos de {isToday ? "Hoje" : selectedDay?.day || "Hoje"}
       </h2>
       {compromissosDoDia.length > 0 ? (
         compromissosDoDia.map((compromisso, index) => {
@@ -77,26 +111,37 @@ const CompromissosHoje = ({ compromissos, selectedDay }) => {
               <div className="flex flex-col justify-center gap-1 ml-4">
                 <div className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] flex items-center gap-2">
                   <HiOutlineClock />
-                  <span>{compromisso.horario}</span>
+                  {/* <span>{compromisso.horario}</span> */}
+                  <span>8:00 - 9:00</span>
                 </div>
-               
+
               </div>
 
               {/* Bloco da Pessoa + Botão */}
               <div className="flex flex-col items-center justify-center gap-2 mr-4">
                 <div className="flex items-center gap-2">
-                  <img
-                    src={compromisso.aluno.foto}
-                    alt={compromisso.aluno.nome}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
+                  {compromisso.aluno.foto && !errosImagem[compromisso.aluno.id] ? (
+                    <img
+                      src={compromisso.aluno.foto}
+                      alt={compromisso.aluno.nome}
+                      className="w-8 h-8 rounded-full object-cover"
+                      onError={() => lidarErroImagem(compromisso.aluno.id)}
+                    />
+                  ) : (
+                    <FaUserCircle className="w-8 h-8 text-[var(--cor-secundaria)]" />
+
+                  )}
                   <span className="text-[var(--cor-secundaria)] font-medium text-base 2xl:text-xl">
                     {compromisso.aluno.nome}
                   </span>
                 </div>
-                <button className="bg-transparent border border-white text-white text-xs font-semibold rounded-md py-1 px-3 hover:opacity-80">
-                  Marcar como feito
-                </button>
+                {compromisso.dataHorarioFim === null && (
+                  <button
+                    onClick={() => marcarComoConcluido(compromisso.id)}
+                    className="bg-transparent border border-white text-white text-xs font-semibold rounded-md py-1 px-3 hover:opacity-80">
+                    Marcar como feito
+                  </button>
+                )}
               </div>
             </div>
           );
