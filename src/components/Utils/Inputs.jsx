@@ -29,7 +29,7 @@ const Input = ({
     >
       <input
         type={inputType}
-        className='text-base w-full border-solid border-b-2 p-0 bg-transparent shadow-none outline-none peer'
+        className='text-base w-full border-solid p-0 focus:border-b-0 bg-transparent shadow-none outline-none peer'
         id={id}
         name={name}
         required={required}
@@ -51,10 +51,7 @@ const Input = ({
       {label}
       </label>
 
-      <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#333] transition-all duration-300 ease-in-out
-      transform scale-x-0
-      peer-focus:scale-x-100
-      peer-not-placeholder-shown:scale-x-100"
+      <div className="aabsolute bottom-0 peer-focus:bg-[#333] left-0 h-[2px] w-full bg-[#ccc] transition-all duration-300 ease-in-out"
       style={{ marginBottom: marginBottomLinha }} />
       {/* <div className="underline" style={{ marginBottom: marginBottomLinha }} /> */}
 

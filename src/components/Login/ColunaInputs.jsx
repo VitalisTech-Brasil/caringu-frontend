@@ -73,7 +73,7 @@ const ColunaInputs = () => {
       <div className="mb-[3%]">
         <Link
           to="/"
-          className="inline-block w-[5vw] h-[6vh] transition-transform duration-200 ease-in-out hover:scale-105"
+          className="inline-block w-[8vw] h-[6vh] transition-transform duration-200 ease-in-out hover:scale-105"
         >
           <img src={setaVoltar} alt="Voltar" className="w-full h-full" />
         </Link>
@@ -89,15 +89,15 @@ const ColunaInputs = () => {
           </p>
         </header>
 
-        <form className="h-[70%] w-[70%] gap-2 flex flex-col justify-center items-center mb-[2%]" onSubmit={handleSubmit(verificarUsuario)}>
+        <form className="h-[70%] w-[80%] gap-2 flex flex-col justify-center items-center mb-[2%]" onSubmit={handleSubmit(verificarUsuario)}>
           <div className="inputs w-full max-[1050px]:w-[280px] max-[450px]:w-[250px]">
             <Input
               id="email"
               name="email"
               type="email"
               label="Email"
-              marginBottomLinha="5.5%"
-              margin="50px auto 0px 0px"
+              marginBottomLinha="-7%"
+              margin="auto 0px 0px"
               corBordaInput={"#ccc"}
               {...register('email', { required: 'Email é obrigatório' })}
               isError={!!errors.email}
@@ -108,7 +108,7 @@ const ColunaInputs = () => {
               name="senha"
               type="password"
               label="Senha"
-              marginBottomLinha="5.5%"
+              marginBottomLinha="-4%"
               margin="50px auto 0px 0px"
               corBordaInput={"#ccc"}
               {...register('senha', { required: 'Senha é obrigatória' })}
@@ -117,8 +117,8 @@ const ColunaInputs = () => {
             />
           </div>
 
-          <div className="flex justify-start items-center w-full pt-[1%] pr-0 pb-[3%] pl-[2%]">
-            <a className="text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:scale-101 hover:after:scale-x-100" href="/esqueci-senha">Esqueci minha senha</a>
+          <div className= "flex justify-start items-center w-full pt-[1%] pr-0 pb-[3%] ">
+            <a className= "text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:scale-101 hover:after:scale-x-100" href="/esqueci-senha">Esqueci minha senha</a>
           </div>
 
           <Button
@@ -147,7 +147,7 @@ const ColunaInputs = () => {
 
         <footer className="justify-center items-center flex">
           <p className='max-[900px]:w-[270px]'>
-            Não tem uma conta? <Link className="inline-block text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100" to="/cadastro">Cadastrar-se</Link>
+            Não tem uma conta? <Link className="inline-block text-base !text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:after:scale-x-100" to="/cadastro">Cadastrar-se</Link>
           </p>
         </footer>
       </div>

@@ -9,7 +9,7 @@ const Login = () => {
     document.title = "Login | CaringU"
   }, []);
   return (
-    <main className="flex items-center justify-center h-screen w-scrren p-1">
+    <main className="flex items-center justify-center h-screen w-screen p-1">
       <ColunaImagem />
       <ColunaInputs />
       <Toaster position="top-right" reverseOrder={false} />
