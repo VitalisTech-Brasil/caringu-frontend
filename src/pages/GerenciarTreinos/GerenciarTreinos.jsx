@@ -14,6 +14,7 @@ import InputPosLogin from "../../components/Utils/InputPosLogin";
 import Label from "../../components/Utils/Label";
 import info2 from "../../assets/images/info-2.svg";
 import MenuFiltro from "../../components/Utils/MenuFiltro";
+import { caringuApi } from "../../provider/caringuApi.js";
 
 const GerenciarTreinos = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -31,195 +32,25 @@ const GerenciarTreinos = () => {
     const params = useParams();
     const navigate = useNavigate();
 
-    const [treinos, setTreinos] = useState([
-        {
-            id: 1,
-            nome: "Treino de Braços",
-            dificuldade: "INICIANTE",
-            origem: "BIBLIOTECA",
-            quantidadeExercicios: 3,
-            favorito: true,
-            exercicios: [
-                {
-                    id: 1,
-                    nome: "Rosca Direta",
-                    carga: 10,
-                    series: 4,
-                    repeticoes: 12,
-                    descanso: 60,
-                    observacoes: "Focar na execução"
-                },
-                {
-                    id: 2,
-                    nome: "Rosca Martelo",
-                    carga: 8,
-                    series: 3,
-                    repeticoes: 10,
-                    descanso: 60,
-                    observacoes: ""
-                },
-                {
-                    id: 3,
-                    nome: "Tríceps Testa",
-                    carga: 12,
-                    series: 4,
-                    repeticoes: 12,
-                    descanso: 90,
-                    observacoes: ""
-                }
-            ]
-        },
-        {
-            id: 2,
-            nome: "Treino de Pernas",
-            dificuldade: "AVANCADO",
-            origem: "PERSONAL",
-            quantidadeExercicios: 3,
-            favorito: false,
-            exercicios: [
-                {
-                    id: 4,
-                    nome: "Agachamento Livre",
-                    carga: 50,
-                    series: 5,
-                    repeticoes: 8,
-                    descanso: 120,
-                    observacoes: "Descer até 90 graus"
-                },
-                {
-                    id: 5,
-                    nome: "Leg Press",
-                    carga: 150,
-                    series: 4,
-                    repeticoes: 10,
-                    descanso: 90,
-                    observacoes: ""
-                },
-                {
-                    id: 6,
-                    nome: "Cadeira Extensora",
-                    carga: 40,
-                    series: 4,
-                    repeticoes: 12,
-                    descanso: 60,
-                    observacoes: "Segurar 2s no topo"
-                }
-            ]
-        },
-        {
-            id: 3,
-            nome: "Treino de Peito",
-            dificuldade: "INTERMEDIARIO",
-            origem: "BIBLIOTECA",
-            quantidadeExercicios: 2,
-            favorito: true,
-            exercicios: [
-                {
-                    id: 7,
-                    nome: "Supino Reto",
-                    carga: 30,
-                    series: 4,
-                    repeticoes: 10,
-                    descanso: 90,
-                    observacoes: "Manter controle na descida"
-                },
-                {
-                    id: 8,
-                    nome: "Crucifixo",
-                    carga: 12,
-                    series: 3,
-                    repeticoes: 12,
-                    descanso: 60,
-                    observacoes: ""
-                }
-            ]
-        },
-        {
-            id: 4,
-            nome: "Treino de Costas",
-            dificuldade: "AVANCADO",
-            origem: "PERSONAL",
-            quantidadeExercicios: 2,
-            favorito: true,
-            exercicios: [
-                {
-                    id: 9,
-                    nome: "Remada Curvada",
-                    carga: 40,
-                    series: 4,
-                    repeticoes: 10,
-                    descanso: 90,
-                    observacoes: "Mantenha coluna neutra"
-                },
-                {
-                    id: 10,
-                    nome: "Puxada Frontal",
-                    carga: 35,
-                    series: 4,
-                    repeticoes: 12,
-                    descanso: 60,
-                    observacoes: ""
-                }
-            ]
-        },
-        {
-            id: 5,
-            nome: "Treino de Ombros",
-            dificuldade: "INICIANTE",
-            origem: "BIBLIOTECA",
-            quantidadeExercicios: 2,
-            favorito: true,
-            exercicios: [
-                {
-                    id: 11,
-                    nome: "Desenvolvimento",
-                    carga: 20,
-                    series: 4,
-                    repeticoes: 10,
-                    descanso: 60,
-                    observacoes: ""
-                },
-                {
-                    id: 12,
-                    nome: "Elevação Lateral",
-                    carga: 6,
-                    series: 3,
-                    repeticoes: 15,
-                    descanso: 60,
-                    observacoes: "Executar devagar"
-                }
-            ]
-        },
-        {
-            id: 6,
-            nome: "Treino de Abdômen",
-            dificuldade: "INTERMEDIARIO",
-            origem: "PERSONAL",
-            quantidadeExercicios: 2,
-            favorito: false,
-            descricao: "Treino para definição abdominal",
-            exercicios: [
-                {
-                    id: 13,
-                    nome: "Abdominal Infra",
-                    carga: 0,
-                    series: 4,
-                    repeticoes: 15,
-                    descanso: 45,
-                    observacoes: ""
-                },
-                {
-                    id: 14,
-                    nome: "Prancha",
-                    carga: 0,
-                    series: 3,
-                    repeticoes: 1,
-                    descanso: 60,
-                    observacoes: "Manter por 60 segundos"
-                }
-            ]
-        }
-    ]); // Simulated data
+    const [treinos, setTreinos] = useState([]);
+
+    const idPersonal = sessionStorage.getItem("pessoaId")
+
+    useEffect(() => {
+        console.log(idPersonal)
+        const fetchInfosTreinos = async () => {
+            try {
+                const response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
+                setTreinos(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar informações dos treinos:", error);
+            }
+        };
+
+        fetchInfosTreinos();
+    }, [idPersonal]);
+
+console.log(treinos)
 
     const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
         defaultValues: {
@@ -232,12 +63,29 @@ const GerenciarTreinos = () => {
     });
 
 
-    const toggleFavorito = (id) => {
-        const treinoIndex = treinos.findIndex((treino) => treino.id === id);
-        const updatedTreinos = [...treinos];
-        updatedTreinos[treinoIndex].favorito = !updatedTreinos[treinoIndex].favorito;
-        setTreinos(updatedTreinos);
+    const toggleFavorito = async (id) => {
+        try {
+            // Pega o treino atual
+            const treinoAtual = treinos.find((treino) => treino.treinoId === id);
+            const novoFavorito = !treinoAtual.favorito;
+
+            // Envia o novo valor para o backend
+            await caringuApi.patch(`/treino/${id}/favorito`, {
+                favorito: novoFavorito
+            });
+
+            // Atualiza o estado local após sucesso
+            const treinoIndex = treinos.findIndex((treino) => treino.treinoId === id);
+            const updatedTreinos = [...treinos];
+            updatedTreinos[treinoIndex].favorito = novoFavorito;
+            setTreinos(updatedTreinos);
+
+            console.log("Favorito atualizado com sucesso!");
+        } catch (error) {
+            console.error('Erro ao atualizar favorito:', error);
+        }
     };
+
 
     const { fontSize, width } = useResponsiveStyles();
 
@@ -275,13 +123,13 @@ const GerenciarTreinos = () => {
 
     const filteredTreinos = treinos
         .filter((treino) => {
-            if (searchTerm && !treino.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
+            if (searchTerm && !treino.nomeTreino.toLowerCase().includes(searchTerm.toLowerCase())) {
                 return false;
             }
-            if (difficultyFilter && treino.dificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
+            if (difficultyFilter && treino.grauDificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
                 return false;
             }
-            if (origemFilter && origemFilter !== "" && treino.origem.toLowerCase() !== origemFilter.toLowerCase()) {
+            if (origemFilter && origemFilter !== "" && treino.origemTreinoExercicio.toLowerCase() !== origemFilter.toLowerCase()) {
                 return false;
             }
             if (showOnlyFavorites && !treino.favorito) {
@@ -290,8 +138,8 @@ const GerenciarTreinos = () => {
             return true;
         })
         .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
-            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nome);
+            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nome);
             return 0;
         });
 
@@ -318,7 +166,7 @@ const GerenciarTreinos = () => {
     const TreinoActionsMenu = ({ treino }) => (
         <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
             <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
-                onClick={() => { navigate(`/editar-treino/${treino.id}`) }}
+                onClick={() => { navigate(`/editar-treino/${treino.treinoId}`) }}
             >
                 Editar
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -548,7 +396,7 @@ const GerenciarTreinos = () => {
                     </div>
                     <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-130 overflow-y-auto mt-5 border border-[#E6E6E2]">
                         {filteredTreinos.map((treino) => (
-                            <div key={treino.id} className="relative w-full bg-[var(--cor-secundaria)] border border-[#E6E6E2] flex flex-wrap items-center rounded-lg p-2">
+                            <div key={treino.treinoId} className="relative w-full bg-[var(--cor-secundaria)] border border-[#E6E6E2] flex flex-wrap items-center rounded-lg p-2">
                                 <div className="relative flex flex-col gap-10 md:flex-row items-center justify-between md:gap-8 w-full p-5">
                                     <div className="relative  flex flex-col md:flex-row gap-5 md:gap-10 items-center md:items-start justify-start w-full">
                                         <div className="relative flex grid-cols-2 items-center justify-between bg-[#FFFDF6] rounded-lg w-[90%] md:w-10">
@@ -568,14 +416,14 @@ const GerenciarTreinos = () => {
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation(); // Prevent card click event
-                                                                setOpenMenuId(openMenuId === treino.id ? null : treino.id);
+                                                                setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
                                                             }}
                                                             className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                                                         >
                                                             <FaEllipsisV className="text-xl cursor-pointer" />
                                                         </button>
 
-                                                        {openMenuId === treino.id && (
+                                                        {openMenuId === treino.treinoId && (
                                                             <div
                                                                 style={{
                                                                     position: 'fixed',
@@ -594,12 +442,12 @@ const GerenciarTreinos = () => {
                                         </div>
                                         <div className="flex flex-col md:flex-row md:grid-cols-2 md:gap-5 w-full">
                                             <div className="md:col-span-1 text-sm md:text-lg">
-                                                <p><b>Treino: </b>{treino.nome}</p>
+                                                <p><b>Treino: </b>{treino.nomeTreino}</p>
                                                 <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
                                             </div>
                                             <div className="md:col-span-1 text-sm md:text-lg ">
-                                                <p><b>Dificuldade: </b>{treino.dificuldade}</p>
-                                                <p><b>Origem: </b>{treino.origem}</p>
+                                                <p><b>Dificuldade: </b>{treino.grauDificuldade}</p>
+                                                <p><b>Origem: </b>{treino.origemTreinoExercicio}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -619,7 +467,7 @@ const GerenciarTreinos = () => {
                                                 }
                                                 onClick={(e) => {
                                                     e.stopPropagation(); // Prevent card click event
-                                                    toggleFavorito(treino.id);
+                                                    toggleFavorito(treino.treinoId);
                                                 }}
                                             />
                                         </div>
@@ -628,13 +476,13 @@ const GerenciarTreinos = () => {
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation(); // Prevent card click event
-                                                        setOpenMenuId(openMenuId === treino.id ? null : treino.id);
+                                                        setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
                                                     }}
                                                 >
                                                     <FaEllipsisV className="text-xl cursor-pointer" />
                                                 </button>
 
-                                                {openMenuId === treino.id && (
+                                                {openMenuId === treino.treinoId && (
                                                     <div
                                                         ref={menuRef}
                                                         onClick={(e) => e.stopPropagation()} // Prevent card click event
@@ -661,7 +509,7 @@ const GerenciarTreinos = () => {
                                             }
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Prevent card click event
-                                                toggleFavorito(treino.id);
+                                                toggleFavorito(treino.treinoId);
                                             }}
                                         />
                                     </div>

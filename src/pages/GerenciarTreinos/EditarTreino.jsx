@@ -4,12 +4,14 @@ import Header from '../../components/Personal/Header/Header'
 import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import Label from '../../components/Utils/Label'
-import InputPosLogin from '../../components/Utils/InputPosLogin'
+import InputEditar from '../../components/Utils/InputEditar'
 import Button from '../../components/Utils/Button'
 import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import info2 from "../../assets/images/info-2.svg";
+import { caringuApi } from '../../provider/caringuApi.js'
+
 
 
 const EditarTreino = () => {
@@ -22,211 +24,59 @@ const EditarTreino = () => {
     const sugestaoRef = useRef(null);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
 
-    const { id } = useParams(); // pega o id da URL
-    const treinoId = parseInt(id); // transforma para número (porque vem como string)
+
+    const [valorNomeTreino, setValorNomeTreino] = useState("")
 
 
+
+    const { id } = useParams();
+    const treinoId = parseInt(id);
+    const idPersonal = sessionStorage.getItem("pessoaId")
 
     // Simulação do banco de dados
-    const treinoMock = (
-        [
-            {
-                id: 1,
-                nome: "Treino de Braços",
-                dificuldade: "Iniciante",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 1,
-                        nome: "Rosca Direta",
-                        carga: 10,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: "Focar na execução"
-                    },
-                    {
-                        id: 2,
-                        nome: "Rosca Martelo",
-                        carga: 8,
-                        series: 3,
-                        repeticoes: 10,
-                        descanso: 60,
-                        observacoes: ""
-                    },
-                    {
-                        id: 3,
-                        nome: "Tríceps Testa",
-                        carga: 12,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 90,
-                        observacoes: ""
-                    }
-                ]
-            },
-            {
-                id: 2,
-                nome: "Treino de Pernas",
-                dificuldade: "Avançado",
-                favorito: false,
-                exercicios: [
-                    {
-                        id: 4,
-                        nome: "Agachamento Livre",
-                        carga: 50,
-                        series: 5,
-                        repeticoes: 8,
-                        descanso: 120,
-                        observacoes: "Descer até 90 graus"
-                    },
-                    {
-                        id: 5,
-                        nome: "Leg Press",
-                        carga: 150,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 90,
-                        observacoes: ""
-                    },
-                    {
-                        id: 6,
-                        nome: "Cadeira Extensora",
-                        carga: 40,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: "Segurar 2s no topo"
-                    }
-                ]
-            },
-            {
-                id: 3,
-                nome: "Treino de Peito",
-                dificuldade: "Intermediário",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 7,
-                        nome: "Supino Reto",
-                        carga: 30,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 90,
-                        observacoes: "Manter controle na descida"
-                    },
-                    {
-                        id: 8,
-                        nome: "Crucifixo",
-                        carga: 12,
-                        series: 3,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: ""
-                    }
-                ]
-            },
-            {
-                id: 4,
-                nome: "Treino de Costas",
-                dificuldade: "Avançado",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 9,
-                        nome: "Remada Curvada",
-                        carga: 40,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 90,
-                        observacoes: "Mantenha coluna neutra"
-                    },
-                    {
-                        id: 10,
-                        nome: "Puxada Frontal",
-                        carga: 35,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: ""
-                    }
-                ]
-            },
-            {
-                id: 5,
-                nome: "Treino de Ombros",
-                dificuldade: "Iniciante",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 11,
-                        nome: "Desenvolvimento",
-                        carga: 20,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 60,
-                        observacoes: ""
-                    },
-                    {
-                        id: 12,
-                        nome: "Elevação Lateral",
-                        carga: 6,
-                        series: 3,
-                        repeticoes: 15,
-                        descanso: 60,
-                        observacoes: "Executar devagar"
-                    }
-                ]
-            },
-            {
-                id: 6,
-                nome: "Treino de Abdômen",
-                dificuldade: "Intermediário",
-                favorito: false,
-                descricao: "Treino para definição abdominal",
-                exercicios: [
-                    {
-                        id: 13,
-                        nome: "Abdominal Infra",
-                        carga: 0,
-                        series: 4,
-                        repeticoes: 15,
-                        descanso: 45,
-                        observacoes: ""
-                    },
-                    {
-                        id: 14,
-                        nome: "Prancha",
-                        carga: 0,
-                        series: 3,
-                        repeticoes: 1,
-                        descanso: 60,
-                        observacoes: "Manter por 60 segundos"
-                    }
-                ]
-            }
-        ]);
+    const [treino, setTreino] = useState([]);
+
+    const exerciciosTreino = useState([])
+
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+        defaultValues: {
+            nomeTreino: "",
+            dificuldade: "",
+            descricao: "",
+            exercicios: []
+        },
+        mode: "onChange"
+    });
 
 
-    const treinoSelecionado = treinoMock.find(treino => treino.id === treinoId);
+    const descricaoValue = watch('descricao'); // pega o valor atual do campo descricao
+
+    // Quando receber os dados da API, atualize o valor com setValue
+    useEffect(() => {
+        if (treino?.[0]?.descricaoTreino) {
+            setValue('descricao', treino[0].descricaoTreino);
+        }
+    }, [treino, setValue]);
+
+
 
     useEffect(() => {
-        // Preenche os valores iniciais do formulário e dos exercícios
-        setValue("nomeTreino", treinoMock.nomeTreino);
-        setValue("dificuldade", treinoMock.dificuldade);
-        setValue("descricao", treinoMock.descricao);
-        setExerciciosSelecionados(treinoMock.exercicios);
-    }, []);
+        const fetchSugestoes = async () => {
+            if (exercicioInput.trim().length < 2) {
+                setSugestoes([]);
+                return;
+            }
 
-    const listaExerciciosMock = [
-        { id: 1, nome: "Supino" },
-        { id: 2, nome: "Agachamento" },
-        { id: 3, nome: "Remada curvada" },
-        { id: 4, nome: "Rosca direta" },
-        { id: 5, nome: "Desenvolvimento" },
-        { id: 6, nome: "Leg press" },
-        { id: 7, nome: "Puxada frontal" }
-    ];
+            try {
+                const response = await caringuApi.get(`/exercicios/buscar?nome=${encodeURIComponent(exercicioInput)}`);
+                setSugestoes(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar sugestões de exercício:", error);
+            }
+        };
+
+        fetchSugestoes();
+    }, [exercicioInput]);
 
     const adicionarExercicio = (exercicio) => {
         if (!exerciciosSelecionados.find(e => e.id === exercicio.id)) {
@@ -238,6 +88,53 @@ const EditarTreino = () => {
         setExercicioInput('');
         setSugestoes([]);
     };
+
+    useEffect(() => {
+        if (treino && treino.grauDificuldade) {
+            setValue("dificuldade", treino.grauDificuldade);
+        }
+    }, [treino, setValue]);
+
+    useEffect(() => {
+        const fetchInfosTreino = async () => {
+            try {
+                const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${treinoId}`);
+                const data = response.data;
+
+                if (data.length > 0) {
+                    setTreino(data); // array completo com os exercícios
+
+                    // Campos principais do formulário (nome do treino, descrição, etc.)
+                    const treinoInfo = data[0];
+                    setValorNomeTreino(treinoInfo.nomeTreino);
+                    setValue('nomeTreino', treinoInfo.nomeTreino);
+                    setValue('descricaoTreino', treinoInfo.descricaoTreino);
+                }
+            } catch (error) {
+                console.error("Erro ao buscar informações dos treinos:", error);
+            }
+        };
+
+        fetchInfosTreino();
+    }, [idPersonal]);
+
+    useEffect(() => {
+        // Preenche os valores iniciais do formulário e dos exercícios
+        setValue("nomeTreino", treino.nomeTreino);
+        setValue("dificuldade", treino.dificuldade);
+        setValue("descricao", treino.descricao);
+        setExerciciosSelecionados(treino.exercicios);
+    }, []);
+
+    const listaExerciciosMock = [
+        { id: 1, nome: "Supino" },
+        { id: 2, nome: "Agachamento" },
+        { id: 3, nome: "Remada curvada" },
+        { id: 4, nome: "Rosca direta" },
+        { id: 5, nome: "Desenvolvimento" },
+        { id: 6, nome: "Leg press" },
+        { id: 7, nome: "Puxada frontal" }
+    ];
 
     const abrirModalExercicio = (exercicio) => {
         setExercicioAtual(exercicio);
@@ -256,16 +153,6 @@ const EditarTreino = () => {
         setExerciciosSelecionados(exerciciosSelecionados.filter(e => e.id !== id));
     };
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm({
-        defaultValues: {
-            nomeTreino: "",
-            dificuldade: "",
-            descricao: "",
-            exercicios: []
-        },
-        mode: "onChange"
-    });
-
     const salvarTreino = (data) => {
         const treinoAtualizado = {
             ...data,
@@ -281,6 +168,9 @@ const EditarTreino = () => {
         setModalExercicioVisivel(false);
         setExercicioAtual(null);
     };
+
+    console.log("treinos", treino)
+    console.log()
 
     return (
         <div className="flex h-screen bg-[#fdfbf7]">
@@ -302,7 +192,7 @@ const EditarTreino = () => {
                             <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 md:gap-10 mt-4">
                                 <div className="col-span-1">
                                     <Label id="nomeTreino" nomeLabel="Nome do treino" fontSize="20px" fontWeight="500" />
-                                    <InputPosLogin
+                                    <InputEditar
                                         id="nomeTreino"
                                         name="nomeTreino"
                                         inputType="text"
@@ -311,8 +201,7 @@ const EditarTreino = () => {
                                         fontWeight="400"
                                         fontSizeErro="16px"
                                         width="100%"
-                                        value={treinoSelecionado.nome}
-                                        onChange={(e) => setValue('nomeTreino', e.target.value)}
+                                        defaultValue={treino?.[0]?.nomeTreino || ""}
                                         {...register('nomeTreino', {
                                             required: 'O nome do treino é obrigatório',
                                             minLength: {
@@ -355,17 +244,17 @@ const EditarTreino = () => {
                                     <select
                                         defaultValue=""
                                         id="dificuldade"
-                                        value={treinoSelecionado.dificuldade}
-                                        onChange={(e) => setValue('dificuldade', e.target.value)}
                                         {...register("dificuldade", {
                                             required: 'Selecione a dificuldade do treino'
                                         })}
                                         className="appearance-none text-base w-full flex items-center justify-center pt-1 pr-[1%] pb-[1%] pl-[1%] border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
                                     >
-                                        <option disabled className="text-[#15171B87]" value="">Selecione o grau de dificuldade</option>
-                                        <option value="1">Iniciante</option>
-                                        <option value="2">Intermediário</option>
-                                        <option value="3">Avançado</option>
+                                        <option disabled value="" className="text-[#15171B87]">
+                                            Selecione o grau de dificuldade
+                                        </option>
+                                        <option value="INICIANTE">Iniciante</option>
+                                        <option value="INTERMEDIARIO">Intermediário</option>
+                                        <option value="AVANCADO">Avançado</option>
                                     </select>
                                     {errors.dificuldade && (
                                         <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-sm">
@@ -374,7 +263,7 @@ const EditarTreino = () => {
                                         </div>
                                     )}
                                     <Label id="descricao" nomeLabel="Descrição" fontSize="20px" fontWeight="500" />
-                                    <InputPosLogin
+                                    <InputEditar
                                         id="descricao"
                                         name="descricao"
                                         inputType="text"
@@ -383,10 +272,10 @@ const EditarTreino = () => {
                                         fontWeight="400"
                                         fontSizeErro="16px"
                                         width="100%"
-                                        value={treinoSelecionado.descricao}
-                                        onChange={(e) => setValue('descricao', e.target.value)}
+                                        value={descricaoValue}  // passa o valor do watch aqui
+                                        onChange={(e) => setValue('descricao', e.target.value)}  // atualiza o valor do form
                                         {...register('descricao', {
-                                            required: 'A descrição do treino é obrigatória',
+                                            required: 'A descrição do treino é obrigatório',
                                             minLength: {
                                                 value: 5,
                                                 message: 'A descrição deve ter pelo menos 5 caracteres',
@@ -399,10 +288,10 @@ const EditarTreino = () => {
                             </div>
                             <h1 className="mt-6">Exercícios adicionados:</h1>
                             <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
-                                {treinoSelecionado.exercicios.map((exercicio) => (
+                                {treino.map((exercicio) => (
 
-                                    <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
-                                        {exercicio.nome}
+                                    <div key={exercicio.exercicioId} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
+                                        {exercicio.nomeExercicio}
                                         <button onClick={(e) => {
                                             e.stopPropagation();
                                             removerExercicio(exercicio.id)
@@ -459,7 +348,7 @@ const EditarTreino = () => {
                                         <div className="grid grid-cols-2 mb-4 w-full">
                                             <div className="grid-span-1 w-full">
                                                 <Label id="carga" nomeLabel="Carga" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+                                                <InputEditar
                                                     id="carga"
                                                     name="carga"
                                                     value={exercicioAtual?.carga || ''}
@@ -481,7 +370,7 @@ const EditarTreino = () => {
                                                     errorMessage={errors.email?.message}
                                                 />
                                                 <Label id="series" nomeLabel="Séries" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+                                                <InputEditar
                                                     id="series"
                                                     name="series"
                                                     inputType="number"
@@ -505,7 +394,7 @@ const EditarTreino = () => {
                                             </div>
                                             <div className="grid-span-1">
                                                 <Label id="repeticoes" nomeLabel="Repetições" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+                                                <InputEditar
                                                     id="repeticoes"
                                                     name="repeticoes"
                                                     inputType="number"
@@ -522,7 +411,7 @@ const EditarTreino = () => {
                                                     })}
                                                 />
                                                 <Label id="descanso" nomeLabel="Tempo de descanso" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+                                                <InputEditar
                                                     id="tempoDescanso"
                                                     name="tempoDescanso"
                                                     inputType="number"

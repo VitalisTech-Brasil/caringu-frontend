@@ -10,6 +10,7 @@ import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import info2 from "../../assets/images/info-2.svg";
+import { caringuApi } from '../../provider/caringuApi.js'
 
 
 const CriarTreino = () => {
@@ -23,6 +24,7 @@ const CriarTreino = () => {
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [exercicios, setExercicios] = useState([]);
 
     useEffect(() => {
         const handleClickFora = (event) => {
@@ -39,27 +41,28 @@ const CriarTreino = () => {
     }, []);
 
     useEffect(() => {
-
-        if (exercicioInput.length >= 2) {
-            const resultados = listaExerciciosMock.filter(e =>
+        if (exercicioInput.length >= 1) {
+            const resultados = exercicios.filter(e =>
                 e.nome.toLowerCase().includes(exercicioInput.toLowerCase())
             );
             setSugestoes(resultados);
         } else if (exercicioInput.length === 0) {
-            setSugestoes(listaExerciciosMock); // mostra todos se o campo estiver vazio
+            setSugestoes(exercicios); // mostra todos se o campo estiver vazio
         }
+    }, [exercicioInput, exercicios]); // agora também depende de 'exercicios'
 
-    }, [exercicioInput]);
+    useEffect(() => {
+        const buscarExercicios = async () => {
+            try {
+                const response = await caringuApi.get('/exercicios'); // ou caringuApi.get(...)
+                setExercicios(response.data); // Assumindo que o backend retorna um array de exercícios
+            } catch (error) {
+                console.error('Erro ao buscar exercícios:', error);
+            }
+        };
 
-    const listaExerciciosMock = [
-        { id: 1, nome: "Supino" },
-        { id: 2, nome: "Agachamento" },
-        { id: 3, nome: "Remada curvada" },
-        { id: 4, nome: "Rosca direta" },
-        { id: 5, nome: "Desenvolvimento" },
-        { id: 6, nome: "Leg press" },
-        { id: 7, nome: "Puxada frontal" }
-    ];
+        buscarExercicios();
+    }, []);
 
     const adicionarExercicio = (exercicio) => {
         setShowCreateModal(true);
@@ -69,6 +72,8 @@ const CriarTreino = () => {
         setExercicioInput('');
         setSugestoes([]);
     };
+
+    
 
     const removerExercicio = (id) => {
         setExerciciosSelecionados(exerciciosSelecionados.filter(e => e.id !== id));
@@ -168,7 +173,7 @@ const CriarTreino = () => {
                                                     {sugestoes.map((exercicio) => (
                                                         <li
                                                             key={exercicio.id}
-                                                            onClick={() => adicionarExercicio(exercicio)}
+                                                            onMouseDown={() => adicionarExercicio(exercicio)}
                                                             className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
                                                         >
                                                             {exercicio.nome}
