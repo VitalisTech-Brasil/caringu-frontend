@@ -35,7 +35,7 @@ const RelatorioTreinos = () => {
     useEffect(() => {
         const relatoriosTreinosAluno = async () => {
             try {
-                const response = await caringuApi.get(`/treinos-exercicios/personal/5`)
+                const response = await caringuApi.get(`/treinos-exercicios/aluno/${idAluno}`);
                 console.log('Treinos obtidos com sucesso:', response.data);
                 setTreinos(response.data);
             } catch (error) {
