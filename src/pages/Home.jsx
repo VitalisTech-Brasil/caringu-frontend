@@ -162,7 +162,7 @@ const Home = () => {
 
   const kpis = [
     {
-      title: "Alunos ativos",
+      title: "Alunos Ativos",
       value: alunosAtivos,
       description: "Número total de alunos ativos.",
       icon: <FaUsers />,
@@ -170,7 +170,7 @@ const Home = () => {
       iconColor: "text-[#748CAB]",
     },
     {
-      title: "Treinos criados",
+      title: "Treinos Criados",
       value: treinosCriados,
       description: "Treinos criados recentemente.",
       icon: <FaDumbbell />,
@@ -178,7 +178,7 @@ const Home = () => {
       iconColor: "text-[#46982B]",
     },
     {
-      title: "Treinos próximos do vencimento",
+      title: "Treinos Próximos do Vencimento",
       value: treinosVencimento,
       description: "Treinos que expiram em 2 semanas.",
       icon: <FaClock />,
@@ -186,7 +186,7 @@ const Home = () => {
       iconColor: "text-[#E96E35]",
     },
     {
-      title: "Anamneses pendentes",
+      title: "Anamneses Pendentes",
       value: anamnesesPendentes,
       description: "Anamneses aguardando preenchimento.",
       icon: <FaClipboardList />,

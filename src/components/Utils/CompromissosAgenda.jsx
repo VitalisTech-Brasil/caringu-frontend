@@ -14,7 +14,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         }));
     };
 
-    const  treinoFim =  format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");  
+    const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     const marcarComoConcluido = async (idTreinoFinalizado) => {
         try {
@@ -120,7 +120,9 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                     <path d="M22.9168 12.4997C22.9168 18.2497 18.2502 22.9163 12.5002 22.9163C6.75016 22.9163 2.0835 18.2497 2.0835 12.4997C2.0835 6.74967 6.75016 2.08301 12.5002 2.08301C18.2502 2.08301 22.9168 6.74967 22.9168 12.4997Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
-                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
+                                                {/* <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span> */}
+                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">8:00 - 9:00</span>
+
                                             </div>
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">

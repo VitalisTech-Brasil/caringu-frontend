@@ -158,7 +158,10 @@ const Header = () => {
     const fetchNotifications = async () => {
       try {
         const notifications = await caringuApi.get(`notificacoes/pessoas/${personalId}`);
-        setNotificacoesGeral(notifications.data);
+
+        const notificacoesOrdenadas = ordenarNotificacoes(notifications.data);
+        setNotificacoesGeral(notificacoesOrdenadas);
+        console.log("Notificações:", notificacoesOrdenadas);
       } catch (error) {
         console.error("Erro ao buscar notificações:", error);
       }
@@ -166,12 +169,23 @@ const Header = () => {
     fetchNotifications();
   }, []);
 
+  function ordenarNotificacoes(lista) {
+    return [...lista].sort((a, b) => {
+      if (a.visualizada === b.visualizada) {
+        return new Date(b.dataCriacao) - new Date(a.dataCriacao);
+      }
+      return a.visualizada ? 1 : -1;
+    });
+  }
+
   const atualizarNotificacoesVisualizadas = (ids = []) => {
     setNotificacoesGeral((prev) =>
-      prev.map((n) =>
-        ids.length === 0 || ids.includes(n.id)
-          ? { ...n, visualizada: true }
-          : n
+      ordenarNotificacoes(
+        prev.map((n) =>
+          ids.length === 0 || ids.includes(n.id)
+            ? { ...n, visualizada: true }
+            : n
+        )
       )
     );
   };

@@ -84,7 +84,7 @@ const CompromissosHoje = ({ compromissos, selectedDay, listarTreinosFinalizados 
       }}
     >
       <h2 className="text-[28px] font-bold text-gray-900">
-        Compromissos de {isToday ? "hoje" : selectedDay?.day || "hoje"}
+        Compromissos de {isToday ? "Hoje" : selectedDay?.day || "Hoje"}
       </h2>
       {compromissosDoDia.length > 0 ? (
         compromissosDoDia.map((compromisso, index) => {
@@ -111,7 +111,8 @@ const CompromissosHoje = ({ compromissos, selectedDay, listarTreinosFinalizados 
               <div className="flex flex-col justify-center gap-1 ml-4">
                 <div className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] flex items-center gap-2">
                   <HiOutlineClock />
-                  <span>{compromisso.horario}</span>
+                  {/* <span>{compromisso.horario}</span> */}
+                  <span>8:00 - 9:00</span>
                 </div>
 
               </div>
