@@ -50,7 +50,7 @@ const VisualizarPdf = () => {
     }, [exercicioSelecionadoId]);
 
     useEffect(() => {
-        caringuApi.get(`/treinos-exercicios/exercicios-por-treino/${idTreino}`)
+        caringuApi.get(`/treinos-exercicios/exercicios-por-treino/${idTreino}/${idAluno}`)
             .then(response => {
 
                 const lista = response.data;
