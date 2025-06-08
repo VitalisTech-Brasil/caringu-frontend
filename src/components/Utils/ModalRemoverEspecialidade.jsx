@@ -14,7 +14,7 @@ const ModalRemoverEspecialidade = ({
           <button
             onClick={onCancel}
             aria-label="Fechar modal"
-            className="rounded-full bg-red-600 text-white p-2 hover:bg-red-700"
+            className="rounded-full bg-red-600 text-white p-2 cursor-pointer hover:bg-red-700"
           >
             <HiX className="w-5 h-5" />
           </button>
@@ -39,13 +39,13 @@ const ModalRemoverEspecialidade = ({
         <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={() => {onConfirm(especialidadeId), onCancel()}}
-            className="text-red-600 font-semibold hover:underline bg-transparent text-[16px]"
+            className="text-red-600 font-semibold hover:underline bg-transparent cursor-pointer text-[16px]"
           >
             Remover mesmo assim
           </button>
           <button
             onClick={onCancel}
-            className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 text-[16px]"
+            className="bg-green-600 text-white px-6 py-2 rounded-md cursor-pointer hover:bg-green-700 text-[16px]"
           >
             Manter
           </button>

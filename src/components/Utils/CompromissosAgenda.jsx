@@ -1,4 +1,37 @@
-const CompromissosAgenda = ({ compromissos, selectedDay }) => {
+import { FaUserCircle } from "react-icons/fa";
+import { useState } from "react";
+import { caringuApi } from "../../provider/caringuApi";
+import { format } from "date-fns";
+
+const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
+
+    const [errosImagem, setErrosImagem] = useState({});
+
+    const lidarErroImagem = (id) => {
+        setErrosImagem((prev) => ({
+            ...prev,
+            [id]: true,
+        }));
+    };
+
+    const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+    const marcarComoConcluido = async (idTreinoFinalizado) => {
+        try {
+            await caringuApi.patch(
+                `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
+                {
+                    dataHorarioFim: treinoFim,
+                }
+            );
+
+            if (atualizarTreinos) atualizarTreinos();
+        } catch (error) {
+            console.error("Erro ao marcar compromisso como concluído:", error);
+        }
+    };
+
+
 
     const today = new Date();
     const todayFormatted = today.toLocaleDateString("pt-BR", {
@@ -87,30 +120,35 @@ const CompromissosAgenda = ({ compromissos, selectedDay }) => {
                                                     <path d="M22.9168 12.4997C22.9168 18.2497 18.2502 22.9163 12.5002 22.9163C6.75016 22.9163 2.0835 18.2497 2.0835 12.4997C2.0835 6.74967 6.75016 2.08301 12.5002 2.08301C18.2502 2.08301 22.9168 6.74967 22.9168 12.4997Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
-                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
-                                            </div>
-                                            <div className="text-white text-sm flex items-center gap-2 h-auto w-auto">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 2xl:w-6 2xl:h-6 shrink-0" viewBox="0 0 25 25" fill="none">
-                                                    <path d="M3.77094 8.84343C5.82302 -0.177407 19.1876 -0.16699 21.2293 8.85384C22.4272 14.1455 19.1355 18.6247 16.2501 21.3955C14.1564 23.4163 10.8439 23.4163 8.73969 21.3955C5.86469 18.6247 2.57302 14.1351 3.77094 8.84343Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" />
-                                                    <path d="M12.5 13.9902C14.2949 13.9902 15.75 12.5352 15.75 10.7402C15.75 8.94531 14.2949 7.49023 12.5 7.49023C10.7051 7.49023 9.25 8.94531 9.25 10.7402C9.25 12.5352 10.7051 13.9902 12.5 13.9902Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="1.5" />
-                                                </svg>
-                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] break-words">{compromisso.local}</span>
+                                                {/* <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span> */}
+                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">8:00 - 9:00</span>
+
                                             </div>
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
                                             <div className="flex sm:flex-row flex-col items-center gap-2">
-                                                <img
-                                                    src={"https://res.cloudinary.com/lptennis/image/upload/v1665352930/zllaquu1qwwi2jx1scif.jpg"}
-                                                    alt={"Ricardo Lima"}
-                                                    className="w-13 h-13 2xl:w-15 2xl:h-15 rounded-full object-cover"
-                                                />
+                                                {compromisso.urlFotoPerfil && !errosImagem[compromisso.idAluno] ? (
+                                                    <img
+                                                        src={compromisso.urlFotoPerfil}
+                                                        alt={compromisso.nomeAluno}
+                                                        className="w-13 h-13 2xl:w-15 2xl:h-15 rounded-full object-cover"
+                                                        onError={() => lidarErroImagem(compromisso.idAluno)}
+                                                    />
+                                                ) : (
+                                                    <FaUserCircle className="w-13 h-13 2xl:w-15 2xl:h-15 text-[var(--cor-secundaria)]" />
+                                                )}
                                                 <span className="text-[var(--cor-secundaria)] font-medium text-base 2xl:text-xl">
                                                     {compromisso.aluno.nome}
                                                 </span>
                                             </div>
-                                            <button className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer">
-                                                Marcar como feito
-                                            </button>
+                                            {compromisso.dataHorarioFim === null && (
+                                                <button
+                                                    onClick={() => marcarComoConcluido(compromisso.id)}
+                                                    className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
+                                                >
+                                                    Marcar como feito
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

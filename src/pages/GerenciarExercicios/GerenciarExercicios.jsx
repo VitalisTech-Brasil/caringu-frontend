@@ -15,6 +15,10 @@ import Label from "../../components/Utils/Label";
 import info2 from "../../assets/images/info-2.svg";
 import MenuFiltro from "../../components/Utils/MenuFiltro";
 import { icons } from "lucide-react";
+import { caringuApi } from "../../provider/caringuApi.js";
+import ExercicioCard from "../../components/Utils/GerenciarExercicios/ExercicioCard.jsx";
+import toast, { Toaster } from "react-hot-toast";
+import ModalCriarExercicio from "../../components/Utils/GerenciarExercicios/ModalCriarExercicio.jsx";
 
 const GerenciarExercicios = () => {
 
@@ -25,7 +29,7 @@ const GerenciarExercicios = () => {
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false)
-    
+
     const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
@@ -41,136 +45,12 @@ const GerenciarExercicios = () => {
     const params = useParams();
     const navigate = useNavigate();
 
-    const [exercicios, setExercicios] = useState([
-        {
-            id: 1,
-            nome: "Rosca Direta",
-            grupoMuscular: "BRACO",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=rosca-direta",
-            observacoes: "Focar na execução e postura."
-        },
-        {
-            id: 2,
-            nome: "Rosca Martelo",
-            grupoMuscular: "BRACO",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=rosca-martelo",
-            observacoes: "Manter os cotovelos fixos."
-        },
-        {
-            id: 3,
-            nome: "BRACO Testa",
-            grupoMuscular: "BRACO",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=triceps-testa",
-            observacoes: "Evitar abrir demais os cotovelos."
-        },
-        {
-            id: 4,
-            nome: "Agachamento Livre",
-            grupoMuscular: "PERNAS",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=agachamento-livre",
-            observacoes: "Descer até 90 graus mantendo a coluna neutra."
-        },
-        {
-            id: 5,
-            nome: "Leg Press",
-            grupoMuscular: "PERNAS",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=leg-press",
-            observacoes: "Não estender completamente os joelhos."
-        },
-        {
-            id: 6,
-            nome: "Cadeira Extensora",
-            grupoMuscular: "PERNA",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=cadeira-extensora",
-            observacoes: "Segurar 2 segundos no topo do movimento."
-        },
-        {
-            id: 7,
-            nome: "Supino Reto",
-            grupoMuscular: "PEITORAL",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=supino-reto",
-            observacoes: "Controle na descida e pés firmes no chão."
-        },
-        {
-            id: 8,
-            nome: "Crucifixo",
-            grupoMuscular: "PEITORAL",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=crucifixo",
-            observacoes: "Não deixar os BRACO descerem além da linha dos OMBRO."
-        },
-        {
-            id: 9,
-            nome: "Remada Curvada",
-            grupoMuscular: "COSTAS",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=remada-curvada",
-            observacoes: "Manter a coluna neutra e CORE contraído."
-        },
-        {
-            id: 10,
-            nome: "Puxada Frontal",
-            grupoMuscular: "COSTAS",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=puxada-frontal",
-            observacoes: "Concentrar na ativação das dorsais."
-        },
-        {
-            id: 11,
-            nome: "Desenvolvimento",
-            grupoMuscular: "OMBRO",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=desenvolvimento",
-            observacoes: "Não deixar os cotovelos baixar abaixo da linha dos OMBRO."
-        },
-        {
-            id: 12,
-            nome: "Elevação Lateral",
-            grupoMuscular: "OMBRO",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=elevacao-lateral",
-            observacoes: "Executar lentamente, foco no deltoide lateral."
-        },
-        {
-            id: 13,
-            nome: "Abdominal Infra",
-            grupoMuscular: "CORE",
-            origem: "BIBLIOTECA",
-            favorito: true,
-            url: "https://www.youtube.com/watch?v=abdominal-infra",
-            observacoes: "Não utilizar o balanço das PERNAS."
-        },
-        {
-            id: 14,
-            nome: "Prancha",
-            grupoMuscular: "CORE",
-            origem: "PERSONAL",
-            favorito: false,
-            url: "https://www.youtube.com/watch?v=prancha",
-            observacoes: "Manter o CORE contraído e a lombar neutra."
-        }
-    ]);
+    const [totalExerciciosKpi, setTotalExerciciosKpi] = useState({
+        kpiBiblioteca: {},
+        kpiPersonal: {}
+    });
 
-
+    const [exercicios, setExercicios] = useState([]);
 
     const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm({
         defaultValues: {
@@ -182,12 +62,52 @@ const GerenciarExercicios = () => {
         mode: "onChange"
     });
 
+    useEffect(() => {
+        caringuApi.get("/exercicios/kpi/total-por-origem")
+            .then(response => {
+                const data = response.data;
 
-    const toggleFavorito = (id) => {
+                const kpi = {
+                    kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
+                    kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
+                };
+
+                setTotalExerciciosKpi(kpi);
+            })
+            .catch(err => {
+                console.error("Erro ao buscar KPI de exercícios:", err);
+            });
+
+        caringuApi.get("/exercicios")
+            .then(response => {
+                const data = response.data;
+
+                setExercicios(data);
+                console.log(data);
+            })
+            .catch(err => {
+                console.error("Erro ao buscar exercícios: ", err);
+            })
+    }, []);
+
+    const toggleFavorito = async (id) => {
         const exercicioIndex = exercicios.findIndex((exercicio) => exercicio.id === id);
-        const updatedexercicios = [...exercicios];
-        updatedexercicios[exercicioIndex].favorito = !updatedexercicios[exercicioIndex].favorito;
-        setExercicios(updatedexercicios);
+        if (exercicioIndex === -1) return;
+
+        const favoritoAtual = exercicios[exercicioIndex].favorito;
+        const novoValor = !favoritoAtual;
+
+        try {
+            await caringuApi.patch(`/exercicios/${id}/favorito`, {
+                favorito: novoValor
+            });
+
+            const exerciciosAtualizados = [...exercicios];
+            exerciciosAtualizados[exercicioIndex].favorito = novoValor;
+            setExercicios(exerciciosAtualizados);
+        } catch (error) {
+            console.error("Erro ao atualizar favorito:", error);
+        }
     };
 
     const { fontSize, width } = useResponsiveStyles();
@@ -196,6 +116,8 @@ const GerenciarExercicios = () => {
         const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
 
         useEffect(() => {
+
+            document.title = "Gerenciar Exercícios | CaringU"
 
             const updateStyles = () => {
                 const screenWidth = window.innerWidth;
@@ -260,21 +182,35 @@ const GerenciarExercicios = () => {
         if (showEditModal && exercicioSelecionado) {
             reset({
                 nome: exercicioSelecionado.nome,
-                url: exercicioSelecionado.url || '',
+                urlVideo: exercicioSelecionado.urlVideo || '',
                 grupoMuscular: exercicioSelecionado.grupoMuscular,
                 observacoes: exercicioSelecionado.observacoes || '',
             });
         }
     }, [showEditModal, exercicioSelecionado, reset]);
 
-    const openDeleteModal = () => {
+    const openDeleteModal = (id) => {
+        setExercicioSelecionado(id);
         setModalDeletarVisivel(true);
-
     };
 
     const confirmDelete = () => {
-        alert("exercicio excluído!");
-        setModalDeletarVisivel(false);
+        if (!exercicioSelecionado) return;
+
+        caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
+            .then(() => {
+
+                setExercicios(prev => prev.filter(ex => ex.id !== exercicioSelecionado));
+                setModalDeletarVisivel(false);
+                setExercicioSelecionado(null);
+
+                toast.success("Exercício deletado com sucesso!");
+                window.location.reload(true);
+            })
+            .catch((err) => {
+                console.error("Erro ao deletar exercício:", err);
+                toast.error("Erro ao deletar exercício:", err);
+            });
     };
 
     const handleOpenModal = () => {
@@ -286,10 +222,49 @@ const GerenciarExercicios = () => {
         setShowEditModal(true);
     };
 
+    const handleCriarExercicio = async (data) => {
+        try {
+            const response = await caringuApi.post("/exercicios/campos-essenciais", {
+                nome: data.nome,
+                grupoMuscular: data.grupoMuscular,
+                urlVideo: data.urlVideo,
+                observacoes: data.observacoes || "",
+            });
+
+            toast.success("Exercício criado com sucesso!");
+
+            setExercicios((prev) => [...prev, response.data]);
+            setShowCreateModal(false);
+            window.location.reload(true);
+        } catch (error) {
+            console.error("Erro ao criar exercício:", error);
+            toast.error("Erro ao criar exercício. Verifique os dados e tente novamente.");
+        }
+    };
+
+    const editarExercicio = async (data) => {
+        try {
+            const response = await caringuApi.put(`/exercicios/campos-essenciais/${exercicioSelecionado.id}`, {
+                nome: data.nome,
+                grupoMuscular: data.grupoMuscular,
+                urlVideo: data.urlVideo,
+                observacoes: data.observacoes || ""
+            });
+
+            toast.success("Exercício atualizado com sucesso!");
+
+            setShowEditModal(false);
+            window.location.reload(true);
+        } catch (error) {
+            console.error("Erro ao atualizar o exercício:", error);
+            toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
+        }
+    }
 
     const ExercicioActionsMenu = ({ exercicio }) => (
-        <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
-            <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
+        <div className="flex flex-col text-sm font-medium w-full p-1">
+            <button
+                className="flex items-center justify-between min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
                 onClick={() => handleEditarExercicio(exercicio)}
             >
                 Editar
@@ -300,7 +275,7 @@ const GerenciarExercicios = () => {
                 </svg>
             </button>
             <button
-                className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
+                className="flex items-center justify-between min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
                 onClick={() => openDeleteModal(exercicio.id)}
             >
                 Excluir
@@ -352,7 +327,7 @@ const GerenciarExercicios = () => {
                         </svg>
                         <div className="col-span-2 flex-col">
                             <h1 className="font-semibold">Exercícios Criados</h1>
-                            10
+                            {totalExerciciosKpi.kpiPersonal.totalExercicio}
                         </div>
                     </div>
                     <div className="border border-[#E6E6E2] rounded-md w-90 md:w-80 lg:w-100 lg:h-1/4 h-25 grid grid-cols-3 justify-center items-center p-5">
@@ -363,21 +338,24 @@ const GerenciarExercicios = () => {
                         </svg>
                         <div className="col-span-2 flex-col">
                             <h1 className="font-semibold">Exercícios da Biblioteca</h1>
-                            7
+                            {totalExerciciosKpi.kpiBiblioteca.totalExercicio}
                         </div>
                     </div>
                 </div>
-                <div className="bg-[var(--cor-secundaria)] rounded-lg p-6 md:p-6 border border-[#E6E6E2] max-h-135 md:h-[65%] mx-8">
+                <div className="bg-[var(--cor-secundaria)] rounded-lg p-6 md:p-6 border border-[#E6E6E2] max-h-[70%] md:h-[85%] mx-8">
                     <h1 className="text-zinc-900 md:text-3xl font-semibold font-['Inter']">Gerenciamento de Exercícios</h1>
-                    <div className="flex flex-col md:flex-row items-center gap-2 mt-5 justify-between max-w-full">
-                        <div className="flex items-center gap-2 md:w-full">
+                    <div className="flex flex-wrap md:flex-nowrap items-start md:items-center gap-4 mt-5 justify-between w-full">
+
+                        {/* Campo de pesquisa + filtros */}
+                        <div className="flex flex-wrap md:flex-nowrap gap-2 w-full md:w-2/3">
                             <input
                                 type="text"
-                                placeholder="Pesquisar exercicio"
-                                className="flex-1 border max-w-50 border-gray-300 rounded-md p-2 md:max-w-1/2"
+                                placeholder="Pesquisar exercício"
+                                className="flex-grow border border-gray-300 rounded-md p-2 min-w-[200px] md:min-w-[250px]"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
+
                             <MenuFiltro
                                 menuWidth="280px"
                                 buttonIcon={
@@ -425,7 +403,7 @@ const GerenciarExercicios = () => {
                                         width: "55%",
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
-                                                <path d="M20.0229 5.11885L22.5896 10.2522C22.9396 10.9668 23.8729 11.6522 24.6604 11.7834L29.3125 12.5563C32.2875 13.0522 32.9875 15.2105 30.8437 17.3397L27.2271 20.9563C26.6146 21.5688 26.2792 22.7501 26.4687 23.5959L27.5042 28.073C28.3208 31.6168 26.4396 32.9876 23.3042 31.1355L18.9437 28.5543C18.1562 28.0876 16.8583 28.0876 16.0562 28.5543L11.6958 31.1355C8.57499 32.9876 6.67916 31.6022 7.49582 28.073L8.53124 23.5959C8.72082 22.7501 8.38541 21.5688 7.77291 20.9563L4.15624 17.3397C2.02707 15.2105 2.71249 13.0522 5.68749 12.5563L10.3396 11.7834C11.1125 11.6522 12.0458 10.9668 12.3958 10.2522L14.9625 5.11885C16.3625 2.33343 18.6375 2.33343 20.0229 5.11885Z" stroke="#E96E35" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M20.0229 5.11885L22.5896 10.2522C22.9396 10.9668 23.8729 11.6522 24.6604 11.7834L29.3125 12.5563C32.2875 13.0522 32.9875 15.2105 30.8437 17.3397L27.2271 20.9563C26.6146 21.5688 26.2792 22.7501 26.4687 23.5959L27.5042 28.073C28.3208 31.6168 26.4396 32.9876 23.3042 31.1355L18.9437 28.5543C18.1562 28.0876 16.8583 28.0876 16.0562 28.5543L11.6958 31.1355C8.57499 32.9876 6.67916 31.6022 7.49582 28.073L8.53124 23.5959C8.72082 22.7501 8.38541 21.5688 7.77291 20.9563L4.15624 17.3397C2.02707 15.2105 2.71249 13.0522 5.68749 12.5563L10.3396 11.7834C11.1125 11.6522 12.0458 10.9668 12.3958 10.2522L14.9625 5.11885C16.3625 2.33343 18.6375 2.33343 20.0229 5.11885Z" stroke="#E96E35" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>,
                                         active: showOnlyFavorites,
                                         onClick: () => setShowOnlyFavorites((prev) => !prev),
@@ -439,13 +417,13 @@ const GerenciarExercicios = () => {
                                         active: origemFilter === origemSelecionada,
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" viewBox="0 0 29 25" fill="none">
-                                                <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M19.9375 1H21.75C22.2502 1 22.6562 1.51284 22.6562 2.14474V22.75C22.6562 23.3819 22.2502 23.8947 21.75 23.8947H19.9375C19.4373 23.8947 19.0312 23.3819 19.0312 22.75V2.14474C19.0312 1.51284 19.4373 1 19.9375 1Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M7.25 1H9.0625C9.56275 1 9.96875 1.51284 9.96875 2.14474V22.75C9.96875 23.3819 9.56275 23.8947 9.0625 23.8947H7.25C6.74975 23.8947 6.34375 23.3819 6.34375 22.75V2.14474C6.34375 1.51284 6.74975 1 7.25 1Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M3.625 5.5791H5.4375C5.93775 5.5791 6.34375 6.09194 6.34375 6.72384V18.1712C6.34375 18.8031 5.93775 19.3159 5.4375 19.3159H3.625C3.12475 19.3159 2.71875 18.8031 2.71875 18.1712V6.72384C2.71875 6.09194 3.12475 5.5791 3.625 5.5791Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M26.2812 12.4473H29" stroke="#46982B" stroke-width="2" />
-                                                <path d="M9.96875 12.4473H19.0312" stroke="#46982B" stroke-width="2" />
-                                                <path d="M0 12.4473H2.71875" stroke="#46982B" stroke-width="2" />
+                                                <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M19.9375 1H21.75C22.2502 1 22.6562 1.51284 22.6562 2.14474V22.75C22.6562 23.3819 22.2502 23.8947 21.75 23.8947H19.9375C19.4373 23.8947 19.0312 23.3819 19.0312 22.75V2.14474C19.0312 1.51284 19.4373 1 19.9375 1Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M7.25 1H9.0625C9.56275 1 9.96875 1.51284 9.96875 2.14474V22.75C9.96875 23.3819 9.56275 23.8947 9.0625 23.8947H7.25C6.74975 23.8947 6.34375 23.3819 6.34375 22.75V2.14474C6.34375 1.51284 6.74975 1 7.25 1Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M3.625 5.5791H5.4375C5.93775 5.5791 6.34375 6.09194 6.34375 6.72384V18.1712C6.34375 18.8031 5.93775 19.3159 5.4375 19.3159H3.625C3.12475 19.3159 2.71875 18.8031 2.71875 18.1712V6.72384C2.71875 6.09194 3.12475 5.5791 3.625 5.5791Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M26.2812 12.4473H29" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M9.96875 12.4473H19.0312" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M0 12.4473H2.71875" stroke="#46982B" strokeWidth="2" />
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
@@ -463,11 +441,11 @@ const GerenciarExercicios = () => {
                                         width: '85%',
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="37" height="37" viewBox="0 0 37 37" fill="none">
-                                                <path d="M26.4858 27.75C30.1858 27.75 31.1108 25.6687 31.1108 23.125V13.875C31.1108 11.3312 30.1858 9.25 26.4858 9.25C22.7858 9.25 21.8608 11.3312 21.8608 13.875V23.125C21.8608 25.6687 22.7858 27.75 26.4858 27.75Z" stroke="#748CAB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M10.5142 27.75C6.81416 27.75 5.88916 25.6687 5.88916 23.125V13.875C5.88916 11.3312 6.81416 9.25 10.5142 9.25C14.2142 9.25 15.1392 11.3312 15.1392 13.875V23.125C15.1392 25.6687 14.2142 27.75 10.5142 27.75Z" stroke="#748CAB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M15.1392 18.5H21.8608" stroke="#748CAB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M34.6875 22.3541V14.6458" stroke="#748CAB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M2.3125 22.3541V14.6458" stroke="#748CAB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M26.4858 27.75C30.1858 27.75 31.1108 25.6687 31.1108 23.125V13.875C31.1108 11.3312 30.1858 9.25 26.4858 9.25C22.7858 9.25 21.8608 11.3312 21.8608 13.875V23.125C21.8608 25.6687 22.7858 27.75 26.4858 27.75Z" stroke="#748CAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M10.5142 27.75C6.81416 27.75 5.88916 25.6687 5.88916 23.125V13.875C5.88916 11.3312 6.81416 9.25 10.5142 9.25C14.2142 9.25 15.1392 11.3312 15.1392 13.875V23.125C15.1392 25.6687 14.2142 27.75 10.5142 27.75Z" stroke="#748CAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M15.1392 18.5H21.8608" stroke="#748CAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M34.6875 22.3541V14.6458" stroke="#748CAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M2.3125 22.3541V14.6458" stroke="#748CAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
@@ -485,314 +463,50 @@ const GerenciarExercicios = () => {
                                 ]}
                             />
                         </div>
-                        <div className="flex justify-end md:w-2xl gap-4 md:gap-13">
+
+                        {/* Botão "Criar exercício" */}
+                        <div className="w-full md:w-auto flex justify-end">
                             <ButtonInterno
-                                classNameExtra="p-4"
-                                texto="Criar Exercicio"
+                                classNameExtra="p-4 w-full md:w-auto"
+                                texto="Criar Exercício"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
                                 corHover="#F9FAFB"
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
-                                width="60%"
                                 height="50px"
                                 font-size={fontSize}
-                                logoSvg={
-                                    <svg className="w-8 h-8" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M13 19.8252H24.375" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M13 26.3252H20.1175" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M16.25 9.75H22.75C26 9.75 26 8.125 26 6.5C26 3.25 24.375 3.25 22.75 3.25H16.25C14.625 3.25 13 3.25 13 6.5C13 9.75 14.625 9.75 16.25 9.75Z" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M26 6.53223C31.4112 6.82473 34.125 8.82348 34.125 16.2497V25.9997C34.125 32.4997 32.5 35.7497 24.375 35.7497H14.625C6.5 35.7497 4.875 32.4997 4.875 25.9997V16.2497C4.875 8.83973 7.58875 6.82473 13 6.53223" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M28.6024 8.14982L21.4187 15.7536C21.1474 16.0423 20.8849 16.6111 20.8324 17.0048L20.5087 19.8398C20.3949 20.8636 21.1299 21.5636 22.1449 21.3886L24.9624 20.9073C25.3562 20.8373 25.9074 20.5486 26.1787 20.2511L33.3624 12.6473C34.6049 11.3348 35.1649 9.83857 33.2312 8.00982C31.3062 6.19857 29.8449 6.83732 28.6024 8.14982Z" fill="#FFFDF6" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M27.4038 9.41895C27.7801 11.8339 29.7401 13.6802 32.1726 13.9252" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
-                                }
+                                logoSvg={<svg className="w-8 h-8" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13 19.8252H24.375" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M13 26.3252H20.1175" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M16.25 9.75H22.75C26 9.75 26 8.125 26 6.5C26 3.25 24.375 3.25 22.75 3.25H16.25C14.625 3.25 13 3.25 13 6.5C13 9.75 14.625 9.75 16.25 9.75Z" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M26 6.53223C31.4112 6.82473 34.125 8.82348 34.125 16.2497V25.9997C34.125 32.4997 32.5 35.7497 24.375 35.7497H14.625C6.5 35.7497 4.875 32.4997 4.875 25.9997V16.2497C4.875 8.83973 7.58875 6.82473 13 6.53223" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M28.6024 8.14982L21.4187 15.7536C21.1474 16.0423 20.8849 16.6111 20.8324 17.0048L20.5087 19.8398C20.3949 20.8636 21.1299 21.5636 22.1449 21.3886L24.9624 20.9073C25.3562 20.8373 25.9074 20.5486 26.1787 20.2511L33.3624 12.6473C34.6049 11.3348 35.1649 9.83857 33.2312 8.00982C31.3062 6.19857 29.8449 6.83732 28.6024 8.14982Z" fill="#FFFDF6" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M27.4038 9.41895C27.7801 11.8339 29.7401 13.6802 32.1726 13.9252" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>}
                                 onClick={handleOpenModal}
                             />
                         </div>
                     </div>
                     <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-70 md:max-h-[75%] overflow-y-auto mt-5 border border-[#E6E6E2]">
                         {filteredExercicios.map((exercicio) => (
-                            <div key={exercicio.id} className="relative w-full bg-[var(--cor-secundaria)] border border-[#E6E6E2] flex flex-wrap items-center rounded-lg px-2">
-                                <div className="relative flex flex-col md:flex-row items-center justify-between md:gap-8 w-full p-5">
-                                    <div className="relative flex flex-col md:flex-row  md:gap-10 items-center md:items-start justify-start w-full">
-                                        <div className="relative flex grid-cols-2 items-center justify-between bg-[#FFFDF6] rounded-lg w-[90%] md:w-10">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-15 col-span-1" viewBox="0 0 70 70" fill="none">
-                                                <path d="M58.3334 24.0622V52.4997C58.3334 61.2497 53.1126 64.1663 46.6667 64.1663H23.3334C16.8876 64.1663 11.6667 61.2497 11.6667 52.4997V24.0622C11.6667 14.583 16.8876 12.3955 23.3334 12.3955C23.3334 14.2038 24.0625 15.8372 25.2583 17.033C26.4542 18.2288 28.0876 18.958 29.8959 18.958H40.1042C43.7209 18.958 46.6667 16.0122 46.6667 12.3955C53.1126 12.3955 58.3334 14.583 58.3334 24.0622Z" stroke="#1D2D44" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                                                <path d="M46.6666 12.3955C46.6666 16.0122 43.7208 18.958 40.1041 18.958H29.8958C28.0874 18.958 26.454 18.2288 25.2582 17.033C24.0623 15.8372 23.3333 14.2038 23.3333 12.3955C23.3333 8.77884 26.2791 5.83301 29.8958 5.83301H40.1041C41.9124 5.83301 43.5458 6.56219 44.7417 7.75802C45.9375 8.95385 46.6666 10.5872 46.6666 12.3955Z" stroke="#1D2D44" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                                                <path d="M23.3333 37.917H34.9999" stroke="#1D2D44" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                                                <path d="M23.3333 49.583H46.6666" stroke="#1D2D44" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                            <div className="flex flex-col gap-2 col-span-1 md:hidden">
-                                                <div className="flex justify-end items-center">
-                                                    <div className="relative" ref={buttonRef}>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation(); // Prevent card click event
-                                                                setOpenMenuId(openMenuId === exercicio.id ? null : exercicio.id);
-                                                            }}
-                                                            className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
-                                                        >
-                                                            <FaEllipsisV className="text-xl cursor-pointer" />
-                                                        </button>
-                                                        {openMenuId === exercicio.id && (
-                                                            <div
-                                                                style={{
-                                                                    position: 'fixed',
-                                                                    top: buttonRef.current?.getBoundingClientRect().top || 0,
-                                                                    left: (buttonRef.current?.getBoundingClientRect().left || 0) - 180,
-                                                                }}
-                                                                className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-[9999] min-w-[160px]"
-                                                            >
-                                                                <ExercicioActionsMenu exercicio={exercicio} />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col md:flex-row md:grid-cols-2 md:gap-5 w-full">
-                                            <div className="md:col-span-1 text-sm md:text-lg">
-                                                <p><b>Nome: </b>{exercicio.nome}</p>
-                                                <p><b>Grupo Muscular: </b>{exercicio.grupoMuscular}</p>
-                                            </div>
-                                            <div className="md:col-span-1 text-sm md:text-lg ">
-                                                <p><b>Origem: </b>{exercicio.origem}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="md:flex flex-col-reverse justify-end md:flex-row md:gap-10 hidden">
-                                        <div>
-                                            <ButtonInterno
-                                                logoSvg={
-                                                    exercicio.favorito ? (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                            <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#E96E35" />
-                                                        </svg>
-                                                    ) : (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                            <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#FFFDF6" stroke="#15171B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                                        </svg>
-                                                    )
-                                                }
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // Prevent card click event
-                                                    toggleFavorito(exercicio.id);
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="flex justify-end items-center">
-                                            <div className="relative" ref={buttonRef}>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // Prevent card click event
-                                                        setOpenMenuId(openMenuId === exercicio.id ? null : exercicio.id);
-                                                    }}
-                                                >
-                                                    <FaEllipsisV className="text-xl cursor-pointer" />
-                                                </button>
-                                                {openMenuId === exercicio.id && (
-                                                    <div
-                                                        ref={menuRef}
-                                                        onClick={(e) => e.stopPropagation()} // Prevent card click event
-                                                        className="absolute top-0 right-full mr-2 z-30 bg-white border border-gray-200 rounded-md shadow-lg p-2"
-                                                    >
-                                                        <ExercicioActionsMenu exercicio={exercicio} />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col md:hidden gap-2">
-                                        <ButtonInterno
-                                            logoSvg={
-                                                exercicio.favorito ? (
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                        <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#E96E35" />
-                                                    </svg>
-                                                ) : (
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                        <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#FFFDF6" stroke="#15171B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                )
-                                            }
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event
-                                                toggleFavorito(exercicio.id);
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <ExercicioCard
+                                key={exercicio.id}
+                                exercicio={exercicio}
+                                isOpen={openMenuId === exercicio.id}
+                                setOpenMenuId={setOpenMenuId}
+                                toggleFavorito={toggleFavorito}
+                                ExercicioActionsMenu={ExercicioActionsMenu}
+                            />
                         ))}
                         {showCreateModal && (
-                            <div className="fixed inset-0 z-40 flex justify-center items-center overflow-y-auto">
-                                <div className="absolute inset-0 bg-[#000000] opacity-50"
-                                    aria-label="Fundo Escurecido"
-                                ></div>
-                                <div className="relative p-4 w-full max-w-2xl">
-                                    <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
-                                        <div className="flex justify-between items-center pb-4 mb-4 ">
-                                            <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">
-                                                Criar Exercício
-                                            </h1>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setModalConfirmarCancelarVisivel(true)
-                                                }}
-                                                className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
-                                            >
-                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
-                                            <div className="grid gap-4 mb-4">
-                                                <Label
-                                                    id="nome"
-                                                    nomeLabel="Nome"
-                                                    fontSize="20px"
-                                                    fontWeight="500"
-                                                />
-                                                <InputPosLogin
-                                                    id="nome"
-                                                    name="nome"
-                                                    inputType="text"
-                                                    placeholder="Digite o nome do exercício"
-                                                    fontSize="16px"
-                                                    fontWeight="400"
-                                                    fontSizeErro="16px"
-                                                    width="100%"
-                                                    {...register('nome', {
-                                                        required: 'O nome do exercício é obrigatório',
-                                                        minLength: {
-                                                            value: 3,
-                                                            message: 'O nome deve ter pelo menos 3 caracteres',
-                                                        },
-                                                    })}
-                                                    isError={!!errors.nome}
-                                                    errorMessage={errors.nome?.message}
-                                                />
-
-                                                <Label
-                                                    id="url"
-                                                    nomeLabel="URL do vídeo"
-                                                    fontSize="20px"
-                                                    fontWeight="500"
-                                                />
-                                                <InputPosLogin
-                                                    id="url"
-                                                    name="url"
-                                                    inputType="text"
-                                                    placeholder="Insira o URL do vídeo do exercício"
-                                                    fontSize="16px"
-                                                    fontWeight="400"
-                                                    fontSizeErro="16px"
-                                                    width="100%"
-                                                    inputMode="text"
-                                                    {...register('url', {
-                                                        required: 'A URL é obrigatória',
-                                                        pattern: {
-                                                            value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/,
-                                                            message: 'Insira uma URL válida',
-                                                        },
-                                                    })}
-                                                    isError={!!errors.url}
-                                                    errorMessage={errors.url?.message}
-                                                />
-
-                                                <Label
-                                                    id="grupoMuscular"
-                                                    nomeLabel="Grupo muscular"
-                                                    fontSize="20px"
-                                                    fontWeight="500"
-                                                />
-                                                <InputPosLogin
-                                                    id="grupoMuscular"
-                                                    name="grupoMuscular"
-                                                    inputType="text"
-                                                    placeholder="Ex: PEITORAL"
-                                                    fontSize="16px"
-                                                    fontWeight="400"
-                                                    fontSizeErro="16px"
-                                                    width="100%"
-                                                    inputMode="text"
-                                                    {...register('grupoMuscular', {
-                                                        required: 'O grupo muscular é obrigatório',
-                                                        minLength: {
-                                                            value: 3,
-                                                            message: 'O grupo muscular deve ter pelo menos 3 caracteres',
-                                                        },
-                                                    })}
-                                                    isError={!!errors.grupoMuscular}
-                                                    errorMessage={errors.grupoMuscular?.message}
-                                                />
-
-                                                <Label
-                                                    id="observacoes"
-                                                    nomeLabel="Observações"
-                                                    fontSize="20px"
-                                                    fontWeight="500"
-                                                />
-                                                <InputPosLogin
-                                                    id="observacoes"
-                                                    name="observacoes"
-                                                    inputType="text"
-                                                    placeholder="Observações sobre o exercício"
-                                                    fontSize="16px"
-                                                    fontWeight="400"
-                                                    fontSizeErro="16px"
-                                                    width="100%"
-                                                    inputMode="text"
-                                                    {...register('observacoes', {
-                                                        required: 'As observações são obrigatórias',
-                                                        minLength: {
-                                                            value: 3,
-                                                            message: 'As observações devem ter pelo menos 3 caracteres',
-                                                        },
-                                                    })}
-                                                    isError={!!errors.observacoes}
-                                                    errorMessage={errors.observacoes?.message}
-                                                />
-
-
-                                            </div>
-                                            <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
-                                                <ButtonInterno
-                                                    texto="Cancelar"
-                                                    corTexto="#B41F1F"
-                                                    cor="var(--cor-secundaria)"
-                                                    height="2.75rem"
-                                                    width="13.25rem"
-                                                    corHover="#1D2D4417"
-                                                    fontWeight="500"
-                                                    aria-label={"Botão de Cancelar"}
-                                                    onClick={() => setModalConfirmarCancelarVisivel(true)}
-                                                >
-                                                </ButtonInterno>
-                                                <ButtonInterno
-                                                    texto="Salvar"
-                                                    corTexto="var(--cor-secundaria)"
-                                                    cor="#46982B"
-                                                    height="2.75rem"
-                                                    width="9.2rem"
-                                                    corHover="#46982BE5"
-                                                    fontWeight="600"
-                                                    aria-label={"Botão de Salvar"}
-                                                >
-                                                </ButtonInterno>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                            <ModalCriarExercicio
+                                isVisible={showCreateModal}
+                                setModalConfirmarCancelarVisivel={setModalConfirmarCancelarVisivel}
+                                onClose={() => setShowCreateModal(false)}
+                                onSubmit={handleCriarExercicio}
+                            />
                         )}
 
                         {showEditModal && exercicioSelecionado && (
@@ -818,7 +532,7 @@ const GerenciarExercicios = () => {
                                                 </svg>
                                             </button>
                                         </div>
-                                        <form onSubmit={handleSubmit((data) => console.log("Dados editados:", data))}>
+                                        <form onSubmit={handleSubmit(editarExercicio)}>
                                             <div className="grid gap-4 mb-4">
                                                 <Label
                                                     id="nome"
@@ -847,14 +561,14 @@ const GerenciarExercicios = () => {
                                                 />
 
                                                 <Label
-                                                    id="url"
+                                                    id="urlVideo"
                                                     nomeLabel="URL do vídeo"
                                                     fontSize="20px"
                                                     fontWeight="500"
                                                 />
                                                 <InputPosLogin
-                                                    id="url"
-                                                    name="url"
+                                                    id="urlVideo"
+                                                    name="urlVideo"
                                                     inputType="text"
                                                     placeholder="Insira o URL do vídeo do exercício"
                                                     fontSize="16px"
@@ -862,43 +576,44 @@ const GerenciarExercicios = () => {
                                                     fontSizeErro="16px"
                                                     width="100%"
                                                     inputMode="text"
-                                                    {...register('url', {
+                                                    {...register('urlVideo', {
                                                         required: 'A URL é obrigatória',
                                                         pattern: {
                                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/,
                                                             message: 'Insira uma URL válida',
                                                         },
                                                     })}
-                                                    isError={!!errors.url}
-                                                    errorMessage={errors.url?.message}
+                                                    isError={!!errors.urlVideo}
+                                                    errorMessage={errors.urlVideo?.message}
                                                 />
 
-                                                <Label
+                                                <Label id="grupoMuscular" nomeLabel="Grupo muscular" fontSize="20px" fontWeight="500" />
+                                                <select
                                                     id="grupoMuscular"
-                                                    nomeLabel="Grupo muscular"
-                                                    fontSize="20px"
-                                                    fontWeight="500"
-                                                />
-                                                <InputPosLogin
-                                                    id="grupoMuscular"
-                                                    name="grupoMuscular"
-                                                    inputType="text"
-                                                    placeholder="Ex: PEITORAL"
-                                                    fontSize="16px"
-                                                    fontWeight="400"
-                                                    fontSizeErro="16px"
-                                                    width="100%"
-                                                    inputMode="text"
-                                                    {...register('grupoMuscular', {
-                                                        required: 'O grupo muscular é obrigatório',
-                                                        minLength: {
-                                                            value: 3,
-                                                            message: 'O grupo muscular deve ter pelo menos 3 caracteres',
-                                                        },
-                                                    })}
-                                                    isError={!!errors.grupoMuscular}
-                                                    errorMessage={errors.grupoMuscular?.message}
-                                                />
+                                                    defaultValue={""}
+                                                    {...register("grupoMuscular", { required: "O grupo muscular é obrigatório" })}
+                                                    className="border border-gray-300 rounded-md px-4 py-2"
+                                                >
+                                                    <option value="" disabled={true}>Selecione...</option>
+                                                    <option value="PEITORAL">Peitoral</option>
+                                                    <option value="COSTAS">Costas</option>
+                                                    <option value="PERNAS">Pernas</option>
+                                                    <option value="OMBRO">Ombro</option>
+                                                    <option value="BRACO">Braço</option>
+                                                    <option value="CORE">Core</option>
+                                                    <option value="CARDIO">Cardio</option>
+                                                </select>
+
+                                                {errors.grupoMuscular && (
+                                                    <div className="flex items-center gap-2">
+                                                        <img
+                                                            src={info2}
+                                                            alt="Erro"
+                                                            className="w-4.5 h-4.5"
+                                                        />
+                                                        <span className="text-[#D45C56]">{errors.grupoMuscular.message}</span>
+                                                    </div>
+                                                )}
 
                                                 <Label
                                                     id="observacoes"
@@ -917,7 +632,7 @@ const GerenciarExercicios = () => {
                                                     width="100%"
                                                     inputMode="text"
                                                     {...register('observacoes', {
-                                                        required: 'As observações são obrigatórias',
+                                                        required: false,
                                                         minLength: {
                                                             value: 3,
                                                             message: 'As observações devem ter pelo menos 3 caracteres',
@@ -933,6 +648,7 @@ const GerenciarExercicios = () => {
                                                 <ButtonInterno
                                                     texto="Cancelar"
                                                     corTexto="#B41F1F"
+                                                    type="button"
                                                     cor="var(--cor-secundaria)"
                                                     height="2.75rem"
                                                     width="13.25rem"
@@ -963,10 +679,7 @@ const GerenciarExercicios = () => {
                             fecharModal={() => setModalDeletarVisivel(false)}
                             titulo="Tem certeza que deseja excluir esse exercicio?"
                             descricao="Você não poderá disponibilizá-lo futuramente"
-                            onConfirm={() => {
-                                setModalConfirmarCancelarVisivel(false);
-                                setShowCreateModal(false);
-                            }}
+                            onConfirm={confirmDelete}
                             icone={lixeira}
                             textoBotaoConfirmar="Manter exercicio"
                             textoBotaoCancelar="Deletar mesmo assim"
@@ -988,8 +701,8 @@ const GerenciarExercicios = () => {
                             aria-label="Modal de Cancelamento"
                         />
                     </div>
+                    <Toaster position='top-right' reverseOrder={false} />
                 </div>
-                {/* </div> */}
             </div >
         </div >
     )

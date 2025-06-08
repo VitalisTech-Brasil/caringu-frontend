@@ -1,5 +1,8 @@
 import React from "react";
 import Rating from 'react-rating'
+import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+
 
 
 const CardPersonal = ({
@@ -12,6 +15,8 @@ const CardPersonal = ({
     especialidades = []
 
 }) => {
+
+    const [errosImagem, setErrosImagem] = useState({});
 
 
     const StarFull = () => (
@@ -27,10 +32,27 @@ const CardPersonal = ({
     )
 
 
+    const lidarErroImagem = (id) => {
+        setErrosImagem((prev) => ({
+            ...prev,
+            [id]: true,
+        }));
+    };
+
+
     return (
-        <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-4 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
+        <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-2 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
             <div className="mt-9 lg:ml-0 ml-[31%]">
-                <img src={urlFoto} alt="Personal" className="w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33 rounded-full" />
+                {urlFoto && !errosImagem[email] ? (
+                    <img
+                        src={urlFoto}
+                        alt={nomePersonal}
+                        className="w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33 rounded-full"
+                        onError={() => lidarErroImagem(email)}
+                    />
+                ) : (
+                    <FaUserCircle className="flex-shrink-0 w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33" />
+                )}
             </div>
             <div className="flex flex-col items-start justify-start  mt-11 w-58 sm:w-122 lg:w-100  xl:w-130" >
                 <div>

@@ -4,11 +4,19 @@ import Header from "../components/Personal/Header/Header";
 import CardSolitacoes from "../components/Utils/CardSolitacoes";
 import { useNavigate } from "react-router-dom";
 import { caringuApi } from "../provider/caringuApi";
+import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
+import Modal from "../components/Utils/Modal";
+import iconCancelar from "../assets/images/cancelar.png";
+
 
 const SolicitacoesPendentes = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [solicitacoesPendentes, setSolicitacoesPendentes] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [modalCancelarVisivel, setModalCancelarVisivel] = useState(false);
+    const [solicitacaoParaCancelar, setSolicitacaoParaCancelar] = useState(null);
+
 
     const navigate = useNavigate();
 
@@ -21,16 +29,10 @@ const SolicitacoesPendentes = () => {
     const listarSolicitacoesPendentes = async () => {
         try {
             const response = await caringuApi.get(`/planos-contratados/solicitacoes-pendentes/${pessoaId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+
             });
-            const pendentes = Array.isArray(response.data)
-                ? response.data.filter(solicitacao => solicitacao.status === "PENDENTE")
-                : [];
-            setSolicitacoesPendentes(pendentes);
-            console.log("Solicitações pendentes:", response.data);
-        } catch (error) {
+            setSolicitacoesPendentes(response.data);
+         } catch (error) {
             console.error("Erro ao listar solicitações pendentes:", error);
         }
     }
@@ -40,13 +42,10 @@ const SolicitacoesPendentes = () => {
             await caringuApi.patch(
                 `/planos-contratados/${id}/status`,
                 { status },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
             );
-            listarSolicitacoesPendentes();
+             listarSolicitacoesPendentes();
+            setModalCancelarVisivel(false);
+            setSolicitacaoParaCancelar(null);
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
         }
@@ -56,6 +55,24 @@ const SolicitacoesPendentes = () => {
         document.title = "Solicitações Pendentes | Caringu";
         listarSolicitacoesPendentes();
     }, []);
+
+    useEffect(() => {
+        let tokenExistente = sessionStorage.getItem("authToken");
+
+        if (!tokenExistente) {
+            setShowModal(true);
+        }
+    }, [])
+
+    const closeModal = () => {
+        setShowModal(false);
+        navigate("/login");
+    };
+
+     const handleCancelarSolicitacao = (solicitacaoId) => {
+        setSolicitacaoParaCancelar(solicitacaoId);
+        setModalCancelarVisivel(true);
+    };
 
     return (
         <>
@@ -84,10 +101,10 @@ const SolicitacoesPendentes = () => {
                                     key={solicitacao.id}
                                     nome={solicitacao.nomeAluno}
                                     nomePlano={solicitacao.nomePlano}
-                                    telefone={solicitacao.celular}
+                                    telefone={solicitacao.celular ? MascaraTelefone(solicitacao.celular) : "Telefone não informado"}
                                     valorPlano={solicitacao.quantidadeAulas * solicitacao.valorAulas}
                                     confimarPagamento={() => atualizarStatus(solicitacao.id, "ATIVO")}
-                                    cancelarSolicitacao={() => atualizarStatus(solicitacao.id, "INATIVO")}
+                                    cancelarSolicitacao={() => handleCancelarSolicitacao(solicitacao.id)}
                                 />
                             ))
                         ) : (
@@ -98,6 +115,43 @@ const SolicitacoesPendentes = () => {
 
                         }
                     </div>
+                    <Modal
+                        visivel={modalCancelarVisivel}
+                        fecharModal={() => setModalCancelarVisivel(false)}
+                        titulo="Tem certeza que deseja Cancelar a Solicitação?"
+                        descricao="Alteração de status para Cancelado"
+                         onConfirm={() => {
+                            if (solicitacaoParaCancelar) {
+                                atualizarStatus(solicitacaoParaCancelar, "CANCELADO");
+                            }
+                        }}
+                        icone={iconCancelar}
+                        textoBotaoConfirmar="Voltar"
+                        textoBotaoCancelar="Cancelar Solicitação"
+                        ariaLabel="Modal de Cancelamento"
+                    />
+                    {showModal && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
+                            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                                <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
+                                    <img src={alerta} alt="Alerta" className="w-6 h-6" />
+                                    <span>Acesso Negado</span>
+                                </h2>
+                                <p className="text-center mt-4">
+                                    <div>Sessão expirada ou não autenticado.</div>
+                                    <div>Clique em "Redirecionar" para fazer login.</div>
+                                </p>
+                                <div className="flex justify-center mt-6">
+                                    <button
+                                        className="bg-[#D45C56] text-white px-4 py-2 rounded-lg cursor-pointer"
+                                        onClick={closeModal}
+                                    >
+                                        Redirecionar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </>

@@ -10,14 +10,12 @@ import Modal from "../../components/Utils/Modal";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import { useForm } from "react-hook-form";
-import Label from "../../components/Utils/Label";
-import InputPosLogin from "../../components/Utils/InputPosLogin";
-import ButtonInterno from "../../components/Utils/Button";
-
 import MenuFiltro from "../../components/Utils/MenuFiltro";
 
 import { caringuApi } from "../../provider/caringuApi";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
+import FormularioAnamnese from "../../components/Utils/GerenciarAlunos/FormularioAnamnese";
+import toast, { Toaster } from "react-hot-toast";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +35,10 @@ const GerenciarAlunos = () => {
   const buttonRef = useRef(null);
   const buttonRefFilter = useRef(null);
 
+  const [respostas, setRespostas] = useState({});
+  const [respostasBack, setRespostasBack] = useState({});
+  const [alunosAtivos, setAlunosAtivos] = useState([]);
+  const [respostasPorAluno, setRespostasPorAluno] = useState({});
   const [alunoAtual, setAlunoAtual] = useState(null)
 
   const handleOpenModal = (aluno) => {
@@ -45,9 +47,11 @@ const GerenciarAlunos = () => {
     setOpenMenuId(null)
   };
 
-  const rect = buttonRefFilter.current?.getBoundingClientRect();
+  const handleRadioChange = (id, value) => {
+    setRespostas(prev => ({ ...prev, [id]: value }));
+  };
 
-  const [alunosAtivos, setAlunosAtivos] = useState([]);
+  const rect = buttonRefFilter.current?.getBoundingClientRect();
 
   const now = new Date();
 
@@ -122,8 +126,11 @@ const GerenciarAlunos = () => {
 
     const fetchData = async () => {
       try {
-        const totalAlunosAtivos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
-        setAlunosAtivos(totalAlunosAtivos.data);
+        const response = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
+        const aluno = response.data;
+
+        setAlunosAtivos(aluno);
+        console.log(aluno);
 
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
@@ -135,33 +142,47 @@ const GerenciarAlunos = () => {
 
   // Componente do menu de ações do aluno
   const AlunoActionsMenu = ({ aluno }) => (
-    <div className="flex flex-col text-sm font-medium min-w-[160px]">
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => handleOpenModal(aluno)}>
-        Anamnese
+    <div className="flex flex-col text-sm font-medium min-w-[160px] max-w-[220px] w-full">
+      <button
+        className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
+        onClick={() => handleOpenModal(aluno)}
+      >
+        <span className="truncate">
+          {aluno.idAnamnese ? 'Editar Anamnese' : 'Criar Anamnese'}
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M21 22H3C2.59 22 2.25 21.66 2.25 21.25C2.25 20.84 2.59 20.5 3 20.5H21C21.41 20.5 21.75 20.84 21.75 21.25C21.75 21.66 21.41 22 21 22Z" fill="#738CAB" />
           <path d="M19.0201 3.47967C17.0801 1.53967 15.1801 1.48967 13.1901 3.47967L11.9801 4.68967C11.8801 4.78967 11.8401 4.94967 11.8801 5.08967C12.6401 7.73967 14.7601 9.85967 17.4101 10.6197C17.4501 10.6297 17.4901 10.6397 17.5301 10.6397C17.6401 10.6397 17.7401 10.5997 17.8201 10.5197L19.0201 9.30967C20.0101 8.32967 20.4901 7.37967 20.4901 6.41967C20.5001 5.42967 20.0201 4.46967 19.0201 3.47967Z" fill="#738CAB" />
           <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
         </svg>
       </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => redirectToRelatorio(aluno.idAluno)}>
-        Ver relatórios
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M16.5 9.5L12.3 13.7L10.7 11.3L7.5 14.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M14.5 9.5H16.5V11.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer " onClick={() => navigate(`/criar-treino`)}>
-        Cadastrar treino
+      {aluno.idAnamnese && (
+        <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => redirectToRelatorio(aluno.idAluno)}>
+          <span className="truncate">
+            Ver relatórios
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M16.5 9.5L12.3 13.7L10.7 11.3L7.5 14.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14.5 9.5H16.5V11.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+      {/* <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer " onClick={() => navigate(`/criar-treino`)}>
+
+        <span className="truncate">
+          Cadastrar treino
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M8 12H16" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M12 16V8" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </button>
-      <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.idAluno}`)}>
-        Progressão corporal
+      </button> */}
+      <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.idAluno}`)}>
+        <span className="truncate">
+          Progressão corporal
+        </span>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M2.77017 18.25C2.89017 20.31 4.00017 22 6.76017 22H17.2402C20.0002 22 21.1002 20.31 21.2302 18.25L21.7502 9.99C21.8902 7.83 20.1702 6 18.0002 6C17.3902 6 16.8302 5.65 16.5502 5.11L15.8302 3.66C15.3702 2.75 14.1702 2 13.1502 2H10.8602C9.83017 2 8.63017 2.75 8.17017 3.66L7.45017 5.11C7.17017 5.65 6.61017 6 6.00017 6C3.83017 6 2.11017 7.83 2.25017 9.99L2.51017 14.06" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M10.5002 8H13.5002" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -376,7 +397,6 @@ const GerenciarAlunos = () => {
                   {alunosFiltrados.length > 0 && (
                     <>
                       {alunosFiltrados.map((aluno) => {
-                        // Calcula a frequência mensal com base na frequência semanal (ou null/0)
                         const frequenciaMediaMensal = aluno.frequenciaTreino
                           ? Math.round(aluno.frequenciaTreino * 52 / 12)
                           : 0;
@@ -448,17 +468,13 @@ const GerenciarAlunos = () => {
                     ))}
 
                   {showCreateModal && alunoAtual && (
-                    <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
-                      <div className="absolute inset-0 bg-[#000000] opacity-50"
-                        aria-label="Fundo Escurecido"
-                      ></div>
+                    <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto h-full">
+                      <div className="absolute inset-0 bg-[#000000] opacity-50" aria-label="Fundo Escurecido" />
                       <div className="relative p-4 w-full max-w-2xl">
-                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10 max-h-[80vh] flex flex-col p-4">
+                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:p-10 max-h-[80vh] flex flex-col">
                           <div className="flex justify-between items-center pb-4 mb-4">
-                            <div className="flex flex-col">
-                              <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">
-                                Anamnese
-                              </h1>
+                            <div>
+                              <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">Anamnese</h1>
                               <div className="flex gap-3 mt-2">
                                 <svg width="19" height="22" viewBox="0 0 19 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path d="M9.58984 11C12.3513 11 14.5898 8.76142 14.5898 6C14.5898 3.23858 12.3513 1 9.58984 1C6.82842 1 4.58984 3.23858 4.58984 6C4.58984 8.76142 6.82842 11 9.58984 11Z" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -483,212 +499,73 @@ const GerenciarAlunos = () => {
                               </svg>
                             </button>
                           </div>
-                          <form className="overflow-y-auto max-h-full flex-1" onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
-                            <div className="flex flex-col mb-4 gap-2">
-                              {/* Peso */}
-                              <Label id="peso" nomeLabel="Peso (KG)" fontSize="20px" fontWeight="500" />
-                              <InputPosLogin
-                                id="peso"
-                                name="peso"
-                                inputType="number"
-                                placeholder="Ex.: 60"
-                                fontSize="16px"
-                                fontWeight="400"
-                                fontSizeErro="16px"
-                                width="100%"
-                                {...register('peso', {
-                                  required: 'O Peso do aluno é obrigatório',
-                                  min: {
-                                    value: 20,
-                                    message: 'O peso deve ser maior que 20kg',
-                                  },
-                                  max: {
-                                    value: 300,
-                                    message: 'O peso deve ser menor que 300kg',
-                                  },
-                                })}
-                                isError={!!errors.peso}
-                                errorMessage={errors.peso?.message}
-                              />
+                          <FormularioAnamnese
+                            aluno={alunoAtual}
+                            respostasBack={respostasBack}
+                            onSubmit={async (data) => {
+                              try {
+                                const alunoId = alunoAtual.idAluno;
+                                const idAnamnese = alunoAtual.idAnamnese;
 
-                              {/* Altura */}
-                              <Label id="altura" nomeLabel="Altura (m)" fontSize="20px" fontWeight="500" />
-                              <InputPosLogin
-                                id="altura"
-                                name="altura"
-                                inputType="number"
-                                placeholder="Ex.: 1.60"
-                                fontSize="16px"
-                                fontWeight="400"
-                                fontSizeErro="16px"
-                                width="100%"
-                                {...register('altura', {
-                                  required: 'A altura do aluno é obrigatória',
-                                  min: {
-                                    value: 1,
-                                    message: 'Altura mínima é 1 metro',
-                                  },
-                                  max: {
-                                    value: 2.5,
-                                    message: 'Altura máxima é 2.5 metros',
-                                  },
-                                })}
-                                isError={!!errors.altura}
-                                errorMessage={errors.altura?.message}
-                              />
+                                // 1. Separa os campos físicos
+                                const dadosFisicos = {
+                                  peso: parseFloat(data.peso),
+                                  altura: parseFloat(data.altura),
+                                  nivelAtividade: data.nivelAtividade,
+                                  nivelExperiencia: data.nivelExperiencia
+                                };
 
-                              {/* Objetivo */}
-                              <Label id="objetivo" nomeLabel="Objetivo com o treino" fontSize="20px" fontWeight="500" />
-                              <InputPosLogin
-                                id="objetivo"
-                                name="objetivo"
-                                inputType="text"
-                                placeholder="Ex.: Saúde"
-                                fontSize="16px"
-                                fontWeight="400"
-                                fontSizeErro="16px"
-                                width="100%"
-                                {...register('objetivo', {
-                                  required: 'O objetivo do aluno é obrigatório',
-                                  minLength: {
-                                    value: 3,
-                                    message: 'O objetivo deve ter pelo menos 3 caracteres',
-                                  },
-                                })}
-                                isError={!!errors.objetivo}
-                                errorMessage={errors.objetivo?.message}
-                              />
+                                // 2. Separa os campos da anamnese
+                                const dadosAnamnese = {
+                                  objetivoTreino: data.objetivo,
+                                  frequenciaTreino: data.frequencia,
+                                  fumante: data.fumante === 'true',
+                                  desconforto: data.desconforto === 'true',
+                                  desconfortoDescricao: data.desconfortoDescricao || null,
+                                  lesao: data.lesao === 'true',
+                                  lesaoDescricao: data.lesaoDescricao || null,
+                                  experiencia: data.experiencia === 'true',
+                                  experienciaDescricao: data.experienciaDescricao || null,
+                                  proteses: data.proteses === 'true',
+                                  protesesDescricao: data.protesesDescricao || null,
+                                  doencaMetabolica: data.doencaMetabolica === 'true',
+                                  doencaMetabolicaDescricao: data.doencaMetabolicaDescricao || null,
+                                  deficiencia: data.deficiencia === 'true',
+                                  deficienciaDescricao: data.deficienciaDescricao || null
+                                };
 
-                              {/* Frequência Semanal */}
-                              <Label id="frequencia" nomeLabel="Frequência Semanal" fontSize="20px" fontWeight="500" />
-                              <div className="relative">
-                                <select
-                                  defaultValue=""
-                                  id="frequencia"
-                                  {...register("frequencia", {
-                                    required: 'Selecione uma quantidade de dias',
-                                  })}
-                                  className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-2 border-[var(--cor-primaria)] text-[#333]"
-                                >
-                                  <option disabled value="">Selecione uma quantidade de dias</option>
-                                  {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                                    <option key={day} value={day}>{day}</option>
-                                  ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 24 10" fill="none">
-                                    <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                                  </svg>
-                                </div>
-                              </div>
-                              {errors.frequencia && (
-                                <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-[16px]">
-                                  <img src={info2} alt="Erro" className="w-4 h-4" />
-                                  <span>{errors.frequencia.message}</span>
-                                </div>
-                              )}
+                                // 3. Atualiza dados físicos do aluno (sempre)
+                                await caringuApi.patch(`/alunos/${alunoId}/dados-fisicos`, dadosFisicos);
 
-                              {/* Nível de Atividade */}
-                              <Label id="nivelAtividade" nomeLabel="Nível de atividade atual" fontSize="20px" fontWeight="500" />
-                              <div className="relative">
-                                <select
-                                  defaultValue=""
-                                  id="nivelAtividade"
-                                  {...register("nivelAtividade", {
-                                    required: 'Selecione um nível de atividade',
-                                  })}
-                                  className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-2px border-[var(--cor-primaria)] text-[#333]"
-                                >
-                                  <option disabled value="">Selecione um nível de atividade</option>
-                                  <option value="1">Sedentário</option>
-                                  <option value="2">Iniciante</option>
-                                  <option value="3">Intermediário</option>
-                                  <option value="4">Avançado</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4" viewBox="0 0 24 10" fill="none">
-                                    <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                                  </svg>
-                                </div>
-                              </div>
-                              {errors.nivelAtividade && (
-                                <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-[16px]">
-                                  <img src={info2} alt="Erro" className="w-4 h-4" />
-                                  <span>{errors.nivelAtividade.message}</span>
-                                </div>
-                              )}
-                            </div>
+                                // 4. Criação ou edição da anamnese
+                                if (idAnamnese) {
+                                  // Edição
+                                  await caringuApi.patch(`/anamnese/${idAnamnese}`, dadosAnamnese);
+                                  toast.success("Anamnese atualizada com sucesso!");
+                                  window.location.reload(true);
+                                } else {
+                                  // Criação
+                                  await caringuApi.post(`/anamnese`, { alunoId, ...dadosAnamnese });
+                                  toast.success("Anamnese criada com sucesso!");
+                                  window.location.reload(true);
+                                }
 
-                            <div className="flex flex-col gap-4 mt-6">
+                                setShowCreateModal(false);
 
-                              {/* Função auxiliar para gerar radio */}
-                              {[
-                                { id: 'dorArticulacao', label: 'Dor ou desconforto em alguma articulação?' },
-                                { id: 'lesao', label: 'Possui alguma lesão?' },
-                                { id: 'experienciaMusculacao', label: 'Possui experiência com musculação?' },
-                                { id: 'pinosPlacasProteses', label: 'Possui pinos, placas ou próteses?' },
-                                { id: 'doencaMetabolica', label: 'Possui alguma doença metabólica?' },
-                                { id: 'fumante', label: 'É fumante?' },
-                              ].map((pergunta) => (
-                                <div key={pergunta.id} className="flex flex-col">
-                                  <label className="text-[18px] font-medium mb-2" htmlFor={pergunta.id}>
-                                    {pergunta.label}
-                                  </label>
-                                  <div className="flex gap-6">
-                                    <label className="flex items-center gap-2">
-                                      <input
-                                        type="radio"
-                                        value="sim"
-                                        {...register(pergunta.id, { required: 'Campo obrigatório' })}
-                                      />
-                                      Sim
-                                    </label>
-                                    <label className="flex items-center gap-2">
-                                      <input
-                                        type="radio"
-                                        value="nao"
-                                        {...register(pergunta.id, { required: 'Campo obrigatório' })}
-                                      />
-                                      Não
-                                    </label>
-                                  </div>
-                                  {errors[pergunta.id] && (
-                                    <span className="text-[#D45C56] text-[16px] mt-1">
-                                      {errors[pergunta.id]?.message}
-                                    </span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </form>
-                          {/* Botões */}
-                          <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
-                            <ButtonInterno
-                              texto="Cancelar"
-                              corTexto="#B41F1F"
-                              cor="var(--cor-secundaria)"
-                              height="2.75rem"
-                              width="13.25rem"
-                              corHover="#1D2D4417"
-                              fontWeight="500"
-                              aria-label={"Botão de Cancelar"}
-                              onClick={() => setModalConfirmarCancelarVisivel(true)}
-                            />
-                            <ButtonInterno
-                              texto="Salvar"
-                              corTexto="var(--cor-secundaria)"
-                              cor="#46982B"
-                              height="2.75rem"
-                              width="9.2rem"
-                              corHover="#46982BE5"
-                              fontWeight="600"
-                              aria-label={"Botão de Salvar"}
-                            />
-                          </div>
+                              } catch (error) {
+                                console.error("Erro ao salvar anamnese:", error);
+                                toast.error("Erro ao salvar anamnese. Tente novamente.");
+                              }
+                            }}
+                            onCancelar={() => setModalConfirmarCancelarVisivel(true)}
+                          />
+
                         </div>
                       </div>
                     </div>
                   )}
+
+                  <Toaster position="top-right" reverseOrder={false} />
                   <Modal
                     visivel={modalDeletarVisivel}
                     fecharModal={() => setModalDeletarVisivel(false)}
@@ -712,7 +589,6 @@ const GerenciarAlunos = () => {
                     onConfirm={() => {
                       setModalConfirmarCancelarVisivel(false);
                       setShowCreateModal(false);
-                      setShowEditModal(false);
                     }}
                     icone={iconCancelar}
                     textoBotaoConfirmar="Voltar"
