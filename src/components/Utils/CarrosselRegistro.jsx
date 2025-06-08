@@ -10,6 +10,16 @@ import clsx from "clsx";
 import ImageModal from "../../components/Utils/ImageModal";
 
 const CarrosselRegistro = ({ imagens = [], titulo = "" }) => {
+
+  if (imagens.length === 0) {
+    return (
+      <div className="py-12 flex flex-col items-center justify-center">
+        <h2 className="text-xl font-bold text-gray-800">{titulo}</h2>
+        <p className="text-gray-500 text-sm mt-4">Nenhuma imagem disponível.</p>
+      </div>
+    );
+  }
+
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
