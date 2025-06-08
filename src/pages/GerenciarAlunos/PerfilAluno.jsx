@@ -7,11 +7,13 @@ import Image from '../../assets/images/image.png'
 import { caringuApi } from "../../provider/caringuApi";
 import MascaraTelefone from '../../components/Utils/Functions/MascaraTelefone'
 import MascaraData from '../../components/Utils/Functions/MascaraData'
+import { FaUserCircle } from 'react-icons/fa'
 
 const PerfilAluno = () => {
 
     const { idAluno } = useParams();
     const [aluno, setAluno] = useState();
+    const [imgErro, setImgErro] = useState(false);
 
     useEffect(() => {
         const fetchInfosAluno = async () => {
@@ -45,8 +47,20 @@ const PerfilAluno = () => {
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter']">Dados Pessoais</h1>
 
                         <div className="flex flex-col max-h-60 overflow-y-auto">
-                            <div className="flex flex-col md:flex-row items-center md:gap-[100px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
-                                <img src={aluno?.alunoId?.urlFotoPerfil ? aluno.alunoId.urlFotoPerfil : "Sem foto"} alt="" className='h-[116px]' />
+                            <div className="flex flex-col md:flex-row items-center md:gap-[30px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
+                                
+                                {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
+                                    <img
+                                        src={aluno.alunoId.urlFotoPerfil}
+                                        alt="Imagem do aluno"
+                                        className='h-[116px]'
+                                        onError={() => setImgErro(true)}
+                                    />
+
+                                ) : (
+                                    <FaUserCircle className="flex-shrink-0 w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22" />
+                                )}
+
                                 <div className='flex flex-col md:flex-row items-start mt-4 gap-4'>
 
                                     <div className='flex flex-col gap-4'>

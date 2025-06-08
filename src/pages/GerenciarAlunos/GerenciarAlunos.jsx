@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { HiOutlineClock } from "react-icons/hi";
-import { FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV, FaUserCircle } from "react-icons/fa";
 import { Avatar, Dropdown, Button, Popover, DropdownItem } from "flowbite-react";
 import { isSameWeek, isSameMonth, parse } from "date-fns";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
@@ -39,7 +39,8 @@ const GerenciarAlunos = () => {
   const [respostasBack, setRespostasBack] = useState({});
   const [alunosAtivos, setAlunosAtivos] = useState([]);
   const [respostasPorAluno, setRespostasPorAluno] = useState({});
-  const [alunoAtual, setAlunoAtual] = useState(null)
+  const [alunoAtual, setAlunoAtual] = useState(null);
+  const [imgErro, setImgErro] = useState(false);
 
   const handleOpenModal = (aluno) => {
     setAlunoAtual(aluno)
@@ -293,7 +294,7 @@ const GerenciarAlunos = () => {
                         {
                           id: "treino",
                           label: "Aguardando Treino",
-                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${aguardandoTreino ? "stroke-white" : "stroke-[#748CAB]"}`} viewBox="0 0 35 35" fill="none">
+                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${aguardandoTreino ? "stroke-white" : "stroke-[#4B5563]"}`} viewBox="0 0 35 35" fill="none">
                             <path d="M22.225 2.91669H12.775C7.29164 2.91669 6.86872 7.84585 9.82914 10.5292L25.1708 24.4709C28.1312 27.1542 27.7083 32.0834 22.225 32.0834H12.775C7.29164 32.0834 6.86872 27.1542 9.82914 24.4709L25.1708 10.5292C28.1312 7.84585 27.7083 2.91669 22.225 2.91669Z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
                           </svg>,
                           active: aguardandoTreino,
@@ -312,7 +313,18 @@ const GerenciarAlunos = () => {
                       className="relative flex items-center justify-between bg-white rounded-md p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer border-2 border-gray-200 transition duration-200"
                       onClick={() => redirectToPerfilAluno(aluno.idAluno)}
                     >
-                      <Avatar img={aluno.avatar} rounded />
+
+                      {aluno.urlFotoPerfil && !imgErro ? (
+                        <img
+                          src={aluno.urlFotoPerfil}
+                          alt="Imagem do aluno"
+                          className='h-[116px]'
+                          onError={() => setImgErro(true)}
+                        />
+
+                      ) : (
+                        <FaUserCircle className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-10.3 lg:h-10.3 text-[#4B5563]" />
+                      )}
 
                       <div className="flex-1">
                         <p className="font-bold text-md">{aluno.nomeAluno}</p>
@@ -320,12 +332,12 @@ const GerenciarAlunos = () => {
                           {aluno.objetivoTreino ? (
                             <>
                               <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 28 28" fill="none">
-                                <path d="M14.175 19.25V21.7" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M8.34155 25.6667H20.0082V24.5C20.0082 23.2167 18.9582 22.1667 17.6749 22.1667H10.6749C9.39155 22.1667 8.34155 23.2167 8.34155 24.5V25.6667V25.6667Z" fill="#748CAB" />
-                                <path d="M7.17505 25.6667H21.175" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M13.9999 18.6666C9.48492 18.6666 5.83325 15.015 5.83325 10.5V6.99998C5.83325 4.42165 7.92159 2.33331 10.4999 2.33331H17.4999C20.0783 2.33331 22.1666 4.42165 22.1666 6.99998V10.5C22.1666 15.015 18.5149 18.6666 13.9999 18.6666Z" fill="#748CAB" />
-                                <path d="M6.38155 13.5917C5.50655 13.3117 4.73655 12.7983 4.12988 12.1917C3.07988 11.025 2.37988 9.62501 2.37988 7.99168C2.37988 6.35835 3.66322 5.07501 5.29655 5.07501H6.05488C5.82155 5.61168 5.70488 6.20668 5.70488 6.82501V10.325C5.70488 11.4917 5.94988 12.5883 6.38155 13.5917Z" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M21.6184 13.5917C22.4934 13.3117 23.2634 12.7983 23.8701 12.1917C24.9201 11.025 25.6201 9.62501 25.6201 7.99168C25.6201 6.35835 24.3367 5.07501 22.7034 5.07501H21.9451C22.1784 5.61168 22.2951 6.20668 22.2951 6.82501V10.325C22.2951 11.4917 22.0501 12.5883 21.6184 13.5917Z" stroke="#748CAB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M14.175 19.25V21.7" stroke="#4B5563" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M8.34155 25.6667H20.0082V24.5C20.0082 23.2167 18.9582 22.1667 17.6749 22.1667H10.6749C9.39155 22.1667 8.34155 23.2167 8.34155 24.5V25.6667V25.6667Z" fill="#4B5563" />
+                                <path d="M7.17505 25.6667H21.175" stroke="#4B5563" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M13.9999 18.6666C9.48492 18.6666 5.83325 15.015 5.83325 10.5V6.99998C5.83325 4.42165 7.92159 2.33331 10.4999 2.33331H17.4999C20.0783 2.33331 22.1666 4.42165 22.1666 6.99998V10.5C22.1666 15.015 18.5149 18.6666 13.9999 18.6666Z" fill="#4B5563" />
+                                <path d="M6.38155 13.5917C5.50655 13.3117 4.73655 12.7983 4.12988 12.1917C3.07988 11.025 2.37988 9.62501 2.37988 7.99168C2.37988 6.35835 3.66322 5.07501 5.29655 5.07501H6.05488C5.82155 5.61168 5.70488 6.20668 5.70488 6.82501V10.325C5.70488 11.4917 5.94988 12.5883 6.38155 13.5917Z" stroke="#4B5563" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M21.6184 13.5917C22.4934 13.3117 23.2634 12.7983 23.8701 12.1917C24.9201 11.025 25.6201 9.62501 25.6201 7.99168C25.6201 6.35835 24.3367 5.07501 22.7034 5.07501H21.9451C22.1784 5.61168 22.2951 6.20668 22.2951 6.82501V10.325C22.2951 11.4917 22.0501 12.5883 21.6184 13.5917Z" stroke="#4B5563" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                               </svg>
                               <span className="text-sm text-gray-600">Objetivo: {aluno.objetivoTreino}</span>
                             </>
@@ -339,7 +351,7 @@ const GerenciarAlunos = () => {
                         </p>
                         <p className="text-sm text-gray-600 flex items-center gap-1">
                           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 28 28" fill="none">
-                            <path d="M25.6316 21.385C25.6316 21.805 25.5383 22.2366 25.3399 22.6566C25.1416 23.0766 24.8849 23.4733 24.5466 23.8466C23.9749 24.4766 23.3449 24.9316 22.6333 25.2233C21.9333 25.515 21.1749 25.6666 20.3583 25.6666C19.1683 25.6666 17.8966 25.3866 16.5549 24.815C15.2133 24.2433 13.8716 23.4733 12.5416 22.505C11.1999 21.525 9.92825 20.44 8.71492 19.2383C7.51325 18.025 6.42825 16.7533 5.45992 15.4233C4.50325 14.0933 3.73325 12.7633 3.17325 11.445C2.61325 10.115 2.33325 8.84331 2.33325 7.62998C2.33325 6.83665 2.47325 6.07831 2.75325 5.37831C3.03325 4.66665 3.47659 4.01331 4.09492 3.42998C4.84159 2.69498 5.65825 2.33331 6.52159 2.33331C6.84825 2.33331 7.17492 2.40331 7.46659 2.54331C7.76992 2.68331 8.03825 2.89331 8.24825 3.19665L10.9549 7.01165C11.1649 7.30331 11.3166 7.57165 11.4216 7.82831C11.5266 8.07331 11.5849 8.31831 11.5849 8.53998C11.5849 8.81998 11.5033 9.09998 11.3399 9.36831C11.1883 9.63665 10.9666 9.91665 10.6866 10.1966L9.79992 11.1183C9.67158 11.2466 9.61325 11.3983 9.61325 11.585C9.61325 11.6783 9.62492 11.76 9.64825 11.8533C9.68325 11.9466 9.71825 12.0166 9.74159 12.0866C9.95159 12.4716 10.3133 12.9733 10.8266 13.58C11.3516 14.1866 11.9116 14.805 12.5183 15.4233C13.1483 16.0416 13.7549 16.6133 14.3733 17.1383C14.9799 17.6516 15.4816 18.0016 15.8783 18.2116C15.9366 18.235 16.0066 18.27 16.0883 18.305C16.1816 18.34 16.2749 18.3516 16.3799 18.3516C16.5783 18.3516 16.7299 18.2816 16.8583 18.1533L17.7449 17.2783C18.0366 16.9866 18.3166 16.765 18.5849 16.625C18.8533 16.4616 19.1216 16.38 19.4133 16.38C19.6349 16.38 19.8683 16.4266 20.1249 16.5316C20.3816 16.6366 20.6499 16.7883 20.9416 16.9866L24.8033 19.7283C25.1066 19.9383 25.3166 20.1833 25.4449 20.475C25.5616 20.7666 25.6316 21.0583 25.6316 21.385Z" fill="#748CAB" />
+                            <path d="M25.6316 21.385C25.6316 21.805 25.5383 22.2366 25.3399 22.6566C25.1416 23.0766 24.8849 23.4733 24.5466 23.8466C23.9749 24.4766 23.3449 24.9316 22.6333 25.2233C21.9333 25.515 21.1749 25.6666 20.3583 25.6666C19.1683 25.6666 17.8966 25.3866 16.5549 24.815C15.2133 24.2433 13.8716 23.4733 12.5416 22.505C11.1999 21.525 9.92825 20.44 8.71492 19.2383C7.51325 18.025 6.42825 16.7533 5.45992 15.4233C4.50325 14.0933 3.73325 12.7633 3.17325 11.445C2.61325 10.115 2.33325 8.84331 2.33325 7.62998C2.33325 6.83665 2.47325 6.07831 2.75325 5.37831C3.03325 4.66665 3.47659 4.01331 4.09492 3.42998C4.84159 2.69498 5.65825 2.33331 6.52159 2.33331C6.84825 2.33331 7.17492 2.40331 7.46659 2.54331C7.76992 2.68331 8.03825 2.89331 8.24825 3.19665L10.9549 7.01165C11.1649 7.30331 11.3166 7.57165 11.4216 7.82831C11.5266 8.07331 11.5849 8.31831 11.5849 8.53998C11.5849 8.81998 11.5033 9.09998 11.3399 9.36831C11.1883 9.63665 10.9666 9.91665 10.6866 10.1966L9.79992 11.1183C9.67158 11.2466 9.61325 11.3983 9.61325 11.585C9.61325 11.6783 9.62492 11.76 9.64825 11.8533C9.68325 11.9466 9.71825 12.0166 9.74159 12.0866C9.95159 12.4716 10.3133 12.9733 10.8266 13.58C11.3516 14.1866 11.9116 14.805 12.5183 15.4233C13.1483 16.0416 13.7549 16.6133 14.3733 17.1383C14.9799 17.6516 15.4816 18.0016 15.8783 18.2116C15.9366 18.235 16.0066 18.27 16.0883 18.305C16.1816 18.34 16.2749 18.3516 16.3799 18.3516C16.5783 18.3516 16.7299 18.2816 16.8583 18.1533L17.7449 17.2783C18.0366 16.9866 18.3166 16.765 18.5849 16.625C18.8533 16.4616 19.1216 16.38 19.4133 16.38C19.6349 16.38 19.8683 16.4266 20.1249 16.5316C20.3816 16.6366 20.6499 16.7883 20.9416 16.9866L24.8033 19.7283C25.1066 19.9383 25.3166 20.1833 25.4449 20.475C25.5616 20.7666 25.6316 21.0583 25.6316 21.385Z" fill="#4B5563" />
                           </svg>
                           {MascaraTelefone(aluno.celular)}
                         </p>
@@ -406,7 +418,17 @@ const GerenciarAlunos = () => {
                             key={aluno.idAluno}
                             className="relative flex items-center justify-between bg-white rounded-md p-4 gap-4 w-full border-2 border-[#E6E6E2]"
                           >
-                            <Avatar img={aluno.avatar} rounded />
+                            {aluno.urlFotoPerfil && !imgErro ? (
+                              <img
+                                src={aluno.urlFotoPerfil}
+                                alt="Imagem do aluno"
+                                className='h-[116px]'
+                                onError={() => setImgErro(true)}
+                              />
+
+                            ) : (
+                              <FaUserCircle className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-10.3 lg:h-10.3 text-[#4B5563]" />
+                            )}
 
                             {filter === "SEMANA" && (
                               <div className="flex-1">
@@ -456,7 +478,17 @@ const GerenciarAlunos = () => {
                         key={aluno.idAluno}
                         className="relative flex items-center justify-between bg-white border-2 border-[#E6E6E2] p-4 gap-4 rounded-md"
                       >
-                        <Avatar img={aluno.avatar} rounded />
+                        {aluno.urlFotoPerfil && !imgErro ? (
+                          <img
+                            src={aluno.urlFotoPerfil}
+                            alt="Imagem do aluno"
+                            className='h-[116px]'
+                            onError={() => setImgErro(true)}
+                          />
+
+                        ) : (
+                          <FaUserCircle className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-10.3 lg:h-10.3 text-[#4B5563]" />
+                        )}
 
                         <div className="flex-1">
                           <p className="font-bold text-md">{aluno.nomeAluno}</p>

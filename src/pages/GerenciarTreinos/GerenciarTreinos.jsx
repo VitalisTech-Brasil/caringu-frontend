@@ -144,11 +144,13 @@ const GerenciarTreinos = () => {
     }, [idPersonal]);
 
 
-    const alunoOptions = alunos.map(aluno => ({
-        key: aluno.idAluno,
-        value: aluno.email,
-        label: `${aluno.nomeAluno} - ${aluno.email}`,
-    }));
+    const alunoOptions = alunos
+        .filter(aluno => aluno.idAnamnese != null)
+        .map(aluno => ({
+            key: aluno.idAluno,
+            value: aluno.email,
+            label: `${aluno.nomeAluno} - ${aluno.email}`,
+        }));
 
     const toggleFavorito = async (id) => {
         try {
