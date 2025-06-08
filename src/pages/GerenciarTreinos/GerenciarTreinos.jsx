@@ -9,12 +9,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import iconCancelar from "../../assets/images/cancelar.png";
 import Modal from "../../components/Utils/Modal.jsx"; // Certifique-se de que o caminho está correto
 import lixeira from "../../assets/images/trash.png";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import InputPosLogin from "../../components/Utils/InputPosLogin";
 import Label from "../../components/Utils/Label";
 import info2 from "../../assets/images/info-2.svg";
 import MenuFiltro from "../../components/Utils/MenuFiltro";
 import { caringuApi } from "../../provider/caringuApi.js";
+import Select from 'react-select';
+import toast, { Toaster } from "react-hot-toast";
+import CustomToast from "../../components/Utils/CustomToast.jsx";
+import MascaraData from "../../components/Utils/Functions/MascaraData.js"
 
 const GerenciarTreinos = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -27,32 +31,22 @@ const GerenciarTreinos = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [origemFilter, setOrigemFilter] = useState("");
     const [origemSelecionada, setOrigemSelecionada] = useState("");
+    const [showEditModal, setShowEditModal] = useState(false);
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
     const params = useParams();
     const navigate = useNavigate();
-
+    const [treinosAtribuidos, setTreinosAtribuidos] = useState([]);
     const [treinos, setTreinos] = useState([]);
-
+    const [alunos, setAlunos] = useState([]);
     const idPersonal = sessionStorage.getItem("pessoaId")
+    const { fontSize, width } = useResponsiveStyles();
+    const [idTreinoExercicioParaDeletar, setIdTreinoExercicioParaDeletar] = useState(null);
+    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
 
-    useEffect(() => {
-        console.log(idPersonal)
-        const fetchInfosTreinos = async () => {
-            try {
-                const response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
-                setTreinos(response.data);
-            } catch (error) {
-                console.error("Erro ao buscar informações dos treinos:", error);
-            }
-        };
 
-        fetchInfosTreinos();
-    }, [idPersonal]);
 
-console.log(treinos)
-
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
+    const { register, handleSubmit, control, reset, watch, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
         defaultValues: {
             plano: "",
             duracao: "",
@@ -62,6 +56,99 @@ console.log(treinos)
         mode: "onChange"
     });
 
+    const handleAddTreino = (data) => {
+
+        if (!data.treino || !data.diasDaSemana || !data.dataVencimento) return;
+
+        setTreinosAtribuidos((prev) => [
+            ...prev,
+            {
+                alunosId: data.email.value, // ou outro campo de ID
+                treinosExerciciosId: data.treino.value,
+                treinoNome: data.treino.label,
+                diasSemana: data.diasDaSemana.map(d => d.value),
+                dataVencimento: data.dataVencimento
+            },
+        ]);
+
+
+        // Limpar campos do formulário, exceto o email
+        reset({
+            email: data.email,
+            treino: null,
+            diasDaSemana: [],
+            dataVencimento: ""
+        });
+    };
+
+    const handleSalvarTodos = async () => {
+        const alunoSelecionado = watch("email");
+
+        const alunoId = alunoSelecionado?.key;
+
+        console.log(treinosAtribuidos)
+
+        try {
+            if (treinosAtribuidos.length > 0) {
+                for (const treino of treinosAtribuidos) {
+                    await caringuApi.post('/alunos-treinos', {
+                        ...treino,
+                        alunosId: alunoId,
+                    });
+                }
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Treinos atribuídos com sucesso!" />
+                ));
+                setTreinosAtribuidos([]);
+                reset({
+                    treino: null,
+                    diasDaSemana: [],
+                    dataVencimento: ""
+                });
+                return
+            }
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Você deve atribuir um treino!" />
+            ));
+        } catch (err) {
+            console.error('Erro ao salvar treinos:', err);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao salvar treinos." />
+            ));
+        }
+    };
+    const fetchInfosTreinos = async () => {
+        try {
+            const response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
+            setTreinos(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar informações dos treinos:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchInfosTreinos();
+    }, [idPersonal]);
+
+    useEffect(() => {
+        const fetchInfosAlunos = async () => {
+            try {
+                const response = await caringuApi.get(`/alunos/detalhes/personal/${idPersonal}`);
+                setAlunos(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar informações dos treinos:", error);
+            }
+        };
+
+        fetchInfosAlunos();
+    }, [idPersonal]);
+
+
+    const alunoOptions = alunos.map(aluno => ({
+        key: aluno.idAluno,
+        value: aluno.email,
+        label: `${aluno.nomeAluno} - ${aluno.email}`,
+    }));
 
     const toggleFavorito = async (id) => {
         try {
@@ -80,14 +167,10 @@ console.log(treinos)
             updatedTreinos[treinoIndex].favorito = novoFavorito;
             setTreinos(updatedTreinos);
 
-            console.log("Favorito atualizado com sucesso!");
         } catch (error) {
             console.error('Erro ao atualizar favorito:', error);
         }
     };
-
-
-    const { fontSize, width } = useResponsiveStyles();
 
     function useResponsiveStyles() {
         const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
@@ -143,19 +226,47 @@ console.log(treinos)
             return 0;
         });
 
-    const openDeleteModal = () => {
+    const treinoOptions = filteredTreinos.map(t => ({
+        value: t.treinoId,
+        label: t.nomeTreino,
+    }));
+
+    const openDeleteModal = (id) => {
+        setIdTreinoExercicioParaDeletar(id);
         setModalDeletarVisivel(true);
-
     };
 
-    const confirmDelete = () => {
-        alert("Treino excluído!");
-        setModalDeletarVisivel(false);
-    };
+    const handleDelete = async (id) => {
+        try {
+            const response = await caringuApi.delete(`/treino/${id}`);
 
-    const handleDelete = () => {
-        setMenuOpen(false);
-        openDeleteModal();
+            // Considera sucesso se status for 204 (No Content) ou 200 (OK)
+            if (response.status === 204 || response.status === 200) {
+                setExerciciosSelecionados(prev => prev.filter(ex => ex.id !== id));
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Treino excluido com sucesso!" />
+                ));
+                await fetchInfosTreinos();
+                setModalDeletarVisivel(false);
+            } else {
+                throw new Error('Erro inesperado ao deletar');
+            }
+
+        } catch (error) {
+            if (error.response) {
+                console.error('Erro do servidor:', error.response.data);
+                alert(error.response.data.message || 'Erro ao deletar exercício');
+                setModalDeletarVisivel(false);
+            } else if (error.request) {
+                console.error('Sem resposta do servidor:', error.request);
+                alert('Sem resposta do servidor');
+                setModalDeletarVisivel(false);
+            } else {
+                console.error('Erro inesperado:', error.message);
+                alert('Erro inesperado ao deletar exercício');
+                setModalDeletarVisivel(false);
+            }
+        }
     };
 
     const handleOpenModal = () => {
@@ -177,7 +288,7 @@ console.log(treinos)
             </button>
             <button
                 className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
-                onClick={() => handleDelete()}
+                onClick={() => openDeleteModal(treino.treinoId)}
             >
                 Excluir
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -545,34 +656,46 @@ console.log(treinos)
                                         </div>
 
 
-                                        <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+                                        <form onSubmit={handleSubmit(handleAddTreino)}>
                                             <div className="grid gap-4 mb-4">
-                                                <div>
+                                                <div className="flex flex-col gap-4">
                                                     <Label
                                                         id="email"
                                                         nomeLabel="Email do aluno"
                                                         fontSize="20px"
                                                         fontWeight="500"
                                                     />
-                                                    <InputPosLogin
-                                                        id="email"
+                                                    <Controller
                                                         name="email"
-                                                        inputType="email"
-                                                        placeholder="Ex.: aluno@gmail.com"
-                                                        fontSize="16px"
-                                                        fontWeight="400"
-                                                        fontSizeErro="16px"
-                                                        width="100%"
-                                                        {...register('email', {
-                                                            required: 'Email do Aluno é obrigatório',
-                                                            pattern: {
-                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                                                message: 'Email inválido',
-                                                            },
-                                                        })}
-                                                        isError={!!errors.email}
-                                                        errorMessage={errors.email?.message}
+                                                        control={control}
+                                                        rules={{ required: 'Selecione um aluno' }}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                {...field}
+                                                                options={alunoOptions}
+                                                                placeholder="Busque e selecione um aluno"
+                                                                isClearable
+                                                                className="basic-single"
+                                                                classNamePrefix="select"
+                                                                styles={{
+                                                                    control: (base, state) => ({
+                                                                        ...base,
+                                                                        borderColor: state.isFocused ? '#748CAB' : 'var(--cor-primaria)',
+                                                                        boxShadow: 'none',
+                                                                        borderWidth: '2px',
+                                                                        borderRadius: '0.375rem',
+                                                                        padding: '2px',
+                                                                    }),
+                                                                }}
+                                                            />
+                                                        )}
                                                     />
+                                                    {errors.email && (
+                                                        <span className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                                            <img src={info2} alt="Erro" className="w-4 h-4" />
+                                                            {errors.email.message}
+                                                        </span>
+                                                    )}
                                                     <ButtonInterno
                                                         texto="Acrescentar treino"
                                                         type="submit"
@@ -582,67 +705,67 @@ console.log(treinos)
                                                         width="40%"
                                                         height="50px"
                                                         font-size="14px"
-
                                                     />
+                                                    <ul className="mt-4 space-y-2">
+                                                        {treinosAtribuidos.map((t, i) => (
+                                                            <li key={i} className="flex items-center justify-between text-sm text-gray-700">
+                                                                <span>
+                                                                    - {t.treinoNome} - Dias: {t.diasSemana.join(', ')} - Vence em: {MascaraData(t.dataVencimento)}
+                                                                </span>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setTreinosAtribuidos(current =>
+                                                                            current.filter((_, index) => index !== i)
+                                                                        );
+                                                                    }}
+                                                                    className="ml-4 text-red-600 hover:text-red-800 font-semibold cursor-pointer"
+                                                                    aria-label={`Remover treino ID ${t.treinosExerciciosId}`}
+                                                                >
+                                                                    Remover
+                                                                </button>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 </div>
                                                 <div className="border-[2px] border-[#E6E6E2] rounded-[7px] p-5">
                                                     <Label
-                                                        id="duracao"
-                                                        nomeLabel="Período de duração do plano"
+                                                        id="treino"
+                                                        nomeLabel="Selecione o Treino"
                                                         fontSize="20px"
                                                         fontWeight="500"
                                                     />
-                                                    <div className="relative">
-                                                        <select defaultValue=""
-                                                            id="duracao"
-                                                            {...register("duracao", { required: 'Selecione o Período de duração do plano' })}
-                                                            className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]">
-                                                            <option disabled className="text-[#15171B87]" value="">Selecione o período</option>
-                                                            <option value="MENSAL">Mensal</option>
-                                                            <option value="SEMESTRAL">Semestral</option>
-                                                            <option value="AVULSO">Avulso</option>
-                                                        </select>
-                                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
-                                                                <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <span className="error-message" style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '5px',
-                                                        height: 'auto',
-                                                        marginTop: '12px',
-                                                        color: '#D45C56',
-                                                        fontSize: '16px',
-                                                    }}>{errors.duracao && (
-                                                        <div className="flex items-center justify-start gap-1 text-[#D45C56]">
+                                                    <Controller
+                                                        name="treino"
+                                                        control={control}
+                                                        rules={{ required: 'Selecione um treino' }}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                {...field}
+                                                                options={treinoOptions}
+                                                                placeholder="Busque e selecione um treino"
+                                                                isClearable
+                                                                className="basic-single my-2"
+                                                                classNamePrefix="select"
+                                                                styles={{
+                                                                    control: (base, state) => ({
+                                                                        ...base,
+                                                                        borderColor: state.isFocused ? '#748CAB' : 'var(--cor-primaria)',
+                                                                        boxShadow: 'none',
+                                                                        borderWidth: '2px',
+                                                                        borderRadius: '0.375rem',
+                                                                        padding: '2px',
+                                                                    }),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                    {errors.treino && (
+                                                        <span className="text-red-500 text-sm mt-2 flex items-center gap-1">
                                                             <img src={info2} alt="Erro" className="w-4 h-4" />
-                                                            <span>Selecione o Período de duração do plano</span>
-                                                        </div>
+                                                            {errors.treino.message}
+                                                        </span>
                                                     )}
-                                                    </span>
-                                                    <Label
-                                                        id="horario"
-                                                        nomeLabel="Horário"
-                                                        fontSize="20px"
-                                                        fontWeight="500"
-                                                    />
-                                                    <InputPosLogin
-                                                        id="horario"
-                                                        name="horario"
-                                                        inputType="time"
-                                                        placeholder="15:45"
-                                                        fontSize="16px"
-                                                        fontWeight="400"
-                                                        fontSizeErro="16px"
-                                                        width="25%"
-                                                        inputMode="numeric"
-                                                        {...register('horario', {
-                                                            required: 'O horário é obrigatório'
-                                                        })}
-                                                    />
 
                                                     <Label
                                                         id="dataVencimento"
@@ -661,37 +784,74 @@ console.log(treinos)
                                                         width="50%"
                                                         inputMode="numeric"
                                                         {...register('dataVencimento', {
-                                                            required: 'A data de vencimento é obrigatória'
+                                                            required: 'A data de vencimento é obrigatória',
+                                                            validate: (value) => {
+                                                                const dataSelecionada = new Date(value);
+                                                                const hoje = new Date();
+                                                                dataSelecionada.setHours(0, 0, 0, 0);
+                                                                hoje.setHours(0, 0, 0, 0);
+
+                                                                if (dataSelecionada < hoje) {
+                                                                    return "Data passada não permitida.";
+                                                                }
+
+                                                                return true;
+                                                            }
                                                         })}
                                                     />
+                                                    {errors.dataVencimento && (
+                                                        <span className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                                            <img src={info2} alt="Erro" className="w-4 h-4" />
+                                                            {errors.dataVencimento.message}
+                                                        </span>
+                                                    )}
                                                     <Label
                                                         id="diasDaSemana"
                                                         nomeLabel="Dias da Semana"
                                                         fontSize="20px"
                                                         fontWeight="500"
                                                     />
-                                                    <div className="relative">
-                                                        <select defaultValue=""
-                                                            id="diasDaSemana"
-                                                            {...register("diasDaSemana", {
-                                                                required: 'Selecione o dia da semana'
-                                                            })}
-                                                            className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]">
-                                                            <option disabled className="text-[#15171B87]" value="">Selecione o período</option>
-                                                            <option value="SEGUNDA">Segunda</option>
-                                                            <option value="TERCA">Terça</option>
-                                                            <option value="QUARTA">Quarta</option>
-                                                            <option value="QUINTA">Quinta</option>
-                                                            <option value="SEXTA">Sexta</option>
-                                                            <option value="SABADO">Sábado</option>
-                                                            <option value="DOMINGO">Domingo</option>
-                                                        </select>
-                                                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
-                                                                <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
+                                                    <Controller
+                                                        name="diasDaSemana"
+                                                        control={control}
+                                                        rules={{ required: 'Selecione pelo menos um dia' }}
+                                                        render={({ field }) => (
+                                                            <Select
+                                                                {...field}
+                                                                isMulti
+                                                                options={[
+                                                                    { value: 'SEGUNDA', label: 'Segunda' },
+                                                                    { value: 'TERCA', label: 'Terça' },
+                                                                    { value: 'QUARTA', label: 'Quarta' },
+                                                                    { value: 'QUINTA', label: 'Quinta' },
+                                                                    { value: 'SEXTA', label: 'Sexta' },
+                                                                    { value: 'SABADO', label: 'Sábado' },
+                                                                    { value: 'DOMINGO', label: 'Domingo' },
+                                                                ]}
+                                                                placeholder="Selecione os dias"
+                                                                className="basic-single"
+                                                                classNamePrefix="select"
+                                                                styles={{
+                                                                    control: (base, state) => ({
+                                                                        ...base,
+                                                                        borderColor: state.isFocused ? '#748CAB' : 'var(--cor-primaria)',
+                                                                        boxShadow: 'none',
+                                                                        borderWidth: '2px',
+                                                                        borderRadius: '0.375rem',
+                                                                        padding: '2px',
+                                                                    }),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                    {errors.diasDaSemana && (
+                                                        <span className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                                            <img src={info2} alt="Erro" className="w-4 h-4" />
+                                                            {errors.diasDaSemana.message}
+                                                        </span>
+                                                    )}
+
+
                                                 </div>
                                             </div>
                                             <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
@@ -717,6 +877,7 @@ console.log(treinos)
                                                     corHover="#46982BE5"
                                                     fontWeight="600"
                                                     aria-label={"Botão de Salvar"}
+                                                    onClick={handleSalvarTodos}
                                                 >
                                                 </ButtonInterno>
 
@@ -731,10 +892,7 @@ console.log(treinos)
                             fecharModal={() => setModalDeletarVisivel(false)}
                             titulo="Tem certeza que deseja excluir esse treino?"
                             descricao="Você não poderá disponibilizá-lo futuramente"
-                            onConfirm={() => {
-                                setModalConfirmarCancelarVisivel(false);
-                                setShowCreateModal(false);
-                            }}
+                            onConfirm={() => handleDelete(idTreinoExercicioParaDeletar)}
                             icone={lixeira}
                             textoBotaoConfirmar="Manter Treino"
                             textoBotaoCancelar="Deletar mesmo assim"
@@ -750,12 +908,14 @@ console.log(treinos)
                                 setModalConfirmarCancelarVisivel(false);
                                 setShowCreateModal(false);
                                 setShowEditModal(false);
+                                reset()
                             }}
                             icone={iconCancelar}
                             textoBotaoConfirmar="Voltar"
                             textoBotaoCancelar="Cancelar mesmo assim"
                             aria-label="Modal de Cancelamento"
                         />
+                        <Toaster position='top-right' reverseOrder={false} />
                     </div>
                 </div>
             </div >
