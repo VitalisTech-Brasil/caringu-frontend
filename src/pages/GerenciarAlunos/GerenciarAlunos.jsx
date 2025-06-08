@@ -131,7 +131,6 @@ const GerenciarAlunos = () => {
         const aluno = response.data;
 
         setAlunosAtivos(aluno);
-        console.log(aluno);
 
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
@@ -180,16 +179,18 @@ const GerenciarAlunos = () => {
           <path d="M12 16V8" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button> */}
-      <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.idAluno}`)}>
-        <span className="truncate">
-          Progressão corporal
-        </span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M2.77017 18.25C2.89017 20.31 4.00017 22 6.76017 22H17.2402C20.0002 22 21.1002 20.31 21.2302 18.25L21.7502 9.99C21.8902 7.83 20.1702 6 18.0002 6C17.3902 6 16.8302 5.65 16.5502 5.11L15.8302 3.66C15.3702 2.75 14.1702 2 13.1502 2H10.8602C9.83017 2 8.63017 2.75 8.17017 3.66L7.45017 5.11C7.17017 5.65 6.61017 6 6.00017 6C3.83017 6 2.11017 7.83 2.25017 9.99L2.51017 14.06" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M10.5002 8H13.5002" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M12.0002 18C13.7902 18 15.2502 16.54 15.2502 14.75C15.2502 12.96 13.7902 11.5 12.0002 11.5C10.2102 11.5 8.75018 12.96 8.75018 14.75C8.75018 16.54 10.2102 18 12.0002 18Z" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+      {(aluno.idAluno == 7 || aluno.idAluno == 8) && (
+        <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => navigate(`/relatorios/registro-corporal/${aluno.idAluno}`)}>
+          <span className="truncate">
+            Progressão corporal
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M2.77017 18.25C2.89017 20.31 4.00017 22 6.76017 22H17.2402C20.0002 22 21.1002 20.31 21.2302 18.25L21.7502 9.99C21.8902 7.83 20.1702 6 18.0002 6C17.3902 6 16.8302 5.65 16.5502 5.11L15.8302 3.66C15.3702 2.75 14.1702 2 13.1502 2H10.8602C9.83017 2 8.63017 2.75 8.17017 3.66L7.45017 5.11C7.17017 5.65 6.61017 6 6.00017 6C3.83017 6 2.11017 7.83 2.25017 9.99L2.51017 14.06" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10.5002 8H13.5002" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M12.0002 18C13.7902 18 15.2502 16.54 15.2502 14.75C15.2502 12.96 13.7902 11.5 12.0002 11.5C10.2102 11.5 8.75018 12.96 8.75018 14.75C8.75018 16.54 10.2102 18 12.0002 18Z" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 
@@ -318,12 +319,12 @@ const GerenciarAlunos = () => {
                         <img
                           src={aluno.urlFotoPerfil}
                           alt="Imagem do aluno"
-                          className='h-[116px]'
+                          className='w-12 h-12 lg:w-15 lg:h-15 rounded-full'
                           onError={() => setImgErro(true)}
                         />
 
                       ) : (
-                        <FaUserCircle className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-10.3 lg:h-10.3 text-[#4B5563]" />
+                        <FaUserCircle className="flex-shrink-0 w-12 h-12 lg:w-15 lg:h-15 text-[#4B5563]" />
                       )}
 
                       <div className="flex-1">
@@ -422,12 +423,12 @@ const GerenciarAlunos = () => {
                               <img
                                 src={aluno.urlFotoPerfil}
                                 alt="Imagem do aluno"
-                                className='h-[116px]'
+                                className='w-12 h-12 lg:w-15 lg:h-15 rounded-full'
                                 onError={() => setImgErro(true)}
                               />
 
                             ) : (
-                              <FaUserCircle className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-10.3 lg:h-10.3 text-[#4B5563]" />
+                              <FaUserCircle className="flex-shrink-0 w-12 h-12 lg:w-15 lg:h-15 text-[#4B5563]" />
                             )}
 
                             {filter === "SEMANA" && (
@@ -482,12 +483,12 @@ const GerenciarAlunos = () => {
                           <img
                             src={aluno.urlFotoPerfil}
                             alt="Imagem do aluno"
-                            className='h-[116px]'
+                            className='w-12 h-12 lg:w-15 lg:h-15 rounded-full'
                             onError={() => setImgErro(true)}
                           />
 
                         ) : (
-                          <FaUserCircle className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 lg:w-10.3 lg:h-10.3 text-[#4B5563]" />
+                          <FaUserCircle className="flex-shrink-0 w-12 h-12 lg:w-15 lg:h-15 text-[#4B5563]" />
                         )}
 
                         <div className="flex-1">

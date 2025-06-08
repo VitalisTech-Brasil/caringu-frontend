@@ -6,50 +6,50 @@ import { useParams, useNavigate } from 'react-router-dom'
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro'
 
 const RelatorioTreinos = () => {
-    const { idAluno, idTreino } = useParams();
+    const { idAluno } = useParams();
+    console.log(idAluno);
 
     const imagensFrontais = [
-        { id: 1, dataEnvio: "10/05/2025", src: "https://cdn3.pixelcut.app/upscale_after_3_b6760ad57f.jpg" },
-        { id: 2, dataEnvio: "11/05/2025", src: "https://cdn3.pixelcut.app/upscale_after_3_b6760ad57f.jpg" },
-        { id: 3, dataEnvio: "10/05/2025", src: "https://cdn3.pixelcut.app/upscale_after_3_b6760ad57f.jpg" },
-        { id: 4, dataEnvio: "11/05/2025", src: "https://cdn3.pixelcut.app/upscale_after_3_b6760ad57f.jpg" },
-        { id: 5, dataEnvio: "10/05/2025", src: "https://cdn3.pixelcut.app/upscale_after_3_b6760ad57f.jpg" },
-        { id: 6, dataEnvio: "11/05/2025", src: "https://cdn3.pixelcut.app/upscale_after_3_b6760ad57f.jpg" },
+        { id: 1, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1frente.jpg" },
+        { id: 2, dataEnvio: "11/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2frente.jpeg" }
     ];
 
     const imagensPerfilDireita = [
-        { id: 7, dataEnvio: "12/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 8, dataEnvio: "13/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 9, dataEnvio: "12/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 10, dataEnvio: "13/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 11, dataEnvio: "12/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 12, dataEnvio: "13/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 13, dataEnvio: "12/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
-        { id: 14, dataEnvio: "13/05/2025", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Nasa_blue_marble.jpg/250px-Nasa_blue_marble.jpg" },
+        { id: 3, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1ladoDireito.jpg" },
+        { id: 4, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2ladoDireito.jpg" }
     ];
 
     const imagensPerfilEsquerda = [
-        { id: 15, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 16, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 17, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 18, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 19, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 20, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 21, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
-        { id: 22, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqHp59YJK_PdoHWHTk2K6IaxlmGdZ7e-Npuw&s" },
+        { id: 5, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1ladoEsquerdo.jpg" },
+        { id: 6, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2ladoEsquerdo.jpg" }
 
     ];
 
     const imagensCosta = [
-        { id: 23, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 24, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 25, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 26, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 27, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 28, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 29, dataEnvio: "12/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
-        { id: 30, dataEnvio: "13/05/2025", src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxOjFO7lJA-zaMBXBdEVh1yb_y38BBsnmv_w&s" },
+        { id: 7, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1costas.jpg" },
+        { id: 8, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2costas.jpg" }
 
+    ];
+
+    const imagensNaganoFrontais = [
+        { id: 9, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1frente.jpg" },
+        { id: 10, dataEnvio: "11/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2frente.jpg" }
+    ];
+
+    const imagensNaganoDireita = [
+        { id: 11, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1ladoDireito.jpg" },
+        { id: 12, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2ladoDireito.jpg" }
+    ];
+
+    const imagensNaganoEsquerda = [
+        { id: 13, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1ladoEsquerdo.jpg" }/* ,
+        { id: 14, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2ladoEsquerdo.jpg" } */
+
+    ];
+
+    const imagensNaganoCosta = [
+        { id: 15, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1costas.jpg" },
+        { id: 16, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2costas.jpg" }
     ];
 
     return (
@@ -72,25 +72,25 @@ const RelatorioTreinos = () => {
                             <div className='flex flex-col mt-10 max-h-[400px]'>
                                 <h1 className='font-semibold text-[24px]'>Frente</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={imagensFrontais} />
+                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoFrontais : imagensFrontais} />
                                 </div>
                             </div>
                             <div className='flex flex-col mt-10 max-h-[400px]'>
                                 <h1 className='font-semibold text-[24px]'>Perfil Direita</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={imagensPerfilDireita} />
+                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoDireita : imagensPerfilDireita} />
                                 </div>
                             </div>
                             <div className='flex flex-col mt-10 max-h-[400px]'>
                                 <h1 className='font-semibold text-[24px]'>Perfil Esquerdo</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={imagensPerfilEsquerda} />
+                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoEsquerda : imagensPerfilEsquerda} />
                                 </div>
                             </div>
                             <div className='flex flex-col mt-10 max-h-[400px]'>
                                 <h1 className='font-semibold text-[24px]'>Costa</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={imagensCosta} />
+                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoCosta : imagensCosta} />
                                 </div>
                             </div>
                         </div>
