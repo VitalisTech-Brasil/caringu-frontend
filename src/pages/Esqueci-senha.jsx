@@ -10,7 +10,7 @@ import { EmailProvider } from "../components/EsqueciSenha/Context/EsqueciSenhaCo
 
 const EsqueciSenha = () => {
     useEffect(() => {
-        document.title = "Esqueci Senha";
+        document.title = "Esqueci Senha | CaringU";
     }, []);
 
     const [etapa, setEtapa] = useState("email");
@@ -41,7 +41,7 @@ const EsqueciSenha = () => {
                     <EtapaSucesso irPraLogin={irPraLogin} />
                 )}
 
-                <section className="h-screen w-1/2">
+                <section className="h-screen w-1/2 max-[1450px]:hidden" >
                     <div className="flex justify-end h-full w-full">
                         <img src={imagemEsqueciSenha} alt="Imagem Esqueci Senha" />
                     </div>

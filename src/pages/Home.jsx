@@ -12,26 +12,92 @@ import CompromissosHoje from "../components/Utils/CompromissosHoje";
 import EstaSemana from "../components/Utils/EstaSemana";
 import KPI from "../components/Utils/KPI";
 
-import alert from "../assets/images/alert.svg";
+import { caringuApi } from "../provider/caringuApi";
 
 const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
 
-  const [showModal, setShowModal] = useState(false);
+  const [alunosAtivos, setAlunosAtivos] = useState(0);
+  const [treinosVencimento, setTreinosVencimento] = useState(0);
+  const [treinosCriados, setTreinosCriados] = useState(0);
+  const [anamnesesPendentes, setAnamnesesPendentes] = useState(0);
+  const [treinosFinalizados, setTreinosFinalizados] = useState([]);
+
+
   const navigate = useNavigate();
+  const personalId = sessionStorage.getItem('pessoaId');
+
 
   useEffect(() => {
-    let tokenExistente = sessionStorage.getItem("authToken");
 
-    if (!tokenExistente) {
-      setShowModal(true);
+    const fetchData = async () => {
+      try {
+        const totalAlunosAtivos = await caringuApi.get(`/planos-contratados/kpis/alunos-ativos/${personalId}`);
+        setAlunosAtivos(totalAlunosAtivos.data);
+
+        const totalTreinosVencimento = await caringuApi.get(`/alunos-treinos/kpis/proximos-vencimento/${personalId}`);
+        setTreinosVencimento(totalTreinosVencimento.data);
+
+        const totalTreinosCriados = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
+        setTreinosCriados(totalTreinosCriados.data);
+
+        const totalAnamnesePendentes = await caringuApi.get(`/anamnese/kpis/pendentes/${personalId}`);
+        setAnamnesesPendentes(totalAnamnesePendentes.data);
+
+
+      } catch (error) {
+        console.error("Erro ao carrefae as informações da kpi e agenda:", error);
+      }
+    };
+
+    fetchData();
+    fetchTreinosFinalizados();
+  }, []);
+
+
+  const fetchTreinosFinalizados = async () => {
+    try {
+      const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
+      setTreinosFinalizados(treinosFinalizadosResponse.data);
+    } catch (error) {
+      console.error("Erro ao buscar treinos finalizados:", error);
     }
-  }, [])
+  }
+
+  function formatarHora(isoString) {
+    const data = new Date(isoString);
+    return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function formatarData(isoString) {
+    const data = new Date(isoString);
+    return data.toLocaleDateString('pt-BR');
+  }
+
+  const compromissos = treinosFinalizados.map(item => ({
+    id: item.id,
+    horario: item.dataHorarioFim
+      ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
+      : `${formatarHora(item.dataHorarioInicio)}`,
+    data: formatarData(item.dataHorarioInicio),
+    aluno: {
+      nome: item.nomeAluno,
+      foto: item.urlFotoPerfil,
+    },
+    finalizado: item.finalizado,
+
+    dataHorarioFim: item.dataHorarioFim,
+    dataHorarioInicio: item.dataHorarioInicio,
+    nomeAluno: item.nomeAluno,
+    urlFotoPerfil: item.urlFotoPerfil,
+    idAluno: item.idAluno
+  }));
 
   // Define o dia atual como padrão ao carregar a página
   useEffect(() => {
     const today = new Date();
+    document.title = "Home | CaringU"
     setSelectedDay({
       day: today.toLocaleDateString("pt-BR", { weekday: "long" }),
       date: today.toLocaleDateString("pt-BR", {
@@ -51,27 +117,41 @@ const Home = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Função para fechar o modal de acesso negado
-  const closeModal = () => {
-    setShowModal(false);
-    navigate("/login");
-  };
-
   const atalhos = [
     {
-      icon: <GoPersonAdd />,
-      label: "Adicionar Aluno",
-      onClick: () => console.log("Adicionar Aluno clicado"),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-7 h-7 text-gray-800 group-hover:text-white transition-colors"
+          viewBox="0 0 30 30"
+          fill="none"
+        >
+          <path d="M27.5 15.0005V21.2505C27.5 25.0005 25 27.5005 21.25 27.5005H8.75C5 27.5005 2.5 25.0005 2.5 21.2505V15.0005C2.5 11.6005 4.55 9.22549 7.7375 8.82549C8.0625 8.77549 8.4 8.75049 8.75 8.75049H21.25C21.575 8.75049 21.8875 8.76297 22.1875 8.81297C25.4125 9.18797 27.5 11.5755 27.5 15.0005Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M22.1893 8.81299C21.8893 8.76299 21.5768 8.7505 21.2518 8.7505H8.75176C8.40176 8.7505 8.06426 8.7755 7.73926 8.8255C7.91426 8.4755 8.16426 8.1505 8.46426 7.8505L12.5268 3.77549C14.2393 2.07549 17.0143 2.07549 18.7268 3.77549L20.9143 5.98801C21.7143 6.77551 22.1393 7.77549 22.1893 8.81299Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M27.5 15.6255H23.75C22.375 15.6255 21.25 16.7505 21.25 18.1255C21.25 19.5005 22.375 20.6255 23.75 20.6255H27.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+      label: "Visualizar Planos",
+      onClick: () => navigate("/planos"),
     },
     {
       icon: <CiMedicalCase />,
       label: "Adicionar Treino",
-      onClick: () => console.log("Adicionar Treino clicado"),
+      onClick: () => navigate("/gerenciar-treinos"),
     },
     {
-      icon: <TbReportAnalytics />,
-      label: "Acessar Relatório",
-      onClick: () => console.log("Acessar Relatório clicado"),
+      icon: <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-7 h-7 text-gray-800 group-hover:text-white transition-colors"
+        viewBox="0 0 30 31"
+        fill="none">
+        <path d="M25 10.8125V23C25 26.75 22.7625 28 20 28H10C7.2375 28 5 26.75 5 23V10.8125C5 6.75 7.2375 5.8125 10 5.8125C10 6.5875 10.3125 7.2875 10.825 7.8C11.3375 8.3125 12.0375 8.625 12.8125 8.625H17.1875C18.7375 8.625 20 7.3625 20 5.8125C22.7625 5.8125 25 6.75 25 10.8125Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20 5.8125C20 7.3625 18.7375 8.625 17.1875 8.625H12.8125C12.0375 8.625 11.3375 8.3125 10.825 7.8C10.3125 7.2875 10 6.5875 10 5.8125C10 4.2625 11.2625 3 12.8125 3H17.1875C17.9625 3 18.6625 3.3125 19.175 3.825C19.6875 4.3375 20 5.0375 20 5.8125Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 16.75H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 21.75H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Criar Exercício",
+      onClick: () => navigate("/gerenciar-exercicios"),
     },
     {
       icon: <VscFeedback />,
@@ -82,32 +162,32 @@ const Home = () => {
 
   const kpis = [
     {
-      title: "Alunos ativos",
-      value: 120,
+      title: "Alunos Ativos",
+      value: alunosAtivos,
       description: "Número total de alunos ativos.",
       icon: <FaUsers />,
       bgColor: "bg-[#748CAB1A]",
       iconColor: "text-[#748CAB]",
     },
     {
-      title: "Treinos criados",
-      value: 45,
+      title: "Treinos Criados",
+      value: treinosCriados,
       description: "Treinos criados recentemente.",
       icon: <FaDumbbell />,
       bgColor: "bg-[#46982B38]",
       iconColor: "text-[#46982B]",
     },
     {
-      title: "Treinos próximos do vencimento",
-      value: 8,
-      description: "Treinos que expiram em breve.",
+      title: "Treinos Próximos do Vencimento",
+      value: treinosVencimento,
+      description: "Treinos que expiram em 2 semanas.",
       icon: <FaClock />,
       bgColor: "bg-[#E96E354F]",
       iconColor: "text-[#E96E35]",
     },
     {
-      title: "Anamneses pendentes",
-      value: 5,
+      title: "Anamneses Pendentes",
+      value: anamnesesPendentes,
       description: "Anamneses aguardando preenchimento.",
       icon: <FaClipboardList />,
       bgColor: "bg-yellow-100",
@@ -115,138 +195,6 @@ const Home = () => {
     },
   ];
 
-  const compromissos = [
-    {
-      id: 1,
-      horario: "9:00 - 10:00",
-      local: "Academia XYZ",
-      data: new Date().toLocaleDateString("pt-BR"),
-      aluno: {
-        nome: "João Silva",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 2,
-      horario: "14:00 - 15:00",
-      local: "Academia ABC",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Maria Oliveira",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 3,
-      horario: "10:00 - 11:00",
-      local: "Academia XYZ",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Carlos Souza",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 4,
-      horario: "11:00 - 12:00",
-      local: "Academia ABC",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Ana Paula",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 5,
-      horario: "15:00 - 16:00",
-      local: "Academia XYZ",
-      data: "30/04/2025",
-      aluno: {
-        nome: "Lucas Mendes",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 6,
-      horario: "8:00 - 9:00",
-      local: "Academia XYZ",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Fernanda Lima",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 7,
-      horario: "9:00 - 10:00",
-      local: "Academia ABC",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Rafael Costa",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 8,
-      horario: "10:00 - 11:00",
-      local: "Academia XYZ",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Juliana Alves",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 9,
-      horario: "11:00 - 12:00",
-      local: "Academia ABC",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Pedro Henrique",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 10,
-      horario: "13:00 - 14:00",
-      local: "Academia XYZ",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Mariana Silva",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 11,
-      horario: "14:00 - 15:00",
-      local: "Academia ABC",
-      data: "29/04/2025",
-      aluno: {
-        nome: "Gabriel Santos",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 12,
-      horario: "9:00 - 10:00",
-      local: "Academia XYZ",
-      data: "28/04/2025",
-      aluno: {
-        nome: "Beatriz Oliveira",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-    {
-      id: 13,
-      horario: "10:00 - 11:00",
-      local: "Academia ABC",
-      data: "03/05/2025",
-      aluno: {
-        nome: "Ricardo Lima",
-        foto: "https://via.placeholder.com/150",
-      },
-    },
-  ];
 
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -287,40 +235,23 @@ const Home = () => {
           </div>
 
           {/* Seção de Compromissos */}
-          <div className="flex flex-col md:flex-row gap-6">
-            <CompromissosHoje
-              compromissos={compromissos}
-              selectedDay={selectedDay}
-            />
-            <EstaSemana onDaySelect={setSelectedDay} />
+          <div className="flex flex-col 2xl:flex-row gap-6">
+            <div className="2xl:w-[50%] w-full">
+              <CompromissosHoje
+                compromissos={compromissos}
+                selectedDay={selectedDay}
+                listarTreinosFinalizados={fetchTreinosFinalizados}
+              />
+            </div>
+            <div className="2xl:w-[50%] w-full">
+              <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} />
+
+            </div>
+
           </div>
 
         </main>
       </div>
-
-      {/* Modal de Acesso Negado */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold text-center text-[#D45C56] flex items-center justify-center space-x-2">
-              <img src={alert} alt="Alerta" className="w-6 h-6" />
-              <span>Acesso Negado</span>
-            </h2>
-            <p className="text-center mt-4">
-              <div>Sessão expirada ou não autenticado.</div>
-              <div>Clique em "Redirecionar" para fazer login.</div>
-            </p>
-            <div className="flex justify-center mt-6">
-              <button
-                className="bg-[#D45C56] text-white px-4 py-2 rounded-lg cursor-pointer"
-                onClick={closeModal}
-              >
-                Redirecionar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
