@@ -10,6 +10,9 @@ import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import info2 from "../../assets/images/info-2.svg";
+import { caringuApi } from '../../provider/caringuApi.js'
+import toast, { Toaster } from 'react-hot-toast'
+import CustomToast from '../../components/Utils/CustomToast.jsx'
 
 
 const CriarTreino = () => {
@@ -23,6 +26,24 @@ const CriarTreino = () => {
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [exercicios, setExercicios] = useState([]);
+    const [exercicioEditando, setExercicioEditando] = useState(null);
+
+    const onSubmit = (data) => {
+
+        setExerciciosSelecionados(prev => {
+            const existe = prev.some(ex => ex.id === exercicioEditando.id);
+            if (existe) {
+                return prev.map(ex => ex.id === exercicioEditando.id ? { ...ex, ...data } : ex);
+            } else {
+                return [...prev, { ...exercicioEditando, ...data }];
+            }
+        });
+
+        setShowCreateModal(false);
+        setExercicioEditando(null);
+    };
+
 
     useEffect(() => {
         const handleClickFora = (event) => {
@@ -39,62 +60,126 @@ const CriarTreino = () => {
     }, []);
 
     useEffect(() => {
-
-        if (exercicioInput.length >= 2) {
-            const resultados = listaExerciciosMock.filter(e =>
+        if (exercicioInput.length >= 1) {
+            const resultados = exercicios.filter(e =>
                 e.nome.toLowerCase().includes(exercicioInput.toLowerCase())
             );
             setSugestoes(resultados);
         } else if (exercicioInput.length === 0) {
-            setSugestoes(listaExerciciosMock); // mostra todos se o campo estiver vazio
+            setSugestoes(exercicios); // mostra todos se o campo estiver vazio
         }
+    }, [exercicioInput, exercicios]); // agora também depende de 'exercicios'
 
-    }, [exercicioInput]);
+    useEffect(() => {
+        const buscarExercicios = async () => {
+            try {
+                const response = await caringuApi.get('/exercicios'); // ou caringuApi.get(...)
+                setExercicios(response.data); // Assumindo que o backend retorna um array de exercícios
+            } catch (error) {
+                console.error('Erro ao buscar exercícios:', error);
+            }
+        };
 
-    const listaExerciciosMock = [
-        { id: 1, nome: "Supino" },
-        { id: 2, nome: "Agachamento" },
-        { id: 3, nome: "Remada curvada" },
-        { id: 4, nome: "Rosca direta" },
-        { id: 5, nome: "Desenvolvimento" },
-        { id: 6, nome: "Leg press" },
-        { id: 7, nome: "Puxada frontal" }
-    ];
+        buscarExercicios();
+    }, []);
+
 
     const adicionarExercicio = (exercicio) => {
+        setExercicioEditando(exercicio);
         setShowCreateModal(true);
-        if (!exerciciosSelecionados.find(e => e.id === exercicio.id)) {
-            setExerciciosSelecionados([...exerciciosSelecionados, exercicio]);
-        }
         setExercicioInput('');
         setSugestoes([]);
+    };
+
+    const handleSubmitTreino = async (data) => {
+        try {
+            const personalId = sessionStorage.getItem("pessoaId"); // Corrigido o nome da constante
+
+            // 1. Criar treino
+            const treinoResponse = await caringuApi.post('/treino', {
+                nome: data.nomeTreino,
+                descricao: data.descricao,
+                personalId: personalId
+            });
+
+            const treinoId = treinoResponse.data.id;
+            if (!treinoId) {
+                throw new Error("ID do treino não retornado.");
+            }
+
+            // 2. Mapear grau de dificuldade
+            const grauDificuldadeMap = {
+                '1': 'INICIANTE',
+                '2': 'INTERMEDIARIO',
+                '3': 'AVANCADO'
+            };
+
+            // 3. Preparar exercícios personalizados
+            const exerciciosPayload = exerciciosSelecionados.map((exercicio) => ({
+                exercicioId: exercicio.id, // Certifique-se que o objeto tem 'id'
+                carga: Number(exercicio.carga) || 0,
+                repeticoes: Number(exercicio.repeticoes) || 10,
+                series: Number(exercicio.series) || 3,
+                descanso: Number(exercicio.tempoDescanso) || 60, // Use 'tempoDescanso' se esse for o nome do input
+                dataHoraCriacao: new Date().toISOString(),
+                dataHoraModificacao: new Date().toISOString(),
+                origemTreinoExercicio: 'BIBLIOTECA',
+                grauDificuldade: grauDificuldadeMap[data.dificuldade] || 'INICIANTE'
+            }));
+
+            // 4. Cadastrar lote de exercícios
+            await caringuApi.post('/treinos-exercicios/cadastrar-lote', {
+                treinoId,
+                exercicios: exerciciosPayload
+            });
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Treino cadastrado com sucesso!" />
+            ));
+            reset();
+            setExerciciosSelecionados([]); 
+            
+        } catch (error) {
+            console.error('Erro ao cadastrar treino:', error);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao cadastrar treino" />
+            ));
+        }
     };
 
     const removerExercicio = (id) => {
         setExerciciosSelecionados(exerciciosSelecionados.filter(e => e.id !== id));
     };
 
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
+    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm({
         defaultValues: {
             nomeTreino: "",
             dificuldade: "",
             descricao: "",
-            exercicios: [] // se for enviar os selecionados ao backend
+            exercicios: []
         },
         mode: "onChange"
     });
 
-    const openDeleteModal = () => {
-        setModalDeletarVisivel(true);
-    };
 
-    const confirmDelete = () => {
-        alert("Treino excluído!");
-        setModalDeletarVisivel(false);
-    };
+    useEffect(() => {
+        if (exercicioEditando) {
+            setValue('carga', exercicioEditando.carga || '');
+            setValue('series', exercicioEditando.series || '');
+            setValue('repeticoes', exercicioEditando.repeticoes || '');
+            setValue('tempoDescanso', exercicioEditando.tempoDescanso || '');
+            // Adicione outros campos que existirem no seu formulário
+        }
+    }, [exercicioEditando, setValue]);
 
     const handleOpenModal = () => {
         setShowCreateModal(true);
+    };
+
+    const cancelarEdicao = () => {
+        setModalConfirmarCancelarVisivel(false);
+        setShowCreateModal(false);
+        setExercicioEditando(null);
     };
 
     return (
@@ -114,7 +199,7 @@ const CriarTreino = () => {
                             <h1>Criar Treino</h1>
                         </div>
                         <div>
-                            <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
+                            <form onSubmit={handleSubmit(handleSubmitTreino)}>
                                 <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 md:gap-10 mt-4">
 
                                     <div className="col-span-1">
@@ -168,7 +253,7 @@ const CriarTreino = () => {
                                                     {sugestoes.map((exercicio) => (
                                                         <li
                                                             key={exercicio.id}
-                                                            onClick={() => adicionarExercicio(exercicio)}
+                                                            onMouseDown={() => adicionarExercicio(exercicio)}
                                                             className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
                                                         >
                                                             {exercicio.nome}
@@ -247,243 +332,246 @@ const CriarTreino = () => {
                                         />
                                     </div>
                                 </div>
+
+                                <h1>Exercícios adicionados:</h1>
+                                <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
+                                    {exerciciosSelecionados.map((exercicio) => (
+                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal()}>
+                                            {exercicio.nome}
+                                            <button onClick={(e) => {
+                                                e.stopPropagation();
+                                                removerExercicio(exercicio.id)
+                                            }}
+                                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg></button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex items-center justify-center mt-7">
+                                    <Button
+                                        texto="Salvar"
+                                        type="submit"
+                                        corTexto="var(--cor-secundaria)"
+                                        cor="#46982B"
+                                        height="2.75rem"
+                                        width="9.2rem"
+                                        corHover="#46982BE5"
+                                        fontWeight="600"
+                                        aria-label={"Botão de Salvar"}
+                                    />
+
+                                </div>
                             </form>
 
                         </div>
-                        <h1>Exercícios adicionados:</h1>
-                        <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
-                            {exerciciosSelecionados.map((exercicio) => (
-                                <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal()}>
-                                    {exercicio.nome}
-                                    <button onClick={(e) => {
-                                        e.stopPropagation();
-                                        removerExercicio(exercicio.id)
-                                    }}
-                                        className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                            <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg></button>
-                                </div>
-                            ))}
-                            {showCreateModal && (
-                                <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
-                                    <div className="absolute inset-0 bg-[#000000] opacity-50"
-                                        aria-label="Fundo Escurecido"
-                                    ></div>
-                                    <div className="relative p-4 w-full max-w-2xl md:max-w-[1100px]">
-                                        <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
-                                            {/* Header */}
-                                            <div className="flex justify-between items-center pb-4 mb-4 ">
-                                                <h3 className="text-4xl font-semibold text-[var(--cor-primaria)]">
-                                                    Personalizar exercício
-                                                </h3>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setModalConfirmarCancelarVisivel(true)
-                                                    }}
-                                                    className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
-                                                >
-                                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </div>
+                        {showCreateModal && (
+                            <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
+                                <div className="absolute inset-0 bg-[#000000] opacity-50"
+                                    aria-label="Fundo Escurecido"
+                                ></div>
+                                <div className="relative p-4 w-full max-w-2xl md:max-w-[1100px]">
+                                    <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
+                                        {/* Header */}
+                                        <div className="flex justify-between items-center pb-4 mb-4 ">
+                                            <h3 className="text-4xl font-semibold text-[var(--cor-primaria)]">
+                                                Personalizar exercício
+                                            </h3>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setModalConfirmarCancelarVisivel(true)
+                                                }}
+                                                className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
 
-                                            {/* Formulário */}
-                                            <form onSubmit={handleSubmit((data) => console.log("Dados do formulário:", data))}>
-
-                                                <div className="flex w-full">
-                                                    <div className="flex flex-col w-[65%] m-5">
-                                                        <div className="grid grid-cols-2 mb-4 w-full">
-                                                            <div className="grid-span-1 w-full">
-                                                                <Label
-                                                                    id="carga"
-                                                                    nomeLabel="Carga"
-                                                                    fontSize="20px"
-                                                                    fontWeight="500"
-                                                                />
-                                                                <InputPosLogin
-                                                                    id="carga"
-                                                                    name="carga"
-                                                                    inputType="number"
-                                                                    placeholder="Ex.: 20"
-                                                                    fontSize="16px"
-                                                                    fontWeight="400"
-                                                                    fontSizeErro="16px"
-                                                                    width="50%"
-                                                                    {...register('carga', {
-                                                                        required: 'A carga é obrigatória',
-                                                                        pattern: {
-                                                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                                                            message: 'Email inválido',
-                                                                        },
-                                                                    })}
-                                                                    isError={!!errors.email}
-                                                                    errorMessage={errors.email?.message}
-                                                                />
-                                                                <Label
-                                                                    id="series"
-                                                                    nomeLabel="Séries"
-                                                                    fontSize="20px"
-                                                                    fontWeight="500"
-                                                                />
-                                                                <InputPosLogin
-                                                                    id="series"
-                                                                    name="series"
-                                                                    inputType="number"
-                                                                    placeholder="Ex.: 20"
-                                                                    fontSize="16px"
-                                                                    fontWeight="400"
-                                                                    fontSizeErro="16px"
-                                                                    width="50%"
-                                                                    {...register('series', {
-                                                                        required: 'A quantidade de séries é obrigatória',
-                                                                        pattern: {
-                                                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                                                            message: 'Email inválido',
-                                                                        },
-                                                                    })}
-                                                                    isError={!!errors.email}
-                                                                    errorMessage={errors.email?.message}
-                                                                />
-                                                            </div>
-                                                            <div className="grid-span-1">
-                                                                <Label
-                                                                    id="repeticoes"
-                                                                    nomeLabel="Repetições"
-                                                                    fontSize="20px"
-                                                                    fontWeight="500"
-                                                                />
-                                                                <InputPosLogin
-                                                                    id="repeticoes"
-                                                                    name="repeticoes"
-                                                                    inputType="number"
-                                                                    placeholder="Ex.: 20"
-                                                                    fontSize="16px"
-                                                                    fontWeight="400"
-                                                                    fontSizeErro="16px"
-                                                                    width="50%"
-                                                                    inputMode="numeric"
-                                                                    {...register('repeticoes', {
-                                                                        required: 'A quantidade de repetições é obrigatória'
-                                                                    })}
-                                                                />
-                                                                <Label
-                                                                    id="tempoDescanso"
-                                                                    nomeLabel="Tempo de descanso"
-                                                                    fontSize="20px"
-                                                                    fontWeight="500"
-                                                                />
-                                                                <InputPosLogin
-                                                                    id="tempoDescanso"
-                                                                    name="tempoDescanso"
-                                                                    inputType="number"
-                                                                    placeholder="Ex.: 20"
-                                                                    fontSize="16px"
-                                                                    fontWeight="400"
-                                                                    fontSizeErro="16px"
-                                                                    width="50%"
-                                                                    inputMode="numeric"
-                                                                    {...register('repeticoes', {
-                                                                        required: 'O tempo de descanço é obrigatório'
-                                                                    })}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className=" w-full">
+                                        {/* Formulário */}
+                                        <form onSubmit={handleSubmit(onSubmit)}>
+                                            <div className="flex w-full">
+                                                <div className="flex flex-col w-[65%] m-5">
+                                                    <div className="grid grid-cols-2 mb-4 w-full">
+                                                        {/* Coluna Esquerda */}
+                                                        <div className="grid-span-1 w-full">
                                                             <Label
-                                                                id="observacao"
-                                                                nomeLabel="Observações"
+                                                                id="carga"
+                                                                nomeLabel="Carga"
                                                                 fontSize="20px"
                                                                 fontWeight="500"
                                                             />
                                                             <InputPosLogin
-                                                                id="observacao"
-                                                                name="observacao"
-                                                                inputType="text"
-                                                                placeholder="Ex.: Como deve ser feito"
+                                                                id="carga"
+                                                                name="carga"
+                                                                inputType="number"
+                                                                placeholder="Ex.: 20"
                                                                 fontSize="16px"
                                                                 fontWeight="400"
                                                                 fontSizeErro="16px"
-                                                                width="100%"
-                                                                {...register('observacao', {
-                                                                    required: 'A observação é obrigatória',
-                                                                    minLength: {
-                                                                        value: 5,
-                                                                        message: 'A observação deve ter pelo menos 5 caracteres',
+                                                                width="50%"
+                                                                {...register('carga', {
+                                                                    required: 'A carga é obrigatória',
+                                                                    valueAsNumber: true,
+                                                                    min: {
+                                                                        value: 1,
+                                                                        message: 'A carga deve ser maior que 0',
                                                                     },
                                                                 })}
-                                                                isError={!!errors.observacao}
-                                                                errorMessage={errors.observacao?.message}
+                                                                isError={!!errors.carga}
+                                                                errorMessage={errors.carga?.message}
+                                                            />
+
+                                                            <Label
+                                                                id="series"
+                                                                nomeLabel="Séries"
+                                                                fontSize="20px"
+                                                                fontWeight="500"
+                                                            />
+                                                            <InputPosLogin
+                                                                id="series"
+                                                                name="series"
+                                                                inputType="number"
+                                                                placeholder="Ex.: 4"
+                                                                fontSize="16px"
+                                                                fontWeight="400"
+                                                                fontSizeErro="16px"
+                                                                width="50%"
+                                                                {...register('series', {
+                                                                    required: 'A quantidade de séries é obrigatória',
+                                                                    valueAsNumber: true,
+                                                                    min: {
+                                                                        value: 1,
+                                                                        message: 'A série deve ser maior que 0',
+                                                                    },
+                                                                })}
+                                                                isError={!!errors.series}
+                                                                errorMessage={errors.series?.message}
+                                                            />
+                                                        </div>
+
+                                                        {/* Coluna Direita */}
+                                                        <div className="grid-span-1">
+                                                            <Label
+                                                                id="repeticoes"
+                                                                nomeLabel="Repetições"
+                                                                fontSize="20px"
+                                                                fontWeight="500"
+                                                            />
+                                                            <InputPosLogin
+                                                                id="repeticoes"
+                                                                name="repeticoes"
+                                                                inputType="number"
+                                                                placeholder="Ex.: 12"
+                                                                fontSize="16px"
+                                                                fontWeight="400"
+                                                                fontSizeErro="16px"
+                                                                width="50%"
+                                                                {...register('repeticoes', {
+                                                                    required: 'A quantidade de repetições é obrigatória',
+                                                                    valueAsNumber: true,
+                                                                    min: {
+                                                                        value: 1,
+                                                                        message: 'As repetições devem ser maiores que 0',
+                                                                    },
+                                                                })}
+                                                                isError={!!errors.repeticoes}
+                                                                errorMessage={errors.repeticoes?.message}
+                                                            />
+
+                                                            <Label
+                                                                id="tempoDescanso"
+                                                                nomeLabel="Tempo de descanso (segundos)"
+                                                                fontSize="20px"
+                                                                fontWeight="500"
+                                                            />
+                                                            <InputPosLogin
+                                                                id="tempoDescanso"
+                                                                name="tempoDescanso"
+                                                                inputType="number"
+                                                                placeholder="Ex.: 60"
+                                                                fontSize="16px"
+                                                                fontWeight="400"
+                                                                fontSizeErro="16px"
+                                                                width="50%"
+                                                                {...register('tempoDescanso', {
+                                                                    required: 'O tempo de descanso é obrigatório',
+                                                                    valueAsNumber: true,
+                                                                    min: {
+                                                                        value: 1,
+                                                                        message: 'O descanso deve ser maior que 0',
+                                                                    },
+                                                                })}
+                                                                isError={!!errors.tempoDescanso}
+                                                                errorMessage={errors.tempoDescanso?.message}
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className="flex flex-col w-[35%] m-5 gap-5">
-                                                        <div className="bg-gray-400 w-full h-full flex items-center justify-center rounded-lg">
-                                                            <h1>Video</h1>
-                                                        </div>
-                                                        <div className="grid-span-1 w-full">
-                                                            <p><b>Nome:</b> Supino</p>
-                                                            <p><b>Origem:</b>  Biblioteca CaringU</p>
-                                                            <p><b>Grupo muscular:</b> Peitoral</p>
-                                                            <p><b>Observações:</b> Sem observações</p>
-                                                        </div>
+                                                </div>
+
+                                                {/* Vídeo e Dados do Exercício */}
+                                                <div className="flex flex-col w-[35%] m-5 gap-5">
+                                                    <div className="bg-gray-400 w-full h-full flex items-center justify-center rounded-lg">
+                                                        {exercicioEditando?.videoUrl ? (
+                                                            <video
+                                                                src={exercicioEditando.videoUrl}
+                                                                controls
+                                                                className="w-full h-full rounded-lg"
+                                                                aria-label="Vídeo do exercício"
+                                                            />
+                                                        ) : (
+                                                            <h1>Vídeo não disponível</h1>
+                                                        )}
+                                                    </div>
+                                                    <div className="grid-span-1 w-full">
+                                                        <p><b>Nome:</b> {exercicioEditando?.nome}</p>
+                                                        <p><b>Origem:</b> {exercicioEditando?.origem}</p>
+                                                        <p><b>Grupo muscular:</b> {exercicioEditando?.grupoMuscular}</p>
+                                                        <p><b>Observações:</b> {exercicioEditando?.observacoes || 'Sem observações'}</p>
                                                     </div>
                                                 </div>
-                                                <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row mt-5 gap-4 w-full justify-center">
-                                                    <Button
-                                                        texto="Cancelar"
-                                                        corTexto="#B41F1F"
-                                                        cor="var(--cor-secundaria)"
-                                                        height="2.75rem"
-                                                        width="13.25rem"
-                                                        corHover="#1D2D4417"
-                                                        fontWeight="500"
-                                                        aria-label={"Botão de Cancelar"}
-                                                        onClick={() => setModalConfirmarCancelarVisivel(true)}
-                                                    />
+                                            </div>
 
-                                                    <Button
-                                                        texto="Salvar"
-                                                        corTexto="var(--cor-secundaria)"
-                                                        cor="#46982B"
-                                                        height="2.75rem"
-                                                        width="9.2rem"
-                                                        corHover="#46982BE5"
-                                                        fontWeight="600"
-                                                        aria-label={"Botão de Salvar"}
-                                                    />
+                                            {/* Botões */}
+                                            <div className="flex flex-col items-center sm:flex-row mt-5 gap-4 w-full justify-center">
+                                                <Button
+                                                    texto="Cancelar"
+                                                    corTexto="#B41F1F"
+                                                    cor="var(--cor-secundaria)"
+                                                    height="2.75rem"
+                                                    width="13.25rem"
+                                                    corHover="#1D2D4417"
+                                                    fontWeight="500"
+                                                    aria-label="Botão de Cancelar"
+                                                    onClick={() => setModalConfirmarCancelarVisivel(true)}
+                                                />
 
-                                                </div>
-                                            </form>
-                                        </div>
+                                                <Button
+                                                    type="submit"
+                                                    texto="Salvar"
+                                                    corTexto="var(--cor-secundaria)"
+                                                    cor="#46982B"
+                                                    height="2.75rem"
+                                                    width="9.2rem"
+                                                    corHover="#46982BE5"
+                                                    fontWeight="600"
+                                                    aria-label="Botão de Salvar"
+                                                />
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
-                            )}
-                        </div>
-                        <div className="flex items-center justify-center mt-7">
-                            <Button
-                                texto="Salvar"
-                                corTexto="var(--cor-secundaria)"
-                                cor="#46982B"
-                                height="2.75rem"
-                                width="9.2rem"
-                                corHover="#46982BE5"
-                                fontWeight="600"
-                                aria-label={"Botão de Salvar"}
-                                onClick={handleSubmit((data) => {
-                                    console.log("Dados do formulário:", data);
-                                    // Aqui você pode enviar os dados para o backend
-                                })}
-                            />
-
-                        </div>
+                            </div>
+                        )}
                         <Modal
                             visivel={modalDeletarVisivel}
                             fecharModal={() => setModalDeletarVisivel(false)}
@@ -514,6 +602,7 @@ const CriarTreino = () => {
                             textoBotaoCancelar="Cancelar mesmo assim"
                             aria-label="Modal de Cancelamento"
                         />
+                        <Toaster position='top-right' reverseOrder={false} />
                     </div>
                 </main>
             </div>

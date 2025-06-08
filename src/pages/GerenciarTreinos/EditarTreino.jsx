@@ -4,283 +4,231 @@ import Header from '../../components/Personal/Header/Header'
 import { Link, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import Label from '../../components/Utils/Label'
-import InputPosLogin from '../../components/Utils/InputPosLogin'
+import InputEditar from '../../components/Utils/InputEditar'
 import Button from '../../components/Utils/Button'
-import Modal from "../../components/Utils/Modal.jsx";
-import lixeira from "../../assets/images/trash.png";
-import iconCancelar from "../../assets/images/cancelar.png";
 import info2 from "../../assets/images/info-2.svg";
+import { caringuApi } from '../../provider/caringuApi.js'
+import toast, { Toaster } from 'react-hot-toast'
+import CustomToast from '../../components/Utils/CustomToast.jsx'
+
 
 
 const EditarTreino = () => {
+    // Estados locais
     const [exercicioInput, setExercicioInput] = useState('');
-    const [sugestoes, setSugestoes] = useState([]);
-    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
     const [focado, setFocado] = useState(false);
     const [modalExercicioVisivel, setModalExercicioVisivel] = useState(false);
-    const [exercicioAtual, setExercicioAtual] = useState(null); // Exercício sendo editado
-    const sugestaoRef = useRef(null);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
+    const [sugestoes, setSugestoes] = useState([]);
+    const [exercicios, setExercicios] = useState([]); 
+    const [treino, setTreino] = useState([]); 
+    const [exercicioAtual, setExercicioAtual] = useState(null); 
+    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]); 
+    const [exerciciosEditados, setExerciciosEditados] = useState([]);
+    const [indexExercicioAtual, setIndexExercicioAtual] = useState(null);
+    const { id } = useParams();
+    const treinoId = parseInt(id);
+    const idPersonal = sessionStorage.getItem('pessoaId');
+    const sugestaoRef = useRef(null);
 
-    const { id } = useParams(); // pega o id da URL
-    const treinoId = parseInt(id); // transforma para número (porque vem como string)
+    // React Hook Form
+    const {
+        register: registerTreino,
+        handleSubmit: handleSubmitTreino,
+        setValue,
+        reset: resetTreino,
+        formState: { errors: errorsTreino },
+    } = useForm();
 
-
-
-    // Simulação do banco de dados
-    const treinoMock = (
-        [
-            {
-                id: 1,
-                nome: "Treino de Braços",
-                dificuldade: "Iniciante",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 1,
-                        nome: "Rosca Direta",
-                        carga: 10,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: "Focar na execução"
-                    },
-                    {
-                        id: 2,
-                        nome: "Rosca Martelo",
-                        carga: 8,
-                        series: 3,
-                        repeticoes: 10,
-                        descanso: 60,
-                        observacoes: ""
-                    },
-                    {
-                        id: 3,
-                        nome: "Tríceps Testa",
-                        carga: 12,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 90,
-                        observacoes: ""
-                    }
-                ]
-            },
-            {
-                id: 2,
-                nome: "Treino de Pernas",
-                dificuldade: "Avançado",
-                favorito: false,
-                exercicios: [
-                    {
-                        id: 4,
-                        nome: "Agachamento Livre",
-                        carga: 50,
-                        series: 5,
-                        repeticoes: 8,
-                        descanso: 120,
-                        observacoes: "Descer até 90 graus"
-                    },
-                    {
-                        id: 5,
-                        nome: "Leg Press",
-                        carga: 150,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 90,
-                        observacoes: ""
-                    },
-                    {
-                        id: 6,
-                        nome: "Cadeira Extensora",
-                        carga: 40,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: "Segurar 2s no topo"
-                    }
-                ]
-            },
-            {
-                id: 3,
-                nome: "Treino de Peito",
-                dificuldade: "Intermediário",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 7,
-                        nome: "Supino Reto",
-                        carga: 30,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 90,
-                        observacoes: "Manter controle na descida"
-                    },
-                    {
-                        id: 8,
-                        nome: "Crucifixo",
-                        carga: 12,
-                        series: 3,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: ""
-                    }
-                ]
-            },
-            {
-                id: 4,
-                nome: "Treino de Costas",
-                dificuldade: "Avançado",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 9,
-                        nome: "Remada Curvada",
-                        carga: 40,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 90,
-                        observacoes: "Mantenha coluna neutra"
-                    },
-                    {
-                        id: 10,
-                        nome: "Puxada Frontal",
-                        carga: 35,
-                        series: 4,
-                        repeticoes: 12,
-                        descanso: 60,
-                        observacoes: ""
-                    }
-                ]
-            },
-            {
-                id: 5,
-                nome: "Treino de Ombros",
-                dificuldade: "Iniciante",
-                favorito: true,
-                exercicios: [
-                    {
-                        id: 11,
-                        nome: "Desenvolvimento",
-                        carga: 20,
-                        series: 4,
-                        repeticoes: 10,
-                        descanso: 60,
-                        observacoes: ""
-                    },
-                    {
-                        id: 12,
-                        nome: "Elevação Lateral",
-                        carga: 6,
-                        series: 3,
-                        repeticoes: 15,
-                        descanso: 60,
-                        observacoes: "Executar devagar"
-                    }
-                ]
-            },
-            {
-                id: 6,
-                nome: "Treino de Abdômen",
-                dificuldade: "Intermediário",
-                favorito: false,
-                descricao: "Treino para definição abdominal",
-                exercicios: [
-                    {
-                        id: 13,
-                        nome: "Abdominal Infra",
-                        carga: 0,
-                        series: 4,
-                        repeticoes: 15,
-                        descanso: 45,
-                        observacoes: ""
-                    },
-                    {
-                        id: 14,
-                        nome: "Prancha",
-                        carga: 0,
-                        series: 3,
-                        repeticoes: 1,
-                        descanso: 60,
-                        observacoes: "Manter por 60 segundos"
-                    }
-                ]
-            }
-        ]);
+    const {
+        register: registerExercicio,
+        handleSubmit: handleSubmitExercicio,
+        formState: { errors: errorsExercicio },
+        setValue: setValueExercicio,
+        watch: watchExercicio,
+        reset: resetExercicio,
+    } = useForm();
 
 
-    const treinoSelecionado = treinoMock.find(treino => treino.id === treinoId);
 
+    // Busca os exercícios do backend (ao montar)
     useEffect(() => {
-        // Preenche os valores iniciais do formulário e dos exercícios
-        setValue("nomeTreino", treinoMock.nomeTreino);
-        setValue("dificuldade", treinoMock.dificuldade);
-        setValue("descricao", treinoMock.descricao);
-        setExerciciosSelecionados(treinoMock.exercicios);
+        const buscarExercicios = async () => {
+            try {
+                const response = await caringuApi.get('/exercicios');
+                setExercicios(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar exercícios:', error);
+            }
+        };
+        buscarExercicios();
     }, []);
 
-    const listaExerciciosMock = [
-        { id: 1, nome: "Supino" },
-        { id: 2, nome: "Agachamento" },
-        { id: 3, nome: "Remada curvada" },
-        { id: 4, nome: "Rosca direta" },
-        { id: 5, nome: "Desenvolvimento" },
-        { id: 6, nome: "Leg press" },
-        { id: 7, nome: "Puxada frontal" }
-    ];
 
-    const adicionarExercicio = (exercicio) => {
-        if (!exerciciosSelecionados.find(e => e.id === exercicio.id)) {
-            setExerciciosSelecionados([
-                ...exerciciosSelecionados,
-                { ...exercicio, carga: 0, series: 0, repeticoes: 0, descanso: 0 }
-            ]);
+    // Busca treino e seus exercícios
+    useEffect(() => {
+        const fetchInfosTreino = async () => {
+            try {
+                const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${treinoId}`);
+                const data = response.data;
+                if (data.length > 0) {
+                    setTreino(data);
+                    setExerciciosSelecionados(data);
+                    setExerciciosEditados(data);
+                }
+            } catch (error) {
+                console.error('Erro ao buscar informações dos treinos:', error);
+            }
+        };
+        fetchInfosTreino();
+    }, [idPersonal, treinoId]);
+
+    useEffect(() => {
+        if (treino && treino.length > 0) {
+            const treinoInfo = treino[0];  // supondo que o objeto tenha os campos do treino
+            resetTreino({
+                nomeTreino: treinoInfo.nomeTreino || '',
+                dificuldade: treinoInfo.grauDificuldade || '',
+                descricao: treinoInfo.descricaoTreino || '',
+            });
         }
+    }, [treino, resetTreino]);
+
+    useEffect(() => {
+        if (exercicioInput.trim().length < 2) {
+            setSugestoes([]);
+            return;
+        }
+
+        const termo = exercicioInput.trim().toLowerCase();
+        const resultados = exercicios.filter((ex) =>
+            ex.nome.toLowerCase().includes(termo)
+        );
+        setSugestoes(resultados);
+    }, [exercicioInput]);
+
+    useEffect(() => {
+        const handleClickFora = (event) => {
+            if (sugestaoRef.current && !sugestaoRef.current.contains(event.target)) {
+                setFocado(false); // <- atualiza corretamente o estado de foco
+            }
+        };
+        document.addEventListener('mousedown', handleClickFora);
+        return () => document.removeEventListener('mousedown', handleClickFora);
+    }, []);
+
+    // Atualiza campos do modal quando o exercícioAtual muda
+    useEffect(() => {
+        if ('Atualizando modal com:', exercicioAtual) {
+
+            resetExercicio({
+                carga: exercicioAtual.carga || '',
+                series: exercicioAtual.series || '',
+                repeticoes: exercicioAtual.repeticoes || '',
+                tempoDescanso: exercicioAtual.descanso || exercicioAtual.tempoDescanso || '',
+            });
+        }
+    }, [exercicioAtual, resetExercicio]);
+
+    // Salvar edição do exercício (form modal)
+    const onSubmitExercicio = (data) => {
+        if (indexExercicioAtual === null) return;
+
+        const novosExercicios = [...exerciciosEditados];
+        novosExercicios[indexExercicioAtual] = {
+            ...novosExercicios[indexExercicioAtual],
+            ...data
+        };
+
+        setExerciciosEditados(novosExercicios);
+        setModalExercicioVisivel(false);
+    };
+
+
+    // Adiciona novo exercício ao treino (abre modal para ele)
+    const abrirModalExercicio = (exercicio) => {
+        const existente = exerciciosEditados.find(e => e.exercicioId === exercicio.id);
+
+        if (existente) {
+            setExercicioAtual(existente);
+            setIndexExercicioAtual(exerciciosEditados.findIndex(e => e.exercicioId === exercicio.id));
+        } else {
+            const novoExercicio = {
+                ...exercicio,
+                exercicioId: exercicio.id, // importante para consistência
+                carga: '',
+                series: '',
+                repeticoes: '',
+                tempoDescanso: ''
+            };
+
+            const novosEditados = [...exerciciosEditados, novoExercicio];
+            setExerciciosEditados(novosEditados);
+            setIndexExercicioAtual(novosEditados.length - 1);
+            setExercicioAtual(novoExercicio);
+        }
+
+        setModalExercicioVisivel(true);
         setExercicioInput('');
         setSugestoes([]);
     };
 
-    const abrirModalExercicio = (exercicio) => {
-        setExercicioAtual(exercicio);
-        setModalExercicioVisivel(true);
-    };
 
-    const atualizarExercicio = (id, campo, valor) => {
-        setExerciciosSelecionados(prev =>
-            prev.map(exercicio =>
-                exercicio.id === id ? { ...exercicio, [campo]: valor } : exercicio
-            )
-        );
-    };
-
+    // Remover exercício da lista
     const removerExercicio = (id) => {
-        setExerciciosSelecionados(exerciciosSelecionados.filter(e => e.id !== id));
+        setExerciciosEditados((prev) => {
+            const novaLista = prev.filter(e => e.exercicioId !== id);
+            return novaLista;
+        });
     };
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm({
-        defaultValues: {
-            nomeTreino: "",
-            dificuldade: "",
-            descricao: "",
-            exercicios: []
-        },
-        mode: "onChange"
-    });
-
-    const salvarTreino = (data) => {
-        const treinoAtualizado = {
-            ...data,
-            exercicios: exerciciosSelecionados
+    // Salvar treino completo com exercícios editados
+    const salvarTreino = async (data) => {
+        const payload = {
+            treinoId: treinoId, // do useParams
+            exercicios: exerciciosEditados.map((ex) => ({
+                exercicioId: ex.exercicioId || ex.id,
+                carga: parseFloat(ex.carga),
+                repeticoes: parseInt(ex.repeticoes),
+                series: parseInt(ex.series),
+                descanso: parseInt(ex.tempoDescanso || ex.descanso), // garantir compatibilidade
+                dataHoraCriacao: ex.dataHoraCriacao || new Date().toISOString(),
+                dataHoraModificacao: new Date().toISOString(),
+                origemTreinoExercicio: ex.origemTreinoExercicio || 'BIBLIOTECA',
+                grauDificuldade: data.dificuldade || 'INICIANTE'
+            })),
         };
-        console.log("Treino atualizado:", treinoAtualizado);
-        alert("Treino atualizado com sucesso!");
+
+        const payloadTreino = {
+            nome: data.nomeTreino,
+            descricao: data.descricao
+        }
+        try {
+            const response = await caringuApi.put(
+                `/treinos-exercicios/atualizar/treinos/${treinoId}/exercicios`,
+                payload
+            );
+
+            const responseTreino = await caringuApi.put(`/treino/${treinoId}/personal/${idPersonal}`, payloadTreino)
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Treino atualizado com sucesso!" />
+            ));
+        } catch (error) {
+            console.error('Erro ao salvar treino:', error);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao salvar treino. Tente novamente." />
+            ));
+        }
     };
 
-    const salvarExercicio = (e) => {
-        e.preventDefault();
-        // Os valores já foram atualizados pelo atualizarExercicio
-        setModalExercicioVisivel(false);
-        setExercicioAtual(null);
+
+    // Função auxiliar para validar URL do YouTube (se precisar)
+    const isValidYoutubeUrl = (url) => {
+        const youtubeRegex = /^(https:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+        return youtubeRegex.test(url);
     };
+
 
     return (
         <div className="flex h-screen bg-[#fdfbf7]">
@@ -298,11 +246,11 @@ const EditarTreino = () => {
                             </Link>
                             <h1>Editar Treino</h1>
                         </div>
-                        <form onSubmit={handleSubmit(salvarTreino)}>
+                        <form onSubmit={handleSubmitTreino(salvarTreino)}>
                             <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 md:gap-10 mt-4">
                                 <div className="col-span-1">
                                     <Label id="nomeTreino" nomeLabel="Nome do treino" fontSize="20px" fontWeight="500" />
-                                    <InputPosLogin
+                                    <InputEditar
                                         id="nomeTreino"
                                         name="nomeTreino"
                                         inputType="text"
@@ -311,70 +259,79 @@ const EditarTreino = () => {
                                         fontWeight="400"
                                         fontSizeErro="16px"
                                         width="100%"
-                                        value={treinoSelecionado.nome}
-                                        onChange={(e) => setValue('nomeTreino', e.target.value)}
-                                        {...register('nomeTreino', {
+                                        {...registerTreino('nomeTreino', {
                                             required: 'O nome do treino é obrigatório',
                                             minLength: {
                                                 value: 3,
                                                 message: 'O nome deve ter pelo menos 3 caracteres',
                                             },
                                         })}
-                                        isError={!!errors.nomeTreino}
-                                        errorMessage={errors.nomeTreino?.message}
+                                        isError={!!errorsTreino.nomeTreino}
+                                        errorMessage={errorsTreino.nomeTreino?.message}
                                     />
                                     <div className="relative" ref={sugestaoRef}>
-                                        <Label id="exerciciosTreino" nomeLabel="Exercícios que compõem o treino" fontSize="20px" fontWeight="500" />
+                                        <Label
+                                            id="exerciciosTreino"
+                                            nomeLabel="Exercícios que compõem o treino"
+                                            fontSize="20px"
+                                            fontWeight="500"
+                                        />
                                         <input
                                             id="exerciciosTreino"
                                             type="text"
-                                            value={exercicioInput}
-                                            onChange={(e) => setExercicioInput(e.target.value)}
                                             onFocus={() => setFocado(true)}
-                                            onBlur={() => setTimeout(() => setFocado(false), 200)}
+                                            onBlur={() => setTimeout(() => setFocado(false), 200)} // pequeno delay para permitir clicar na sugestão
+                                            onChange={(e) => setExercicioInput(e.target.value)}
+                                            value={exercicioInput}
                                             placeholder="Digite o nome do exercício"
                                             className="border-b-2 w-full"
                                         />
                                         {focado && sugestoes.length > 0 && (
                                             <ul className="absolute bg-white border w-full max-h-40 overflow-y-auto z-10">
-                                                {sugestoes.map((exercicio) => (
-                                                    <li
-                                                        key={exercicio.id}
-                                                        onClick={() => adicionarExercicio(exercicio)}
-                                                        className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                                                    >
-                                                        {exercicio.nome}
-                                                    </li>
-                                                ))}
+                                                {sugestoes.map((exercicio) => {
+                                                    return (
+                                                        <li
+                                                            key={exercicio.id}
+                                                            onClick={() => abrirModalExercicio(exercicio)}
+                                                            className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                                                        >
+                                                            {exercicio.nome}
+                                                        </li>
+                                                    )
+                                                })}
                                             </ul>
+                                        )}
+                                        {focado && exercicioInput.length >= 2 && sugestoes.length === 0 && (
+                                            <div className="absolute bg-white border w-full p-2 text-gray-500 z-10">
+                                                Nenhum exercício encontrado
+                                            </div>
                                         )}
                                     </div>
                                 </div>
                                 <div className="col-span-1 space-y-3">
                                     <Label id="dificuldade" nomeLabel="Grau de dificuldade" fontSize="20px" fontWeight="500" />
                                     <select
-                                        defaultValue=""
                                         id="dificuldade"
-                                        value={treinoSelecionado.dificuldade}
-                                        onChange={(e) => setValue('dificuldade', e.target.value)}
-                                        {...register("dificuldade", {
+                                        {...registerTreino("dificuldade", {
                                             required: 'Selecione a dificuldade do treino'
                                         })}
                                         className="appearance-none text-base w-full flex items-center justify-center pt-1 pr-[1%] pb-[1%] pl-[1%] border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
                                     >
-                                        <option disabled className="text-[#15171B87]" value="">Selecione o grau de dificuldade</option>
-                                        <option value="1">Iniciante</option>
-                                        <option value="2">Intermediário</option>
-                                        <option value="3">Avançado</option>
+                                        <option disabled value="" className="text-[#15171B87]">
+                                            Selecione o grau de dificuldade
+                                        </option>
+                                        <option value="INICIANTE">Iniciante</option>
+                                        <option value="INTERMEDIARIO">Intermediário</option>
+                                        <option value="AVANCADO">Avançado</option>
                                     </select>
-                                    {errors.dificuldade && (
+                                    {errorsTreino.dificuldade && (
                                         <div className="flex items-center justify-start gap-1 text-[#D45C56] mt-3 text-sm">
                                             <img src={info2} alt="Erro" className="w-4 h-4" />
-                                            <span>{errors.dificuldade.message}</span>
+                                            <span>{errorsTreino.dificuldade.message}</span>
                                         </div>
                                     )}
                                     <Label id="descricao" nomeLabel="Descrição" fontSize="20px" fontWeight="500" />
-                                    <InputPosLogin
+                                    <InputEditar
                                         id="descricao"
                                         name="descricao"
                                         inputType="text"
@@ -383,29 +340,28 @@ const EditarTreino = () => {
                                         fontWeight="400"
                                         fontSizeErro="16px"
                                         width="100%"
-                                        value={treinoSelecionado.descricao}
-                                        onChange={(e) => setValue('descricao', e.target.value)}
-                                        {...register('descricao', {
-                                            required: 'A descrição do treino é obrigatória',
+                                        {...registerTreino('descricao', {
+                                            required: 'A descrição do treino é obrigatório',
                                             minLength: {
                                                 value: 5,
                                                 message: 'A descrição deve ter pelo menos 5 caracteres',
                                             },
                                         })}
-                                        isError={!!errors.descricao}
-                                        errorMessage={errors.descricao?.message}
+                                        isError={!!errorsTreino.descricao}
+                                        errorMessage={errorsTreino.descricao?.message}
                                     />
                                 </div>
                             </div>
                             <h1 className="mt-6">Exercícios adicionados:</h1>
                             <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
-                                {treinoSelecionado.exercicios.map((exercicio) => (
+                                {exerciciosEditados.map((exercicio) => (
 
-                                    <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
-                                        {exercicio.nome}
+                                    <div key={exercicio.exercicioId} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
+                                        {exercicio.nomeExercicio || exercicio.nome}
                                         <button onClick={(e) => {
+                                            e.preventDefault();
                                             e.stopPropagation();
-                                            removerExercicio(exercicio.id)
+                                            removerExercicio(exercicio.exercicioId)
                                         }}
                                             className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                                         >
@@ -453,143 +409,189 @@ const EditarTreino = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <form onSubmit={salvarExercicio}>
+                            <form onSubmit={handleSubmitExercicio(onSubmitExercicio)}>
                                 <div className="flex w-full">
                                     <div className="flex flex-col w-[65%] m-5">
                                         <div className="grid grid-cols-2 mb-4 w-full">
+                                            {/* Coluna Esquerda */}
                                             <div className="grid-span-1 w-full">
-                                                <Label id="carga" nomeLabel="Carga" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+                                                <Label
+                                                    id="carga"
+                                                    nomeLabel="Carga"
+                                                    fontSize="20px"
+                                                    fontWeight="500"
+                                                />
+                                                <InputEditar
                                                     id="carga"
                                                     name="carga"
-                                                    value={exercicioAtual?.carga || ''}
                                                     inputType="number"
                                                     placeholder="Ex.: 20"
                                                     fontSize="16px"
                                                     fontWeight="400"
                                                     fontSizeErro="16px"
                                                     width="50%"
-                                                    onChange={(e) => atualizarExercicio(exercicioAtual.id, 'carga', Number(e.target.value))}
-                                                    {...register('carga', {
+                                                    {...registerExercicio('carga', {
                                                         required: 'A carga é obrigatória',
-                                                        pattern: {
-                                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                                            message: 'Email inválido',
+                                                        valueAsNumber: true,
+                                                        min: {
+                                                            value: 1,
+                                                            message: 'A carga deve ser maior que 0',
                                                         },
                                                     })}
-                                                    isError={!!errors.email}
-                                                    errorMessage={errors.email?.message}
+                                                    isError={!!errorsExercicio.carga}
+                                                    errorMessage={errorsExercicio.carga?.message}
                                                 />
-                                                <Label id="series" nomeLabel="Séries" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+
+                                                <Label
+                                                    id="series"
+                                                    nomeLabel="Séries"
+                                                    fontSize="20px"
+                                                    fontWeight="500"
+                                                />
+                                                <InputEditar
                                                     id="series"
                                                     name="series"
                                                     inputType="number"
-                                                    placeholder="Ex.: 20"
+                                                    placeholder="Ex.: 4"
                                                     fontSize="16px"
                                                     fontWeight="400"
                                                     fontSizeErro="16px"
                                                     width="50%"
-                                                    value={exercicioAtual?.series || ''}
-                                                    onChange={(e) => atualizarExercicio(exercicioAtual.id, 'series', Number(e.target.value))}
-                                                    {...register('series', {
+                                                    {...registerExercicio('series', {
                                                         required: 'A quantidade de séries é obrigatória',
-                                                        pattern: {
-                                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                                            message: 'Email inválido',
+                                                        valueAsNumber: true,
+                                                        min: {
+                                                            value: 1,
+                                                            message: 'A série deve ser maior que 0',
                                                         },
                                                     })}
-                                                    isError={!!errors.email}
-                                                    errorMessage={errors.email?.message}
+                                                    isError={!!errorsExercicio.series}
+                                                    errorMessage={errorsExercicio.series?.message}
                                                 />
                                             </div>
+
+                                            {/* Coluna Direita */}
                                             <div className="grid-span-1">
-                                                <Label id="repeticoes" nomeLabel="Repetições" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+                                                <Label
+                                                    id="repeticoes"
+                                                    nomeLabel="Repetições"
+                                                    fontSize="20px"
+                                                    fontWeight="500"
+                                                />
+                                                <InputEditar
                                                     id="repeticoes"
                                                     name="repeticoes"
                                                     inputType="number"
-                                                    placeholder="Ex.: 20"
+                                                    placeholder="Ex.: 12"
                                                     fontSize="16px"
                                                     fontWeight="400"
                                                     fontSizeErro="16px"
                                                     width="50%"
-                                                    inputMode="numeric"
-                                                    onChange={(e) => atualizarExercicio(exercicioAtual.id, 'repeticoes', Number(e.target.value))}
-                                                    value={exercicioAtual?.repeticoes || ''}
-                                                    {...register('repeticoes', {
-                                                        required: 'A quantidade de repetições é obrigatória'
+                                                    {...registerExercicio('repeticoes', {
+                                                        required: 'A quantidade de repetições é obrigatória',
+                                                        valueAsNumber: true,
+                                                        min: {
+                                                            value: 1,
+                                                            message: 'As repetições devem ser maiores que 0',
+                                                        },
                                                     })}
+                                                    isError={!!errorsExercicio.repeticoes}
+                                                    errorMessage={errorsExercicio.repeticoes?.message}
                                                 />
-                                                <Label id="descanso" nomeLabel="Tempo de descanso" fontSize="20px" fontWeight="500" />
-                                                <InputPosLogin
+
+                                                <Label
+                                                    id="tempoDescanso"
+                                                    nomeLabel="Tempo de descanso (segundos)"
+                                                    fontSize="20px"
+                                                    fontWeight="500"
+                                                />
+                                                <InputEditar
                                                     id="tempoDescanso"
                                                     name="tempoDescanso"
                                                     inputType="number"
-                                                    placeholder="Ex.: 20"
+                                                    placeholder="Ex.: 60"
                                                     fontSize="16px"
                                                     fontWeight="400"
                                                     fontSizeErro="16px"
                                                     width="50%"
-                                                    inputMode="numeric"
-                                                    onChange={(e) => atualizarExercicio(exercicioAtual.id, 'descanso', Number(e.target.value))}
-                                                    value={exercicioAtual?.descanso || ''}
-                                                    {...register('repeticoes', {
-                                                        required: 'O tempo de descanço é obrigatório'
+                                                    {...registerExercicio('tempoDescanso', {
+                                                        required: 'O tempo de descanso é obrigatório',
+                                                        valueAsNumber: true,
+                                                        min: {
+                                                            value: 1,
+                                                            message: 'O descanso deve ser maior que 0',
+                                                        },
                                                     })}
+                                                    isError={!!errorsExercicio.tempoDescanso}
+                                                    errorMessage={errorsExercicio.tempoDescanso?.message}
                                                 />
                                             </div>
                                         </div>
-                                        <div className="w-full">
-                                            <Label id="observacoes" nomeLabel="Observações" fontSize="20px" fontWeight="500" />
-                                            <input
-                                                type="text"
-                                                value={exercicioAtual?.observacoes || ''}
-                                                onChange={(e) => atualizarExercicio(exercicioAtual.id, 'observacoes', e.target.value)}
-                                                placeholder="Ex.: Como deve ser feito"
-                                                className="border-b-2 w-full"
-                                            />
-                                        </div>
                                     </div>
+
+                                    {/* Vídeo e Dados do Exercício */}
                                     <div className="flex flex-col w-[35%] m-5 gap-5">
                                         <div className="bg-gray-400 w-full h-full flex items-center justify-center rounded-lg">
-                                            <h1>Video</h1>
+                                            {isValidYoutubeUrl(exercicioAtual?.urlVideo) ? (
+                                                <iframe
+                                                    className="w-full h-full rounded-lg"
+                                                    src={exercicioAtual.urlVideo}
+                                                    title="YouTube video player"
+                                                    aria-label="Vídeo do exercício"
+                                                    frameBorder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    referrerPolicy="strict-origin-when-cross-origin"
+                                                    allowFullScreen
+                                                />
+                                            ) : (
+                                                <h1>Vídeo não disponível</h1>
+                                            )}
+
                                         </div>
                                         <div className="grid-span-1 w-full">
-                                            <p><b>Nome:</b> {exercicioAtual?.nome}</p>
-                                            <p><b>Origem:</b> Biblioteca CaringU</p>
-                                            <p><b>Grupo muscular:</b> Peitoral</p>
+                                            <p><b>Nome:</b> {exercicioAtual?.nomeExercicio || exercicioAtual?.nome}</p>
+                                            <p><b>Origem:</b> {exercicioAtual?.origemExercicio || exercicioAtual?.origem}</p>
+                                            <p><b>Grupo muscular:</b> {exercicioAtual?.grupoMuscular}</p>
                                             <p><b>Observações:</b> {exercicioAtual?.observacoes || 'Sem observações'}</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex justify-center gap-4 mt-6">
-                                    <Button
-                                        texto="Cancelar"
-                                        corTexto="#B41F1F"
-                                        cor="transparent"
-                                        height="2.75rem"
-                                        width="13.25rem"
-                                        corHover="#1D2D4417"
-                                        fontWeight="500"
-                                        onClick={() => setModalExercicioVisivel(false)}
-                                    />
-                                    <Button
-                                        texto="Salvar"
-                                        corTexto="var(--cor-secundaria)"
-                                        cor="#46982B"
-                                        height="2.75rem"
-                                        width="9.2rem"
-                                        corHover="#46982BE5"
-                                        fontWeight="600"
-                                        type="submit"
-                                    />
+
+                                {/* Botões */}
+                                <div className="flex flex-col items-center sm:flex-row mt-5 gap-4 w-full justify-center">
+                                    <div className="flex flex-col items-center sm:flex-row mt-5 gap-4 w-full justify-center">
+                                        <Button
+                                            texto="Cancelar"
+                                            corTexto="#B41F1F"
+                                            cor="var(--cor-secundaria)"
+                                            height="2.75rem"
+                                            width="13.25rem"
+                                            corHover="#1D2D4417"
+                                            fontWeight="500"
+                                            aria-label="Botão de Cancelar"
+                                            onClick={() => setModalConfirmarCancelarVisivel(true)}
+                                            type="button" // cancelar não envia o form
+                                        />
+
+                                        <Button
+                                            type="submit"
+                                            texto="Salvar"
+                                            corTexto="var(--cor-secundaria)"
+                                            cor="#46982B"
+                                            height="2.75rem"
+                                            width="9.2rem"
+                                            corHover="#46982BE5"
+                                            fontWeight="600"
+                                            aria-label="Botão de Salvar"
+                                        />
+                                    </div>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             )}
+            <Toaster position='top-right' reverseOrder={false} />
         </div>
     );
 };

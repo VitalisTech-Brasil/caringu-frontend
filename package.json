@@ -36,6 +36,7 @@
     "react-input-mask-next": "^3.0.0-alpha.12",
     "react-rating": "^2.0.5",
     "react-router-dom": "7.4.1",
+    "react-select": "^5.10.1",
     "styled-components": "^6.1.17",
     "swiper": "^11.2.6",
     "tailwind-scrollbar-hide": "^2.0.0",

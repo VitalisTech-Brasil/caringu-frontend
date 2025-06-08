@@ -220,22 +220,23 @@ const GerenciarAlunos = () => {
       <MenuLateral />
       <div className="flex-1 overflow-y-auto">
         <Header />
-        <main className="w-full overflow-y-auto max-h-screen">
-          <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 m-8">
-            <div className="col-span-3">
-              <div className="bg-white rounded-xl shadow-sm p-6 h-[84.5vh] ">
+        <main className="w-full overflow-y-auto">
+          <div className="flex flex-col lg:grid lg:grid-cols-5 gap-6 m-6 h-full">
+            <div className="col-span-3 border-2 border-[#E6E6E2] rounded-md">
+              <div className="bg-white rounded-xl p-6 ">
                 <h2 className="text-xl font-bold mb-4">Alunos Ativos</h2>
                 <div className="flex items-center gap-2 mb-4">
                   <input
                     type="text"
                     placeholder="Pesquisar aluno"
-                    className="flex-1 border border-gray-300 rounded-md p-2 w-40"
+                    className="flex-1 border-2 border-gray-300 rounded-md p-2 w-40"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
 
                   <div className="flex justify-end items-center">
                     <MenuFiltro
+                      menuWidth="280px"
                       buttonIcon={
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -280,6 +281,11 @@ const GerenciarAlunos = () => {
                         },
                         {
                           id: "anamnese",
+                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${anamnesesPendentes ? "stroke-white" : "stroke-[#E96E35]"}`} viewBox="0 0 35 35" fill="none">
+                            <path d="M32.0833 17.5C32.0833 25.55 25.55 32.0833 17.5 32.0833C9.44996 32.0833 2.91663 25.55 2.91663 17.5C2.91663 9.45 9.44996 2.91666 17.5 2.91666C25.55 2.91666 32.0833 9.45 32.0833 17.5Z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M22.9104 22.1375L18.3896 19.4396C17.6021 18.9729 16.9604 17.85 16.9604 16.9313V10.9521" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                          ,
                           label: "Anamneses Pendentes",
                           active: anamnesesPendentes,
                           onClick: () => setAnamnesesPendentes((prev) => !prev),
@@ -287,6 +293,9 @@ const GerenciarAlunos = () => {
                         {
                           id: "treino",
                           label: "Aguardando Treino",
+                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${aguardandoTreino ? "stroke-white" : "stroke-[#748CAB]"}`} viewBox="0 0 35 35" fill="none">
+                            <path d="M22.225 2.91669H12.775C7.29164 2.91669 6.86872 7.84585 9.82914 10.5292L25.1708 24.4709C28.1312 27.1542 27.7083 32.0834 22.225 32.0834H12.775C7.29164 32.0834 6.86872 27.1542 9.82914 24.4709L25.1708 10.5292C28.1312 7.84585 27.7083 2.91669 22.225 2.91669Z" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>,
                           active: aguardandoTreino,
                           onClick: () => setAguardandoTreino((prev) => !prev),
                         },
@@ -294,13 +303,13 @@ const GerenciarAlunos = () => {
                     />
                   </div>
                 </div>
-                <div className="relative z-0 space-y-2 overflow-y-auto max-h-[65vh] md:max-h-[67vh]  border h-full border-gray-200 rounded-md p-4">
+                <div className="relative z-0 space-y-2 overflow-y-auto max-h-[65vh] md:max-h-[67vh]  border-2 h-full border-gray-200 rounded-md p-4">
 
                   {filteredAlunos.map((aluno) => (
 
                     <div
                       key={aluno.idAluno}
-                      className="relative flex items-center justify-between bg-white rounded-md p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer border border-gray-200 transition duration-200"
+                      className="relative flex items-center justify-between bg-white rounded-md p-4 gap-4 w-full hover:bg-gray-50 cursor-pointer border-2 border-gray-200 transition duration-200"
                       onClick={() => redirectToPerfilAluno(aluno.idAluno)}
                     >
                       <Avatar img={aluno.avatar} rounded />
@@ -353,7 +362,7 @@ const GerenciarAlunos = () => {
                             <div
                               ref={menuRef}
                               onClick={(e) => e.stopPropagation()}
-                              className="absolute right-0 mt-2 z-[9999] bg-white border border-gray-200 rounded-md shadow-lg p-2 min-w-[160px]"
+                              className="absolute right-0 mt-2 z-[9999] bg-white border-2 border-gray-200 rounded-md shadow-lg p-2 w-55"
                             >
                               <AlunoActionsMenu aluno={aluno} />
                             </div>
@@ -368,8 +377,8 @@ const GerenciarAlunos = () => {
             </div >
 
             {/* Seção Direita: Widgets */}
-            < div className="max-h-[84.5vh] gap-5 flex flex-col col-span-2" >
-              <div className="bg-white rounded-xl shadow-sm p-6 h-1/2 ">
+            < div className="gap-5 flex flex-col col-span-2" >
+              <div className="bg-white rounded-xl p-6 flex-1 overflow-hidden h-100 border-2 border-[#E6E6E2]">
                 <h2 className="text-lg font-bold mb-4">
                   Presença de alunos por:
                 </h2>
@@ -377,7 +386,7 @@ const GerenciarAlunos = () => {
                   <DropdownItem onClick={() => { setFilter("SEMANA"), setValorSelecionado("Semana") }}>Semana</DropdownItem>
                   <DropdownItem onClick={() => { setFilter("MES"), setValorSelecionado("Mês") }}>Mês</DropdownItem>
                 </Dropdown>
-                <div className="space-y-2 overflow-y-auto border border-[#E6E6E2] rounded-md mt-2 max-h-[70%]">
+                <div className="space-y-2 overflow-y-auto border-2 border-[#E6E6E2] rounded-md mt-2 h-65 p-2">
                   {/* Conteúdo do widget */}
                   {alunosAtivos.length == 0 && (
                     <div className="flex justify-center">
@@ -395,7 +404,7 @@ const GerenciarAlunos = () => {
                         return (
                           <div
                             key={aluno.idAluno}
-                            className="relative flex items-center justify-between bg-white rounded-md shadow-sm p-4 gap-4 w-full"
+                            className="relative flex items-center justify-between bg-white rounded-md p-4 gap-4 w-full border-2 border-[#E6E6E2]"
                           >
                             <Avatar img={aluno.avatar} rounded />
 
@@ -427,11 +436,11 @@ const GerenciarAlunos = () => {
                   )}
                 </div>
               </div>
-              <div className="bg-white rounded-xl shadow-sm p-6 flex-1 overflow-hidden">
+              <div className="bg-white rounded-xl p-6 flex-1 overflow-hidden h-100 border-2 border-[#E6E6E2]">
                 <h2 className="text-lg font-bold mb-4">
                   Alunos com o plano perto do fim:
                 </h2>
-                <div className="space-y-2 overflow-y-auto max-h-full border border-[#E6E6E2] rounded-md">
+                <div className="space-y-2 overflow-y-auto border-2 border-[#E6E6E2] rounded-md p-2 h-70">
                   {/* Conteúdo do widget */}
                   {[...alunosAtivos]
                     .filter(
@@ -445,7 +454,7 @@ const GerenciarAlunos = () => {
                     .map((aluno) => (
                       <div
                         key={aluno.idAluno}
-                        className="relative flex items-center justify-between bg-white border border-[#E6E6E2] p-4 gap-4 m-4"
+                        className="relative flex items-center justify-between bg-white border-2 border-[#E6E6E2] p-4 gap-4 rounded-md"
                       >
                         <Avatar img={aluno.avatar} rounded />
 
@@ -490,7 +499,6 @@ const GerenciarAlunos = () => {
                               </svg>
                             </button>
                           </div>
-
                           <FormularioAnamnese
                             aluno={alunoAtual}
                             respostasBack={respostasBack}
