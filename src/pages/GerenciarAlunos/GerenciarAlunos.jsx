@@ -10,15 +10,11 @@ import Modal from "../../components/Utils/Modal";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import { useForm } from "react-hook-form";
-import Label from "../../components/Utils/Label";
-import InputPosLogin from "../../components/Utils/InputPosLogin";
-import ButtonInterno from "../../components/Utils/Button";
-
 import MenuFiltro from "../../components/Utils/MenuFiltro";
 
 import { caringuApi } from "../../provider/caringuApi";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
-import FormularioAnamnese from "./FormularioAnamnese";
+import FormularioAnamnese from "../../components/Utils/GerenciarAlunos/FormularioAnamnese";
 import toast, { Toaster } from "react-hot-toast";
 
 const GerenciarAlunos = () => {
@@ -160,16 +156,18 @@ const GerenciarAlunos = () => {
           <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
         </svg>
       </button>
-      <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => redirectToRelatorio(aluno.idAluno)}>
-        <span className="truncate">
-          Ver relatórios
-        </span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M16.5 9.5L12.3 13.7L10.7 11.3L7.5 14.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M14.5 9.5H16.5V11.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
+      {aluno.idAnamnese && (
+        <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer" onClick={() => redirectToRelatorio(aluno.idAluno)}>
+          <span className="truncate">
+            Ver relatórios
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M16.5 9.5L12.3 13.7L10.7 11.3L7.5 14.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14.5 9.5H16.5V11.5" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="#E96E35" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
       {/* <button className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer " onClick={() => navigate(`/criar-treino`)}>
 
         <span className="truncate">
@@ -390,7 +388,6 @@ const GerenciarAlunos = () => {
                   {alunosFiltrados.length > 0 && (
                     <>
                       {alunosFiltrados.map((aluno) => {
-                        // Calcula a frequência mensal com base na frequência semanal (ou null/0)
                         const frequenciaMediaMensal = aluno.frequenciaTreino
                           ? Math.round(aluno.frequenciaTreino * 52 / 12)
                           : 0;
@@ -462,7 +459,7 @@ const GerenciarAlunos = () => {
                     ))}
 
                   {showCreateModal && alunoAtual && (
-                    <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
+                    <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto h-full">
                       <div className="absolute inset-0 bg-[#000000] opacity-50" aria-label="Fundo Escurecido" />
                       <div className="relative p-4 w-full max-w-2xl">
                         <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:p-10 max-h-[80vh] flex flex-col">

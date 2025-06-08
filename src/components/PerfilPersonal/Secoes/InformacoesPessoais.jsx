@@ -184,10 +184,6 @@ export default function InformacoesPessoais() {
             especialidadesIds: especialidadesIds
         };
 
-        console.log(dataParaSalvar);
-
-        /* const emailAnterior = sessionStorage.getItem('email'); */
-
         try {
             await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvar);
 
