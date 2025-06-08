@@ -11,6 +11,7 @@
     "postinstall": "npx flowbite-react@latest init && flowbite-react patch"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
     "@tailwindcss/vite": "^4.1.1",
     "apexcharts": "^4.7.0",
     "axios": "^1.8.4",

@@ -1,4 +1,5 @@
-import { React,useEffect } from 'react';
+import { React, useEffect } from 'react';
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,13 +13,56 @@ import CustomToast from '../Utils/CustomToast';
 const ColunaInputs = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
-  
+
 
   useEffect(() => {
     return () => {
       toast.remove();
     };
   }, []);
+
+  const loginGoogle = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      
+      try {
+        const response = await api.post('/login/google', {
+          code: codeResponse.code
+        }, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.status === 200) {
+          sessionStorage.setItem('authToken', response.data.token);
+          sessionStorage.setItem('usuario', response.data.nome);
+          sessionStorage.setItem('pessoaId', response.data.pessoaId);
+          sessionStorage.setItem('tipo', response.data.tipo);
+          sessionStorage.setItem('email', response.data.email);
+
+          toast.custom((t) => (
+            <CustomToast t={t} type="success" message="Login com Google realizado!" />
+          ));
+
+          setTimeout(() => {
+            if (response.data.tipo === "PERSONAL") {
+              navigate('/home');
+            } else {
+              navigate('/procurando-personal');
+            }
+          }, 1000);
+        }
+      } catch (error) {
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
+        ));
+      }
+    },
+    onError: () => {
+      toast.custom((t) => (
+        <CustomToast t={t} type="error" message="Login com Google falhou." />
+      ));
+    },
+    flow: 'auth-code'
+  });
 
   const verificarUsuario = async (data) => {
 
@@ -38,19 +82,17 @@ const ColunaInputs = () => {
         sessionStorage.setItem('tipo', response.data.tipo);
         sessionStorage.setItem('email', email);
 
-          toast.custom((t) => (
-            <CustomToast t={t} type="success" message="Login realizado com sucesso!" />
-          ));
-        
-  
-       
-  setTimeout(() => {
-    if (response.data.tipo === "PERSONAL") {
-      navigate('/home');
-    } else {
-      navigate('/procurando-personal');
-    }
-  }, 1000);
+        toast.custom((t) => (
+          <CustomToast t={t} type="success" message="Login realizado com sucesso!" />
+        ));
+
+        setTimeout(() => {
+          if (response.data.tipo === "PERSONAL") {
+            navigate('/home');
+          } else {
+            navigate('/procurando-personal');
+          }
+        }, 1000);
       } else {
         throw new Error('Ops! Ocorreu um erro interno.');
       }
@@ -135,14 +177,57 @@ const ColunaInputs = () => {
           <Button
             logo={googleLogo}
             texto="Entrar com Google"
-            type="submit"
+            type="button"
             cor="var(--azul-escuro)"
             corTexto="var(--cor-secundaria)"
             corHover="var(--cor-primaria)"
             width="100%"
             height="12.15%"
             font-size="14px"
+            onClick={() => loginGoogle()}
           />
+          {/* <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              const { credential } = credentialResponse;
+
+              try {
+                const response = await api.post('/login/google', { token: credential }, {
+                  headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.status === 200) {
+                  sessionStorage.setItem('authToken', response.data.token);
+                  sessionStorage.setItem('usuario', response.data.nome);
+                  sessionStorage.setItem('pessoaId', response.data.pessoaId);
+                  sessionStorage.setItem('tipo', response.data.tipo);
+                  sessionStorage.setItem('email', response.data.email);
+
+                  toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Login com Google realizado!" />
+                  ));
+
+                  setTimeout(() => {
+                    if (response.data.tipo === "PERSONAL") {
+                      navigate('/home');
+                    } else {
+                      navigate('/procurando-personal');
+                    }
+                  }, 1000);
+                }
+
+              } catch (error) {
+                toast.custom((t) => (
+                  <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
+                ));
+              }
+            }}
+            theme="fille_blue"
+            onError={() => {
+              toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Login com Google falhou." />
+              ));
+            }}
+          /> */}
         </form>
 
         <footer className="justify-center items-center flex">
