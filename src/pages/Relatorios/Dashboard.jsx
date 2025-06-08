@@ -22,6 +22,7 @@ const Dashboard = () => {
     const [fontSize, setFontSize] = useState("16px");
 
     const [nomeTreino, setNomeTreino] = useState("");
+    const [infoAluno, setInfoAluno] = useState([]);
 
     /* Gráficos */
     const [dadosEvolucaoCarga, setDadosEvolucaoCarga] = useState([]);
@@ -38,7 +39,23 @@ const Dashboard = () => {
     const [aderencia, setAderencia] = useState("");
 
     useEffect(() => {
-        caringuApi.get(`/treinos-exercicios/exercicios-por-treino/${idTreino}`)
+        caringuApi.get(`/alunos/${idAluno}`)
+            .then(response => {
+
+                const aluno = response.data;
+
+                setInfoAluno(aluno);
+            })
+            .catch(error => {
+                console.error("Erro ao buscar informação de aluno:", error);
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Erro ao buscar informação de aluno!" />
+                ));
+            });
+    }, [])
+
+    useEffect(() => {
+        caringuApi.get(`/treinos-exercicios/exercicios-por-treino/${idTreino}/${idAluno}`)
             .then(response => {
 
                 const lista = response.data;
@@ -201,11 +218,21 @@ const Dashboard = () => {
 
     const getAnoSemanaAtual = () => {
         const now = new Date();
-        const onejan = new Date(now.getFullYear(), 0, 1);
-        const millisInDay = 86400000;
-        const days = Math.floor((now - onejan) / millisInDay);
-        const week = Math.ceil((days + onejan.getDay() + 1) / 7);
-        return `${now.getFullYear()}${String(week).padStart(2, '0')}`;
+
+        const thursday = new Date(now);
+        thursday.setDate(now.getDate() + (4 - (now.getDay() || 7)));
+
+        const year = thursday.getFullYear();
+
+        const firstJan = new Date(year, 0, 1);
+        const firstThursday = new Date(firstJan);
+        firstThursday.setDate(firstJan.getDate() + (4 - (firstJan.getDay() || 7)));
+
+        const weekNumber = Math.ceil(
+            ((thursday - firstThursday) / 86400000 + 1) / 7
+        );
+
+        return `${year}${String(weekNumber).padStart(2, '0')}`;
     };
 
     const navigate = useNavigate();
@@ -254,9 +281,9 @@ const Dashboard = () => {
                             </div>
                             <div className="flex md:hidden justify-start w-full mt-4">
                                 <div className='flex justify-between w-full border-2 border-[#E6E6E2] rounded-md p-5 text-2xs sm:text-sm'>
-                                    <h1><b>Aluno: </b>{dadosEvolucaoCarga.length > 0 && dadosEvolucaoCarga[0].nomeAluno}</h1>
-                                    <h1><b>Peso: </b>{dadosEvolucaoCarga.length > 0 && dadosEvolucaoCarga[0].pesoAluno}KG</h1>
-                                    <h1><b>Altura: </b>{dadosEvolucaoCarga.length > 0 && dadosEvolucaoCarga[0].alturaAluno}m</h1>
+                                    <h1><b>Aluno: </b>{infoAluno.nome}</h1>
+                                    <h1><b>Peso: </b>{infoAluno.peso}KG</h1>
+                                    <h1><b>Altura: </b>{infoAluno.altura}m</h1>
                                 </div>
                             </div>
                             <div className="flex flex-col justify-center items-center gap-5 mt-8">
@@ -299,8 +326,8 @@ const Dashboard = () => {
                                             </svg>
 
                                         </div>
-                                        <div className="mt-27 md:mt-22 text-center flex flex-col justify-between h-30">
-                                            <p className="text-md font-medium">Treinos Cumpridos por Mês</p>
+                                        <div className="mt-24 md:mt-25 text-center flex flex-col justify-between h-30">
+                                            <p className="leading-tight break-words text-md font-medium">Treinos Realizados por Mês</p>
                                             <h2 className="text-2xl font-bold">{treinosCumpridosMensal}</h2>
                                         </div>
                                     </div>
@@ -312,8 +339,8 @@ const Dashboard = () => {
                                                 <path d="M56.4753 53.9072L47.3044 48.4343C45.7069 47.4876 44.4053 45.2097 44.4053 43.346V31.2168" stroke="#FFFDF6" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         </div>
-                                        <div className="mt-27 md:mt-22 text-center flex flex-col justify-between h-30">
-                                            <p className="text-md font-medium">{labelHoras}</p>
+                                        <div className="mt-24 md:mt-25 text-center flex flex-col justify-between h-30">
+                                            <p className="leading-tight break-words text-md font-medium">{labelHoras}</p>
                                             <h2 className="text-2xl font-bold">{horasTreinadasSemanal}</h2>
                                         </div>
                                     </div>
@@ -327,7 +354,7 @@ const Dashboard = () => {
                                             </svg>
                                         </div>
                                         <div className="mt-27 md:mt-27 text-center flex flex-col justify-between h-30">
-                                            <p className="text-md font-medium ">Aderência</p>
+                                            <p className="leading-tight break-words text-md font-medium">Aderência</p>
                                             <h2 className="text-2xl font-bold">{aderencia}</h2>
                                         </div>
                                     </div>
@@ -341,6 +368,7 @@ const Dashboard = () => {
                                             value={exercicioSelecionado}
                                             onChange={(e) => {
                                                 const novoId = e.target.value;
+                                                console.log(novoId);
                                                 setExercicioSelecionado(novoId);
                                                 buscarEvolucaoCargaPorExercicio(novoId);
                                             }}
@@ -361,10 +389,10 @@ const Dashboard = () => {
                         </div>
                         <div className='max-w-full md:w-1/2 flex flex-col items-center'>
                             <div className="hidden md:flex justify-end w-full max-h-[80px] md:justify-end">
-                                <div className='flex justify-center md:gap-32 border-2 border-[#E6E6E2] rounded-md p-5 md:w-17/18'>
-                                    <h1 className="text-sm md:text-[20px] md:max-w-1xl text-black font-normal"><b>Aluno: </b>{dadosEvolucaoCarga.length > 0 && dadosEvolucaoCarga[0].nomeAluno} </h1>
-                                    <h1 className="text-sm md:text-[20px] text-black font-normal"><b>Peso: </b>{dadosEvolucaoCarga.length > 0 && dadosEvolucaoCarga[0].pesoAluno}KG</h1>
-                                    <h1 className="text-sm md:text-[20px] text-black font-normal"><b>Altura: </b>{dadosEvolucaoCarga.length > 0 && dadosEvolucaoCarga[0].alturaAluno}m</h1>
+                                <div className='flex justify-center sm:gap-8 md:gap-16 lg:gap-32 border-2 border-[#E6E6E2] rounded-md p-5 md:w-17/18'>
+                                    <h1 className="text-sm md:text-[20px] md:max-w-1xl text-black font-normal"><b>Aluno: </b>{infoAluno.nome} </h1>
+                                    <h1 className="text-sm md:text-[20px] text-black font-normal"><b>Peso: </b>{infoAluno.peso}KG</h1>
+                                    <h1 className="text-sm md:text-[20px] text-black font-normal"><b>Altura: </b>{infoAluno.altura}m</h1>
                                 </div>
                             </div>
                             <div className='flex flex-col gap-5 m-3 md:w-11/13'>
