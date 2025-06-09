@@ -11,6 +11,9 @@ const MenuFiltro = ({
     const [open, setOpen] = useState(false);
     const [rect, setRect] = useState(null);
     const buttonRef = useRef(null);
+    const labelRefs = useRef({}); // refs por id de dropdown
+
+    const [dynamicWidths, setDynamicWidths] = useState({});
 
     const handleToggle = (e) => {
         e.stopPropagation();
@@ -36,6 +39,16 @@ const MenuFiltro = ({
         };
     }, [open]);
 
+    useEffect(() => {
+        const widths = {};
+        Object.entries(labelRefs.current).forEach(([id, ref]) => {
+            if (ref && ref.offsetWidth) {
+                widths[id] = ref.offsetWidth + 60;
+            }
+        });
+        setDynamicWidths(widths);
+    }, [options]);
+
     return (
         <div className="relative">
             <button
@@ -60,23 +73,39 @@ const MenuFiltro = ({
                     <div className="flex flex-col gap-2">
                         {options.map((opt) => {
                             if (opt.type === "dropdown") {
+                                const labelText = opt.selected
+                                    ? opt.items.find((item) => item.value === opt.selected)?.label
+                                    : opt.label;
+
                                 return (
-                                    <div key={opt.id} className="border-[2px] gap-2 flex items-center p-3 h-[55px]"
+                                    <div
+                                        key={opt.id}
+                                        className="border-[2px] flex items-center p-3 h-[55px] min-w-[120px] gap-2"
                                         style={{
                                             borderColor: "rgba(29, 45, 68, 0.11)",
-                                            width: opt.width
-                                        }}>
-                                        {opt.icon}
-                                        <Dropdown label={opt.label} inline>
-                                            {opt.items.map((item) => (
-                                                <DropdownItem
-                                                    key={item.value}
-                                                    onClick={() => opt.onSelect(item.value)}
-                                                >
-                                                    {item.label}
-                                                </DropdownItem>
-                                            ))}
-                                        </Dropdown>
+                                            width: dynamicWidths[opt.id] || "fit-content",
+                                            maxWidth: "100%",
+                                        }}
+                                    >
+                                        <div className="flex-shrink-0">
+                                            {opt.icon}
+                                        </div>
+                                        <div className="flex-grow">
+                                            <Dropdown
+                                                label={labelText}
+                                                inline
+                                                className="!w-auto"
+                                            >
+                                                {opt.items.map((item) => (
+                                                    <DropdownItem
+                                                        key={item.value}
+                                                        onClick={() => opt.onSelect(item.value)}
+                                                    >
+                                                        {item.label}
+                                                    </DropdownItem>
+                                                ))}
+                                            </Dropdown>
+                                        </div>
                                     </div>
                                 );
                             } else {

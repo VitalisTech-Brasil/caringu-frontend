@@ -10,6 +10,8 @@ import info2 from "../../assets/images/info-2.svg";
 import { caringuApi } from '../../provider/caringuApi.js'
 import toast, { Toaster } from 'react-hot-toast'
 import CustomToast from '../../components/Utils/CustomToast.jsx'
+import Modal from "../../components/Utils/Modal.jsx";
+import iconCancelar from "../../assets/images/cancelar.png";
 
 
 
@@ -20,10 +22,10 @@ const EditarTreino = () => {
     const [modalExercicioVisivel, setModalExercicioVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [sugestoes, setSugestoes] = useState([]);
-    const [exercicios, setExercicios] = useState([]); 
-    const [treino, setTreino] = useState([]); 
-    const [exercicioAtual, setExercicioAtual] = useState(null); 
-    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]); 
+    const [exercicios, setExercicios] = useState([]);
+    const [treino, setTreino] = useState([]);
+    const [exercicioAtual, setExercicioAtual] = useState(null);
+    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
     const [exerciciosEditados, setExerciciosEditados] = useState([]);
     const [indexExercicioAtual, setIndexExercicioAtual] = useState(null);
     const { id } = useParams();
@@ -122,10 +124,10 @@ const EditarTreino = () => {
         if ('Atualizando modal com:', exercicioAtual) {
 
             resetExercicio({
-                carga: exercicioAtual.carga || '',
-                series: exercicioAtual.series || '',
-                repeticoes: exercicioAtual.repeticoes || '',
-                tempoDescanso: exercicioAtual.descanso || exercicioAtual.tempoDescanso || '',
+                carga: exercicioAtual.carga,
+                series: exercicioAtual.series,
+                repeticoes: exercicioAtual.repeticoes,
+                tempoDescanso: exercicioAtual.descanso || exercicioAtual.tempoDescanso,
             });
         }
     }, [exercicioAtual, resetExercicio]);
@@ -147,19 +149,28 @@ const EditarTreino = () => {
 
     // Adiciona novo exercício ao treino (abre modal para ele)
     const abrirModalExercicio = (exercicio) => {
-        const existente = exerciciosEditados.find(e => e.exercicioId === exercicio.id);
+        console.log(exercicio);
+        const existente = exerciciosEditados.find(e =>
+            e.exercicioId === exercicio.exercicioId || e.exercicioId === exercicio.id
+        );
 
         if (existente) {
             setExercicioAtual(existente);
-            setIndexExercicioAtual(exerciciosEditados.findIndex(e => e.exercicioId === exercicio.id));
+            setIndexExercicioAtual(exerciciosEditados.findIndex(e =>
+                e.exercicioId === exercicio.exercicioId || e.exercicioId === exercicio.id
+            ));
         } else {
             const novoExercicio = {
                 ...exercicio,
-                exercicioId: exercicio.id, // importante para consistência
+                exercicioId: exercicio.id, // unifica o identificador
+                nomeExercicio: exercicio.nome || exercicio.nomeExercicio,
+                origemExercicio: exercicio.origem || exercicio.origemExercicio,
+                grupoMuscular: exercicio.grupoMuscular,
+                observacoes: exercicio.observacoes || '',
                 carga: '',
                 series: '',
                 repeticoes: '',
-                tempoDescanso: ''
+                tempoDescanso: '',
             };
 
             const novosEditados = [...exerciciosEditados, novoExercicio];
@@ -172,6 +183,7 @@ const EditarTreino = () => {
         setExercicioInput('');
         setSugestoes([]);
     };
+
 
 
     // Remover exercício da lista
@@ -356,12 +368,12 @@ const EditarTreino = () => {
                             <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                 {exerciciosEditados.map((exercicio) => (
 
-                                    <div key={exercicio.exercicioId} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
+                                    <div key={exercicio.exercicioId || exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
                                         {exercicio.nomeExercicio || exercicio.nome}
                                         <button onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            removerExercicio(exercicio.exercicioId)
+                                            removerExercicio(exercicio.exercicioId || exercicio.id)
                                         }}
                                             className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                                         >
@@ -401,7 +413,7 @@ const EditarTreino = () => {
                                 </h3>
                                 <button
                                     type="button"
-                                    onClick={() => setModalExercicioVisivel(false)}
+                                    onClick={() => setModalConfirmarCancelarVisivel(true)}
                                     className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
                                 >
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -591,6 +603,20 @@ const EditarTreino = () => {
                     </div>
                 </div>
             )}
+            <Modal
+                visivel={modalConfirmarCancelarVisivel}
+                fecharModal={() => setModalConfirmarCancelarVisivel(false)}
+                titulo="Tem certeza que deseja cancelar?"
+                descricao="Alterações que não forem salvas serão perdidas"
+                onConfirm={() => {
+                    setModalConfirmarCancelarVisivel(false);
+                    setModalExercicioVisivel(false);
+                }}
+                icone={iconCancelar}
+                textoBotaoConfirmar="Voltar"
+                textoBotaoCancelar="Cancelar mesmo assim"
+                aria-label="Modal de Cancelamento"
+            />
             <Toaster position='top-right' reverseOrder={false} />
         </div>
     );

@@ -264,7 +264,7 @@ const GerenciarExercicios = () => {
     const ExercicioActionsMenu = ({ exercicio }) => (
         <div className="flex flex-col text-sm font-medium w-full p-1">
             <button
-                className="flex items-center justify-between min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
+                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
                 onClick={() => handleEditarExercicio(exercicio)}
             >
                 Editar
@@ -275,7 +275,7 @@ const GerenciarExercicios = () => {
                 </svg>
             </button>
             <button
-                className="flex items-center justify-between min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
+                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
                 onClick={() => openDeleteModal(exercicio.id)}
             >
                 Excluir
@@ -427,8 +427,8 @@ const GerenciarExercicios = () => {
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
-                                            { label: "BIBLIOTECA", value: "BIBLIOTECA" },
-                                            { label: "PERSONAL", value: "PERSONAL" },
+                                            { label: "Biblioteca", value: "BIBLIOTECA" },
+                                            { label: "Personal", value: "PERSONAL" },
                                         ],
                                         onSelect: handleOrigemSelect,
                                     },
@@ -438,7 +438,6 @@ const GerenciarExercicios = () => {
                                         label: "Grupo muscular",
                                         selected: grupoMuscularSelecionado,
                                         active: grupoMuscularFilter === grupoMuscularSelecionado,
-                                        width: '85%',
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="37" height="37" viewBox="0 0 37 37" fill="none">
                                                 <path d="M26.4858 27.75C30.1858 27.75 31.1108 25.6687 31.1108 23.125V13.875C31.1108 11.3312 30.1858 9.25 26.4858 9.25C22.7858 9.25 21.8608 11.3312 21.8608 13.875V23.125C21.8608 25.6687 22.7858 27.75 26.4858 27.75Z" stroke="#748CAB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -449,13 +448,13 @@ const GerenciarExercicios = () => {
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
-                                            { label: "PEITORAL", value: "PEITORAL" },
-                                            { label: "COSTAS", value: "COSTAS" },
-                                            { label: "PERNAS", value: "PERNAS" },
-                                            { label: "OMBRO", value: "OMBRO" },
-                                            { label: "BRACO", value: "BRACO" },
-                                            { label: "CORE", value: "CORE" },
-                                            { label: "CARDIO", value: "CARDIO" },
+                                            { label: "Peitoral", value: "PEITORAL" },
+                                            { label: "Costas", value: "COSTAS" },
+                                            { label: "Pernas", value: "PERNAS" },
+                                            { label: "Ombro", value: "OMBRO" },
+                                            { label: "Braço", value: "BRACO" },
+                                            { label: "Core", value: "CORE" },
+                                            { label: "Cardio", value: "CARDIO" },
                                         ],
                                         onSelect: handleGrupoMuscularSelect,
                                     }

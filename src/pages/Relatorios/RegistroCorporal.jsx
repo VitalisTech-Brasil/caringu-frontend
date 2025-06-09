@@ -7,7 +7,6 @@ import CarrosselRegistro from '../../components/Utils/CarrosselRegistro'
 
 const RelatorioTreinos = () => {
     const { idAluno } = useParams();
-    console.log(idAluno);
 
     const imagensFrontais = [
         { id: 1, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1frente.jpg" },

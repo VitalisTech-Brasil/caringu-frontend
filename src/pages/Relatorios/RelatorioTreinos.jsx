@@ -215,7 +215,7 @@ const RelatorioTreinos = () => {
                                             </svg>
                                         ),
                                         onClick: () =>
-                                            setDifficultyFilter((prev) => (prev === "   " ? null : "AVANCADO")),
+                                            setDifficultyFilter((prev) => (prev === "AVANCADO" ? null : "AVANCADO")),
                                     }
 
                                 ]}
