@@ -247,7 +247,7 @@ const EditarTreino = () => {
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header />
-                <main className="p-4 md:p-8 font-sans space-y-8 flex flex-col">
+                <main className="p-4 md:p-8 space-y-8 flex flex-col">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2]">
                         <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5">
                             <Link to="/gerenciar-treinos">

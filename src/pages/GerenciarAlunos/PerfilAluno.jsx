@@ -33,7 +33,7 @@ const PerfilAluno = () => {
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header />
-                <main className="p-4 md:p-8 font-sans space-y-3 flex flex-col">
+                <main className="p-4 md:p-8 space-y-3 flex flex-col">
                     <div className="flex items-center text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] gap-8">
                         <Link to={`/gerenciar-alunos`}>
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
@@ -47,18 +47,18 @@ const PerfilAluno = () => {
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter']">Dados Pessoais</h1>
 
                         <div className="flex flex-col max-h-60 overflow-y-auto">
-                            <div className="flex flex-col md:flex-row items-center md:gap-[30px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
-                                
+                            <div className="flex flex-row sm:flow-row md:flex-row items-center md:gap-[30px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
+
                                 {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
                                     <img
                                         src={aluno.alunoId.urlFotoPerfil}
                                         alt="Imagem do aluno"
-                                        className='h-[116px]'
+                                        className='w-12 h-12 lg:w-30 lg:h-30 rounded-full'
                                         onError={() => setImgErro(true)}
                                     />
 
                                 ) : (
-                                    <FaUserCircle className="flex-shrink-0 w-16 h-16 sm:w-19 sm:h-19 lg:w-22 lg:h-22" />
+                                    <FaUserCircle className="flex-shrink-0 w-16 h-16 sm:w-25 sm:h-25 lg:w-30 lg:h-30" />
                                 )}
 
                                 <div className='flex flex-col md:flex-row items-start mt-4 gap-4'>
@@ -66,12 +66,32 @@ const PerfilAluno = () => {
                                     <div className='flex flex-col gap-4'>
                                         <p><b>Nome:</b> {aluno?.alunoId?.nome ? `${aluno.alunoId.nome}` : "N/A"}</p>
                                         <p><b>Email:</b> {aluno?.alunoId?.email ? `${aluno.alunoId.email}` : "N/A"}</p>
-                                        <p><b>Gênero:</b> {aluno?.alunoId?.genero ? `${aluno.alunoId.genero}` : "N/A"}</p>
+                                        <p>
+                                            <b>
+                                                Gênero:
+                                            </b> {
+                                                aluno?.alunoId?.genero === "HOMEM_CISGENERO" ? "Homem Cisgênero" :
+                                                    aluno?.alunoId?.genero === "HOMEM_TRANSGENERO" ? "Homem Transgênero" :
+                                                        aluno?.alunoId?.genero === "MULHER_CISGENERO" ? "Mulher Cisgênero" :
+                                                            aluno?.alunoId?.genero === "MULHER_TRANSGENERO" ? "Mulher Transgênero" :
+                                                                aluno?.alunoId?.genero === "NAO_BINARIO" ? "Não Binário" :
+                                                                    aluno?.alunoId?.genero || "N/A"
+                                            }
+                                        </p>
                                     </div>
                                     <div className='flex flex-col gap-4'>
                                         <p><b>Data de nascimento:</b> {aluno?.alunoId?.dataNascimento ? `${MascaraData(aluno.alunoId.dataNascimento)}` : "N/A"}</p>
                                         <p><b>Telefone:</b> {aluno?.alunoId?.celular ? `${MascaraTelefone(aluno.alunoId.celular)}` : "N/A"}</p>
-                                        <p><b>Nível de experiência:</b> {aluno?.alunoId?.nivelExperiencia ? `${aluno.alunoId.nivelExperiencia}` : "N/A"}</p>
+                                        <p>
+                                            <b>
+                                                Nível de experiência:
+                                            </b> {
+                                                aluno?.alunoId?.nivelExperiencia === "INICIANTE" ? "Iniciante" :
+                                                    aluno?.alunoId?.nivelExperiencia === "INTERMEDIARIO" ? "Intermediário" :
+                                                        aluno?.alunoId?.nivelExperiencia === "AVANCADO" ? "Avançado" :
+                                                            aluno?.alunoId?.nivelExperiencia || "N/A"
+                                            }
+                                        </p>
                                     </div>
                                 </div>
 
@@ -136,8 +156,18 @@ const PerfilAluno = () => {
                                             <p>{aluno?.objetivoTreino ? `${aluno.objetivoTreino}` : "N/A"}</p>
                                         </div>
                                         <div>
-                                            <p><b>Nível de atividade atual:</b></p>
-                                            <p>{aluno?.alunoId?.nivelAtividade ? `${aluno.alunoId.nivelAtividade}` : "N/A"}</p>
+                                            <p className='font-bold w-[10vw]'>Nível de atividade atual:</p>
+                                            <p>
+                                                {
+                                                    aluno?.alunoId?.nivelAtividade === "SEDENTARIO" ? "Sedentário" :
+                                                        aluno?.alunoId?.nivelAtividade === "LEVEMENTE_ATIVO" ? "Levemente Ativo" :
+                                                            aluno?.alunoId?.nivelAtividade === "MODERADAMENTE_ATIVO" ? "Moderadamente Ativo" :
+                                                                aluno?.alunoId?.nivelAtividade === "MUITO_ATIVO" ? "Muito Ativo" :
+                                                                    aluno?.alunoId?.nivelAtividade === "EXTREMAMENTE_ATIVO" ? "Extremamente Ativo" :
+                                                                        aluno?.alunoId?.nivelAtividade || "N/A"
+                                                }
+                                            </p>
+
                                         </div>
                                         <div>
                                             <p><b>Doenças Metabólicas:</b></p>

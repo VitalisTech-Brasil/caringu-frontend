@@ -99,6 +99,16 @@ const GerenciarAlunos = () => {
   });
 
   useEffect(() => {
+    const KpiAlunoSelecionada = sessionStorage.getItem("KPI_ALUNO_SELECIONADA");
+
+    if (KpiAlunoSelecionada) {
+      setAnamnesesPendentes(true);
+    }
+
+    sessionStorage.removeItem("KPI_ALUNO_SELECIONADA");
+  }, [])
+
+  useEffect(() => {
     document.title = "Gerenciar Alunos | CaringU"
     const handleClickOutside = (event) => {
       if (

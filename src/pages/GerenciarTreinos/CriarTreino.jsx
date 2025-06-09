@@ -32,6 +32,7 @@ const CriarTreino = () => {
     const onSubmit = (data) => {
 
         setExerciciosSelecionados(prev => {
+            console.log(prev);
             const existe = prev.some(ex => ex.id === exercicioEditando.id);
             if (existe) {
                 return prev.map(ex => ex.id === exercicioEditando.id ? { ...ex, ...data } : ex);
@@ -61,10 +62,15 @@ const CriarTreino = () => {
 
     useEffect(() => {
         if (exercicioInput.length >= 1) {
-            const resultados = exercicios.filter(e =>
+            let resultados = exercicios.filter(e =>
                 e.nome.toLowerCase().includes(exercicioInput.toLowerCase())
             );
+            
+            /* console.log(resultados);
+            resultados = resultados.filter(e => e.id == exerciciosSelecionados.id); */
+
             setSugestoes(resultados);
+
         } else if (exercicioInput.length === 0) {
             setSugestoes(exercicios); // mostra todos se o campo estiver vazio
         }
@@ -137,8 +143,8 @@ const CriarTreino = () => {
                 <CustomToast t={t} type="success" message="Treino cadastrado com sucesso!" />
             ));
             reset();
-            setExerciciosSelecionados([]); 
-            
+            setExerciciosSelecionados([]);
+
         } catch (error) {
             console.error('Erro ao cadastrar treino:', error);
             toast.custom((t) => (
@@ -172,8 +178,9 @@ const CriarTreino = () => {
         }
     }, [exercicioEditando, setValue]);
 
-    const handleOpenModal = () => {
+    const handleOpenModal = (exercicio) => {
         setShowCreateModal(true);
+        setExercicioEditando(exercicio);
     };
 
     const cancelarEdicao = () => {
@@ -187,7 +194,7 @@ const CriarTreino = () => {
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header />
-                <main className="p-4 md:p-8 font-sans space-y-8 flex flex-col">
+                <main className="p-4 md:p-8 space-y-8 flex flex-col">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2]">
                         <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5">
                             <Link to="/gerenciar-treinos">
@@ -246,7 +253,7 @@ const CriarTreino = () => {
                                                 onFocus={() => setFocado(true)}
                                                 onBlur={() => setTimeout(() => setFocado(false), 200)} // pequeno delay para permitir clicar na sugestão
                                                 placeholder="Digite o nome do exercício"
-                                                className="border-b-2 w-full"
+                                                className="border-b-2 w-full pt-2 pb-1"
                                             />
                                             {focado && sugestoes.length > 0 && (
                                                 <ul className="absolute bg-white border w-full max-h-40 overflow-y-auto z-10">
@@ -284,7 +291,7 @@ const CriarTreino = () => {
                                                 {...register("dificuldade", {
                                                     required: 'Selecione a dificuldade do treino'
                                                 })}
-                                                className="appearance-none text-base w-full flex items-center justify-center pt-1 pr-[1%] pb-[1%] pl-[1%] border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                                                className="appearance-none text-base w-full flex items-center justify-center pt-2 pb-1 pr-[1%] pl-[1%] border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
                                             >
                                                 <option disabled className="text-[#15171B87]" value="">Selecione o grau de dificuldade</option>
                                                 <option value="1">Iniciante</option>
@@ -336,7 +343,7 @@ const CriarTreino = () => {
                                 <h1>Exercícios adicionados:</h1>
                                 <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                     {exerciciosSelecionados.map((exercicio) => (
-                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal()}>
+                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal(exercicio)}>
                                             {exercicio.nome}
                                             <button onClick={(e) => {
                                                 e.stopPropagation();
@@ -346,7 +353,8 @@ const CriarTreino = () => {
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
                                                     <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg></button>
+                                                </svg>
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
@@ -400,9 +408,9 @@ const CriarTreino = () => {
                                         <form onSubmit={handleSubmit(onSubmit)}>
                                             <div className="flex w-full">
                                                 <div className="flex flex-col w-[65%] m-5">
-                                                    <div className="grid grid-cols-2 mb-4 w-full">
+                                                    <div className="flex gap-1 mb-4 w-full">
                                                         {/* Coluna Esquerda */}
-                                                        <div className="grid-span-1 w-full">
+                                                        <div className="grid-span-1 w-1/2">
                                                             <Label
                                                                 id="carga"
                                                                 nomeLabel="Carga"
@@ -459,7 +467,7 @@ const CriarTreino = () => {
                                                         </div>
 
                                                         {/* Coluna Direita */}
-                                                        <div className="grid-span-1">
+                                                        <div className="grid-span-1 w-full">
                                                             <Label
                                                                 id="repeticoes"
                                                                 nomeLabel="Repetições"
@@ -487,12 +495,15 @@ const CriarTreino = () => {
                                                                 errorMessage={errors.repeticoes?.message}
                                                             />
 
-                                                            <Label
-                                                                id="tempoDescanso"
-                                                                nomeLabel="Tempo de descanso (segundos)"
-                                                                fontSize="20px"
-                                                                fontWeight="500"
-                                                            />
+                                                            <div>
+                                                                <Label
+                                                                    id="tempoDescanso"
+                                                                    nomeLabel="Tempo de descanso"
+                                                                    fontSize="20px"
+                                                                    fontWeight="500"
+                                                                />
+                                                                <span className='text-[14px]'> (segundos)</span>
+                                                            </div>
                                                             <InputPosLogin
                                                                 id="tempoDescanso"
                                                                 name="tempoDescanso"
@@ -544,6 +555,7 @@ const CriarTreino = () => {
                                             <div className="flex flex-col items-center sm:flex-row mt-5 gap-4 w-full justify-center">
                                                 <Button
                                                     texto="Cancelar"
+                                                    type="button"
                                                     corTexto="#B41F1F"
                                                     cor="var(--cor-secundaria)"
                                                     height="2.75rem"
