@@ -10,6 +10,8 @@ import info2 from "../../assets/images/info-2.svg";
 import { caringuApi } from '../../provider/caringuApi.js'
 import toast, { Toaster } from 'react-hot-toast'
 import CustomToast from '../../components/Utils/CustomToast.jsx'
+import Modal from "../../components/Utils/Modal.jsx";
+import iconCancelar from "../../assets/images/cancelar.png";
 
 
 
@@ -122,10 +124,10 @@ const EditarTreino = () => {
         if ('Atualizando modal com:', exercicioAtual) {
 
             resetExercicio({
-                carga: exercicioAtual.carga || '',
-                series: exercicioAtual.series || '',
-                repeticoes: exercicioAtual.repeticoes || '',
-                tempoDescanso: exercicioAtual.descanso || exercicioAtual.tempoDescanso || '',
+                carga: exercicioAtual.carga,
+                series: exercicioAtual.series,
+                repeticoes: exercicioAtual.repeticoes,
+                tempoDescanso: exercicioAtual.descanso || exercicioAtual.tempoDescanso,
             });
         }
     }, [exercicioAtual, resetExercicio]);
@@ -147,6 +149,7 @@ const EditarTreino = () => {
 
     // Adiciona novo exercício ao treino (abre modal para ele)
     const abrirModalExercicio = (exercicio) => {
+        console.log(exercicio);
         const existente = exerciciosEditados.find(e =>
             e.exercicioId === exercicio.exercicioId || e.exercicioId === exercicio.id
         );
@@ -410,7 +413,7 @@ const EditarTreino = () => {
                                 </h3>
                                 <button
                                     type="button"
-                                    onClick={() => setModalExercicioVisivel(false)}
+                                    onClick={() => setModalConfirmarCancelarVisivel(true)}
                                     className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
                                 >
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -600,6 +603,20 @@ const EditarTreino = () => {
                     </div>
                 </div>
             )}
+            <Modal
+                visivel={modalConfirmarCancelarVisivel}
+                fecharModal={() => setModalConfirmarCancelarVisivel(false)}
+                titulo="Tem certeza que deseja cancelar?"
+                descricao="Alterações que não forem salvas serão perdidas"
+                onConfirm={() => {
+                    setModalConfirmarCancelarVisivel(false);
+                    setModalExercicioVisivel(false);
+                }}
+                icone={iconCancelar}
+                textoBotaoConfirmar="Voltar"
+                textoBotaoCancelar="Cancelar mesmo assim"
+                aria-label="Modal de Cancelamento"
+            />
             <Toaster position='top-right' reverseOrder={false} />
         </div>
     );
