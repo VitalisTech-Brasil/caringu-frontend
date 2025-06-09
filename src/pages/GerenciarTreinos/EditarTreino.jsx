@@ -20,10 +20,10 @@ const EditarTreino = () => {
     const [modalExercicioVisivel, setModalExercicioVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [sugestoes, setSugestoes] = useState([]);
-    const [exercicios, setExercicios] = useState([]); 
-    const [treino, setTreino] = useState([]); 
-    const [exercicioAtual, setExercicioAtual] = useState(null); 
-    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]); 
+    const [exercicios, setExercicios] = useState([]);
+    const [treino, setTreino] = useState([]);
+    const [exercicioAtual, setExercicioAtual] = useState(null);
+    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
     const [exerciciosEditados, setExerciciosEditados] = useState([]);
     const [indexExercicioAtual, setIndexExercicioAtual] = useState(null);
     const { id } = useParams();
@@ -147,19 +147,27 @@ const EditarTreino = () => {
 
     // Adiciona novo exercício ao treino (abre modal para ele)
     const abrirModalExercicio = (exercicio) => {
-        const existente = exerciciosEditados.find(e => e.exercicioId === exercicio.id);
+        const existente = exerciciosEditados.find(e =>
+            e.exercicioId === exercicio.exercicioId || e.exercicioId === exercicio.id
+        );
 
         if (existente) {
             setExercicioAtual(existente);
-            setIndexExercicioAtual(exerciciosEditados.findIndex(e => e.exercicioId === exercicio.id));
+            setIndexExercicioAtual(exerciciosEditados.findIndex(e =>
+                e.exercicioId === exercicio.exercicioId || e.exercicioId === exercicio.id
+            ));
         } else {
             const novoExercicio = {
                 ...exercicio,
-                exercicioId: exercicio.id, // importante para consistência
+                exercicioId: exercicio.id, // unifica o identificador
+                nomeExercicio: exercicio.nome || exercicio.nomeExercicio,
+                origemExercicio: exercicio.origem || exercicio.origemExercicio,
+                grupoMuscular: exercicio.grupoMuscular,
+                observacoes: exercicio.observacoes || '',
                 carga: '',
                 series: '',
                 repeticoes: '',
-                tempoDescanso: ''
+                tempoDescanso: '',
             };
 
             const novosEditados = [...exerciciosEditados, novoExercicio];
@@ -172,6 +180,7 @@ const EditarTreino = () => {
         setExercicioInput('');
         setSugestoes([]);
     };
+
 
 
     // Remover exercício da lista
@@ -356,12 +365,12 @@ const EditarTreino = () => {
                             <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                 {exerciciosEditados.map((exercicio) => (
 
-                                    <div key={exercicio.exercicioId} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
+                                    <div key={exercicio.exercicioId || exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
                                         {exercicio.nomeExercicio || exercicio.nome}
                                         <button onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            removerExercicio(exercicio.exercicioId)
+                                            removerExercicio(exercicio.exercicioId || exercicio.id)
                                         }}
                                             className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
                                         >
