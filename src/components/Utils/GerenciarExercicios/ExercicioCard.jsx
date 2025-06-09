@@ -36,7 +36,7 @@ const ExercicioCard = ({
     }, [isOpen]);
 
     return (
-        <div className="relative w-full border border-[#E6E6E2] bg-white rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="relative w-full border border-[#E6E6E2] bg-white rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-end gap-4">
             {/* Infos principais */}
             <div className="flex flex-1 flex-col md:flex-row gap-4 md:items-center">
                 <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[#FFFDF6] rounded-md">
@@ -49,8 +49,26 @@ const ExercicioCard = ({
                 </div>
                 <div className="flex flex-col gap-1">
                     <p className="text-sm md:text-base"><b>Nome:</b> {exercicio.nome}</p>
-                    <p className="text-sm md:text-base"><b>Grupo:</b> {exercicio.grupoMuscular}</p>
-                    <p className="text-sm md:text-base"><b>Origem:</b> {exercicio.origem}</p>
+                    <p className="text-sm md:text-base">
+                        <b>Grupo: </b>
+                        {
+                            exercicio.grupoMuscular === 'PEITORAL' ? 'Peitoral' :
+                                exercicio.grupoMuscular === 'COSTAS' ? 'Costas' :
+                                    exercicio.grupoMuscular === 'PERNAS' ? 'Pernas' :
+                                        exercicio.grupoMuscular === 'OMBRO' ? 'Ombro' :
+                                            exercicio.grupoMuscular === 'BRACO' ? 'Braço' :
+                                                exercicio.grupoMuscular === 'CORE' ? 'Core' :
+                                                    exercicio.grupoMuscular === 'CARDIO' ? 'Cardio' :
+                                                        exercicio.grupoMuscular
+                        }
+                    </p>
+                    <p className="text-sm md:text-base">
+                        <b>Origem: </b>
+                        {
+                            exercicio.origem === "PERSONAL" ? "Personal" :
+                                exercicio.origem === "BIBLIOTECA" ? "Biblioteca" :
+                                    exercicio.origem
+                        }</p>
                 </div>
             </div>
 
@@ -86,7 +104,7 @@ const ExercicioCard = ({
                     {isOpen && (
                         <div
                             ref={menuRef}
-                            className="absolute right-0 mt-2 w-40 z-10 bg-white shadow-md rounded border"
+                            className="absolute right-0 mt-2 w-30 z-10 bg-white shadow-md rounded"
                         >
                             <ExercicioActionsMenu exercicio={exercicio} />
                         </div>
@@ -121,7 +139,7 @@ const ExercicioCard = ({
                     <FaEllipsisV />
                 </button>
                 {isOpen && (
-                    <div className="absolute right-2 top-[90%] mt-2 w-[10rem] sm:w-[11rem] md:w-[12rem] max-w-[90vw] z-50 bg-white shadow-md rounded border">
+                    <div className="absolute right-2 top-[90%] mt-2 w-[10rem] sm:w-[11rem] md:w-[12rem] max-w-[25vw] z-50 bg-white shadow-md rounded">
                         <ExercicioActionsMenu exercicio={exercicio} />
                     </div>
                 )}
