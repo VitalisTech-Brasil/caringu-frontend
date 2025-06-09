@@ -393,8 +393,8 @@ const GerenciarTreinos = () => {
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
-                                            { label: "BIBLIOTECA", value: "BIBLIOTECA" },
-                                            { label: "PERSONAL", value: "PERSONAL" },
+                                            { label: "Biblioteca", value: "BIBLIOTECA" },
+                                            { label: "Personal", value: "PERSONAL" },
                                         ],
                                         onSelect: handleOrigemSelect,
                                     },
@@ -402,7 +402,7 @@ const GerenciarTreinos = () => {
                                     // 🎯 Dificuldade
                                     {
                                         id: "INICIANTE",
-                                        label: "Dificuldade: INICIANTE",
+                                        label: "Dificuldade: Iniciante",
                                         active: difficultyFilter === "INICIANTE",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
@@ -432,7 +432,7 @@ const GerenciarTreinos = () => {
                                     },
                                     {
                                         id: "intermediario",
-                                        label: "Dificuldade: INTERMEDIARIO",
+                                        label: "Dificuldade: Intermediário",
                                         active: difficultyFilter === "INTERMEDIARIO",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
@@ -447,7 +447,7 @@ const GerenciarTreinos = () => {
                                     },
                                     {
                                         id: "avancado",
-                                        label: "Dificuldade: AVANCADO",
+                                        label: "Dificuldade: Avançado",
                                         active: difficultyFilter === "AVANCADO",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
@@ -561,8 +561,23 @@ const GerenciarTreinos = () => {
                                                 <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
                                             </div>
                                             <div className="md:col-span-1 text-sm md:text-lg ">
-                                                <p><b>Dificuldade: </b>{treino.grauDificuldade}</p>
-                                                <p><b>Origem: </b>{treino.origemTreinoExercicio}</p>
+                                                <p>
+                                                    <b>Dificuldade: </b>
+                                                    {
+                                                        treino.grauDificuldade === 'INICIANTE' ? 'Iniciante' :
+                                                            treino.grauDificuldade === 'INTERMEDIARIO' ? 'Intermediário' :
+                                                                treino.grauDificuldade === 'AVANCADO' ? 'Avançado' :
+                                                                    treino.grauDificuldade
+                                                    }
+                                                </p>
+                                                <p>
+                                                    <b>Origem: </b>
+                                                    {
+                                                        treino.origemTreinoExercicio === 'BIBLIOTECA' ? 'Biblioteca' :
+                                                            treino.origemTreinoExercicio === 'PERSONAL' ? 'Personal' :
+                                                                treino.origemTreinoExercicio
+                                                    }
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
