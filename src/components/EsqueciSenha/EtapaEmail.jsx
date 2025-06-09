@@ -33,7 +33,7 @@ const EtapaEmail = ({ onAvancar }) => {
   return (
     <section className="flex justify-center items-center h-screen w-1/2 max-[1450px]:w-[1400px]">
       <div className="flex justify-center items-center h-full w-full">
-        <div className="flex justify-center items-center w-full h-150 flex-col gap-10 ">
+        <div className="flex justify-center items-center w-full h-150 flex-col">
           <div className="flex w-100 items-center justify-between max-[415px]:w-[300px]">
             <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-25 max-[415px]:w-[80px]"></div>
             <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25 max-[415px]:w-[80px]"></div>
@@ -41,19 +41,19 @@ const EtapaEmail = ({ onAvancar }) => {
           </div>
 
           <div className="text-[var(--cor-primaria)] h-27 w-2/3 text-center flex-col justify-end max-[1450px]:w-[500px] max-[550px]:w-[400px] max-[415px]:w-[350px]">
-            <h1 className="text-[48px] font-bold max-[1450px]:text-[42px] max-[1300px]:text-[42px] max-[550px]:text-[36px] max-[415px]:text-[28px]">Recuperação de senha</h1>
-            <p className="text-[20px] font-normal] max-[1300px]:text-[18px] max-[550px]:text-[16px] max-[415px]:text-[14px]">
+            <h1 className="text-[48px] mt-5 font-bold max-[1450px]:text-[42px] max-[1300px]:text-[42px] max-[550px]:text-[36px] max-[415px]:text-[28px]">Recuperação de senha</h1>
+            <p className="text-[20px] font-normal max-[1300px]:text-[18px] max-[550px]:text-[16px] max-[415px]:text-[14px]">
               Não se preocupe! Informe seu e-mail e enviaremos um link para redefinir sua senha.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2 max-[1450px]:w-[400px] max-[415px]:w-[315px]">
+          <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2 mt-[5%] max-[1450px]:w-[400px] max-[415px]:w-[315px]">
             <Input
               id="email"
               name="email"
               type="email"
               label="Email"
-              marginBottomLinha="5.5%"
+              marginBottomLinha="3%"
               margin="50px auto 0px 0px"
               corBordaInput={"#ccc"}
 
@@ -68,14 +68,14 @@ const EtapaEmail = ({ onAvancar }) => {
               errorMessage={errors.email?.message}
             />
 
-            <footer className="flex flex-col h-25 justify-between items-center max-[500px]:w-[400px] max-[415px]:w-[300px]">
+            <footer className="flex flex-col h-25 justify-between mt-[5%] items-center max-[500px]:w-[400px] max-[415px]:w-[300px]">
               <Button
                 texto="Resetar Senha"
                 type="submit"
                 cor="var(--laranja)"
                 corTexto="var(--cor-secundaria)"
                 corHover="#ca6333"
-                width="350px"
+                width="80%"
                 height="50px"
                 fontSize="14px"
               />

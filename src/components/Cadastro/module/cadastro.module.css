@@ -221,72 +221,18 @@ body,
     gap: 8px;
 }
 
-.input-container {
+.input-container,
+.input-container-cadastro,
+.input-container-especialidade,
+.input-container-cadastro-especialidade {
     position: relative;
-    height: 4.5vh;
     width: 100%;
     margin-top: 1%;
 }
 
 .input-container input,
-.input-container-especialidade input {
-    font-size: 16px;
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid #ccc;
-    padding: 5px 0;
-    background-color: transparent;
-    outline: none;
-}
-
-.input-container .label,
-.input-container-especialidade .label {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    color: #ccc;
-    transition: all 0.3s ease;
-    pointer-events: none;
-}
-
-.input-container input:focus~.label,
-.input-container input:not(:placeholder-shown)~.label,
-
-.input-container-especialidade input:focus~.label,
-.input-container-especialidade input:not(:placeholder-shown)~.label {
-    top: -15px;
-    font-size: 16px;
-    color: #333;
-}
-
-.input-container .underline,
-.input-container-especialidade .underline {
-    position: absolute;
-    left: 0;
-    bottom: 4px;
-    height: 2px;
-    width: 100%;
-    background-color: #333;
-    transform: scaleX(0);
-    transition: all 0.3s ease;
-}
-
-.input-container input:focus~.underline,
-.input-container input:not(:placeholder-shown)~.underline,
-.input-container-especialidade input:focus~.underline,
-.input-container-especialidade input:not(:placeholder-shown)~.underline {
-    transform: scaleX(1);
-}
-
-/* INPUT DE CADASTRO: */
-.input-container-cadastro {
-    position: relative;
-    height: 4.5vh;
-    width: 100%;
-    margin-top: 1%;
-}
-
 .input-container-cadastro input,
+.input-container-especialidade input,
 .input-container-cadastro-especialidade input {
     font-size: 16px;
     width: 100%;
@@ -297,11 +243,9 @@ body,
     outline: none;
 }
 
-.input-container-cadastro-especialidade input {
-    padding: 8px 0;
-}
-
+.input-container .label,
 .input-container-cadastro .label,
+.input-container-especialidade .label,
 .input-container-cadastro-especialidade .label {
     position: absolute;
     top: 5px;
@@ -311,41 +255,45 @@ body,
     pointer-events: none;
 }
 
-.input-container-cadastro input:focus~.label,
-.input-container-cadastro input:not(:placeholder-shown)~.label,
-
-.input-container-cadastro-especialidade input:focus~.label,
-.input-container-cadastro-especialidade input:not(:placeholder-shown)~.label {
-    top: -20px;
+.input-container input:focus ~ .label,
+.input-container input:not(:placeholder-shown) ~ .label,
+.input-container-cadastro input:focus ~ .label,
+.input-container-cadastro input:not(:placeholder-shown) ~ .label,
+.input-container-especialidade input:focus ~ .label,
+.input-container-especialidade input:not(:placeholder-shown) ~ .label,
+.input-container-cadastro-especialidade input:focus ~ .label,
+.input-container-cadastro-especialidade input:not(:placeholder-shown) ~ .label {
+    top: -15px;
     font-size: 16px;
     color: #333;
 }
 
+.input-container .underline,
 .input-container-cadastro .underline,
+.input-container-especialidade .underline,
 .input-container-cadastro-especialidade .underline {
     position: absolute;
     left: 0;
-    bottom: 4px;
+    bottom: 0;
     height: 2px;
     width: 100%;
     background-color: #333;
     transform: scaleX(0);
-    transition: all 0.3s ease;
+    transform-origin: left;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.input-container-cadastro input:focus~.underline,
-.input-container-cadastro input:not(:placeholder-shown)~.underline,
-.input-container-cadastro-especialidade input:focus~.underline,
-.input-container-cadastro-especialidade input:not(:placeholder-shown)~.underline {
+.input-container input:focus ~ .underline,
+.input-container input:not(:placeholder-shown) ~ .underline,
+.input-container-cadastro input:focus ~ .underline,
+.input-container-cadastro input:not(:placeholder-shown) ~ .underline,
+.input-container-especialidade input:focus ~ .underline,
+.input-container-especialidade input:not(:placeholder-shown) ~ .underline,
+.input-container-cadastro-especialidade input:focus ~ .underline,
+.input-container-cadastro-especialidade input:not(:placeholder-shown) ~ .underline {
     transform: scaleX(1);
+    background-color: #000;
 }
-
-.input-container-cadastro-especialidade {
-    position: relative;
-    height: 5vh;
-    width: 100%;
-}
-/*  */
 
 .input-genero {
     height: 10%;
@@ -411,12 +359,6 @@ body,
     align-items: center;
 }
 
-.input-container-especialidade {
-    position: relative;
-    height: 5vh;
-    width: 100%;
-}
-
 .tooltip-wrapper {
     position: relative;
     display: inline-block;
@@ -426,7 +368,6 @@ body,
     cursor: pointer;
     width: 1vw;
 }
-
 
 .tooltip-box {
     position: absolute;

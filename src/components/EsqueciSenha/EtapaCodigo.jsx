@@ -16,7 +16,7 @@ const EtapaCodigo = ({ onAvancar }) => {
 
     try {
       // Envia o código para o backend para verificação
-      const response = await caringuApi.post('/esqueci-senha/validacao-token', { email, codigo });
+      const response = await caringuApi.post('/esqueci-senha/validacao-token', {email, codigo });
 
       console.log(response.status)
 
@@ -39,51 +39,53 @@ const EtapaCodigo = ({ onAvancar }) => {
   useEffect(() => {
     if (!email) {
       alert('Email não encontrado. Por favor, forneça um email primeiro.');
-      // Redireciona de volta para a página anterior
+       // Redireciona de volta para a página anterior
       window.location.href = '/esqueci-senha';
     }
   }, [email]);
 
   return (
-    <section className="flex justify-center items-center h-screen w-1/2">
+    <section className="flex justify-center items-center h-screen w-1/2 max-[700px]:w-full px-2">
       <div className="flex justify-center items-center h-full w-full">
-        <div className="flex justify-center items-center w-full h-150 flex-col gap-10">
-          <div className="flex w-100 items-center justify-between">
-            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
-            <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-25"></div>
-            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
+        <div className="flex flex-col justify-center items-center w-full h-150 gap-10">
+          <div className="flex w-full max-w-[400px] items-center justify-center gap-10">
+            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
+            <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
+            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
           </div>
 
-          <div className="text-[var(--cor-primaria)] h-27 w-1/2 text-center flex-col justify-end">
-            <h1 className="text-[48px]">Verifique seu e-mail</h1>
-            <p>
+          <div className="text-[var(--cor-primaria)] h-27 w-1/2 max-[700px]:w-[90%] text-center flex-col justify-end">
+            <h1 className="text-[48px] max-[700px]:text-[30px]">Verifique seu e-mail</h1>
+            <p className="text-[15px]">
               Enviamos um código de verificação para <strong>{email}</strong>. Digite o código abaixo para continuar.
             </p>
           </div>
 
           {/* Formulário com react-hook-form */}
-          <form onSubmit={handleSubmit(handleVerificarCodigo)} className="w-1/2">
+          <form onSubmit={handleSubmit(handleVerificarCodigo)} className="w-1/2 max-[700px]:w-[90%]">
             <InputVerificacao
               length={4}
               onComplete={handleComplete}  // Passando a função handleComplete
             />
 
-            <footer className="flex flex-col h-30 justify-between items-center">
+            <footer className="flex flex-col h-30 justify-between items-center gap-2 mt-4">
               <Button
                 texto="Verificar Código"
                 type="submit"
                 cor="var(--laranja)"
                 corTexto="var(--cor-secundaria)"
                 corHover="#ca6333"
-                width="511px"
+                width="100%"
                 height="50px"
                 fontSize="14px"
               />
-{/*               <p>
-                Não recebeu o código?{' '}
-                <a href="">Clique para reenviar em [x] segundos</a>
-              </p> */}
-              <a href="/login">Voltar para Login</a>
+              {/*
+            <p>
+              Não recebeu o código?{' '}
+              <a href="">Clique para reenviar em [x] segundos</a>
+            </p>
+            */}
+              <a href="/login" className="text-sm mt-2">Voltar para Login</a>
             </footer>
           </form>
         </div>
