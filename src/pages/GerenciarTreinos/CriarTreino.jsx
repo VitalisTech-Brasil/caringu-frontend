@@ -13,6 +13,7 @@ import info2 from "../../assets/images/info-2.svg";
 import { caringuApi } from '../../provider/caringuApi.js'
 import toast, { Toaster } from 'react-hot-toast'
 import CustomToast from '../../components/Utils/CustomToast.jsx'
+import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx'
 
 
 const CriarTreino = () => {
@@ -28,6 +29,7 @@ const CriarTreino = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [exercicios, setExercicios] = useState([]);
     const [exercicioEditando, setExercicioEditando] = useState(null);
+    const [selectAberto, setSelectAberto] = useState(false);
 
     const onSubmit = (data) => {
 
@@ -61,14 +63,23 @@ const CriarTreino = () => {
 
     useEffect(() => {
         if (exercicioInput.length >= 1) {
-            const resultados = exercicios.filter(e =>
-                e.nome.toLowerCase().includes(exercicioInput.toLowerCase())
-            );
+            let resultados = exercicios
+                .filter(e =>
+                    e.nome.toLowerCase().includes(exercicioInput.toLowerCase())
+                )
+                .filter(e =>
+                    !exerciciosSelecionados.some(sel => sel.id === e.id)
+                );
+
             setSugestoes(resultados);
         } else if (exercicioInput.length === 0) {
-            setSugestoes(exercicios); // mostra todos se o campo estiver vazio
+            // mostrar todos, menos os já selecionados
+            const restantes = exercicios.filter(e =>
+                !exerciciosSelecionados.some(sel => sel.id === e.id)
+            );
+            setSugestoes(restantes);
         }
-    }, [exercicioInput, exercicios]); // agora também depende de 'exercicios'
+    }, [exercicioInput, exercicios, exerciciosSelecionados]);
 
     useEffect(() => {
         const buscarExercicios = async () => {
@@ -84,11 +95,25 @@ const CriarTreino = () => {
     }, []);
 
 
-    const adicionarExercicio = (exercicio) => {
+    const adicionarExercicio = async (exercicio) => {
+        const valido = await trigger(['nomeTreino', 'descricao', 'dificuldade']);
+        if (!valido) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Preencha os campos do treino antes de adicionar exercícios." />
+            ));
+            return;
+        }
+
         setExercicioEditando(exercicio);
         setShowCreateModal(true);
         setExercicioInput('');
         setSugestoes([]);
+    };
+
+    // Função auxiliar para validar URL do YouTube (se precisar)
+    const isValidYoutubeUrl = (url) => {
+        const youtubeRegex = /^(https:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+        return youtubeRegex.test(url);
     };
 
     const handleSubmitTreino = async (data) => {
@@ -137,8 +162,8 @@ const CriarTreino = () => {
                 <CustomToast t={t} type="success" message="Treino cadastrado com sucesso!" />
             ));
             reset();
-            setExerciciosSelecionados([]); 
-            
+            setExerciciosSelecionados([]);
+
         } catch (error) {
             console.error('Erro ao cadastrar treino:', error);
             toast.custom((t) => (
@@ -172,8 +197,9 @@ const CriarTreino = () => {
         }
     }, [exercicioEditando, setValue]);
 
-    const handleOpenModal = () => {
+    const handleOpenModal = (exercicio) => {
         setShowCreateModal(true);
+        setExercicioEditando(exercicio);
     };
 
     const cancelarEdicao = () => {
@@ -187,7 +213,7 @@ const CriarTreino = () => {
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header />
-                <main className="p-4 md:p-8 font-sans space-y-8 flex flex-col">
+                <main className="p-4 md:p-8 space-y-8 flex flex-col">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2]">
                         <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5">
                             <Link to="/gerenciar-treinos">
@@ -246,7 +272,7 @@ const CriarTreino = () => {
                                                 onFocus={() => setFocado(true)}
                                                 onBlur={() => setTimeout(() => setFocado(false), 200)} // pequeno delay para permitir clicar na sugestão
                                                 placeholder="Digite o nome do exercício"
-                                                className="border-b-2 w-full"
+                                                className="border-b-2 w-full pt-2 pb-1"
                                             />
                                             {focado && sugestoes.length > 0 && (
                                                 <ul className="absolute bg-white border w-full max-h-40 overflow-y-auto z-10">
@@ -284,14 +310,16 @@ const CriarTreino = () => {
                                                 {...register("dificuldade", {
                                                     required: 'Selecione a dificuldade do treino'
                                                 })}
-                                                className="appearance-none text-base w-full flex items-center justify-center pt-1 pr-[1%] pb-[1%] pl-[1%] border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                                                onClick={() => setSelectAberto((prev) => !prev)}
+                                                onBlur={() => setSelectAberto(false)}
+                                                className="appearance-none peer text-base w-full pt-2 pb-1 pr-[1%] pl-[1%] border-b-2 border-[var(--cor-primaria)] text-[#333] transition-all"
                                             >
                                                 <option disabled className="text-[#15171B87]" value="">Selecione o grau de dificuldade</option>
                                                 <option value="1">Iniciante</option>
                                                 <option value="2">Intermediário</option>
                                                 <option value="3">Avançado</option>
                                             </select>
-                                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                                            <div className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 transition-transform duration-200 ease-in-out ${selectAberto ? 'rotate-180' : 'rotate-0'}`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
                                                     <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
                                                 </svg>
@@ -333,10 +361,10 @@ const CriarTreino = () => {
                                     </div>
                                 </div>
 
-                                <h1>Exercícios adicionados:</h1>
+                                <h1 className='mt-6'>Exercícios adicionados:</h1>
                                 <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                     {exerciciosSelecionados.map((exercicio) => (
-                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal()}>
+                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal(exercicio)}>
                                             {exercicio.nome}
                                             <button onClick={(e) => {
                                                 e.stopPropagation();
@@ -346,7 +374,8 @@ const CriarTreino = () => {
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
                                                     <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg></button>
+                                                </svg>
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
@@ -368,209 +397,17 @@ const CriarTreino = () => {
 
                         </div>
                         {showCreateModal && (
-                            <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
-                                <div className="absolute inset-0 bg-[#000000] opacity-50"
-                                    aria-label="Fundo Escurecido"
-                                ></div>
-                                <div className="relative p-4 w-full max-w-2xl md:max-w-[1100px]">
-                                    <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
-                                        {/* Header */}
-                                        <div className="flex justify-between items-center pb-4 mb-4 ">
-                                            <h3 className="text-4xl font-semibold text-[var(--cor-primaria)]">
-                                                Personalizar exercício
-                                            </h3>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setModalConfirmarCancelarVisivel(true)
-                                                }}
-                                                className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
-                                            >
-                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </div>
-
-                                        {/* Formulário */}
-                                        <form onSubmit={handleSubmit(onSubmit)}>
-                                            <div className="flex w-full">
-                                                <div className="flex flex-col w-[65%] m-5">
-                                                    <div className="grid grid-cols-2 mb-4 w-full">
-                                                        {/* Coluna Esquerda */}
-                                                        <div className="grid-span-1 w-full">
-                                                            <Label
-                                                                id="carga"
-                                                                nomeLabel="Carga"
-                                                                fontSize="20px"
-                                                                fontWeight="500"
-                                                            />
-                                                            <InputPosLogin
-                                                                id="carga"
-                                                                name="carga"
-                                                                inputType="number"
-                                                                placeholder="Ex.: 20"
-                                                                fontSize="16px"
-                                                                fontWeight="400"
-                                                                fontSizeErro="16px"
-                                                                width="50%"
-                                                                {...register('carga', {
-                                                                    required: 'A carga é obrigatória',
-                                                                    valueAsNumber: true,
-                                                                    min: {
-                                                                        value: 1,
-                                                                        message: 'A carga deve ser maior que 0',
-                                                                    },
-                                                                })}
-                                                                isError={!!errors.carga}
-                                                                errorMessage={errors.carga?.message}
-                                                            />
-
-                                                            <Label
-                                                                id="series"
-                                                                nomeLabel="Séries"
-                                                                fontSize="20px"
-                                                                fontWeight="500"
-                                                            />
-                                                            <InputPosLogin
-                                                                id="series"
-                                                                name="series"
-                                                                inputType="number"
-                                                                placeholder="Ex.: 4"
-                                                                fontSize="16px"
-                                                                fontWeight="400"
-                                                                fontSizeErro="16px"
-                                                                width="50%"
-                                                                {...register('series', {
-                                                                    required: 'A quantidade de séries é obrigatória',
-                                                                    valueAsNumber: true,
-                                                                    min: {
-                                                                        value: 1,
-                                                                        message: 'A série deve ser maior que 0',
-                                                                    },
-                                                                })}
-                                                                isError={!!errors.series}
-                                                                errorMessage={errors.series?.message}
-                                                            />
-                                                        </div>
-
-                                                        {/* Coluna Direita */}
-                                                        <div className="grid-span-1">
-                                                            <Label
-                                                                id="repeticoes"
-                                                                nomeLabel="Repetições"
-                                                                fontSize="20px"
-                                                                fontWeight="500"
-                                                            />
-                                                            <InputPosLogin
-                                                                id="repeticoes"
-                                                                name="repeticoes"
-                                                                inputType="number"
-                                                                placeholder="Ex.: 12"
-                                                                fontSize="16px"
-                                                                fontWeight="400"
-                                                                fontSizeErro="16px"
-                                                                width="50%"
-                                                                {...register('repeticoes', {
-                                                                    required: 'A quantidade de repetições é obrigatória',
-                                                                    valueAsNumber: true,
-                                                                    min: {
-                                                                        value: 1,
-                                                                        message: 'As repetições devem ser maiores que 0',
-                                                                    },
-                                                                })}
-                                                                isError={!!errors.repeticoes}
-                                                                errorMessage={errors.repeticoes?.message}
-                                                            />
-
-                                                            <Label
-                                                                id="tempoDescanso"
-                                                                nomeLabel="Tempo de descanso (segundos)"
-                                                                fontSize="20px"
-                                                                fontWeight="500"
-                                                            />
-                                                            <InputPosLogin
-                                                                id="tempoDescanso"
-                                                                name="tempoDescanso"
-                                                                inputType="number"
-                                                                placeholder="Ex.: 60"
-                                                                fontSize="16px"
-                                                                fontWeight="400"
-                                                                fontSizeErro="16px"
-                                                                width="50%"
-                                                                {...register('tempoDescanso', {
-                                                                    required: 'O tempo de descanso é obrigatório',
-                                                                    valueAsNumber: true,
-                                                                    min: {
-                                                                        value: 1,
-                                                                        message: 'O descanso deve ser maior que 0',
-                                                                    },
-                                                                })}
-                                                                isError={!!errors.tempoDescanso}
-                                                                errorMessage={errors.tempoDescanso?.message}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Vídeo e Dados do Exercício */}
-                                                <div className="flex flex-col w-[35%] m-5 gap-5">
-                                                    <div className="bg-gray-400 w-full h-full flex items-center justify-center rounded-lg">
-                                                        {exercicioEditando?.videoUrl ? (
-                                                            <video
-                                                                src={exercicioEditando.videoUrl}
-                                                                controls
-                                                                className="w-full h-full rounded-lg"
-                                                                aria-label="Vídeo do exercício"
-                                                            />
-                                                        ) : (
-                                                            <h1>Vídeo não disponível</h1>
-                                                        )}
-                                                    </div>
-                                                    <div className="grid-span-1 w-full">
-                                                        <p><b>Nome:</b> {exercicioEditando?.nome}</p>
-                                                        <p><b>Origem:</b> {exercicioEditando?.origem}</p>
-                                                        <p><b>Grupo muscular:</b> {exercicioEditando?.grupoMuscular}</p>
-                                                        <p><b>Observações:</b> {exercicioEditando?.observacoes || 'Sem observações'}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Botões */}
-                                            <div className="flex flex-col items-center sm:flex-row mt-5 gap-4 w-full justify-center">
-                                                <Button
-                                                    texto="Cancelar"
-                                                    corTexto="#B41F1F"
-                                                    cor="var(--cor-secundaria)"
-                                                    height="2.75rem"
-                                                    width="13.25rem"
-                                                    corHover="#1D2D4417"
-                                                    fontWeight="500"
-                                                    aria-label="Botão de Cancelar"
-                                                    onClick={() => setModalConfirmarCancelarVisivel(true)}
-                                                />
-
-                                                <Button
-                                                    type="submit"
-                                                    texto="Salvar"
-                                                    corTexto="var(--cor-secundaria)"
-                                                    cor="#46982B"
-                                                    height="2.75rem"
-                                                    width="9.2rem"
-                                                    corHover="#46982BE5"
-                                                    fontWeight="600"
-                                                    aria-label="Botão de Salvar"
-                                                />
-                                            </div>
-                                        </form>
-
-                                    </div>
-                                </div>
-                            </div>
+                            <ModalPersonalizarExercicio
+                                visivel={showCreateModal}
+                                onClose={() => setModalConfirmarCancelarVisivel(true)}
+                                onSubmit={handleSubmit(onSubmit)}
+                                register={register}
+                                handleSubmit={handleSubmit}
+                                errors={errors}
+                                exercicio={exercicioEditando}
+                                InputComponent={InputPosLogin}
+                                isValidYoutubeUrl={isValidYoutubeUrl}
+                            />
                         )}
                         <Modal
                             visivel={modalDeletarVisivel}
@@ -602,10 +439,10 @@ const CriarTreino = () => {
                             textoBotaoCancelar="Cancelar mesmo assim"
                             aria-label="Modal de Cancelamento"
                         />
-                        <Toaster position='top-right' reverseOrder={false} />
                     </div>
                 </main>
             </div>
+            <Toaster position='top-right' reverseOrder={false} />
         </div >
     )
 }

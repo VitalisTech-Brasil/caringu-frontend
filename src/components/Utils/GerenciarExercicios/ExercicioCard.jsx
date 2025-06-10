@@ -97,7 +97,7 @@ const ExercicioCard = ({
                             e.stopPropagation();
                             setOpenMenuId(isOpen ? null : exercicio.id);
                         }}
-                        className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                        className="flex items-center justify-center w-8 h-8 rounded-[5px] cursor-pointer bg-gray-200 hover:bg-gray-300 transition duration-200"
                     >
                         <FaEllipsisV />
                     </button>
@@ -134,7 +134,7 @@ const ExercicioCard = ({
                         e.stopPropagation();
                         setOpenMenuId(isOpen ? null : exercicio.id);
                     }}
-                    className="p-2 hover:bg-gray-200 rounded cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 rounded-[5px] cursor-pointer bg-gray-200 hover:bg-gray-300 transition duration-200"
                 >
                     <FaEllipsisV />
                 </button>
