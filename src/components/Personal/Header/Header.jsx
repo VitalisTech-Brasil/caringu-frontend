@@ -17,6 +17,8 @@ const Header = () => {
   const [notificacoesGeral, setNotificacoesGeral] = useState([]);
 
   const personalId = sessionStorage.getItem('pessoaId');
+  const tipoUsuario = sessionStorage.getItem('tipo'); // Supondo que o tipo está salvo assim
+
 
   // Define os ícones e textos com base na rota atual
   const pageConfig = {
@@ -291,6 +293,7 @@ const Header = () => {
         </span>
       </NavbarBrand>
       {/* Notifications */}
+      {tipoUsuario === "PERSONAL" && (
       <div className="ml-auto flex items-center" ref={notificationRef}>
         <button
           onClick={() => setShowNotifications((prev) => !prev)}
@@ -366,6 +369,7 @@ const Header = () => {
         </div>
 
       </div>
+      )}
     </Navbar>
   );
 };

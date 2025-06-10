@@ -76,9 +76,9 @@ export default function Etapa2({ setEtapa }) {
         const email = e.target.value;
         setValue("email", email);
         trigger("email");
-    
+
         setErroEmailExistente(null);
-    
+
         if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             const emailExiste = await verificarEmail(email);
             if (emailExiste) {
@@ -99,7 +99,7 @@ export default function Etapa2({ setEtapa }) {
             const response = await caringuApi.get("/pessoas/verificacao-email", {
                 params: { email }
             });
-    
+
             if (response.data === true) {
                 setErroEmailExistente("Este e-mail já está cadastrado.");
                 return true;
@@ -134,29 +134,36 @@ export default function Etapa2({ setEtapa }) {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+        className="sm:gap-[1rem] gap-[1.5rem]"
+        onSubmit={handleSubmit(onSubmit)}>
 
-            <div className={styleCadastro.titulo}>
+            <div className={`${styleCadastro.titulo} justify-center lg:justify-start text-[2rem] lg:text-[3rem]`}>
                 <h1>Dados Cadastrais</h1>
             </div>
 
-            <div className={styleCadastro["container-nome-data"]}>
+            <div className={`${styleCadastro["container-nome-data"]} sm:flex-row flex-col items-start`}>
 
-                <div className={styleCadastro['input-nome']}>
+                <div className={`${styleCadastro['input-nome']} xl:w-[62%] md:w-[55%] sm:w-[60%] w-full`}>
 
                     <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type="text"
                             id="nome"
                             maxLength={100}
-                            className={styleCadastro['nome-input']}
+                            className={`${styleCadastro['nome-input']} peer`}
                             {...register("nome", { required: true })}
                             placeholder=""
                         />
 
                         <label htmlFor="nome" className={styleCadastro.label}>* Nome completo</label>
                         <div
-                            className={styleCadastro.underline}
+                            className={`
+                                absolute left-0 bottom-0 w-full h-[2px] bg-[#333]
+                                scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                                transition-all duration-300 ease-in-out
+                                ${errors.nome ? 'bottom-1' : 'bottom-0'}
+                            `}
                             style={{ marginBottom: errors.nome ? "-4px" : "0px" }}
                         >
 
@@ -166,19 +173,19 @@ export default function Etapa2({ setEtapa }) {
                     {errors.nome && (
                         <div className={styleCadastro.erro}>
                             <img src={alert} alt="Ícone de alerta" />
-                            <span>Nome é obrigatório.</span>
+                            <span className="text-[14px] 2xl:text-base">Nome é obrigatório.</span>
                         </div>
                     )}
 
                 </div>
 
-                <div className={styleCadastro['input-data']}>
+                <div className={`${styleCadastro['input-data']} xl:w-[28%] md:w-[45%] sm:w-[35%] w-full`}>
 
                     <div className={styleCadastro["input-container-cadastro"]}>
                         <input
                             type="text"
                             id="dataNascimento"
-                            className={styleCadastro['data-nascimento']}
+                            className={`${styleCadastro['data-nascimento']} peer`}
                             placeholder=""
                             {...register("dataNascimento", {
                                 required: "Data é obrigatória",
@@ -200,9 +207,14 @@ export default function Etapa2({ setEtapa }) {
                             })}
                             onChange={handleDateChange}
                         />
-                        <label htmlFor="dataNascimento" className={styleCadastro.label}>* Data de nascimento</label>
+                        <label htmlFor="dataNascimento" className={`${styleCadastro.label}`}>* Data de nascimento</label>
                         <div
-                            className={styleCadastro.underline}
+                            className={`
+                                absolute left-0 w-full h-[2px] bg-[#333]
+                                scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                                transition-all duration-300 ease-in-out
+                                ${errors.dataNascimento ? 'bottom-1' : 'bottom-0'}
+                            `}
                             style={{ marginBottom: errors.dataNascimento ? "-4px" : "0px" }}
                         >
 
@@ -212,7 +224,7 @@ export default function Etapa2({ setEtapa }) {
                     {errors.dataNascimento && (
                         <div className={styleCadastro.erro}>
                             <img src={alert} alt="Ícone de alerta" />
-                            <span>{errors.dataNascimento.message}</span>
+                            <span className="text-[14px] 2xl:text-base">{errors.dataNascimento.message}</span>
                         </div>
                     )}
 
@@ -232,10 +244,16 @@ export default function Etapa2({ setEtapa }) {
                         })}
                         placeholder=""
                         onChange={handleEmailChange}
+                        className="peer"
                     />
                     <label htmlFor="email" className={styleCadastro.label}>* E-mail</label>
                     <div
-                        className={styleCadastro.underline}
+                        className={`
+                            absolute left-0 w-full h-[1px] bg-[#333]
+                            scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                            transition-all duration-300 ease-in-out
+                            ${errors.email || erroEmailExistente ? 'bottom-1' : 'bottom-0'}
+                        `}
                         style={{ marginBottom: errors.email || erroEmailExistente ? "-4px" : "0px" }}
                     >
 
@@ -245,7 +263,7 @@ export default function Etapa2({ setEtapa }) {
                 {!erroEmailExistente && errors.email && (
                     <div className={styleCadastro.erro}>
                         <img src={alert} alt="Ícone de alerta" />
-                        <span>
+                        <span className="text-[14px] 2xl:text-base">
                             {errors.email.type === "required" && "E-mail é obrigatório."}
                             {errors.email.type === "pattern" && "E-mail inválido."}
                         </span>
@@ -255,7 +273,7 @@ export default function Etapa2({ setEtapa }) {
                 {erroEmailExistente && (
                     <div className={styleCadastro.erro}>
                         <img src={alert} alt="Ícone de alerta" />
-                        <span>{erroEmailExistente}</span>
+                        <span className="text-[14px] 2xl:text-base">{erroEmailExistente}</span>
                     </div>
                 )}
 
@@ -270,10 +288,16 @@ export default function Etapa2({ setEtapa }) {
                         placeholder=""
                         {...register("telefone", { required: true })}
                         onChange={handleTelefoneChange}
+                        className="peer"
                     />
                     <label htmlFor="telefone" className={styleCadastro.label}>* Telefone</label>
                     <div
-                        className={styleCadastro.underline}
+                        className={`
+                            absolute left-0 bottom-0 w-full h-[2px] bg-[#333]
+                            scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                            transition-all duration-300 ease-in-out
+                            ${errors.telefone ? 'bottom-1' : 'bottom-0'}
+                        `}   
                         style={{ marginBottom: errors.telefone ? "-4px" : "0px" }}
                     >
 
@@ -283,15 +307,15 @@ export default function Etapa2({ setEtapa }) {
                 {errors.telefone && (
                     <div className={styleCadastro.erro}>
                         <img src={alert} alt="Ícone de alerta" />
-                        <span>Telefone é obrigatório.</span>
+                        <span className="text-[14px] 2xl:text-base">Telefone é obrigatório.</span>
                     </div>
                 )}
 
             </div>
 
-            <div className={styleCadastro["container-senhas"]}>
+            <div className={`${styleCadastro["container-senhas"]} flex-col lg:flex-row sm:gap-0 gap-4`}>
 
-                <div className={styleCadastro["input-senha"]}>
+                <div className={`${styleCadastro["input-senha"]} w-full lg:w-[54%]`}>
 
                     <div className={styleCadastro["input-container-cadastro"]}>
                         <input
@@ -313,19 +337,25 @@ export default function Etapa2({ setEtapa }) {
                                 setSenhaValue(e.target.value);
                                 if (!senhaInteragiu) setSenhaInteragiu(true);
                             }}
+                            className="peer"
                         />
 
                         <label htmlFor="senha" className={styleCadastro.label}>* Senha</label>
                         <button
                             type="button"
                             onClick={() => setShowSenha(prev => !prev)}
-                            className={styleCadastro["btn-olho"]}
+                            className={`${styleCadastro["btn-olho"]} w-5 h-5 lg:w-7 lg:h-7`}
                             tabIndex={-1}
                         >
                             <img src={showSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
                         </button>
                         <div
-                            className={styleCadastro.underline}
+                            className={`
+                                absolute left-0 bottom-0 w-full h-[2px] bg-[#333]
+                                scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                                transition-all duration-300 ease-in-out
+                                ${errors.senha ? 'bottom-0' : 'bottom-0'}
+                            `}
                             style={{ marginBottom: errors.senha ? "0px" : "0px" }}
                         >
 
@@ -347,7 +377,7 @@ export default function Etapa2({ setEtapa }) {
                                     alt="Ícone"
                                 />
                             )}
-                            <span>Entre 6 a 16 caracteres.</span>
+                            <span className="text-[14px] 2xl:text-base">Entre 6 a 16 caracteres.</span>
                         </div>
 
                         {/* 2 - Caractere especial */}
@@ -364,7 +394,7 @@ export default function Etapa2({ setEtapa }) {
                                     alt="Ícone"
                                 />
                             )}
-                            <span>Mínimo de 1 caractere especial (ex: !, @, #, $, etc).</span>
+                            <span className="text-[14px] 2xl:text-base">Mínimo de 1 caractere especial (ex: !, @, #, $, etc).</span>
                         </div>
 
                         {/* 3 - Letra maiúscula */}
@@ -381,7 +411,7 @@ export default function Etapa2({ setEtapa }) {
                                     alt="Ícone"
                                 />
                             )}
-                            <span>Mínimo de 1 letra maiúscula.</span>
+                            <span className="text-[14px] 2xl:text-base">Mínimo de 1 letra maiúscula.</span>
                         </div>
 
                         {/* 4 - Número */}
@@ -398,13 +428,13 @@ export default function Etapa2({ setEtapa }) {
                                     alt="Ícone"
                                 />
                             )}
-                            <span>Mínimo de 1 número.</span>
+                            <span className="text-[14px] 2xl:text-base">Mínimo de 1 número.</span>
                         </div>
 
                     </div>
                 </div>
 
-                <div className={styleCadastro['input-confirmarSenha']}>
+                <div className={`${styleCadastro['input-confirmarSenha']} w-full lg:w-[40%]`}>
 
                     <div className={styleCadastro['input-container-cadastro']}>
                         <input
@@ -416,18 +446,23 @@ export default function Etapa2({ setEtapa }) {
                                 validate: (value) => value === senhaValue || "As senhas não coincidem."
                             })}
                             placeholder=""
+                            className="peer"
                         />
                         <label htmlFor="confirmarSenha" className={styleCadastro.label}>* Confirmar senha</label>
                         <button
                             type="button"
                             onClick={() => setShowConfirmarSenha(prev => !prev)}
-                            className={styleCadastro["btn-olho"]}
-                            tabIndex={-1}
+                            className={`${styleCadastro["btn-olho"]} w-5 h-5 lg:w-7 lg:h-7`} tabIndex={-1}
                         >
                             <img src={showConfirmarSenha ? olhoAberto : olhoFechado} alt="Mostrar senha" />
                         </button>
                         <div
-                            className={styleCadastro.underline}
+                            className={`
+                                absolute left-0 bottom-0 w-full h-[2px] bg-[#333]
+                                scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                                transition-all duration-300 ease-in-out
+                                ${errors.confirmarSenha ? 'bottom-0' : 'bottom-0'}
+                            `}
                             style={{ marginBottom: errors.confirmarSenha ? "0px" : "0px" }}
                         >
 
@@ -437,7 +472,7 @@ export default function Etapa2({ setEtapa }) {
                     {errors.confirmarSenha && (
                         <div className={styleCadastro['erro-confirmacaoSenha']}>
                             <img src={alert} alt="Ícone de alerta" />
-                            <span>{errors.confirmarSenha.message}</span>
+                            <span className="text-[14px] 2xl:text-base">{errors.confirmarSenha.message}</span>
                         </div>
                     )}
 
@@ -464,7 +499,7 @@ export default function Etapa2({ setEtapa }) {
                 {errors.genero && (
                     <div className={styleCadastro.erro}>
                         <img src={alert} alt="Ícone de alerta" />
-                        <span>Selecione o gênero.</span>
+                        <span className="text-[14px] 2xl:text-base">Selecione o gênero.</span>
                     </div>
                 )}
 
@@ -481,7 +516,18 @@ export default function Etapa2({ setEtapa }) {
                     <span>Voltar</span>
                 </button>
 
-                <button className={styleCadastro.prosseguir} type="submit">Prosseguir</button>
+                <button className="
+                 h-[40px] xl:w-[14.5%]
+                w-[110px]
+                cursor-pointer
+                bg-[var(--laranja)] text-[var(--branco)]
+                rounded-lg
+                text-[16px]
+                transition-all duration-200 ease-in-out
+                hover:bg-[#ef7f4b] focus:bg-[#ef7f4b]
+                hover:scale-105 focus:scale-105
+                "
+                    type="submit">Prosseguir</button>
             </footer>
         </form>
     )

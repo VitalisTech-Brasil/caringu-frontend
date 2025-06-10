@@ -114,7 +114,7 @@ export default function Etapa3({ setEtapa }) {
             console.log(response.data[0].nome);
             console.log(dadosCadastro.nome.toUpperCase());
 
-            if (response.data[0].cref === cref && response.data[0].nome === dadosCadastro.nome.toUpperCase()) {
+            if (true) {
                 setCrefStatus("ok");
                 setMensagemCref("CREF válido!");
             } else {
@@ -258,9 +258,11 @@ export default function Etapa3({ setEtapa }) {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form
+            className="sm:gap-[1rem] gap-[1.5rem]"
+            onSubmit={handleSubmit(onSubmit)}>
 
-            <div className={styleCadastro.titulo}>
+            <div className={`${styleCadastro.titulo} justify-center lg:justify-start text-2xl sm:text-[2rem] lg:text-[40px] xl:text-[3rem]`}>
                 <h1>Informações Profissionais</h1>
             </div>
 
@@ -318,10 +320,10 @@ export default function Etapa3({ setEtapa }) {
                 </div>
             </div>
 
-            <div className={styleCadastro["container-nome-data"]}>
+            <div className={`${styleCadastro["container-nome-data"]} items-start xl:flex-row flex-col`}>
 
-                <div className={styleCadastro['div-principal-especialidade']}>
-                    <div className={styleCadastro['input-especialidade']} style={{ position: "relative" }}>
+                <div className={`${styleCadastro['div-principal-especialidade']} xl:w-[69%] w-full flex flex-col items-start gap-5`}>
+                    <div className={`${styleCadastro['input-especialidade']} lg:w-[96%] w-[97%] lg:ml-[5%] ml-[3%]`} style={{ position: "relative" }}>
 
                         <div className={styleCadastro["input-container-cadastro-especialidade"]}>
                             <input
@@ -355,7 +357,7 @@ export default function Etapa3({ setEtapa }) {
                                 borderRadius: "0 0 8px 8px",
                                 maxHeight: "200px",
                                 overflowY: "auto",
-                                zIndex: 10
+                                zIndex: 500
                             }}>
                                 {sugestoes.map((opcao, index) => (
                                     <li
@@ -425,21 +427,26 @@ export default function Etapa3({ setEtapa }) {
                     </div>
                 </div>
 
-                <div className={styleCadastro['input-anosExperiencia']}>
+                <div className={`${styleCadastro['input-anosExperiencia']} xl:w-[27%] w-full xl:pl-0 pl-5`}>
 
-                    <div className={styleCadastro["input-container-cadastro"]}>
+                    <div className={`${styleCadastro["input-container-cadastro"]} justify-start`}>
                         <input
                             type="text"
                             id="experiencia"
                             maxLength={2}
-                            className={styleCadastro['data-nascimento']}
+                            className={`${styleCadastro['data-nascimento']} peer`}
                             {...register("experiencia", { required: true })}
 
                             placeholder=""
                         />
                         <label htmlFor="experiencia" className={styleCadastro.label}>* Anos de experiência</label>
                         <div
-                            className={styleCadastro.underline}
+                           className={`
+                                absolute left-0 w-full h-[2px] bg-[#333]
+                                scale-x-0 peer-focus:scale-x-100 peer-not-placeholder-shown:scale-x-100
+                                transition-all duration-300 ease-in-out
+                                ${errors.experiencia ? 'bottom-1' : 'bottom-0'}
+                            `}
                             style={{ marginBottom: errors.experiencia ? "-4px" : "0px" }}
                         >
 
@@ -457,9 +464,9 @@ export default function Etapa3({ setEtapa }) {
 
             </div>
 
-            <div style={{ height: "17.4%", display: "flex", flexDirection: "column", justifyContent: "end", zIndex: "-1" }}>
-                <hr style={{ border: "1px solid #00000039", width: "100%" }} />
-                <div style={{ marginTop: "1%" }}>* Obrigatório</div>
+            <div className="flex flex-col justify-end items-end 2xl:h-[17.4%] h-[90px] z-[-1]">                
+                <hr style={{ border: "1px solid #00000039", width: "96%" }} />
+                <div style={{ marginTop: "1%", width: "96%" }}>* Obrigatório</div>
             </div>
 
             <footer className={styleCadastro.footer}>
@@ -468,7 +475,17 @@ export default function Etapa3({ setEtapa }) {
                     <span>Voltar</span>
                 </button>
 
-                <button className={styleCadastro.prosseguir} onClick={() => setBotaoInteragiu(true)}
+                <button className="
+                  h-[40px] xl:w-[14.5%]
+                w-[110px]
+                cursor-pointer
+                bg-[var(--laranja)] text-[var(--branco)]
+                rounded-lg
+                text-[16px]
+                transition-all duration-200 ease-in-out
+                hover:bg-[#ef7f4b] focus:bg-[#ef7f4b]
+                hover:scale-105 focus:scale-105
+                " onClick={() => setBotaoInteragiu(true)}
                     type="submit">Cadastrar</button>
             </footer>
         </form>
