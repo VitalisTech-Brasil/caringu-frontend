@@ -83,7 +83,6 @@ const GerenciarExercicios = () => {
                 const data = response.data;
 
                 setExercicios(data);
-                console.log(data);
             })
             .catch(err => {
                 console.error("Erro ao buscar exercícios: ", err);

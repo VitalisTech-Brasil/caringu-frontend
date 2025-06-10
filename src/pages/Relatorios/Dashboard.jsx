@@ -368,7 +368,6 @@ const Dashboard = () => {
                                             value={exercicioSelecionado}
                                             onChange={(e) => {
                                                 const novoId = e.target.value;
-                                                console.log(novoId);
                                                 setExercicioSelecionado(novoId);
                                                 buscarEvolucaoCargaPorExercicio(novoId);
                                             }}

@@ -42,7 +42,7 @@ const InputEditar = ({
                 }}
                 {...rest}
             />
-            <span className="error-message" style={{
+            <span className="error-message w-[17vw]" style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '5px',
