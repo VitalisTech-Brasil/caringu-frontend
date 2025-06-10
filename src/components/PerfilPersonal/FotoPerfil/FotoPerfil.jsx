@@ -123,17 +123,14 @@ export default function FotoPerfil(props) {
                         </svg>
                     )}
                     <div>
-                        <h3 className="text-[16px] font-semibold text-gray-800">
-                            Foto de perfil
+                        <h3 className="text-[24px] font-bold text-gray-800">
+                            {props.nomePersonal}
                         </h3>
-                        <p className="text-[14px] text-gray-500">
-                            PNG, JPEG, até 1MB
-                        </p>
                     </div>
                 </div>
 
                 {/* Botões */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col items-start justify-start sm:flex-row gap-4">
                     <input
                         type="file"
                         accept="image/png, image/jpeg"
@@ -142,28 +139,35 @@ export default function FotoPerfil(props) {
                         className="hidden"
                     />
 
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if (fileInputRef.current) {
-                                fileInputRef.current.value = '';
-                            }
-                            fileInputRef.current.click();
-                        }}
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] cursor-pointer text-gray-700 border border-gray-300 hover:bg-gray-100 rounded-md"
-                    >
-                        <HiOutlineUpload className="w-5 h-5" />
-                        Carregar Foto
-                    </button>
+                    <div className="flex flex-col items-center justify-between min-h-[64px]">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (fileInputRef.current) {
+                                    fileInputRef.current.value = '';
+                                }
+                                fileInputRef.current.click();
+                            }}
+                            className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] cursor-pointer text-gray-700 border border-gray-300 hover:bg-gray-100 rounded-md w-full"
+                        >
+                            <HiOutlineUpload className="w-5 h-5" />
+                            Carregar Foto
+                        </button>
+                        <p className="text-[14px] text-gray-500 mt-1">
+                            PNG, JPEG, até 1MB
+                        </p>
+                    </div>
 
-                    <button
-                        type="button"
-                        onClick={handleRemoverFoto}
-                        className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] cursor-pointer text-white bg-red-700 hover:bg-red-800 rounded-md"
-                    >
-                        <HiOutlineTrash className="w-5 h-5" />
-                        Remover foto
-                    </button>
+                    <div className="flex items-start min-h-[79px]">
+                        <button
+                            type="button"
+                            onClick={handleRemoverFoto}
+                            className="flex items-center justify-center gap-2 px-4 py-2 text-[16px] cursor-pointer text-white bg-red-700 hover:bg-red-800 rounded-md w-full"
+                        >
+                            <HiOutlineTrash className="w-5 h-5" />
+                            Remover Foto
+                        </button>
+                    </div>
                 </div>
 
                 {showModal && (

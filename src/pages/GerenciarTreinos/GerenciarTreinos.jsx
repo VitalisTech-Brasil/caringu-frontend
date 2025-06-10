@@ -86,8 +86,6 @@ const GerenciarTreinos = () => {
 
         const alunoId = alunoSelecionado?.key;
 
-        console.log(treinosAtribuidos)
-
         try {
             if (treinosAtribuidos.length > 0) {
                 for (const treino of treinosAtribuidos) {
@@ -608,6 +606,7 @@ const GerenciarTreinos = () => {
                                                         e.stopPropagation(); // Prevent card click event
                                                         setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
                                                     }}
+                                                    className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
                                                 >
                                                     <FaEllipsisV className="text-xl cursor-pointer" />
                                                 </button>

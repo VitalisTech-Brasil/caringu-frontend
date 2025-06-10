@@ -168,6 +168,7 @@ const Home = () => {
       icon: <FaUsers />,
       bgColor: "bg-[#748CAB1A]",
       iconColor: "text-[#748CAB]",
+      rota: "/gerenciar-alunos" 
     },
     {
       title: "Treinos Criados",
@@ -176,6 +177,7 @@ const Home = () => {
       icon: <FaDumbbell />,
       bgColor: "bg-[#46982B38]",
       iconColor: "text-[#46982B]",
+      rota: "/gerenciar-treinos"
     },
     {
       title: "Treinos Próximos do Vencimento",
@@ -184,6 +186,7 @@ const Home = () => {
       icon: <FaClock />,
       bgColor: "bg-[#E96E354F]",
       iconColor: "text-[#E96E35]",
+      rota: "/gerenciar-treinos"
     },
     {
       title: "Anamneses Pendentes",
@@ -192,6 +195,7 @@ const Home = () => {
       icon: <FaClipboardList />,
       bgColor: "bg-yellow-100",
       iconColor: "text-yellow-600",
+      rota: "/gerenciar-alunos"
     },
   ];
 
@@ -201,7 +205,7 @@ const Home = () => {
       <MenuLateral isOpen={isSidebarOpen} />
       <div className="flex-1">
         <Header toggleSidebar={toggleSidebar} />
-        <main className="p-8 font-sans space-y-8">
+        <main className="p-8 space-y-8">
           {/* KPIs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {kpis.map((kpi, index) => (
@@ -213,6 +217,7 @@ const Home = () => {
                 icon={kpi.icon}
                 bgColor={kpi.bgColor}
                 iconColor={`${kpi.iconColor} hover:text-[#748CAB]`}
+                rota={kpi.rota}
               />
             ))}
           </div>
