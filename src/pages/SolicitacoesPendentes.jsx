@@ -49,7 +49,7 @@ const SolicitacoesPendentes = () => {
             setModalCancelarVisivel(false);
             setSolicitacaoParaCancelar(null);
             toast.custom((t) => (
-                <CustomToast t={t} type="success" message="Login com Google realizado!" />
+                <CustomToast t={t} type="success" message="Pagamento confirmado!" />
             ));
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
