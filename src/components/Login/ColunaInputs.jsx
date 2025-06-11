@@ -115,7 +115,7 @@ const ColunaInputs = () => {
       <div className="mb-[3%]">
         <Link
           to="/"
-          className="inline-block w-[5vw] h-[6vh] transition-transform duration-200 ease-in-out hover:scale-105"
+          className="inline-block w-[8vw] h-[6vh] transition-transform duration-200 ease-in-out hover:scale-105"
         >
           <img src={setaVoltar} alt="Voltar" className="w-full h-full" />
         </Link>
@@ -186,48 +186,6 @@ const ColunaInputs = () => {
             font-size="14px"
             onClick={() => loginGoogle()}
           />
-          {/* <GoogleLogin
-            onSuccess={async (credentialResponse) => {
-              const { credential } = credentialResponse;
-
-              try {
-                const response = await api.post('/login/google', { token: credential }, {
-                  headers: { 'Content-Type': 'application/json' }
-                });
-
-                if (response.status === 200) {
-                  sessionStorage.setItem('authToken', response.data.token);
-                  sessionStorage.setItem('usuario', response.data.nome);
-                  sessionStorage.setItem('pessoaId', response.data.pessoaId);
-                  sessionStorage.setItem('tipo', response.data.tipo);
-                  sessionStorage.setItem('email', response.data.email);
-
-                  toast.custom((t) => (
-                    <CustomToast t={t} type="success" message="Login com Google realizado!" />
-                  ));
-
-                  setTimeout(() => {
-                    if (response.data.tipo === "PERSONAL") {
-                      navigate('/home');
-                    } else {
-                      navigate('/procurando-personal');
-                    }
-                  }, 1000);
-                }
-
-              } catch (error) {
-                toast.custom((t) => (
-                  <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
-                ));
-              }
-            }}
-            theme="fille_blue"
-            onError={() => {
-              toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Login com Google falhou." />
-              ));
-            }}
-          /> */}
         </form>
 
         <footer className="justify-center items-center flex">

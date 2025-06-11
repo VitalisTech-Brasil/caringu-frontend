@@ -159,7 +159,7 @@ const Header = () => {
 
     const fetchNotifications = async () => {
       try {
-        const notifications = await caringuApi.get(`notificacoes/pessoas/${personalId}`);
+        const notifications = await caringuApi.get(`/notificacoes/pessoas/${personalId}`);
 
         const notificacoesOrdenadas = ordenarNotificacoes(notifications.data);
         setNotificacoesGeral(notificacoesOrdenadas);
