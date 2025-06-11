@@ -1,7 +1,7 @@
 import { React, useState, useEffect, useRef } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import Label from '../../components/Utils/Label'
 import InputPosLogin from '../../components/Utils/InputPosLogin'
@@ -30,6 +30,7 @@ const CriarTreino = () => {
     const [exercicios, setExercicios] = useState([]);
     const [exercicioEditando, setExercicioEditando] = useState(null);
     const [selectAberto, setSelectAberto] = useState(false);
+    const navigate = useNavigate();
 
     const onSubmit = (data) => {
 
@@ -163,6 +164,7 @@ const CriarTreino = () => {
             ));
             reset();
             setExerciciosSelecionados([]);
+            navigate("/gerenciar-treinos")
 
         } catch (error) {
             console.error('Erro ao cadastrar treino:', error);

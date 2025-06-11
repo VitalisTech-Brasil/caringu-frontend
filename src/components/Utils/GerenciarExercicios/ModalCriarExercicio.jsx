@@ -61,7 +61,7 @@ const ModalCriarExercicio = ({ onClose, onSubmit, isVisible, setModalConfirmarCa
                                 inputType="text"
                                 placeholder="Insira o URL do vídeo do exercício"
                                 {...register("urlVideo", {
-                                    required: "A URL é obrigatória",
+                                    required: false,
                                     pattern: {
                                         value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/,
                                         message: "Insira uma URL válida",

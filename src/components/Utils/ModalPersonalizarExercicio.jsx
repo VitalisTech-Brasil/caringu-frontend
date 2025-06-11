@@ -129,21 +129,39 @@ const ModalPersonalizarExercicio = ({
                             </div>
 
                             {/* Coluna de vídeo e dados do exercício */}
-                            <div className="flex flex-col w-[35%] m-5 gap-5">
-                                <div className="bg-gray-400 w-full h-full flex items-center justify-center rounded-lg">
-                                    {isValidYoutubeUrl(exercicio?.urlVideo || exercicio?.videoUrl) ? (
-                                        <iframe
-                                            className="w-full h-full rounded-lg"
-                                            src={exercicio?.urlVideo || exercicio?.videoUrl}
-                                            title="YouTube video player"
-                                            frameBorder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                            referrerPolicy="strict-origin-when-cross-origin"
-                                            allowFullScreen
-                                        />
-                                    ) : (
-                                        <h1>Vídeo não disponível</h1>
-                                    )}
+                            <div className="flex flex-col w-[35%] h-[40%] m-5 gap-5">
+                                <div className="bg-gray-400 w-full h-[40%] flex items-center justify-center rounded-lg">
+                                    {(() => {
+                                        const url = exercicio?.urlVideo || exercicio?.videoUrl;
+
+                                        if (!url) {
+                                            return <h1>Vídeo não disponível</h1>;
+                                        } else if (url.toLowerCase().endsWith(".gif")) {
+                                            return (
+                                                <div className="w-full aspect-[16/9] rounded-lg flex items-center justify-center">
+                                                    <img
+                                                        src={url}
+                                                        alt="GIF demonstrativo"
+                                                        className="w-full h-full object-contain rounded-lg"
+                                                    />
+                                                </div>
+                                            )
+                                        } else if (isValidYoutubeUrl(url)) {
+                                            return (
+                                                <iframe
+                                                    className="w-full h-full rounded-lg"
+                                                    src={url}
+                                                    title="YouTube video player"
+                                                    frameBorder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    referrerPolicy="strict-origin-when-cross-origin"
+                                                    allowFullScreen
+                                                />
+                                            );
+                                        } else {
+                                            return <h1>Vídeo não disponível</h1>;
+                                        }
+                                    })()}
                                 </div>
                                 <div className="grid-span-1 w-full">
                                     <p><b>Nome:</b> {exercicio?.nomeExercicio || exercicio?.nome}</p>

@@ -714,16 +714,6 @@ const GerenciarTreinos = () => {
                                                             {errors.email.message}
                                                         </span>
                                                     )}
-                                                    <ButtonInterno
-                                                        texto="Acrescentar treino"
-                                                        type="submit"
-                                                        cor="#748CAB"
-                                                        corTexto="#ffffff"
-                                                        corHover="#677e9c"
-                                                        width="40%"
-                                                        height="50px"
-                                                        font-size="14px"
-                                                    />
                                                     <ul className="mt-4 space-y-2">
                                                         {treinosAtribuidos.map((t, i) => (
                                                             <li key={i} className="flex items-center justify-between text-sm text-gray-700">
@@ -868,6 +858,18 @@ const GerenciarTreinos = () => {
                                                             {errors.diasDaSemana.message}
                                                         </span>
                                                     )}
+                                                    <div className="flex justify-end mt-4">
+                                                        <ButtonInterno
+                                                            texto="Acrescentar treino"
+                                                            type="submit"
+                                                            cor="#748CAB"
+                                                            corTexto="#ffffff"
+                                                            corHover="#677e9c"
+                                                            width="40%"
+                                                            height="50px"
+                                                            font-size="14px"
+                                                        />
+                                                    </div>
 
 
                                                 </div>
