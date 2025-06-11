@@ -108,8 +108,8 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                     className="flex sm:flex-row flex-col items-center justify-start bg-[var(--azul-escuro)] rounded-md w-full py-4 sm:px-0 px-2 sm:gap-0 gap-4"
                                 >
                                     <div className="flex flex-col items-center justify-center w-auto h-full border-b sm:border-b-0 sm:border-r border-[var(--cor-secundaria)] sm:px-5 py-2">
-                                        <span className="text-xl 2xl:text-2xl font-normal text-[var(--cor-secundaria)]">{diaSemana}</span>
-                                        <span className="text-4xl 2xl:text-5xl font-bold text-[var(--cor-secundaria)]">
+                                        <span className="text-xl font-normal text-[var(--cor-secundaria)]">{diaSemana}</span>
+                                        <span className="text-4xl font-bold text-[var(--cor-secundaria)]">
                                             {compromissoDate.getDate()}
                                         </span>
                                     </div>
@@ -121,7 +121,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                                 {/* <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span> */}
-                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">8:00 - 9:00</span>
+                                                <span className="text-base font-medium text-[var(--cor-secundaria)]">8:00 - 9:00</span>
 
                                             </div>
                                         </div>
@@ -137,7 +137,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                 ) : (
                                                     <FaUserCircle className="w-13 h-13 2xl:w-15 2xl:h-15 text-[var(--cor-secundaria)]" />
                                                 )}
-                                                <span className="text-[var(--cor-secundaria)] font-medium text-base 2xl:text-xl">
+                                                <span className="text-[var(--cor-secundaria)] font-medium text-base">
                                                     {compromisso.aluno.nome}
                                                 </span>
                                             </div>

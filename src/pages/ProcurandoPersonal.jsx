@@ -336,7 +336,7 @@ const ProcurandoPersonal = () => {
         const screenWidth = window.innerWidth;
 
         if (screenWidth >= 1536) {
-          setStyles({ fontSize: "24px", width: "40%" });
+          setStyles({ fontSize: "20px", width: "40%" });
         } else if (screenWidth >= 1280) {
           setStyles({ fontSize: "20px", width: "40%" });
         } else if (screenWidth >= 640) {
@@ -522,10 +522,10 @@ const ProcurandoPersonal = () => {
 
                       <div className="flex flex-col md:flex-row items-start w-full gap-4">
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
-                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Nome:</b> {trainer.nomePersonal}
                           </h2>
-                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Gênero: </b> {
                               trainer.genero === "HOMEM_CISGENERO" ? "Masculino Cisgênero"
                                 : trainer.genero === "HOMEM_TRANSGENERO" ? "Masculino Transgênero"
@@ -534,7 +534,7 @@ const ProcurandoPersonal = () => {
                                       : "Não Binário"
                             }
                           </p>
-                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Especialidades: </b>
                             {trainer.especialidades[0]}{" "}
                             {trainer.especialidades.length > 1 &&
@@ -542,14 +542,14 @@ const ProcurandoPersonal = () => {
                           </p>
                         </div>
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
-                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="break-words font-bold">Cidade:</b> {trainer.cidade}
                           </h2>
-                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Bairro: </b> {trainer.bairro}
 
                           </p>
-                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Experiência:</b>{" "}
                             {trainer.experiencia < 1
                               ? "menos de 1 ano"
@@ -558,17 +558,17 @@ const ProcurandoPersonal = () => {
 
                         </div>
                         <div className=" w-full md:w-[32%] flex flex-col gap-3">
-                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <h2 className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl  text-[var(--cor-primaria)]">
                             <b className="font-bold">Valor da aula:</b>
                             {trainer.planos && trainer.planos.length > 0
                               ? ` R$ ${Math.min(...trainer.planos.map(plano => plano.valorAulas))}`
                               : " Não informado"}
                           </h2>
-                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl  text-[var(--cor-primaria)]">
                             <b className="break-words font-bold">Email: </b> {trainer.email}
 
                           </p>
-                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)]">
+                          <p className="break-words font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)]">
                             <b className="font-bold">Contato: </b> {MascaraTelefone(trainer.celular)}
                           </p>
 
@@ -594,7 +594,7 @@ const ProcurandoPersonal = () => {
                   {/* Conteúdo expandido */}
                   {expandedCards.includes(index) && (
                     <div className="mt-4">
-                      <ul className="font-normal text-base sm:text-xl md:text-base lg:text-xl xl:text-2xl text-[var(--cor-primaria)] mb-4">
+                      <ul className="font-normal text-base sm:text-xl md:text-base lg:text-xl text-[var(--cor-primaria)] mb-4">
                         {trainer.especialidades.map((especialidade, i) => (
                           <li key={i}>- {especialidade}</li>
                         ))}

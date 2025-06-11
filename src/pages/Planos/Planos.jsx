@@ -63,6 +63,9 @@ const Planos = () => {
     }
 
     function formatarNivelExperiencia(nivel) {
+        if (!nivel) {
+            return 'Nível não informado';
+        }
         switch (nivel) {
             case 'INICIANTE':
                 return 'Iniciante';
@@ -357,7 +360,7 @@ const Planos = () => {
 
 
                     <div className="w-full  mt-3 pl-10 ">
-                        <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com planos ativos</span>
+                        <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com Planos Ativos</span>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                         {alunosAtivos.length === 0 ? (
