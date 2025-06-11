@@ -336,7 +336,7 @@ const ProcurandoPersonal = () => {
         const screenWidth = window.innerWidth;
 
         if (screenWidth >= 1536) {
-          setStyles({ fontSize: "24px", width: "40%" });
+          setStyles({ fontSize: "20px", width: "40%" });
         } else if (screenWidth >= 1280) {
           setStyles({ fontSize: "20px", width: "40%" });
         } else if (screenWidth >= 640) {
