@@ -54,8 +54,8 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         Sunday: "Dom",
         Monday: "Seg",
         Tuesday: "Ter",
-        Wednesday: "Quar",
-        Thursday: "Quin",
+        Wednesday: "Qua",
+        Thursday: "Qui",
         Friday: "Sex",
         Saturday: "Sab",
     };
