@@ -11,6 +11,7 @@ import iconeTreinos from '../../assets/images/iconeTreinos.svg';
 import iconeAlunos from '../../assets/images/iconeAlunos.svg';
 import iconeAgenda from '../../assets/images/iconeAgenda.svg';
 import setaVoltar from '../../assets/images/back.svg';
+import setaAvancar from '../../assets/images/next.svg';
 
 
 const features = [
@@ -139,7 +140,7 @@ const FeatureCarousel = () => {
           max-[375px]:right-14
           z-10 hover:scale-110 transition-all duration-300 cursor-pointer"
       >
-        <img src="src/assets/images/next.svg" alt="Arrow Right" className="w-6 h-6" />
+        <img src={setaAvancar} alt="Arrow Right" className="w-6 h-6" />
       </button>
     </div>
   );
