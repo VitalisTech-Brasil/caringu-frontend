@@ -46,9 +46,9 @@ const EtapaNovaSenha = ({ onAvancar }) => {
   };
 
   return (
-    <section className='flex justify-center items-center h-screen w-1/2 max-[700px]:w-full px-2'>
+    <section className='flex justify-center items-center h-screen w-full xl:w-1/2 px-2'>
       <div className='flex justify-center items-center h-full w-full'>
-        <div className='flex flex-col justify-center items-center w-full h-150 gap-10 max-[700px]:h-auto max-[700px]:gap-6 py-4'>
+        <div className='flex flex-col justify-center items-center w-full h-150 gap-20 max-[700px]:h-auto max-[700px]:gap-6 py-4'>
           <div className="flex w-full max-w-[400px] items-center justify-center gap-10">
             <div className="bg-[var(--azul-claro)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
             <div className="bg-[var(--azul-claro)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
@@ -61,7 +61,7 @@ const EtapaNovaSenha = ({ onAvancar }) => {
 
           <form onSubmit={handleSubmit(handleAlterarSenha)} className='h-1/2 w-1/2 m-5 max-[700px]:w-[95%] max-[700px]:m-2'>
             <div className={styleCadastro["input-senha"]}>
-              <div className={styleCadastro["input-container"]}>
+              <div className={`${styleCadastro["input-container"]} `}>
                 <input
                   type={showSenha ? "text" : "password"}
                   id="senha"

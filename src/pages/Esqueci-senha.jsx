@@ -41,9 +41,11 @@ const EsqueciSenha = () => {
                     <EtapaSucesso irPraLogin={irPraLogin} />
                 )}
 
-                <section className="h-screen w-1/2 max-[1450px]:hidden" >
+                <section className="h-screen xl:w-1/2 w-0 xl:block hidden">
                     <div className="flex justify-end h-full w-full">
-                        <img src={imagemEsqueciSenha} alt="Imagem Esqueci Senha" />
+                        <img src={imagemEsqueciSenha}
+                            className="h-full w-auto max-w-full object-cover bg-left"
+                            alt="Imagem Esqueci Senha" />
                     </div>
                 </section>
             </main>

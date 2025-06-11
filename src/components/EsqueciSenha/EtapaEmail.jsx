@@ -31,7 +31,7 @@ const EtapaEmail = ({ onAvancar }) => {
   };
 
   return (
-    <section className="flex justify-center items-center h-screen w-1/2 max-[1450px]:w-[1400px]">
+    <section className="flex justify-center items-center h-screen w-full xl:w-1/2">
       <div className="flex justify-center items-center h-full w-full">
         <div className="flex justify-center items-center w-full h-150 flex-col gap-10 ">
           <div className="flex w-100 items-center justify-between max-[415px]:w-[300px]">
