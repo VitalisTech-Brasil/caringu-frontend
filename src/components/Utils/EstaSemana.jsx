@@ -36,7 +36,7 @@ const EstaSemana = ({ onDaySelect, compromissos }) => {
 
   return (
     <div className="bg-[var(--cor-secundaria)] rounded-md border-solid border-[#1D2D441C] border-4 p-6" style={{ height: "auto" }}>
-      <h2 className="text-2xl font-semibold text-[var(--cor-primaria)]">Esta Semana</h2>
+      <h2 className="text-base font-semibold text-[var(--cor-primaria)]">Esta Semana</h2>
       <div className="2xl:grid 2xl:grid-cols-7 flex  gap-2 mt-4 overflow-x-auto">
         {weekDays.map((day, index) => {
           let bgClass = "border-solid border-[#1D2D441C] border-4 text-gray-700 hover:bg-[#1D2D4436]";
@@ -53,8 +53,8 @@ const EstaSemana = ({ onDaySelect, compromissos }) => {
               className={`min-w-25 2xl:min-w-21 flex flex-col justify-between items-center p-2 rounded-md transition-all duration-300 cursor-pointer h-32 ${bgClass}`}
               onClick={() => onDaySelect(day)}
             >
-              <p className="text-base sm:text-xl font-semibold capitalize">{day.day}</p>
-              <p className="text-base sm:text-xl self-center">{day.date}</p>
+              <p className="text-base  font-semibold capitalize">{day.day}</p>
+              <p className="text-base  self-center">{day.date}</p>
             </div>
           );
         })}

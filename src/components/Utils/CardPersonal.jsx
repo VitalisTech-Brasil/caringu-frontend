@@ -56,7 +56,7 @@ const CardPersonal = ({
             </div>
             <div className="flex flex-col items-start justify-start  mt-11 w-58 sm:w-122 lg:w-100  xl:w-130" >
                 <div>
-                    <h2 className="text-xl sm:text-[32px] lg:text-2xl xl:text-[28px] 2xl:text-[32px] text-[var(--cor-primaria)] font-semibold">
+                    <h2 className="text-xl sm:text-[32px] lg:text-2xl xl:text-[28px] text-[var(--cor-primaria)] font-semibold">
                         {nomePersonal}
                     </h2>
                 </div>

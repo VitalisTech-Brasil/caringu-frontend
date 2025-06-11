@@ -93,7 +93,7 @@ const SolicitacoesPendentes = () => {
                                 <path d="M21.1331 13.0957L7.72852 26.5003L21.1331 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M45.2717 26.5H8.10547" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            <span className="text-[var(--cor-primaria)] text-xl sm:text-2xl md:text-[28px] xl:text-[32px] font-medium ml-7">
+                            <span className="text-[var(--cor-primaria)] text-xl sm:text-2xl md:text-[28px] font-medium ml-7">
                                 Solicitações de planos pendentes
                             </span>
                         </div>
