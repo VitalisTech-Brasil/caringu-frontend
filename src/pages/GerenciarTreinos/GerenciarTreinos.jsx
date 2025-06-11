@@ -776,44 +776,6 @@ const GerenciarTreinos = () => {
                                                     )}
 
                                                     <Label
-                                                        id="dataVencimento"
-                                                        nomeLabel="Data de Vencimento"
-                                                        fontSize="20px"
-                                                        fontWeight="500"
-                                                    />
-                                                    <InputPosLogin
-                                                        id="dataVencimento"
-                                                        name="dataVencimento"
-                                                        inputType="date"
-                                                        placeholder="30/12/2024"
-                                                        fontSize="16px"
-                                                        fontWeight="400"
-                                                        fontSizeErro="16px"
-                                                        width="50%"
-                                                        inputMode="numeric"
-                                                        {...register('dataVencimento', {
-                                                            required: 'A data de vencimento é obrigatória',
-                                                            validate: (value) => {
-                                                                const dataSelecionada = new Date(value);
-                                                                const hoje = new Date();
-                                                                dataSelecionada.setHours(0, 0, 0, 0);
-                                                                hoje.setHours(0, 0, 0, 0);
-
-                                                                if (dataSelecionada < hoje) {
-                                                                    return "Data passada não permitida.";
-                                                                }
-
-                                                                return true;
-                                                            }
-                                                        })}
-                                                    />
-                                                    {errors.dataVencimento && (
-                                                        <span className="text-red-500 text-sm mt-2 flex items-center gap-1">
-                                                            <img src={info2} alt="Erro" className="w-4 h-4" />
-                                                            {errors.dataVencimento.message}
-                                                        </span>
-                                                    )}
-                                                    <Label
                                                         id="diasDaSemana"
                                                         nomeLabel="Dias da Semana"
                                                         fontSize="20px"
@@ -858,6 +820,44 @@ const GerenciarTreinos = () => {
                                                             {errors.diasDaSemana.message}
                                                         </span>
                                                     )}
+                                                    <div className="mt-5">
+                                                        <Label
+                                                            id="dataVencimento"
+                                                            nomeLabel="Data de Vencimento"
+                                                            fontSize="20px"
+                                                            fontWeight="500"
+                                                        />
+                                                        <InputPosLogin
+                                                            id="dataVencimento"
+                                                            name="dataVencimento"
+                                                            inputType="date"
+                                                            placeholder="30/12/2024"
+                                                            fontSize="16px"
+                                                            fontWeight="400"
+                                                            fontSizeErro="16px"
+                                                            width="50%"
+                                                            inputMode="numeric"
+                                                            {...register('dataVencimento', {
+                                                                required: 'A data de vencimento é obrigatória',
+                                                                validate: (value) => {
+                                                                    const dataSelecionada = new Date(value);
+                                                                    const hoje = new Date();
+                                                                    dataSelecionada.setHours(0, 0, 0, 0);
+                                                                    hoje.setHours(0, 0, 0, 0);
+                                                                    if (dataSelecionada < hoje) {
+                                                                        return "Data passada não permitida.";
+                                                                    }
+                                                                    return true;
+                                                                }
+                                                            })}
+                                                        />
+                                                        {errors.dataVencimento && (
+                                                            <span className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                                                <img src={info2} alt="Erro" className="w-4 h-4" />
+                                                                {errors.dataVencimento.message}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <div className="flex justify-end mt-4">
                                                         <ButtonInterno
                                                             texto="Acrescentar treino"
