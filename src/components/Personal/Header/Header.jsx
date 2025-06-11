@@ -1,5 +1,5 @@
 import { Navbar, NavbarBrand } from "flowbite-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { LucideCheckCheck } from "lucide-react";
 import { FaCheck } from "react-icons/fa";
@@ -16,9 +16,21 @@ const Header = () => {
   const notificationRef = useRef(null);
   const [notificacoesGeral, setNotificacoesGeral] = useState([]);
 
+  const navigate = useNavigate();
   const personalId = sessionStorage.getItem('pessoaId');
   const tipoUsuario = sessionStorage.getItem('tipo'); // Supondo que o tipo está salvo assim
 
+
+  const redirecionarPorTipo = (tipo) => {
+    switch (tipo) {
+      case "PAGAMENTO_REALIZADO":
+        navigate("/solicitacoes-pendentes");
+        break;
+      // depois é pra adicionar mais tipos no futuro...
+      default:
+        break;
+    }
+  };
 
   // Define os ícones e textos com base na rota atual
   const pageConfig = {
@@ -294,81 +306,85 @@ const Header = () => {
       </NavbarBrand>
       {/* Notifications */}
       {tipoUsuario === "PERSONAL" && (
-      <div className="ml-auto flex items-center" ref={notificationRef}>
-        <button
-          onClick={() => setShowNotifications((prev) => !prev)}
-          type="button"
-          className="p-2 text-gray-800 rounded-lg hover:text-gray-900 hover:bg-gray-200 mr-6"
-        >
-          <span className="sr-only">View notifications</span>
-          {notificacoesGeral.length > 0 ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 47" fill="none">
-              <path d="M22.5374 5.69922C16.3311 5.69922 11.2874 10.9671 11.2874 17.4492V23.1088C11.2874 24.3034 10.7999 26.1246 10.2186 27.143L8.06236 30.8834C6.73111 33.1942 7.64986 35.7596 10.0874 36.6213C18.1686 39.4413 26.8874 39.4413 34.9686 36.6213C37.2374 35.838 38.2311 33.0376 36.9936 30.8834L34.8374 27.143C34.2749 26.1246 33.7874 24.3034 33.7874 23.1088V17.4492C33.7874 10.9867 28.7249 5.69922 22.5374 5.69922Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" />
-              <path d="M26.0059 6.26633C25.4246 6.09008 24.8246 5.95299 24.2059 5.87466C22.4059 5.63966 20.6809 5.77674 19.0684 6.26633C19.6121 4.81716 20.9621 3.79883 22.5371 3.79883C24.1121 3.79883 25.4621 4.81716 26.0059 6.26633Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M28.1621 37.3262C28.1621 40.5574 25.6309 43.2012 22.5371 43.2012C20.9996 43.2012 19.5746 42.5353 18.5621 41.4778C17.5496 40.4203 16.9121 38.932 16.9121 37.3262" fill="#1D2D44" />
-              <path d="M28.1621 37.3262C28.1621 40.5574 25.6309 43.2012 22.5371 43.2012C20.9996 43.2012 19.5746 42.5353 18.5621 41.4778C17.5496 40.4203 16.9121 38.932 16.9121 37.3262" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 47" fill="none">
-              <path d="M22.5374 5.69873C16.3311 5.69873 11.2874 10.9666 11.2874 17.4487V23.1083C11.2874 24.3029 10.7999 26.1241 10.2186 27.1425L8.06236 30.8829C6.73111 33.1937 7.64986 35.7591 10.0874 36.6208C18.1686 39.4408 26.8874 39.4408 34.9686 36.6208C37.2374 35.8375 38.2311 33.0371 36.9936 30.8829L34.8374 27.1425C34.2749 26.1241 33.7874 24.3029 33.7874 23.1083V17.4487C33.7874 10.9862 28.7249 5.69873 22.5374 5.69873Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" />
-              <path d="M26.0063 6.26682C25.4251 6.09057 24.8251 5.95348 24.2063 5.87515C22.4063 5.64015 20.6813 5.77723 19.0688 6.26682C19.6126 4.81765 20.9626 3.79932 22.5376 3.79932C24.1126 3.79932 25.4626 4.81765 26.0063 6.26682Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M28.1626 37.3257C28.1626 40.5569 25.6313 43.2007 22.5376 43.2007C21.0001 43.2007 19.5751 42.5349 18.5626 41.4774C17.5501 40.4199 16.9126 38.9315 16.9126 37.3257" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" />
-            </svg>
-          )}
-        </button>
-        <div
-          id="dropdownNotification"
-          className={`z-100 ${showNotifications ? "flex" : "hidden"} flex-col absolute right-9 top-16 w-full max-w-[12rem] sm:max-w-sm md:max-w-xl bg-[var(--cor-secundaria)] rounded-md border-solid border-2 border-[#1D2D441C] shadow`}
-        >
-          <div className="flex flex-row justify-between items-center px-4 py-2 font-medium  text-[var(--cor-primaria)] text-base sm:text-xl md:text-2xl rounded-t-lg bg-[var(--cor-secundaria)] border-b-2 border-[#1D2D441C]">
-            <span>
-              Notificações
-            </span>
-            <LucideCheckCheck
-              onClick={() => marcarTodasNotificacoesComoLidas()}
-              className="cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1 w-7 h-7 sm:h-9 sm:w-9" />
-          </div>
-          <div className="divide-y divide-[#1D2D441A]">
+        <div className="ml-auto flex items-center" ref={notificationRef}>
+          <button
+            onClick={() => setShowNotifications((prev) => !prev)}
+            type="button"
+            className="p-2 text-gray-800 rounded-lg hover:text-gray-900 hover:bg-gray-200 mr-6 cursor-pointer"
+          >
+            <span className="sr-only">View notifications</span>
             {notificacoesGeral.length > 0 ? (
-              notificacoesGeral.map((notification, index) => (
-                <div key={index}
-                  className={`flex px-4 py-3 ${notification.visualizada ? "bg-[#1D2D4417]" : "bg-transparent"}`}
-                >
-                  <div className="w-full flex flex-row items-center ">
-                    <div className="flex  pl-3 flex-col w-[90%]">
-                      <div className="text-xs sm:text-base md:text-xl text-[var(--cor-primaria)] font-bold ">
-                        {notification.titulo}
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 47" fill="none">
+                <path d="M22.5374 5.69922C16.3311 5.69922 11.2874 10.9671 11.2874 17.4492V23.1088C11.2874 24.3034 10.7999 26.1246 10.2186 27.143L8.06236 30.8834C6.73111 33.1942 7.64986 35.7596 10.0874 36.6213C18.1686 39.4413 26.8874 39.4413 34.9686 36.6213C37.2374 35.838 38.2311 33.0376 36.9936 30.8834L34.8374 27.143C34.2749 26.1246 33.7874 24.3034 33.7874 23.1088V17.4492C33.7874 10.9867 28.7249 5.69922 22.5374 5.69922Z" fill="#1D2D44" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" />
+                <path d="M26.0059 6.26633C25.4246 6.09008 24.8246 5.95299 24.2059 5.87466C22.4059 5.63966 20.6809 5.77674 19.0684 6.26633C19.6121 4.81716 20.9621 3.79883 22.5371 3.79883C24.1121 3.79883 25.4621 4.81716 26.0059 6.26633Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M28.1621 37.3262C28.1621 40.5574 25.6309 43.2012 22.5371 43.2012C20.9996 43.2012 19.5746 42.5353 18.5621 41.4778C17.5496 40.4203 16.9121 38.932 16.9121 37.3262" fill="#1D2D44" />
+                <path d="M28.1621 37.3262C28.1621 40.5574 25.6309 43.2012 22.5371 43.2012C20.9996 43.2012 19.5746 42.5353 18.5621 41.4778C17.5496 40.4203 16.9121 38.932 16.9121 37.3262" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 45 47" fill="none">
+                <path d="M22.5374 5.69873C16.3311 5.69873 11.2874 10.9666 11.2874 17.4487V23.1083C11.2874 24.3029 10.7999 26.1241 10.2186 27.1425L8.06236 30.8829C6.73111 33.1937 7.64986 35.7591 10.0874 36.6208C18.1686 39.4408 26.8874 39.4408 34.9686 36.6208C37.2374 35.8375 38.2311 33.0371 36.9936 30.8829L34.8374 27.1425C34.2749 26.1241 33.7874 24.3029 33.7874 23.1083V17.4487C33.7874 10.9862 28.7249 5.69873 22.5374 5.69873Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" />
+                <path d="M26.0063 6.26682C25.4251 6.09057 24.8251 5.95348 24.2063 5.87515C22.4063 5.64015 20.6813 5.77723 19.0688 6.26682C19.6126 4.81765 20.9626 3.79932 22.5376 3.79932C24.1126 3.79932 25.4626 4.81765 26.0063 6.26682Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M28.1626 37.3257C28.1626 40.5569 25.6313 43.2007 22.5376 43.2007C21.0001 43.2007 19.5751 42.5349 18.5626 41.4774C17.5501 40.4199 16.9126 38.9315 16.9126 37.3257" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" />
+              </svg>
+            )}
+          </button>
+          <div
+            id="dropdownNotification"
+            className={`z-100 ${showNotifications ? "flex" : "hidden"} flex-col absolute right-9 top-16 w-full max-w-[12rem] sm:max-w-sm md:max-w-xl bg-[var(--cor-secundaria)] rounded-md border-solid border-2 border-[#1D2D441C] shadow`}
+          >
+            <div className="flex flex-row justify-between items-center px-4 py-2 font-medium  text-[var(--cor-primaria)] text-base sm:text-xl md:text-2xl rounded-t-lg bg-[var(--cor-secundaria)] border-b-2 border-[#1D2D441C]">
+              <span>
+                Notificações
+              </span>
+              <LucideCheckCheck
+                onClick={() => marcarTodasNotificacoesComoLidas()}
+                className="cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1 w-7 h-7 sm:h-9 sm:w-9" />
+            </div>
+            <div className="divide-y divide-[#1D2D441A]">
+              {notificacoesGeral.length > 0 ? (
+                notificacoesGeral.map((notification, index) => (
+                  <div
+                    key={index}
+                    onClick={() => redirecionarPorTipo(notification.tipo)}
+                    className={`flex px-4 py-3 cursor-pointer hover:bg-gray-100 transition ${notification.visualizada ? "bg-[#1D2D4417]" : "bg-transparent"
+                      }`}
+                  >
+                    <div className="w-full flex flex-row items-center">
+                      <div className="flex pl-3 flex-col w-[90%]">
+                        <div className="text-xs sm:text-base md:text-xl text-[var(--cor-primaria)] font-bold">
+                          {notification.titulo}
+                        </div>
+                        <div className="text-xs sm:text-base text-[#15171B99]">
+                          {tempoDecorrido(notification.dataCriacao)}
+                        </div>
                       </div>
-                      <div className="text-xs sm:text-base text-[#15171B99]">
-                        {tempoDecorrido(notification.dataCriacao)}
-                      </div>
-                    </div>
-                    {
-                      !notification.visualizada && (
+                      {!notification.visualizada && (
                         <FaCheck
-                          onClick={() => marcarNotificacaoComoLida(notification.id)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // impede que clique no ícone também dispare o redirecionamento
+                            marcarNotificacaoComoLida(notification.id);
+                          }}
                           className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1"
                         />
-                      )
-                    }
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="flex px-4 py-3">
-                <div className="w-full flex flex-row items-center ">
-                  <div className="flex pl-3 flex-col w-[90%]">
-                    <div className="text-xs sm:text-base md:text-xl text-[var(--cor-primaria)] font-bold ">
-                      Nenhuma notificação nova
+                ))
+              ) : (
+                <div className="flex px-4 py-3">
+                  <div className="w-full flex flex-row items-center">
+                    <div className="flex pl-3 flex-col w-[90%]">
+                      <div className="text-xs sm:text-base md:text-xl text-[var(--cor-primaria)] font-bold">
+                        Nenhuma notificação nova
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
 
-      </div>
+        </div>
       )}
     </Navbar>
   );
