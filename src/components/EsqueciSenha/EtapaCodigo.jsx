@@ -39,54 +39,63 @@ const EtapaCodigo = ({ onAvancar }) => {
   useEffect(() => {
     if (!email) {
       alert('Email não encontrado. Por favor, forneça um email primeiro.');
-      // Redireciona de volta para a página anterior
+       // Redireciona de volta para a página anterior
       window.location.href = '/esqueci-senha';
     }
   }, [email]);
 
   return (
-    <section className="flex justify-center items-center h-screen w-1/2">
-      <div className="flex justify-center items-center h-full w-full">
-        <div className="flex justify-center items-center w-full h-150 flex-col gap-10">
-          <div className="flex w-100 items-center justify-between">
-            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
-            <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-25"></div>
-            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-25"></div>
-          </div>
+    <section className="flex justify-center items-center min-h-screen w-full xl:w-1/2 px-4 py-8">
+      <div className="flex flex-col items-center w-full max-w-md md:max-w-xl">
+        {/* Barra de progresso */}
+        <div className="flex w-full max-w-[400px] items-center justify-between gap-2 md:gap-4 mb-8">
+          <div className="bg-[var(--azul-claro)] rounded-full h-2 md:h-3 w-1/4 max-w-[100px] min-w-[40px]"></div>
+          <div className="bg-[var(--cor-primaria)] rounded-full h-2 md:h-3 w-1/4 max-w-[100px] min-w-[40px]"></div>
+          <div className="bg-[var(--azul-claro)] rounded-full h-2 md:h-3 w-1/4 max-w-[100px] min-w-[40px]"></div>
+        </div>
 
-          <div className="text-[var(--cor-primaria)] h-27 w-1/2 text-center flex-col justify-end">
-            <h1 className="text-[48px]">Verifique seu e-mail</h1>
-            <p>
-              Enviamos um código de verificação para <strong>{email}</strong>. Digite o código abaixo para continuar.
-            </p>
-          </div>
+        {/* Texto principal */}
+        <div className="text-[var(--cor-primaria)] text-center mb-8 w-full">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-[48px] font-bold mb-2 md:mb-4">
+            Verifique seu e-mail
+          </h1>
+          <p className="text-sm md:text-base">
+            Enviamos um código de verificação para <strong className="break-all">{email}</strong>.
+            Digite o código abaixo para continuar.
+          </p>
+        </div>
 
-          {/* Formulário com react-hook-form */}
-          <form onSubmit={handleSubmit(handleVerificarCodigo)} className="w-1/2">
-            <InputVerificacao
-              length={4}
-              onComplete={handleComplete}  // Passando a função handleComplete
+        {/* Formulário */}
+        <form
+          onSubmit={handleSubmit(handleVerificarCodigo)}
+          className="w-full max-w-xs md:max-w-md"
+        >
+          <InputVerificacao
+            length={4}
+            onComplete={handleComplete}
+            className="mb-6" // Adicione esta prop se o componente aceitar className
+          />
+
+          <div className="flex flex-col items-center gap-4 w-full">
+            <Button
+              texto="Verificar Código"
+              type="submit"
+              cor="var(--laranja)"
+              corTexto="var(--cor-secundaria)"
+              corHover="#ca6333"
+              width="100%"
+              height="40px"
+              fontSize="14px"
             />
 
-            <footer className="flex flex-col h-30 justify-between items-center">
-              <Button
-                texto="Verificar Código"
-                type="submit"
-                cor="var(--laranja)"
-                corTexto="var(--cor-secundaria)"
-                corHover="#ca6333"
-                width="511px"
-                height="50px"
-                fontSize="14px"
-              />
-{/*               <p>
-                Não recebeu o código?{' '}
-                <a href="">Clique para reenviar em [x] segundos</a>
-              </p> */}
-              <a href="/login">Voltar para Login</a>
-            </footer>
-          </form>
-        </div>
+            <a
+              href="/login"
+              className="text-xs md:text-sm text-[var(--cor-primaria)] hover:underline"
+            >
+              Voltar para Login
+            </a>
+          </div>
+        </form>
       </div>
     </section>
   );

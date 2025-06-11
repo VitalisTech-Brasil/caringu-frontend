@@ -36,9 +36,9 @@ const CardAlunoAtivos = ({
                         ) : (
                             <FaUserCircle className="h-[45px] w-[45px] md:h-[62px] md:w-[62px]" />
                         )}
-                        <span className="text-[var(--cor-primaria)] font-semibold text-base sm:text-[28px] lg:text-xl 2xl:text-[28px]">{nome}</span>
+                        <span className="text-[var(--cor-primaria)] font-semibold text-base sm:text-[28px] lg:text-xl">{nome}</span>
                     </div>
-                    <div className="text-[var(--azul-claro)] font-normal text-base sm:text-[28px] lg:text-xl 2xl:text-2xl bg-[#748CAB36] rounded-[15px] h-auto w-auto p-1 2xl:p-3  flex flex-row items-center justify-center text-center">
+                    <div className="text-[var(--azul-claro)] font-normal text-base sm:text-[28px] lg:text-xl bg-[#748CAB36] rounded-[15px] h-auto w-auto p-1 2xl:p-3  flex flex-row items-center justify-center text-center">
                         {nomePlano}
                     </div>
                 </div>
@@ -48,7 +48,7 @@ const CardAlunoAtivos = ({
                         <path d="M6.8667 5.33301H21.8C25.4 5.33301 26.2 7.33301 23.6667 9.86634L22.0667 11.4663C21 12.533 21 14.2663 22.0667 15.1997L23.6667 16.7997C26.2 19.333 25.2667 21.333 21.8 21.333H6.8667" fill="#1D2D44" />
                         <path d="M6.8667 5.33301H21.8C25.4 5.33301 26.2 7.33301 23.6667 9.86634L22.0667 11.4663C21 12.533 21 14.2663 22.0667 15.1997L23.6667 16.7997C26.2 19.333 25.2667 21.333 21.8 21.333H6.8667" stroke="#1D2D44" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    <span className="text-base sm:text-[28px] lg:text-xl 2xl:text-[28px] font-normal text-[var(--cor-primaria)]">{niverExperiencia}</span>
+                    <span className="text-base sm:text-[28px] lg:text-xl font-normal text-[var(--cor-primaria)]">{niverExperiencia}</span>
                 </div>
             </div>
 

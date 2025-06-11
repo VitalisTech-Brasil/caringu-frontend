@@ -1,7 +1,7 @@
 import { React, useState, useEffect, useRef } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import Label from '../../components/Utils/Label'
 import InputEditar from '../../components/Utils/InputEditar'
@@ -34,6 +34,7 @@ const EditarTreino = () => {
     const treinoId = parseInt(id);
     const idPersonal = sessionStorage.getItem('pessoaId');
     const sugestaoRef = useRef(null);
+    const navigate = useNavigate();
 
     // React Hook Form
     const {
@@ -236,6 +237,7 @@ const EditarTreino = () => {
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Treino atualizado com sucesso!" />
             ));
+            navigate("/gerenciar-treinos");
         } catch (error) {
             console.error('Erro ao salvar treino:', error);
             toast.custom((t) => (

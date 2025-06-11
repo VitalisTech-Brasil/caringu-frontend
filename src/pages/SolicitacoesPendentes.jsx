@@ -7,6 +7,8 @@ import { caringuApi } from "../provider/caringuApi";
 import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 import Modal from "../components/Utils/Modal";
 import iconCancelar from "../assets/images/cancelar.png";
+import toast, { Toaster } from "react-hot-toast";
+import CustomToast from "../components/Utils/CustomToast";
 
 
 const SolicitacoesPendentes = () => {
@@ -32,7 +34,7 @@ const SolicitacoesPendentes = () => {
 
             });
             setSolicitacoesPendentes(response.data);
-         } catch (error) {
+        } catch (error) {
             console.error("Erro ao listar solicitações pendentes:", error);
         }
     }
@@ -43,9 +45,12 @@ const SolicitacoesPendentes = () => {
                 `/planos-contratados/${id}/status`,
                 { status },
             );
-             listarSolicitacoesPendentes();
+            listarSolicitacoesPendentes();
             setModalCancelarVisivel(false);
             setSolicitacaoParaCancelar(null);
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Login com Google realizado!" />
+            ));
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
         }
@@ -69,7 +74,7 @@ const SolicitacoesPendentes = () => {
         navigate("/login");
     };
 
-     const handleCancelarSolicitacao = (solicitacaoId) => {
+    const handleCancelarSolicitacao = (solicitacaoId) => {
         setSolicitacaoParaCancelar(solicitacaoId);
         setModalCancelarVisivel(true);
     };
@@ -88,7 +93,7 @@ const SolicitacoesPendentes = () => {
                                 <path d="M21.1331 13.0957L7.72852 26.5003L21.1331 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M45.2717 26.5H8.10547" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            <span className="text-[var(--cor-primaria)] text-xl sm:text-2xl md:text-[28px] xl:text-[32px] font-medium ml-7">
+                            <span className="text-[var(--cor-primaria)] text-xl sm:text-2xl md:text-[28px] font-medium ml-7">
                                 Solicitações de planos pendentes
                             </span>
                         </div>
@@ -120,7 +125,7 @@ const SolicitacoesPendentes = () => {
                         fecharModal={() => setModalCancelarVisivel(false)}
                         titulo="Tem certeza que deseja Cancelar a Solicitação?"
                         descricao="Alteração de status para Cancelado"
-                         onConfirm={() => {
+                        onConfirm={() => {
                             if (solicitacaoParaCancelar) {
                                 atualizarStatus(solicitacaoParaCancelar, "CANCELADO");
                             }
@@ -130,6 +135,7 @@ const SolicitacoesPendentes = () => {
                         textoBotaoCancelar="Cancelar Solicitação"
                         ariaLabel="Modal de Cancelamento"
                     />
+                    <Toaster position='top-right' reverseOrder={false} />
                     {showModal && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
                             <div className="bg-white rounded-lg p-6 max-w-md w-full">

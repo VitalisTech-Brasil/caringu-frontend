@@ -26,17 +26,27 @@ const Cadastro = () => {
     return (
         <>
             <CadastroProvider>
-                <main className={styleCadastro.main}>
-                    <section className={styleCadastro['primeira-coluna']} style={{ backgroundImage: `url(${imagemCadastro})` }}>
+                <main className="flex items-center justify-start h-[100vh] w-full p-[1%]">
+                    <section className="hidden md:block w-[40%] h-full
+                        bg-cover lg:bg-center bg-position-[70%] bg-no-repeat
+                        relative rounded-[1%]
+                        transition-all"
+                        style={{ backgroundImage: `url(${imagemCadastro})` }}>
                         <Link to="/">
-                            <button style={{ cursor: "pointer"}}>
-                                <img className={styleCadastro.logo} src={logoCaringu} alt="Logo da CaringU" />
+                            <button style={{ cursor: "pointer" }}>
+                                <img className="absolute top-5 left-5 w-[15vw] 2xl:w-[10vw] h-auto" src={logoCaringu} alt="Logo da CaringU" />
                             </button>
                         </Link>
                     </section>
 
-                    <section className={styleCadastro['segunda-coluna']}>
-                        <div className={styleCadastro['container-form']}>
+                    <section
+                        className={`
+                            w-full lg:w-[60%] h-full flex
+                            ${etapa === 2 ? 'items-start' : 'items-center'}
+                            justify-center overflow-y-auto sm:py-0 py-4
+                        `}
+                    >
+                        <div className={`${styleCadastro['container-form']} 2xl:h-[95%] h-auto 2xl:w-[85%] w-[90%]`}>
 
                             {etapa === 2 && (
                                 <Etapa2 setEtapa={setEtapa} />

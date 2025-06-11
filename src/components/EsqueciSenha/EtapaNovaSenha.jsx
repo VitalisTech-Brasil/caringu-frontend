@@ -46,23 +46,22 @@ const EtapaNovaSenha = ({ onAvancar }) => {
   };
 
   return (
-    <section className='flex justify-center items-center h-screen w-1/2'>
+    <section className='flex justify-center items-center h-screen w-full xl:w-1/2 px-2'>
       <div className='flex justify-center items-center h-full w-full'>
-        <div className='flex justify-center items-center w-full h-150 flex-col gap-10'>
-          <div className='flex w-100 items-center justify-between'>
-            <div className='bg-[var(--azul-claro)] rounded-full h-3 w-25'></div>
-            <div className='bg-[var(--azul-claro)] rounded-full h-3 w-25'></div>
-            <div className='bg-[var(--cor-primaria)] rounded-full h-3 w-25'></div>
+        <div className='flex flex-col justify-center items-center w-full h-150 gap-20 max-[700px]:h-auto max-[700px]:gap-6 py-4'>
+          <div className="flex w-full max-w-[400px] items-center justify-center gap-10">
+            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
+            <div className="bg-[var(--azul-claro)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
+            <div className="bg-[var(--cor-primaria)] rounded-full h-3 w-1/4 max-[500px]:w-[60px]"></div>
           </div>
-          <div className='text-[var(--cor-primaria)] h-20 w-2/3 text-center flex-col justify-end'>
-            <h1 className=' text-[48px]'>Escolha uma nova senha</h1>
-            <p>Sua nova senha deve ter pelo menos 6 caracteres.</p>
+          <div className='text-[var(--cor-primaria)] h-20 w-2/3 max-[700px]:w-[90%] text-center flex-col justify-end'>
+            <h1 className='text-[48px] max-[700px]:text-[28px]'>Escolha uma nova senha</h1>
+            <p className='max-[700px]:text-sm'>Sua nova senha deve ter pelo menos 6 caracteres.</p>
           </div>
 
-          <form onSubmit={handleSubmit(handleAlterarSenha)} className='h-1/2 w-1/2 m-5'>
+          <form onSubmit={handleSubmit(handleAlterarSenha)} className='h-1/2 w-1/2 m-5 max-[700px]:w-[95%] max-[700px]:m-2'>
             <div className={styleCadastro["input-senha"]}>
-
-              <div className={styleCadastro["input-container"]}>
+              <div className={`${styleCadastro["input-container"]} `}>
                 <input
                   type={showSenha ? "text" : "password"}
                   id="senha"
@@ -99,7 +98,6 @@ const EtapaNovaSenha = ({ onAvancar }) => {
                   className={styleCadastro.underline}
                   style={{ marginBottom: errors.senha ? "0px" : "0px" }}
                 >
-
                 </div>
               </div>
 
@@ -171,12 +169,10 @@ const EtapaNovaSenha = ({ onAvancar }) => {
                   )}
                   <span>Mínimo de 1 número.</span>
                 </div>
-
               </div>
             </div>
 
             <div className={[styleCadastro['input-confirmarSenha'], "mb-7 mt-10"].join(" ")}>
-
               <div className={styleCadastro['input-container']}>
                 <input
                   type={showConfirmarSenha ? "text" : "password"}
@@ -210,7 +206,6 @@ const EtapaNovaSenha = ({ onAvancar }) => {
                   <span>{errors.confirmarSenha.message}</span>
                 </div>
               )}
-
             </div>
 
             <footer className='flex flex-col h-30 justify-between items-center'>
@@ -220,11 +215,12 @@ const EtapaNovaSenha = ({ onAvancar }) => {
                 cor="var(--laranja)"
                 corTexto="var(--cor-secundaria)"
                 corHover="#ca6333"
-                width="511px"
+                width="100%"
                 height="50px"
                 fontSize="14px"
+                className="max-[700px]:w-full"
               />
-              <a href="/Login">Voltar para Login</a>
+              <a href="/Login" className="mt-2 text-sm">Voltar para Login</a>
             </footer>
           </form>
         </div>
