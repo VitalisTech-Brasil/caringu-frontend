@@ -193,6 +193,22 @@ const GerenciarExercicios = () => {
         setModalDeletarVisivel(true);
     };
 
+    const atualizarKPIs = async () => {
+        try {
+            const response = await caringuApi.get("/exercicios/kpi/total-por-origem");
+            const data = response.data;
+
+            const kpi = {
+                kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
+                kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
+            };
+
+            setTotalExerciciosKpi(kpi);
+        } catch (err) {
+            console.error("Erro ao buscar KPI de exercícios:", err);
+        }
+    };
+
     const confirmDelete = () => {
         if (!exercicioSelecionado) return;
 
@@ -204,7 +220,7 @@ const GerenciarExercicios = () => {
                 setExercicioSelecionado(null);
 
                 toast.success("Exercício deletado com sucesso!");
-                window.location.reload(true);
+                atualizarKPIs();
             })
             .catch((err) => {
                 console.error("Erro ao deletar exercício:", err);
@@ -234,7 +250,7 @@ const GerenciarExercicios = () => {
 
             setExercicios((prev) => [...prev, response.data]);
             setShowCreateModal(false);
-            window.location.reload(true);
+            atualizarKPIs();
         } catch (error) {
             console.error("Erro ao criar exercício:", error);
             toast.error("Erro ao criar exercício. Verifique os dados e tente novamente.");
@@ -252,8 +268,12 @@ const GerenciarExercicios = () => {
 
             toast.success("Exercício atualizado com sucesso!");
 
+            setExercicios(prev => prev.map(ex =>
+                ex.id === exercicioSelecionado.id ? response.data : ex
+            ));
+
             setShowEditModal(false);
-            window.location.reload(true);
+            atualizarKPIs();
         } catch (error) {
             console.error("Erro ao atualizar o exercício:", error);
             toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
