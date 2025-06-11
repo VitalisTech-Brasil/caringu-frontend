@@ -36,13 +36,13 @@ const EtapaCodigo = ({ onAvancar }) => {
     handleVerificarCodigo(codigo);  // Chama a função de verificação
   };
 
-  // useEffect(() => {
-  //   if (!email) {
-  //     alert('Email não encontrado. Por favor, forneça um email primeiro.');
-  //      // Redireciona de volta para a página anterior
-  //     window.location.href = '/esqueci-senha';
-  //   }
-  // }, [email]);
+  useEffect(() => {
+    if (!email) {
+      alert('Email não encontrado. Por favor, forneça um email primeiro.');
+       // Redireciona de volta para a página anterior
+      window.location.href = '/esqueci-senha';
+    }
+  }, [email]);
 
   return (
     <section className="flex justify-center items-center min-h-screen w-full xl:w-1/2 px-4 py-8">
