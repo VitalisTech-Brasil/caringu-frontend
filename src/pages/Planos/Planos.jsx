@@ -301,7 +301,7 @@ const Planos = () => {
                                     logo={relogioIcon}
                                     width="53%"
                                     height="50px"
-                                    color="#1D2D441C"
+                                    cor="var(--cor-secundaria)"
                                     corTexto="var(--cor-primaria)"
                                     borderStyle="solid"
                                     borderWidth="2px"
@@ -309,7 +309,6 @@ const Planos = () => {
                                     ariaLabel="Botão de Soluções Pendentes"
                                     fontSize={fontSize}
                                     fontWeight="300"
-                                    corHover="#1D2D4417"
                                     onClick={() => navigate("/solicitacoes-pendentes")}
                                 >
                                 </Button>
@@ -322,11 +321,10 @@ const Planos = () => {
                                     ariaLabel="Botão de Criar Plano"
                                     height="50px"
                                     width={width}
-                                    color="#1D2D441C"
+                                    cor="var(--cor-secundaria)"
                                     corTexto="var(--cor-primaria)"
                                     fontSize={fontSize}
                                     fontWeight="300"
-                                    corHover="#1D2D4417"
                                     onClick={handleOpenModal}
                                 >
                                 </Button>
@@ -545,7 +543,6 @@ const Planos = () => {
                                                 cor="#B41F1F"
                                                 height="2.75rem"
                                                 width="13.25rem"
-                                                corHover="#B41F1F"
                                                 fontWeight="500"
                                                 ariaLabel={"Botão de Cancelar"}
                                                 type="button"
@@ -559,7 +556,6 @@ const Planos = () => {
                                                 cor="#46982B"
                                                 height="2.75rem"
                                                 width="9.2rem"
-                                                corHover="#46982BE5"
                                                 fontWeight="600"
                                                 ariaLabel={"Botão de Salvar"}
                                             >
@@ -736,7 +732,6 @@ const Planos = () => {
                                                 cor="#B41F1F"
                                                 height="2.75rem"
                                                 width="13.25rem"
-                                                corHover="#B41F1F"
                                                 fontWeight="500"
                                                 type="button"
                                                 ariaLabel={"Botão de Cancelar"}
@@ -750,7 +745,6 @@ const Planos = () => {
                                                 cor="#46982B"
                                                 height="2.75rem"
                                                 width="9.2rem"
-                                                corHover="#46982BE5"
                                                 fontWeight="600"
                                                 ariaLabel={"Botão de Salvar"}
                                             >

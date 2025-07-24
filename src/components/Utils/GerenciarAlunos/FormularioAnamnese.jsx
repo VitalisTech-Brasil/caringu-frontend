@@ -234,7 +234,6 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
             cor="var(--cor-secundaria)"
             height="2.75rem"
             width="13.25rem"
-            corHover="#1D2D4417"
             fontWeight="500"
             aria-label="Botão de Cancelar"
             type="button"
@@ -246,7 +245,6 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
             cor="#46982B"
             height="2.75rem"
             width="9.2rem"
-            corHover="#46982BE5"
             fontWeight="600"
             aria-label={"Botão de Salvar"}
           />

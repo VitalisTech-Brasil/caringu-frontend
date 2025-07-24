@@ -70,7 +70,6 @@ export default function HomePage() {
               texto="Entrar"
               cor="var(--laranja)"
               corTexto="var(--cor-secundaria)"
-              corHover="#ca6333"
               width="80px"
               height="40px"
               fontSize="14px"
@@ -88,7 +87,7 @@ export default function HomePage() {
           <p className="text-[24px] mb-8 max-w-160 max-[700px]:text-[20px] max-[525px]:text-[16px] max-[500px]:w-[370px] max-[425px]:w-[300px]">
             A CaringU facilita a gestão, conecta você a novos alunos e otimiza a comunicação, permitindo focar no que importa: Transformar vidas através do treino.
           </p>
-          <Link to="/cadastro"><Button texto="Cadastre-se" cor="var(--laranja)" corTexto="var(--cor-secundaria)" corHover="#ca6333" width="200px" height="50px" fontSize="18px" /></Link>
+          <Link to="/cadastro"><Button texto="Cadastre-se" cor="var(--laranja)" corTexto="var(--cor-secundaria)" width="200px" height="50px" fontSize="18px" /></Link>
         </div>
       </section>
       <section id="sobre" className="h-screen w-full bg-[var(--cor-secundaria)]">

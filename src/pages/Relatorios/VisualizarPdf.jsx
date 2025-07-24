@@ -421,7 +421,6 @@ const VisualizarPdf = () => {
                     width={"50%"}
                     height={"50px"}
                     fontSize={fontSize}
-                    corHover={"#E6E6E2"}
                     cor={"#FFFDF6"}
                     onClick={exportarParaPDF}
 

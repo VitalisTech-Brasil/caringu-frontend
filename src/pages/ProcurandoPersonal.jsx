@@ -1004,7 +1004,6 @@ const ProcurandoPersonal = () => {
                       cor="#B41F1F"
                       height="2.75rem"
                       width="13.25rem"
-                      corHover="#B41F1F"
                       fontWeight="500"
                       ariaLabel={"Botão de Cancelar"}
                       type="button"
@@ -1018,7 +1017,6 @@ const ProcurandoPersonal = () => {
                       cor="#46982B"
                       height="2.75rem"
                       width="9.2rem"
-                      corHover="#46982BE5"
                       fontWeight="600"
                       ariaLabel={"Botão de Salvar"}
                       type="submit"

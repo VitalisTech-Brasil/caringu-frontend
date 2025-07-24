@@ -138,7 +138,7 @@ const ColunaInputs = () => {
               name="email"
               type="email"
               label="Email"
-              marginBottomLinha="5.5%"
+              marginBottomLinha="1.55rem"
               margin="50px auto 0px 0px"
               corBordaInput={"#ccc"}
               {...register('email', { required: 'Email é obrigatório' })}
@@ -150,7 +150,7 @@ const ColunaInputs = () => {
               name="senha"
               type="password"
               label="Senha"
-              marginBottomLinha="5.5%"
+              marginBottomLinha="1.55rem"
               margin="50px auto 0px 0px"
               corBordaInput={"#ccc"}
               {...register('senha', { required: 'Senha é obrigatória' })}
@@ -168,7 +168,6 @@ const ColunaInputs = () => {
             type="submit"
             cor="var(--azul-claro)"
             corTexto="var(--cor-secundaria)"
-            corHover="#677e9c"
             width="100%"
             height="12.15%"
             font-size="14px"
@@ -180,7 +179,6 @@ const ColunaInputs = () => {
             type="button"
             cor="var(--azul-escuro)"
             corTexto="var(--cor-secundaria)"
-            corHover="var(--cor-primaria)"
             width="100%"
             height="12.15%"
             font-size="14px"

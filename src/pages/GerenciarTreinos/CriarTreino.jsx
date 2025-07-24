@@ -389,7 +389,6 @@ const CriarTreino = () => {
                                         cor="#46982B"
                                         height="2.75rem"
                                         width="9.2rem"
-                                        corHover="#46982BE5"
                                         fontWeight="600"
                                         aria-label={"Botão de Salvar"}
                                     />

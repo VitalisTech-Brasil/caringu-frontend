@@ -489,7 +489,6 @@ const GerenciarExercicios = () => {
                                 texto="Criar Exercício"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
-                                corHover="#F9FAFB"
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
@@ -670,7 +669,6 @@ const GerenciarExercicios = () => {
                                                     cor="var(--cor-secundaria)"
                                                     height="2.75rem"
                                                     width="13.25rem"
-                                                    corHover="#1D2D4417"
                                                     fontWeight="500"
                                                     aria-label={"Botão de Cancelar"}
                                                     onClick={() => setModalConfirmarCancelarVisivel(true)}
@@ -681,7 +679,6 @@ const GerenciarExercicios = () => {
                                                     cor="#46982B"
                                                     height="2.75rem"
                                                     width="9.2rem"
-                                                    corHover="#46982BE5"
                                                     fontWeight="600"
                                                     aria-label={"Botão de Salvar"}
                                                 />

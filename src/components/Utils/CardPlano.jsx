@@ -136,7 +136,7 @@ const CardPlano = ({
                           width="110px"
                           fontSize="16px"
                           fontWeight="400"
-                          color="var(--cor-primaria)"
+                          cor="var(--cor-secundaria)"
                         >
                         </Button>
 
@@ -260,7 +260,6 @@ const CardPlano = ({
                   id={"btn-contratar-plano"}
                   texto={textoBotao}
                   cor="var(--azul-claro)"
-                  corHover="none"
                   corTexto="#fff"
                   width="100%"
                   height={height}

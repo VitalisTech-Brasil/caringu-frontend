@@ -54,7 +54,7 @@ const MenuFiltro = ({
             <button
                 ref={buttonRef}
                 onClick={handleToggle}
-                className={`flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200 ${buttonClass}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-[5px]  hover:bg-gray-300 transition duration-200 ${buttonClass}`}
             >
                 {buttonIcon}
             </button>
@@ -68,7 +68,7 @@ const MenuFiltro = ({
                         left: rect.left + rect.width - parseInt(menuWidth),
                         width: menuWidth,
                     }}
-                    className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-[9999]"
+                    className=" bg-[var(--cor-secundaria)] border border-gray-200 rounded-md shadow-lg p-2 z-[9999]"
                 >
                     <div className="flex flex-col gap-2">
                         {options.map((opt) => {
@@ -119,7 +119,7 @@ const MenuFiltro = ({
                                         borderColor={"rgba(29, 45, 68, 0.11)"}
                                         height={"55px"}
                                         width={opt.width || "100%"}
-                                        cor={opt.active ? "#748CAB" : "#ffffff"}
+                                        cor={opt.active ? "#748CAB" : "#fffdf6"}
                                         corTexto={opt.active ? "#ffffff" : "#000000"}
                                         onClick={opt.onClick}
                                         classNameExtra={opt.className || ""}

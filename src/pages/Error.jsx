@@ -21,7 +21,6 @@ const Error = () => {
                     texto="Ir para a tela inicial"
                     cor="var(--azul-claro)"
                     corTexto="var(--cor-secundaria)"
-                    corHover="#1D2D44"
                     width="250px"
                     height="50px"
                     fontSize="20px"

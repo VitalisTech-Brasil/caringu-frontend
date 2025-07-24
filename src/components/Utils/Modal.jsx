@@ -71,7 +71,6 @@ function Modal({
                   cor="#B41F1F"
                   height="2.75rem"
                   width="13.25rem"
-                  corHover="#B41F1F"
                   fontWeight="500"
                   onClick={onConfirm}
                   ariaLabel={"Botão de Cancelar"}
@@ -84,7 +83,6 @@ function Modal({
                   cor="#46982B"
                   height="2.75rem"
                   width="9.2rem"
-                  corHover="#46982BE5"
                   fontWeight="600"
                   onClick={fecharModal}
                   ariaLabel={"Botão de Confirmar"}

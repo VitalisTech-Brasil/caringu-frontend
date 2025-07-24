@@ -251,7 +251,6 @@ const RelatorioTreinos = () => {
                                             type="submit"
                                             cor="transparent"
                                             corTexto="var(--cor-primaria)"
-                                            corHover="var(--cor-primaria)"
                                             width="268px"
                                             height="50px"
                                             font-size="20px"

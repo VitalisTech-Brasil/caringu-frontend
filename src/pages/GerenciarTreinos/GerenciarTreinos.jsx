@@ -466,7 +466,6 @@ const GerenciarTreinos = () => {
                                 texto="Criar Treino"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
-                                corHover="#F9FAFB"
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
@@ -489,7 +488,6 @@ const GerenciarTreinos = () => {
                                 texto="Atribuir Treinos"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
-                                corHover="#F9FAFB"
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
@@ -864,7 +862,6 @@ const GerenciarTreinos = () => {
                                                             type="submit"
                                                             cor="#748CAB"
                                                             corTexto="#ffffff"
-                                                            corHover="#677e9c"
                                                             width="40%"
                                                             height="50px"
                                                             font-size="14px"
@@ -881,7 +878,6 @@ const GerenciarTreinos = () => {
                                                     cor="var(--cor-secundaria)"
                                                     height="2.75rem"
                                                     width="13.25rem"
-                                                    corHover="#1D2D4417"
                                                     fontWeight="500"
                                                     aria-label={"Botão de Cancelar"}
                                                     onClick={() => setModalConfirmarCancelarVisivel(true)}
@@ -894,7 +890,6 @@ const GerenciarTreinos = () => {
                                                     cor="#46982B"
                                                     height="2.75rem"
                                                     width="9.2rem"
-                                                    corHover="#46982BE5"
                                                     fontWeight="600"
                                                     aria-label={"Botão de Salvar"}
                                                     onClick={handleSalvarTodos}

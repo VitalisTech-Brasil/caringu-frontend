@@ -82,7 +82,6 @@ const EtapaCodigo = ({ onAvancar }) => {
               type="submit"
               cor="var(--laranja)"
               corTexto="var(--cor-secundaria)"
-              corHover="#ca6333"
               width="100%"
               height="40px"
               fontSize="14px"

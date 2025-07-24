@@ -123,7 +123,6 @@ const ModalCriarExercicio = ({ onClose, onSubmit, isVisible, setModalConfirmarCa
                                 cor="var(--cor-secundaria)"
                                 height="2.75rem"
                                 width="13.25rem"
-                                corHover="#1D2D4417"
                                 fontWeight="500"
                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
                             />
@@ -133,7 +132,6 @@ const ModalCriarExercicio = ({ onClose, onSubmit, isVisible, setModalConfirmarCa
                                 cor="#46982B"
                                 height="2.75rem"
                                 width="9.2rem"
-                                corHover="#46982BE5"
                                 fontWeight="600"
                             />
                         </div>
