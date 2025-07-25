@@ -396,7 +396,7 @@ const GerenciarAlunos = () => {
                           e.stopPropagation(); // Prevent card click event
                           setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
                         }}
-                        className="pt-2 sm:pt-0 flex justify-end items-center rounded-[5px] cursor-pointer hover:bg-gray-300 transition duration-200">
+                        className="pt-2 sm:pt-0 flex justify-end items-center rounded-[5px] cursor-pointer sm:hover:bg-gray-300 transition duration-200">
                         <div className="relative" ref={buttonRef}>
                           <button
                             className="flex items-center justify-center sm:w-8 w-4 sm:h-8 h-4 cursor-pointer"

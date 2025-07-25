@@ -316,7 +316,7 @@ const CriarTreino = () => {
                                                 onBlur={() => setSelectAberto(false)}
                                                 className="appearance-none peer text-base w-full pt-2 pb-1 pr-[1%] pl-[1%] border-b-2 border-[var(--cor-primaria)] text-[#333] transition-all"
                                             >
-                                                <option disabled className="text-[#15171B87]" value="">Selecione o grau de dificuldade</option>
+                                                <option disabled className="text-[#15171B87]" value="">Selecione a dificuldade</option>
                                                 <option value="1">Iniciante</option>
                                                 <option value="2">Intermediário</option>
                                                 <option value="3">Avançado</option>

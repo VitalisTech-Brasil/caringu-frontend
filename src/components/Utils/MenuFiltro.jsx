@@ -94,10 +94,11 @@ const MenuFiltro = ({
                                             <Dropdown
                                                 label={labelText}
                                                 inline
-                                                className="!w-auto"
+                                                className="!w-auto !bg-[var(--cor-secundaria)]"
                                             >
                                                 {opt.items.map((item) => (
                                                     <DropdownItem
+                                                        className="filter bg-[var(--cor-secundaria)] !text-[var(--cor-primaria)] hover:!bg-gray-200 hover:!text-[var(--cor-primaria)]"
                                                         key={item.value}
                                                         onClick={() => opt.onSelect(item.value)}
                                                     >
