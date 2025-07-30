@@ -301,6 +301,22 @@ const GerenciarTreinos = () => {
         </div>
     );
 
+        function useMenuWidth() {
+            const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
+    
+            useEffect(() => {
+                const handleResize = () => {
+                    setWidth(window.innerWidth >= 640 ? "300px" : "235px");
+                };
+                window.addEventListener("resize", handleResize);
+                return () => window.removeEventListener("resize", handleResize);
+            }, []);
+    
+            return width;
+        }
+    
+        const menuWidth = useMenuWidth();
+
     return (
         <div className="flex min-h-screen bg-[#fdfbf7]">
             <MenuLateral />
@@ -318,7 +334,7 @@ const GerenciarTreinos = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <MenuFiltro
-                                menuWidth="300px"
+                                menuWidth={menuWidth}
                                 buttonIcon={
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"

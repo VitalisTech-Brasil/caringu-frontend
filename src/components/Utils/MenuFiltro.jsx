@@ -63,9 +63,9 @@ const MenuFiltro = ({
                 <div
                     onClick={(e) => e.stopPropagation()}
                     style={{
-                        position: "fixed",
-                        top: rect.top + rect.height + 8,
-                        left: rect.left + rect.width - parseInt(menuWidth),
+                        position: "absolute",
+                        top: buttonRef.current ? buttonRef.current.offsetTop + buttonRef.current.offsetHeight + 8 : 0,
+                        left: buttonRef.current ? buttonRef.current.offsetLeft + buttonRef.current.offsetWidth - parseInt(menuWidth) : 0,
                         width: menuWidth,
                     }}
                     className=" bg-[var(--cor-secundaria)] border border-gray-200 rounded-md shadow-lg p-2 z-[9999]"
@@ -80,7 +80,7 @@ const MenuFiltro = ({
                                 return (
                                     <div
                                         key={opt.id}
-                                        className="border-[2px] flex items-center p-3 h-[55px] min-w-[120px] gap-2"
+                                        className="border-[2px] flex items-center p-3 h-20 sm:h-[55px] min-w-[120px] gap-2"
                                         style={{
                                             borderColor: "rgba(29, 45, 68, 0.11)",
                                             width: dynamicWidths[opt.id] || "fit-content",

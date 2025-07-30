@@ -1,20 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
-import { FaEllipsisV } from "react-icons/fa";
-import { Popover, Button } from "flowbite-react"; // Certifique-se de que Modal está correto
-import ButtonInterno from "../../components/Utils/Button"; // Certifique-se de que ButtonInterno está correto
-import { HiOutlineFilter } from "react-icons/hi";
+import ButtonInterno from "../../components/Utils/Button";
 import { useParams, useNavigate } from "react-router-dom";
 import iconCancelar from "../../assets/images/cancelar.png";
-import Modal from "../../components/Utils/Modal.jsx"; // Certifique-se de que o caminho está correto
+import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import { useForm } from "react-hook-form";
 import InputPosLogin from "../../components/Utils/InputPosLogin";
 import Label from "../../components/Utils/Label";
 import info2 from "../../assets/images/info-2.svg";
 import MenuFiltro from "../../components/Utils/MenuFiltro";
-import { icons } from "lucide-react";
 import { caringuApi } from "../../provider/caringuApi.js";
 import ExercicioCard from "../../components/Utils/GerenciarExercicios/ExercicioCard.jsx";
 import toast, { Toaster } from "react-hot-toast";
@@ -281,7 +277,7 @@ const GerenciarExercicios = () => {
     }
 
     const ExercicioActionsMenu = ({ exercicio }) => (
-        <div className="flex flex-col text-sm font-medium w-full p-1">
+        <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
             <button
                 className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
                 onClick={() => handleEditarExercicio(exercicio)}
@@ -306,24 +302,22 @@ const GerenciarExercicios = () => {
         </div>
     );
 
-    const isAnyFilterActive = [
-        origemFilter,
-        grupoMuscularFilter,
-        difficultyFilter,
-        showOnlyFavorites
-    ].some(Boolean);
+    function useMenuWidth() {
+        const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
 
-    const handleClearFilters = () => {
-        setOrigemFilter("");
-        setGrupoMuscularFilter("");
-        setDifficultyFilter("");
-        setShowOnlyFavorites(false);
-        setSearchTerm("");
+        useEffect(() => {
+            const handleResize = () => {
+                setWidth(window.innerWidth >= 640 ? "280px" : "235px");
+            };
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
 
-        // Zera também os selecionados dos dropdowns
-        setOrigemSelecionada("");
-        setGrupoMuscularSelecionado("");
-    };
+        return width;
+    }
+
+    const menuWidth = useMenuWidth();
+
 
     return (
         <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -332,9 +326,9 @@ const GerenciarExercicios = () => {
                 <Header />
 
                 {/* <div className="flex flex-col justify-center items-center w-full"> */}
-                <div className="flex flex-col md:flex-row items-center justify-center gap-5 md:gap-5 lg:gap-30 w-full my-5 md:my-10">
-                    <div className="border border-[#E6E6E2] rounded-md w-90 md:w-80 lg:w-100 lg:h-1/4 h-25 grid grid-cols-3 justify-center items-center p-5">
-                        <svg className="col-span-1 max-w-15 max-h-15" viewBox="0 0 83 83" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-5 md:gap-10 lg:gap-20 w-full my-5 md:my-10 sm:px-8 px-4">
+                    <div className="border border-[#E6E6E2] rounded-md  w-full sm:w-90 md:w-80 lg:w-100 lg:h-1/4 h-25 grid grid-cols-3 justify-center items-center p-5">
+                        <svg className="col-span-1 max-w-15 max-h-15 md:max-w-15 sm:max-w-12 md:max-h-15 sm:max-h-12" viewBox="0 0 83 83" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="41.5" cy="41.5" r="41.5" fill="#748CAB" fillOpacity="0.21" />
                             <path d="M55.8693 29.4697H58.8262C59.6423 29.4697 60.3046 30.3064 60.3046 31.3372V50.0122C60.3046 51.0431 59.6423 51.8797 58.8262 51.8797H55.8693C55.0532 51.8797 54.3909 51.0431 54.3909 50.0122V31.3372C54.3909 30.3064 55.0532 29.4697 55.8693 29.4697Z" stroke="#748CAB" strokeWidth="3" />
                             <path d="M49.9555 22H52.9124C53.7285 22 54.3908 22.8366 54.3908 23.8675V57.4825C54.3908 58.5134 53.7285 59.35 52.9124 59.35H49.9555C49.1394 59.35 48.4771 58.5134 48.4771 57.4825V23.8675C48.4771 22.8366 49.1394 22 49.9555 22Z" stroke="#748CAB" strokeWidth="3" />
@@ -344,39 +338,42 @@ const GerenciarExercicios = () => {
                             <path d="M33.6926 40.6748H48.477" stroke="#748CAB" strokeWidth="3" />
                             <path d="M17.4299 40.6748H21.8652" stroke="#748CAB" strokeWidth="3" />
                         </svg>
-                        <div className="col-span-2 flex-col">
+                        <div className="col-span-2 flex flex-col w-full justify-start items-start">
                             <h1 className="font-semibold">Exercícios Criados</h1>
-                            {totalExerciciosKpi.kpiPersonal.totalExercicio}
+                            <span className="flex w-full flex-row justify-start">{totalExerciciosKpi.kpiPersonal.totalExercicio}</span>
                         </div>
                     </div>
-                    <div className="border border-[#E6E6E2] rounded-md w-90 md:w-80 lg:w-100 lg:h-1/4 h-25 grid grid-cols-3 justify-center items-center p-5">
-                        <svg className="col-span-1 max-w-15 max-h-15" viewBox="0 0 83 83" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div className="border border-[#E6E6E2] rounded-md w-full sm:w-90 md:w-80 lg:w-100 lg:h-1/4 h-25 grid grid-cols-3 justify-center items-center p-5">
+                        <svg className="col-span-1 max-w-15 max-h-15 md:max-w-15 sm:max-w-12 md:max-h-15 sm:max-h-12" viewBox="0 0 83 83" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="41.5" cy="41.5" r="41.5" fill="#E96E35" fillOpacity="0.31" />
                             <path d="M38.0418 30.2946H44.9585C48.4168 30.2946 48.4168 28.5654 48.4168 26.8363C48.4168 23.3779 46.6877 23.3779 44.9585 23.3779H38.0418C36.3127 23.3779 34.5835 23.3779 34.5835 26.8363C34.5835 30.2946 36.3127 30.2946 38.0418 30.2946Z" stroke="#E96E35" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M48.4167 26.8711C54.1748 27.1823 57.0625 29.3092 57.0625 37.2115V47.5865C57.0625 54.5032 55.3333 57.9615 46.6875 57.9615H36.3125C27.6667 57.9615 25.9375 54.5032 25.9375 47.5865V37.2115C25.9375 29.3265 28.8252 27.1823 34.5833 26.8711" stroke="#E96E35" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                        <div className="col-span-2 flex-col">
+                        <div className="col-span-2 flex-col w-full">
                             <h1 className="font-semibold">Exercícios da Biblioteca</h1>
-                            {totalExerciciosKpi.kpiBiblioteca.totalExercicio}
+                            <span className="flex w-full flex-row justify-start">{totalExerciciosKpi.kpiBiblioteca.totalExercicio}</span>
                         </div>
                     </div>
                 </div>
-                <div className="bg-[var(--cor-secundaria)] rounded-lg p-6 md:p-6 border border-[#E6E6E2] max-h-[70%] md:h-[85%] mx-8">
+                <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] h-[85%] mx-8">
                     <h1 className="text-zinc-900 md:text-3xl font-semibold font-['Inter']">Gerenciamento de Exercícios</h1>
-                    <div className="flex flex-wrap md:flex-nowrap items-start md:items-center gap-4 mt-5 justify-between w-full">
+                    <div className="flex flex-wrap md:flex-nowrap items-start md:items-center gap-2 mt-5 justify-between w-full">
 
-                        {/* Campo de pesquisa + filtros */}
-                        <div className="flex flex-wrap md:flex-nowrap gap-2 w-full md:w-2/3">
+                        {/* Campo de pesquisa */}
+                        <div className="flex flex-row w-full">
                             <input
                                 type="text"
                                 placeholder="Pesquisar exercício"
-                                className="flex-grow border border-gray-300 rounded-md p-2 min-w-[200px] md:min-w-[250px]"
+                                className="flex-grow border border-gray-300 rounded-md p-2 w-full"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
+                        </div>
 
+                        {/* Botão "Criar exercício" + filtro*/}
+                        <div className="w-full md:w-auto flex flex-row-reverse md:flex-row items-center justify-end">
                             <MenuFiltro
-                                menuWidth="280px"
+                                menuWidth={menuWidth}
                                 buttonIcon={
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -405,21 +402,42 @@ const GerenciarExercicios = () => {
                                     {
                                         id: "az",
                                         label: "A-Z",
-                                        width: '50%',
                                         active: sortOrder === "A-Z",
                                         onClick: () => setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z")),
+                                        icon: <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className={`w-7 ${sortOrder === "A-Z" ? "stroke-white" : "stroke-black"}`}
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                        >                            <path d="M10.4498 6.71997L6.72974 3L3.00977 6.71997" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M6.72949 21V3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M13.5498 17.2803L17.2698 21.0002L20.9898 17.2803" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M17.2695 3V21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>,
+                                        width: "50%",
                                     },
                                     {
                                         id: "za",
                                         label: "Z-A",
-                                        width: '50%',
                                         active: sortOrder === "Z-A",
                                         onClick: () => setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A")),
+                                        icon: <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className={`w-7 ${sortOrder === "Z-A" ? "stroke-white" : "stroke-black"}`}
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                        >
+                                            <path d="M10.4498 6.71997L6.72974 3L3.00977 6.71997" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M6.72949 21V3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M13.5498 17.2803L17.2698 21.0002L20.9898 17.2803" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M17.2695 3V21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>,
+                                        width: "50%",
                                     },
                                     {
                                         id: "favoritos",
                                         label: "Favoritos",
-                                        width: "55%",
+                                        width: "65%",
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
                                                 <path d="M20.0229 5.11885L22.5896 10.2522C22.9396 10.9668 23.8729 11.6522 24.6604 11.7834L29.3125 12.5563C32.2875 13.0522 32.9875 15.2105 30.8437 17.3397L27.2271 20.9563C26.6146 21.5688 26.2792 22.7501 26.4687 23.5959L27.5042 28.073C28.3208 31.6168 26.4396 32.9876 23.3042 31.1355L18.9437 28.5543C18.1562 28.0876 16.8583 28.0876 16.0562 28.5543L11.6958 31.1355C8.57499 32.9876 6.67916 31.6022 7.49582 28.073L8.53124 23.5959C8.72082 22.7501 8.38541 21.5688 7.77291 20.9563L4.15624 17.3397C2.02707 15.2105 2.71249 13.0522 5.68749 12.5563L10.3396 11.7834C11.1125 11.6522 12.0458 10.9668 12.3958 10.2522L14.9625 5.11885C16.3625 2.33343 18.6375 2.33343 20.0229 5.11885Z" stroke="#E96E35" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -454,7 +472,7 @@ const GerenciarExercicios = () => {
                                     {
                                         type: "dropdown",
                                         id: "grupoMuscular",
-                                        label: "Grupo muscular",
+                                        label: "Grupo Muscular",
                                         selected: grupoMuscularSelecionado,
                                         active: grupoMuscularFilter === grupoMuscularSelecionado,
                                         icon:
@@ -480,10 +498,6 @@ const GerenciarExercicios = () => {
 
                                 ]}
                             />
-                        </div>
-
-                        {/* Botão "Criar exercício" */}
-                        <div className="w-full md:w-auto flex justify-end">
                             <ButtonInterno
                                 classNameExtra="p-4 w-full md:w-auto"
                                 texto="Criar Exercício"
@@ -506,7 +520,7 @@ const GerenciarExercicios = () => {
                             />
                         </div>
                     </div>
-                    <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-70 md:max-h-[75%] overflow-y-auto mt-5 border border-[#E6E6E2]">
+                    <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-[70%] md:max-h-[75%] overflow-y-auto mt-5 border border-[#E6E6E2]">
                         {filteredExercicios.map((exercicio) => (
                             <ExercicioCard
                                 key={exercicio.id}
@@ -664,9 +678,9 @@ const GerenciarExercicios = () => {
                                             <div className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                                 <ButtonInterno
                                                     texto="Cancelar"
-                                                    corTexto="#B41F1F"
+                                                    corTexto="var(--cor-secundaria)"
                                                     type="button"
-                                                    cor="var(--cor-secundaria)"
+                                                    cor="#B41F1F"
                                                     height="2.75rem"
                                                     width="13.25rem"
                                                     fontWeight="500"
