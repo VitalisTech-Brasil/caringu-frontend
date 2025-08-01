@@ -36,7 +36,7 @@ const Perfil = () => {
             
             <MenuLateral isOpen={true} />
 
-            <div className="flex-1 flex flex-col w-full">
+            <div className="flex-1 flex flex-col w-full overflow-y-auto">
                 {/* Cabeçalho */}
                 <Header />
 
