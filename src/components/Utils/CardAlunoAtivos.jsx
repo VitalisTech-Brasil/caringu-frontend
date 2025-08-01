@@ -23,9 +23,9 @@ const CardAlunoAtivos = ({
     return (
         <>
             <div id={idAlunos}
-                className="w-[85%] sm:w-[90%] h-[9.5rem] rounded-md border-[2px] border-[#1D2D441C] border-solid flex flex-col justify-around items-start ml-10 p-2 pr-[3rem]">
-                <div className="flex flex-row items-center justify-between w-full h-auto pl-2">
-                    <div className="flex flex-row items-center gap-6">
+                className="w-[85%] sm:w-[90%] h-auto rounded-md border-[2px] border-[#1D2D441C] border-solid flex flex-col justify-around items-start pl-[1rem] sm:pl-0 ml-[1rem] sm:ml-10 p-2 pr-[3rem] sm:gap-0 gap-2">
+                <div className="flex flex-col md:flex-row md:items-center items-start justify-between w-full h-auto pl-2 gap-2 sm:gap-4 md:gap-0">
+                    <div className="flex flex-row items-center gap-3 sm:gap-6">
                         {urlImagem && !errosImagem[idAlunos] ? (
                             <img
                                 src={urlImagem}
@@ -38,7 +38,7 @@ const CardAlunoAtivos = ({
                         )}
                         <span className="text-[var(--cor-primaria)] font-semibold text-base sm:text-[28px] lg:text-xl">{nome}</span>
                     </div>
-                    <div className="text-[var(--azul-claro)] font-normal text-base sm:text-[28px] lg:text-xl bg-[#748CAB36] rounded-[15px] h-auto w-auto p-1 2xl:p-3  flex flex-row items-center justify-center text-center">
+                    <div className="text-[var(--azul-claro)] font-normal text-base sm:text-[24px] lg:text-xl bg-[#748CAB36] rounded-[15px] h-auto w-auto p-[0.5rem] 2xl:p-3  flex flex-row items-center justify-center text-center">
                         {nomePlano}
                     </div>
                 </div>

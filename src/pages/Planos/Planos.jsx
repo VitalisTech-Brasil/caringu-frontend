@@ -183,10 +183,10 @@ const Planos = () => {
                     setStyles({ fontSize: "24px", width: "33%" });
                 } else if (screenWidth >= 1280) {
                     setStyles({ fontSize: "20px", width: "33%" });
-                } else if (screenWidth >= 640) {
+                } else if (screenWidth >= 768) {
                     setStyles({ fontSize: "16px", width: "33%" });
                 } else {
-                    setStyles({ fontSize: "12px", width: "50%" });
+                    setStyles({ fontSize: "16px", width: "90%" });
                 }
             };
 
@@ -291,15 +291,15 @@ const Planos = () => {
                 <div className="flex-1 overflow-y-auto">
                     <Header toggleSidebar={toggleSidebar} />
                     <div className="w-full h-auto">
-                        <div className="flex flex-row items-end justify-between flex-nowrap h-[170px] sm:h-[80px] w-full relative">
-                            <div className="h-full flex flex-row items-center sm:items-end pl-[2.5rem]">
+                        <div className="flex md:flex-row flex-col md:items-end items-start justify-between flex-nowrap h-[170px] md:h-[80px] w-full relative">
+                            <div className="h-full flex flex-row items-center sm:items-end pl-[1rem] sm:pl-[2.5rem]">
                                 <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]">Planos criados </span>
                             </div>
-                            <div className="h-full w-[35rem] flex  justify-center flex-col items-center sm:flex-row sm:justify-start sm:items-end gap-[22px] ">
+                            <div className="h-full  w-full md:w-[35rem] flex md:justify-center justify-start flex-col md:flex-row md:items-center pl-[1rem] sm:pl-[2.5rem] md:pl-0 items-start gap-[22px] ">
                                 <Button
                                     texto="Solicitações pendentes"
                                     logo={relogioIcon}
-                                    width="53%"
+                                    classNameExtra="md:w-[53%] w-[90%]"
                                     height="50px"
                                     cor="var(--cor-secundaria)"
                                     corTexto="var(--cor-primaria)"
@@ -330,7 +330,7 @@ const Planos = () => {
                                 </Button>
                             </div>
                         </div>
-                        <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
+                        <div className="pl-[1rem] sm:pl-0 ml-0 sm:ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                             <div className="flex gap-9 w-fit">
                                 {planos.length === 0 ? (
                                     <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
@@ -355,9 +355,7 @@ const Planos = () => {
                             </div>
                         </div>
                     </div>
-
-
-                    <div className="w-full  mt-3 pl-10 ">
+                    <div className="w-full  mt-3 sm:pl-10 pl-[1rem] ">
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com Planos Ativos</span>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
