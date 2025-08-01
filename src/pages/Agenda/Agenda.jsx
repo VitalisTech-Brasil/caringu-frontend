@@ -118,7 +118,7 @@ const Agenda = () => {
                             <div className="flex flex-row items-center justify-start">
                                 <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-md bg-[#748CAB36] mr-4">
                                 </div>
-                                <span className="text-[var(--cor-primaria)] font-normal text-base">
+                                <span className="text-[var(--cor-primaria)] font-normal text-base sm:text-2xl">
                                     Dia Atual
                                 </span>
                             </div>
@@ -137,14 +137,14 @@ const Agenda = () => {
                                         <path d="M0 10.0664H2.1198" stroke="#1D2D44" strokeWidth="2" />
                                     </svg>
                                 </div>
-                                <span className="text-[var(--cor-primaria)] font-normal text-base">
+                                <span className="text-[var(--cor-primaria)] font-normal text-base sm:text-2xl">
                                     Dias de treino
                                 </span>
                             </div>
                             <div className="flex flex-row items-center justify-start">
                                 <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-md bg-[#E96E354F] mr-4">
                                 </div>
-                                <span className="text-[var(--cor-primaria)] font-normal text-base">
+                                <span className="text-[var(--cor-primaria)] font-normal text-base sm:text-2xl">
                                     Dias de treinos passados
                                 </span>
                             </div>

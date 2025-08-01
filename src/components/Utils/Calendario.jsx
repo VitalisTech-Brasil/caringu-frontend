@@ -29,7 +29,7 @@ const Calendario = ({ compromissos, value, onChange }) => {
             locale="pt-BR"
             tileClassName={({ date, activeStartDate, view }) => {
                 if (view !== "month") return "w-10 h-10 text-base";
-                let classes = "w-full h-10 sm:h-15 text-base flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300";
+                let classes = "w-full h-10 sm:h-15 text-base sm:text-xl xl:text-2xl flex items-center justify-center rounded-lg cursor-pointer transition-all duration-300";
                 if (date.getMonth() !== activeStartDate.getMonth()) {
                     classes += " relative text-[#15171B3D]";
                 } else if (isSameDay(date, hoje)) {
