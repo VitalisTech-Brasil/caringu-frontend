@@ -47,13 +47,14 @@ const EtapaEmail = ({ onAvancar }) => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2 max-[1450px]:w-[400px] max-[415px]:w-[315px]">
+          <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2 max-[1450px]:w-[400px] max-[415px]:w-[315px] flex flex-col items-center">
+            <div className="w-full ">
             <Input
               id="email"
               name="email"
               type="email"
               label="Email"
-              marginBottomLinha="5.5%"
+              marginBottomLinha="1.55rem"
               margin="50px auto 0px 0px"
               corBordaInput={"#ccc"}
 
@@ -67,6 +68,7 @@ const EtapaEmail = ({ onAvancar }) => {
               isError={!!errors.email}
               errorMessage={errors.email?.message}
             />
+            </div>
 
             <footer className="flex flex-col h-25 justify-between items-center max-[500px]:w-[400px] max-[415px]:w-[300px]">
               <Button
@@ -74,7 +76,8 @@ const EtapaEmail = ({ onAvancar }) => {
                 type="submit"
                 cor="var(--laranja)"
                 corTexto="var(--cor-secundaria)"
-                width="350px"
+                // width="350px"
+                classNameExtra="w-[270px] sm:w-[350px]"
                 height="50px"
                 fontSize="14px"
               />
