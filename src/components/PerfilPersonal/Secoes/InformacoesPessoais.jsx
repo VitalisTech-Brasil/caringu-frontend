@@ -4,7 +4,6 @@ import { caringuApi } from '../../../provider/caringuApi';
 import MascaraTelefone from '../../Utils/Functions/MascaraTelefone';
 import { HiOutlineTrash } from 'react-icons/hi';
 import ModalRemoverEspecialidade from '../../Utils/ModalRemoverEspecialidade';
-
 import { toast, Toaster } from 'react-hot-toast';
 import CustomToast from '../../Utils/CustomToast';
 import CidadeInput from '../../Utils/InputCidade/CidadeInput';
@@ -125,7 +124,9 @@ export default function InformacoesPessoais() {
             }));
         } catch (error) {
             console.error("Erro ao remover especialidade:", error);
-            alert("Não foi possível remover a especialidade. Tente novamente.");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Não foi possível remover a especialidade. Tente novamente." />
+            ));
         }
     };
 

@@ -1,11 +1,14 @@
 // src/components/EsqueciSenha/EtapaEmail.jsx
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import { caringuApi } from '../../provider/caringuApi';
 import Input from '../Utils/Inputs';
 import Button from '../Utils/Button';
 import { useEmail } from './Context/EsqueciSenhaContext';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../Utils/CustomToast';
+
 
 const EtapaEmail = ({ onAvancar }) => {
   const { atualizarEmail } = useEmail(); // pega o atualizarEmail do Context
@@ -13,20 +16,25 @@ const EtapaEmail = ({ onAvancar }) => {
 
   const handleEnviarEmail = async (data) => {
     const { email } = data;
-    console.log(email)
-
     try {
       const response = await caringuApi.post('/esqueci-senha', { email });
 
       if (response.status === 200) {
+        toast.custom((t) => (
+          <CustomToast t={t} type="success" message="E-mail enviado com sucesso!" />
+        ));
         atualizarEmail(email); // <<< Atualiza o email no Context!
         onAvancar();            // Avança para a próxima etapa
       } else {
-        alert("Email não encontrado.");
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Email não encontrado." />
+        ));
       }
     } catch (error) {
       console.error("Erro ao enviar e-mail:", error);
-      alert("Ocorreu um erro ao tentar enviar o e-mail. Tente novamente.");
+      toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Ocorreu um erro ao tentar enviar o e-mail. Tente novamente." />
+        ));
     }
   };
 
@@ -49,25 +57,25 @@ const EtapaEmail = ({ onAvancar }) => {
 
           <form onSubmit={handleSubmit(handleEnviarEmail)} className="w-1/2 max-[1450px]:w-[400px] max-[415px]:w-[315px] flex flex-col items-center">
             <div className="w-full ">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              label="Email"
-              marginBottomLinha="1.55rem"
-              margin="50px auto 0px 0px"
-              corBordaInput={"#ccc"}
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                marginBottomLinha="1.55rem"
+                margin="50px auto 0px 0px"
+                corBordaInput={"#ccc"}
 
-              {...register("email", {
-                required: "O email é obrigatório",
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Formato de e-mail inválido"
-                }
-              })}
-              isError={!!errors.email}
-              errorMessage={errors.email?.message}
-            />
+                {...register("email", {
+                  required: "O email é obrigatório",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Formato de e-mail inválido"
+                  }
+                })}
+                isError={!!errors.email}
+                errorMessage={errors.email?.message}
+              />
             </div>
 
             <footer className="flex flex-col h-25 justify-between items-center max-[500px]:w-[400px] max-[415px]:w-[300px]">
@@ -86,6 +94,7 @@ const EtapaEmail = ({ onAvancar }) => {
           </form>
         </div>
       </div>
+      <Toaster position="top-right" reverseOrder={false} />
     </section>
   );
 };

@@ -4,6 +4,9 @@ import axios from 'axios'; // Importando o axios
 import { caringuApi } from '../../provider/caringuApi';
 import InputVerificacao from './InputVerificacao';
 import Button from '../Utils/Button';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../Utils/CustomToast';
 import { useEmail } from './Context/EsqueciSenhaContext';  // Importando o useEmail
 
 const EtapaCodigo = ({ onAvancar }) => {
@@ -18,16 +21,22 @@ const EtapaCodigo = ({ onAvancar }) => {
       // Envia o código para o backend para verificação
       const response = await caringuApi.post('/esqueci-senha/validacao-token', { email, codigo });
 
-      console.log(response.status)
 
       if (response.status == 200) {
         onAvancar(); // Avança para a próxima etapa
-      } else {
-        alert('Código incorreto.');
+        toast.custom((t) => (
+          <CustomToast t={t} type="success" message="Código verificado com sucesso!" />
+        ));
+      } else { 
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Código incorreto." />
+        ));
       }
     } catch (error) {
       console.error('Erro ao verificar código:', error);
-      alert('Erro ao tentar verificar o código.');
+      toast.custom((t) => (
+        <CustomToast t={t} type="error" message="Erro ao tentar verificar o código." />
+      ));
     }
   };
 
@@ -38,8 +47,9 @@ const EtapaCodigo = ({ onAvancar }) => {
 
   useEffect(() => {
     if (!email) {
-      alert('Email não encontrado. Por favor, forneça um email primeiro.');
-       // Redireciona de volta para a página anterior
+      toast.custom((t) => (
+        <CustomToast t={t} type="error" message="Email não encontrado. Por favor, forneça um email primeiro." />
+      ));
       window.location.href = '/esqueci-senha';
     }
   }, [email]);
@@ -96,6 +106,7 @@ const EtapaCodigo = ({ onAvancar }) => {
           </div>
         </form>
       </div>
+      <Toaster position="top-right" reverseOrder={false} />
     </section>
   );
 };

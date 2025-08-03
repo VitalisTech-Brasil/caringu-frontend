@@ -2,12 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { FaEllipsisV } from "react-icons/fa";
-import { Popover, Button } from "flowbite-react"; // Certifique-se de que Modal está correto
-import ButtonInterno from "../../components/Utils/Button"; // Certifique-se de que ButtonInterno está correto
-import { HiOutlineFilter } from "react-icons/hi";
+import ButtonInterno from "../../components/Utils/Button";
 import { useParams, useNavigate } from "react-router-dom";
 import iconCancelar from "../../assets/images/cancelar.png";
-import Modal from "../../components/Utils/Modal.jsx"; // Certifique-se de que o caminho está correto
+import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import { Controller, useForm } from "react-hook-form";
 import InputPosLogin from "../../components/Utils/InputPosLogin";
@@ -20,11 +18,12 @@ import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../../components/Utils/CustomToast.jsx";
 import MascaraData from "../../components/Utils/Functions/MascaraData.js"
 
+
 const GerenciarTreinos = () => {
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
+    const [sortOrder, setSortOrder] = useState(null); 
     const [openMenuId, setOpenMenuId] = useState(null);
-    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
+    const [difficultyFilter, setDifficultyFilter] = useState(null); 
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
@@ -257,15 +256,21 @@ const GerenciarTreinos = () => {
         } catch (error) {
             if (error.response) {
                 console.error('Erro do servidor:', error.response.data);
-                alert(error.response.data.message || 'Erro ao deletar exercício');
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message={error.response.data.message || 'Erro ao deletar exercício'} />
+                ));
                 setModalDeletarVisivel(false);
             } else if (error.request) {
                 console.error('Sem resposta do servidor:', error.request);
-                alert('Sem resposta do servidor');
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Sem resposta do servidor" />
+                ));
                 setModalDeletarVisivel(false);
             } else {
                 console.error('Erro inesperado:', error.message);
-                alert('Erro inesperado ao deletar exercício');
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Erro inesperado ao deletar exercício" />
+                ));
                 setModalDeletarVisivel(false);
             }
         }
@@ -301,21 +306,21 @@ const GerenciarTreinos = () => {
         </div>
     );
 
-        function useMenuWidth() {
-            const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
-    
-            useEffect(() => {
-                const handleResize = () => {
-                    setWidth(window.innerWidth >= 640 ? "300px" : "235px");
-                };
-                window.addEventListener("resize", handleResize);
-                return () => window.removeEventListener("resize", handleResize);
-            }, []);
-    
-            return width;
-        }
-    
-        const menuWidth = useMenuWidth();
+    function useMenuWidth() {
+        const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
+
+        useEffect(() => {
+            const handleResize = () => {
+                setWidth(window.innerWidth >= 640 ? "300px" : "235px");
+            };
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        return width;
+    }
+
+    const menuWidth = useMenuWidth();
 
     return (
         <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -631,9 +636,9 @@ const GerenciarTreinos = () => {
                                             />
                                         </div>
                                         <div onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event
-                                                setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
-                                            }}
+                                            e.stopPropagation(); // Prevent card click event
+                                            setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
+                                        }}
                                             className="flex justify-end items-center">
                                             <div className="relative" ref={buttonRef}>
                                                 <button className="flex items-center justify-center sm:w-8 w-4 sm:h-8 h-4 cursor-pointer rounded-[5px] sm:hover:bg-gray-300 transition duration-200">
@@ -946,6 +951,7 @@ const GerenciarTreinos = () => {
                     </div>
                 </div>
             </div >
+            <Toaster position="top-right" reverseOrder={false} />
         </div >
     )
 }

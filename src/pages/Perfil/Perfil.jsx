@@ -6,6 +6,8 @@ import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import ModalRemoverEspecialidade from "../../components/Utils/ModalRemoverEspecialidade";
 import { caringuApi } from '../../provider/caringuApi';
 import Secoes from "../../components/PerfilPersonal/Secoes/Secoes";
+import { Toaster, toast } from 'react-hot-toast';
+import CustomToast from "../../components/Utils/CustomToast.jsx";
 
 const Perfil = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -26,14 +28,16 @@ const Perfil = () => {
             navigate("/", { replace: true });
         } catch (error) {
             console.error("Erro ao deletar conta:", error);
-            alert("Não foi possível deletar a conta. Tente novamente.");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Não foi possível deletar a conta. Tente novamente." />
+            ));
         }
     };
 
     return (
         <div className="flex md:flex-row min-h-screen bg-[#fdfcf9]">
             {/* Menu Lateral visível apenas em telas médias para cima */}
-            
+
             <MenuLateral isOpen={true} />
 
             <div className="flex-1 flex flex-col w-full overflow-y-auto">
