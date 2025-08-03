@@ -36,7 +36,6 @@ const RelatorioTreinos = () => {
         const relatoriosTreinosAluno = async () => {
             try {
                 const response = await caringuApi.get(`/treinos-exercicios/aluno/${idAluno}`);
-                console.log('Treinos obtidos com sucesso:', response.data);
                 setTreinos(response.data);
             } catch (error) {
                 console.error('Erro ao buscar os treinos:', error);
