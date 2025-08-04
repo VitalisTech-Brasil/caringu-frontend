@@ -21,9 +21,9 @@ import MascaraData from "../../components/Utils/Functions/MascaraData.js"
 
 const GerenciarTreinos = () => {
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortOrder, setSortOrder] = useState(null); 
+    const [sortOrder, setSortOrder] = useState(null);
     const [openMenuId, setOpenMenuId] = useState(null);
-    const [difficultyFilter, setDifficultyFilter] = useState(null); 
+    const [difficultyFilter, setDifficultyFilter] = useState(null);
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
@@ -567,7 +567,7 @@ const GerenciarTreinos = () => {
                                                 <path d="M7.44147 10.4004H11.1623C12.1893 10.4004 13.0227 11.4532 13.0227 12.7504V36.2504C13.0227 37.5476 12.1893 38.6004 11.1623 38.6004H7.44147C6.41452 38.6004 5.58105 37.5476 5.58105 36.2504V12.7504C5.58105 11.4532 6.41452 10.4004 7.44147 10.4004Z" stroke="#E96E35" strokeWidth="2" />
                                                 <path d="M53.9531 24.5H59.5344" stroke="#E96E35" strokeWidth="2" />
                                                 <path d="M20.4648 24.5H39.069" stroke="#E96E35" strokeWidth="2" />
-                                                    // <path d="M0 24.5H5.58125" stroke="#E96E35" strokeWidth="2" />
+                                                <path d="M0 24.5H5.58125" stroke="#E96E35" strokeWidth="2" />
                                             </svg>
                                         </div>
                                         <div className="flex flex-col md:flex-row md:grid-cols-2 md:gap-5 w-full">

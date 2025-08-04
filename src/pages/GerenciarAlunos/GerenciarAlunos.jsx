@@ -228,21 +228,21 @@ const GerenciarAlunos = () => {
       return 0;
     });
 
-        function useMenuWidth() {
-            const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
-    
-            useEffect(() => {
-                const handleResize = () => {
-                    setWidth(window.innerWidth >= 640 ? "280px" : "235px");
-                };
-                window.addEventListener("resize", handleResize);
-                return () => window.removeEventListener("resize", handleResize);
-            }, []);
-    
-            return width;
-        }
-    
-        const menuWidth = useMenuWidth();
+  function useMenuWidth() {
+    const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
+
+    useEffect(() => {
+      const handleResize = () => {
+        setWidth(window.innerWidth >= 640 ? "280px" : "235px");
+      };
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return width;
+  }
+
+  const menuWidth = useMenuWidth();
 
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">
@@ -297,10 +297,11 @@ const GerenciarAlunos = () => {
                           label: "A-Z",
                           icon: <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`w-7 ${sortOrder === "A-Z" ? "stroke-white" : "stroke-black"}`}
+                            className={`shrink-0 w-7 ${sortOrder === "A-Z" ? "stroke-white" : "stroke-black"}`}
                             viewBox="0 0 24 24"
                             fill="none"
-                          >                            <path d="M10.4498 6.71997L6.72974 3L3.00977 6.71997" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          >
+                            <path d="M10.4498 6.71997L6.72974 3L3.00977 6.71997" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M6.72949 21V3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M13.5498 17.2803L17.2698 21.0002L20.9898 17.2803" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M17.2695 3V21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -315,7 +316,7 @@ const GerenciarAlunos = () => {
                           label: "Z-A",
                           icon: <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className={`w-7 ${sortOrder === "Z-A" ? "stroke-white" : "stroke-black"}`}
+                            className={`shrink-0 w-7 ${sortOrder === "Z-A" ? "stroke-white" : "stroke-black"}`}
                             viewBox="0 0 24 24"
                             fill="none"
                           >
@@ -331,7 +332,7 @@ const GerenciarAlunos = () => {
                         },
                         {
                           id: "anamnese",
-                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${anamnesesPendentes ? "stroke-white" : "stroke-[#E96E35]"}`} viewBox="0 0 35 35" fill="none">
+                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`shrink-0 w-7 ${anamnesesPendentes ? "stroke-white" : "stroke-[#E96E35]"}`} viewBox="0 0 35 35" fill="none">
                             <path d="M32.0833 17.5C32.0833 25.55 25.55 32.0833 17.5 32.0833C9.44996 32.0833 2.91663 25.55 2.91663 17.5C2.91663 9.45 9.44996 2.91666 17.5 2.91666C25.55 2.91666 32.0833 9.45 32.0833 17.5Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                             <path d="M22.9104 22.1375L18.3896 19.4396C17.6021 18.9729 16.9604 17.85 16.9604 16.9313V10.9521" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
@@ -409,9 +410,9 @@ const GerenciarAlunos = () => {
 
                       {/* Botão + menu */}
                       <div onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click event
-                          setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
-                        }}
+                        e.stopPropagation(); // Prevent card click event
+                        setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
+                      }}
                         className="pt-2 sm:pt-0 flex justify-end items-center rounded-[5px] cursor-pointer sm:hover:bg-gray-300 transition duration-200">
                         <div className="relative" ref={buttonRef}>
                           <button
@@ -553,7 +554,7 @@ const GerenciarAlunos = () => {
                     <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto h-full">
                       <div className="absolute inset-0 bg-[#000000] opacity-50" aria-label="Fundo Escurecido" />
                       <div className="relative p-4 w-full max-w-2xl">
-                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow sm:p-10 max-h-[80vh] flex flex-col">
+                        <div className="relative bg-[var(--cor-secundaria)] rounded-lg shadow p-4 sm:p-10 max-h-[80vh] flex flex-col">
                           <div className="flex justify-between items-center pb-4 mb-4">
                             <div>
                               <h1 className="text-4xl font-semibold text-[var(--cor-primaria)]">Anamnese</h1>
