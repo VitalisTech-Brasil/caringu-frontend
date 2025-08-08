@@ -119,7 +119,6 @@ const FaleConosco = () => {
                             texto={isSubmitting ? 'Enviando...' : responseMessage ? 'Enviado' : 'Enviar'}
                             cor="var(--azul-claro)"
                             corTexto="var(--cor-secundaria)"
-                            corHover="#677e9c"
                             width="400px"
                             height="40px"
                             type="submit"

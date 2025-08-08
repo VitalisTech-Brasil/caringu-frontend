@@ -1,4 +1,4 @@
-import React, { use } from 'react'
+import React from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
 import ButtonInterno from '../../components/Utils/Button'
@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import MenuFiltro from '../../components/Utils/MenuFiltro'
 import { caringuApi } from '../../provider/caringuApi'
+import TreinoRelatorioCard from '../../components/Utils/GerenciarTreinos/TreinoRelatorioCard'
 
 const RelatorioTreinos = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -36,7 +37,6 @@ const RelatorioTreinos = () => {
         const relatoriosTreinosAluno = async () => {
             try {
                 const response = await caringuApi.get(`/treinos-exercicios/aluno/${idAluno}`);
-                console.log('Treinos obtidos com sucesso:', response.data);
                 setTreinos(response.data);
             } catch (error) {
                 console.error('Erro ao buscar os treinos:', error);
@@ -90,10 +90,26 @@ const RelatorioTreinos = () => {
         navigate(`/dashboard/${idAluno}/${idTreino}`);
     }
 
+    function useMenuWidth() {
+        const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
+
+        useEffect(() => {
+            const handleResize = () => {
+                setWidth(window.innerWidth >= 640 ? "300px" : "235px");
+            };
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        return width;
+    }
+
+    const menuWidth = useMenuWidth();
+
     return (
         <div className="flex h-screen bg-[#fdfbf7]">
             <MenuLateral />
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header toggleSidebar={toggleSidebar} />
                 <main className="p-4 md:p-8 space-y-8 flex flex-col">
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border-2 border-[#E6E6E2]">
@@ -106,16 +122,17 @@ const RelatorioTreinos = () => {
                             </Link>
                             <h1>Selecionar Treino</h1>
                         </div>
-                        <div className="flex items-center gap-2 mb-4 max-w-[400px] mt-5">
+                        <div className="flex items-center gap-2 mb-4 w-full mt-5">
                             <input
                                 type="text"
                                 placeholder="Pesquisar treino"
-                                className="flex-1 border-2 border-gray-300 rounded-md p-2"
+                                className="flex-1 border-2 border-gray-300 rounded-md p-2 w-full sm:w-auto"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <MenuFiltro
-                                menuWidth="300px"
+                                //menuWidth="300px"
+                                menuWidth={menuWidth}
                                 buttonIcon={
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +182,7 @@ const RelatorioTreinos = () => {
                                         icon: (
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
-                                                className={`w-7 ${difficultyFilter === "INICIANTE" ? "stroke-white" : "stroke-[#748CAB]"}`}
+                                                className={`shrink-0 w-7 ${difficultyFilter === "INICIANTE" ? "stroke-white" : "stroke-[#748CAB]"}`}
                                                 viewBox="0 0 31 31"
                                                 fill="none"
                                             >
@@ -193,7 +210,7 @@ const RelatorioTreinos = () => {
                                         active: difficultyFilter === "INTERMEDIARIO",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
-                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "INTERMEDIARIO" ? "stroke-white" : "stroke-[#E8CD00]"}`
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`shrink-0 w-7 ${difficultyFilter === "INTERMEDIARIO" ? "stroke-white" : "stroke-[#E8CD00]"}`
                                             } viewBox="0 0 31 31" fill="none">
                                                 <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                                 <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
@@ -208,7 +225,7 @@ const RelatorioTreinos = () => {
                                         active: difficultyFilter === "AVANCADO",
                                         className: "flex items-center justify-start gap-2 p-2",
                                         icon: (
-                                            <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "AVANCADO" ? "stroke-white" : "stroke-[#B41F1F]"}`
+                                            <svg xmlns="http://www.w3.org/2000/svg" className={`shrink-0 w-7 ${difficultyFilter === "AVANCADO" ? "stroke-white" : "stroke-[#B41F1F]"}`
                                             } viewBox="0 0 31 31" fill="none">
                                                 <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                                 <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
@@ -224,45 +241,12 @@ const RelatorioTreinos = () => {
                         <div className="flex flex-col items-center gap-4 mt-5 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-140 overflow-y-auto overflow-x-hidden border-2 border-[#E6E6E2]">
 
                             {filteredTreinos.map((treino) => (
-                                <div key={treino.treinoId} className="w-full bg-[var(--cor-secundaria)] border-2 border-[#E6E6E2] flex flex-wrap items-center rounded-lg justify-between p-4">
-                                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 w-full">
-                                        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 md:w-15 md:h-15" viewBox="0 0 60 49" fill="none">
-                                                <path d="M48.3716 10.4004H52.0925C53.1194 10.4004 53.9529 11.4532 53.9529 12.7504V36.2504C53.9529 37.5476 53.1194 38.6004 52.0925 38.6004H48.3716C47.3447 38.6004 46.5112 37.5476 46.5112 36.2504V12.7504C46.5112 11.4532 47.3447 10.4004 48.3716 10.4004Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M40.9298 1H44.6506C45.6775 1 46.511 2.0528 46.511 3.35V45.65C46.511 46.9472 45.6775 48 44.6506 48H40.9298C39.9028 48 39.0693 46.9472 39.0693 45.65V3.35C39.0693 2.0528 39.9028 1 40.9298 1Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M14.8834 1H18.6042C19.6311 1 20.4646 2.0528 20.4646 3.35V45.65C20.4646 46.9472 19.6311 48 18.6042 48H14.8834C13.8564 48 13.0229 46.9472 13.0229 45.65V3.35C13.0229 2.0528 13.8564 1 14.8834 1Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M7.44147 10.4004H11.1623C12.1893 10.4004 13.0227 11.4532 13.0227 12.7504V36.2504C13.0227 37.5476 12.1893 38.6004 11.1623 38.6004H7.44147C6.41452 38.6004 5.58105 37.5476 5.58105 36.2504V12.7504C5.58105 11.4532 6.41452 10.4004 7.44147 10.4004Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M53.9531 24.5H59.5344" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M20.4648 24.5H39.069" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M0 24.5H5.58125" stroke="#E96E35" strokeWidth="2" />
-                                            </svg>
-                                            <div className='grid grid-cols-2 gap-4'>
-                                                <div>
-                                                    <p><b>Treino: </b>{treino.nomeTreino}</p>
-                                                    <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
-                                                </div>
-                                                <div>
-                                                   <p><b>Dificuldade: </b>{formatarDificuldade(treino.grauDificuldade)}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <ButtonInterno
-                                            texto="Ver Relatório"
-                                            type="submit"
-                                            cor="transparent"
-                                            corTexto="var(--cor-primaria)"
-                                            corHover="var(--cor-primaria)"
-                                            width="268px"
-                                            height="50px"
-                                            font-size="20px"
-                                            onClick={() => { irParaDash(treino.treinoId) }}
-                                            borderStyle="solid"
-                                            borderWidth="2px"
-                                            borderColor="rgba(29, 45, 68, 0.11)"
-                                            fontWeight="600"
-                                        />
-                                    </div>
-                                </div>
+                                <TreinoRelatorioCard
+                                    key={treino.treinoId}
+                                    treino={treino}
+                                    onVerRelatorio={irParaDash}
+                                    formatarDificuldade={formatarDificuldade}
+                                />
                             ))}
                         </div>
                     </div>

@@ -29,9 +29,9 @@ const PerfilAluno = () => {
     }, [idAluno]);
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7] ">
+        <div className="flex min-h-screen bg-[#fdfbf7]">
             <MenuLateral />
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header />
                 <main className="p-4 md:p-8 space-y-3 flex flex-col">
                     <div className="flex items-center text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] gap-8">
@@ -46,14 +46,14 @@ const PerfilAluno = () => {
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] md:max-h-[780px] overflow-y-auto">
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter']">Dados Pessoais</h1>
 
-                        <div className="flex flex-col max-h-60 overflow-y-auto">
-                            <div className="flex flex-row sm:flow-row md:flex-row items-center md:gap-[30px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
+                        <div className="flex flex-col h-auto">
+                            <div className="flex flex-col lg:flex-row items-center md:gap-[30px] mt-2 p-5 border-2 border-[#E6E6E2] rounded-lg">
 
                                 {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
                                     <img
                                         src={aluno.alunoId.urlFotoPerfil}
                                         alt="Imagem do aluno"
-                                        className='w-12 h-12 lg:w-30 lg:h-30 rounded-full'
+                                        className=' w-20 h-20 sm:w-30 sm:h-30 rounded-full'
                                         onError={() => setImgErro(true)}
                                     />
 
@@ -98,8 +98,8 @@ const PerfilAluno = () => {
                             </div>
                         </div>
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] mt-5">Dados Físicos</h1>
-                        <div className="flex flex-col max-h-40 overflow-y-auto p-5 border-2 my-4 border-[#E6E6E2] rounded-lg justify-start">
-                            <div className='mx-4 mb-2 w-5xl flex gap-10 grid-cols-2'>
+                        <div className="flex flex-col max-h-40 overflow-y-auto p-5 border-2 my-4 border-[#E6E6E2] rounded-lg justify-start w-full">
+                            <div className='mx-4 mb-2 flex gap-2 sm:gap-10 flex-col sm:flex-row'>
                                 <div className='cols-span-1'>
                                     <p><b>Peso:</b></p>
                                     <p>{aluno?.alunoId?.peso ? `${aluno.alunoId.peso} Kg` : "N/A"}</p>
@@ -109,7 +109,7 @@ const PerfilAluno = () => {
                                     <p>{aluno?.alunoId?.altura ? `${aluno.alunoId.altura} m` : "N/A"}</p>
                                 </div>
                             </div>
-                            <div className='mx-4 mt-2 flex gap-20 grid-cols-3 w-5xl'>
+                            <div className='mx-4 mt-1 sm:mt-2 flex gap-2 sm:gap-20 flex-col sm:flex-row'>
                                 <div className='cols-span-1 '>
                                     <div className='my-4'>
                                         <p><b>Desconforto:</b></p>
@@ -143,14 +143,14 @@ const PerfilAluno = () => {
                             </div>
                         </div>
                         <h1 className="text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] mt-5">Atividade física e Recursos</h1>
-                        <div className="flex flex-col max-h-50 overflow-y-auto p-5 border-2 my-4 border-[#E6E6E2] rounded-lg justify-start">
-                            <div className='flex grid-cols-2'>
-                                <div className='mx-2 w-3xl flex gap-5 cols-span-1 flex-col'>
+                        <div className="flex flex-col max-h-50 overflow-y-auto p-5 border-2 my-4 border-[#E6E6E2] rounded-lg justify-start w-full">
+                            <div className='flex flex-col sm:flex-row'>
+                                <div className='mx-2 flex gap-5 flex-col w-auto'>
                                     <div>
                                         <p><b>Frequência de treino desejada:</b></p>
                                         <p>{aluno?.frequenciaTreino ? `${aluno.frequenciaTreino}x na semana` : "N/A"}</p>
                                     </div>
-                                    <div className='flex gap-20'>
+                                    <div className='flex flex-col sm:flex-row sm:gap-10 lg:gap-20'>
                                         <div>
                                             <p><b>Objetivo:</b></p>
                                             <p>{aluno?.objetivoTreino ? `${aluno.objetivoTreino}` : "N/A"}</p>
@@ -175,8 +175,8 @@ const PerfilAluno = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='cols-span-1 h-full w-1/2 flex justify-start'>
-                                    <div className='w-sm'>
+                                <div className='mx-2 sm:mx-0 cols-span-1 h-full flex justify-start w-auto'>
+                                    <div className='w-auto'>
                                         <p><b>Experiência:</b></p>
                                         <p>{aluno?.experiencia ? `${aluno.experienciaDescricao}` : "N/A"}</p>
                                     </div>

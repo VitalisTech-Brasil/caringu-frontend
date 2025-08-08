@@ -156,10 +156,10 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                         })
                     ) : (
                         <div className="w-full h-[95%] overflow-y-auto flex flex-col items-center justify-center gap-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 sm:w-40.5 sm:h-40.5" viewBox="0 0 162 162" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 md:w-30 md:h-30 xl:w-40.5 xl:h-40.5" viewBox="0 0 162 162" fill="none">
                                 <path d="M81 0C36.369 0 0 36.369 0 81C0 125.631 36.369 162 81 162C125.631 162 162 125.631 162 81C162 36.369 125.631 0 81 0ZM108.216 99.63C110.565 101.979 110.565 105.867 108.216 108.216C107.001 109.431 105.462 109.998 103.923 109.998C102.384 109.998 100.845 109.431 99.63 108.216L81 89.586L62.37 108.216C61.155 109.431 59.616 109.998 58.077 109.998C56.538 109.998 54.999 109.431 53.784 108.216C51.435 105.867 51.435 101.979 53.784 99.63L72.414 81L53.784 62.37C51.435 60.021 51.435 56.133 53.784 53.784C56.133 51.435 60.021 51.435 62.37 53.784L81 72.414L99.63 53.784C101.979 51.435 105.867 51.435 108.216 53.784C110.565 56.133 110.565 60.021 108.216 62.37L89.586 81L108.216 99.63Z" fill="#E96E35" />
                             </svg>
-                            <span className="text-xl sm:text-3xl font-normal text-[#15171BAD]">
+                            <span className="text-base sm:text-xl lg:text-2xl font-normal text-[#15171BAD]">
                                 Não existem treinos agendados para o dia selecionado.
                             </span>
                         </div>

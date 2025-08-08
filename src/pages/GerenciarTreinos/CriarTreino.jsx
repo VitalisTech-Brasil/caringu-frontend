@@ -14,7 +14,7 @@ import { caringuApi } from '../../provider/caringuApi.js'
 import toast, { Toaster } from 'react-hot-toast'
 import CustomToast from '../../components/Utils/CustomToast.jsx'
 import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx'
-
+import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 
 const CriarTreino = () => {
 
@@ -316,7 +316,7 @@ const CriarTreino = () => {
                                                 onBlur={() => setSelectAberto(false)}
                                                 className="appearance-none peer text-base w-full pt-2 pb-1 pr-[1%] pl-[1%] border-b-2 border-[var(--cor-primaria)] text-[#333] transition-all"
                                             >
-                                                <option disabled className="text-[#15171B87]" value="">Selecione o grau de dificuldade</option>
+                                                <option disabled className="text-[#15171B87]" value="">Selecione a dificuldade</option>
                                                 <option value="1">Iniciante</option>
                                                 <option value="2">Intermediário</option>
                                                 <option value="3">Avançado</option>
@@ -366,19 +366,12 @@ const CriarTreino = () => {
                                 <h1 className='mt-6'>Exercícios adicionados:</h1>
                                 <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                     {exerciciosSelecionados.map((exercicio) => (
-                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal(exercicio)}>
-                                            {exercicio.nome}
-                                            <button onClick={(e) => {
-                                                e.stopPropagation();
-                                                removerExercicio(exercicio.id)
-                                            }}
-                                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </button>
-                                        </div>
+                                        <ExercicioChip
+                                            key={exercicio.id}
+                                            exercicio={exercicio}
+                                            onEdit={handleOpenModal}
+                                            onRemove={removerExercicio}
+                                        />
                                     ))}
                                 </div>
                                 <div className="flex items-center justify-center mt-7">
@@ -389,7 +382,6 @@ const CriarTreino = () => {
                                         cor="#46982B"
                                         height="2.75rem"
                                         width="9.2rem"
-                                        corHover="#46982BE5"
                                         fontWeight="600"
                                         aria-label={"Botão de Salvar"}
                                     />

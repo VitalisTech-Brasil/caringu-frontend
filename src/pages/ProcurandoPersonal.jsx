@@ -476,7 +476,7 @@ const ProcurandoPersonal = () => {
         <main className="w-full h-auto">
           <div className="pl-[1rem] sm:pl-[3.5rem] w-[90%] h-auto flex mt-6 flex-col gap-6">
             <h1 className="text-xl sm:text-[32px] font-bold text-[#1E293B]">
-              Encontre o Personal ideal
+              Encontre o Personal Ideal
             </h1>
             <div className="w-full flex items-center gap-2 sm:gap-4 bg-[#fffdf6] border border-gray-300 rounded-md p-4">
               <input
@@ -1004,7 +1004,6 @@ const ProcurandoPersonal = () => {
                       cor="#B41F1F"
                       height="2.75rem"
                       width="13.25rem"
-                      corHover="#B41F1F"
                       fontWeight="500"
                       ariaLabel={"Botão de Cancelar"}
                       type="button"
@@ -1018,7 +1017,6 @@ const ProcurandoPersonal = () => {
                       cor="#46982B"
                       height="2.75rem"
                       width="9.2rem"
-                      corHover="#46982BE5"
                       fontWeight="600"
                       ariaLabel={"Botão de Salvar"}
                       type="submit"

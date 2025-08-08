@@ -93,16 +93,16 @@ const CardPlano = ({
             <div className="h-full  flex flex-row items-end ">
               <span className={`font-light text-sm sm:text-xl h-[2.75rem] pl-2 pr-2 sm:pl-6 sm:pr-6 w-auto rounded-[15px] flex flex-row items-center justify-center
                ${periodo === "MENSAL"
-                ? "text-[var(--azul-claro)] bg-[#3d91ff36]"
-                : periodo === "AVULSO"
-                  ? "text-[var(--azul-escuro)] bg-[#1D2D4436]"
-                  : periodo === "SEMESTRAL"
-                    ? "text-[var(--laranja)] bg-[#E96E354F]"
-                    : ""
-              }
+                  ? "text-[var(--azul-claro)] bg-[#3d91ff36]"
+                  : periodo === "AVULSO"
+                    ? "text-[var(--azul-escuro)] bg-[#1D2D4436]"
+                    : periodo === "SEMESTRAL"
+                      ? "text-[var(--laranja)] bg-[#E96E354F]"
+                      : ""
+                }
               `}
               >
-              {periodo}
+                {periodo}
               </span>
             </div>
             {showDropdown && (
@@ -128,7 +128,7 @@ const CardPlano = ({
                           <path d="M15.6101 11.5298C15.3201 11.3898 15.0401 11.2498 14.7701 11.0898C14.5501 10.9598 14.3401 10.8198 14.1301 10.6698C13.9601 10.5598 13.7601 10.3998 13.5701 10.2398C13.5501 10.2298 13.4801 10.1698 13.4001 10.0898C13.0701 9.8098 12.7001 9.4498 12.3701 9.0498C12.3401 9.0298 12.2901 8.9598 12.2201 8.8698C12.1201 8.7498 11.9501 8.5498 11.8001 8.3198C11.6801 8.1698 11.5401 7.9498 11.4101 7.7298C11.2501 7.4598 11.1101 7.1898 10.9701 6.9098C10.9489 6.86441 10.9284 6.81924 10.9085 6.77434C10.7609 6.44102 10.3263 6.34358 10.0685 6.60133L4.34007 12.3298C4.21007 12.4598 4.09007 12.7098 4.06007 12.8798L3.52007 16.7098C3.42007 17.3898 3.61007 18.0298 4.03007 18.4598C4.39007 18.8098 4.89007 18.9998 5.43007 18.9998C5.55007 18.9998 5.67007 18.9898 5.79007 18.9698L9.63007 18.4298C9.81007 18.3998 10.0601 18.2798 10.1801 18.1498L15.9014 12.4285C16.1609 12.1689 16.063 11.7235 15.7254 11.5794C15.6874 11.5632 15.649 11.5467 15.6101 11.5298Z" fill="#738CAB" />
                         </svg>
                       </div>
-                      <div className="flex w-full hover:bg-[#1D2D4417] flex-row items-center h-8 rounded-md cursor-pointer"
+                      <div className="flex flex-row items-center w-full hover:bg-[#1D2D4417] h-8 rounded-md cursor-pointer"
                         onClick={handleDelete}>
 
                         <Button
@@ -145,8 +145,6 @@ const CardPlano = ({
                           <path d="M19.23 8.14C18.99 7.89 18.66 7.75 18.32 7.75H5.67999C5.33999 7.75 4.99999 7.89 4.76999 8.14C4.53999 8.39 4.40999 8.73 4.42999 9.08L5.04999 19.34C5.15999 20.86 5.29999 22.76 8.78999 22.76H15.21C18.7 22.76 18.84 20.87 18.95 19.34L19.57 9.09C19.59 8.73 19.46 8.39 19.23 8.14ZM13.66 17.75H10.33C9.91999 17.75 9.57999 17.41 9.57999 17C9.57999 16.59 9.91999 16.25 10.33 16.25H13.66C14.07 16.25 14.41 16.59 14.41 17C14.41 17.41 14.07 17.75 13.66 17.75ZM14.5 13.75H9.49999C9.08999 13.75 8.74999 13.41 8.74999 13C8.74999 12.59 9.08999 12.25 9.49999 12.25H14.5C14.91 12.25 15.25 12.59 15.25 13C15.25 13.41 14.91 13.75 14.5 13.75Z" fill="#B41F1F" />
                         </svg>
                       </div>
-
-
                     </div>
                   </div>
                 )}
@@ -199,49 +197,49 @@ const CardPlano = ({
             <li className="flex">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-[34px] sm:h-[34px]" viewBox="0 0 34 34" fill="none">
                 <path d="M12.9766 15.3988C12.835 15.3847 12.665 15.3847 12.5091 15.3988C9.13746 15.2855 6.45996 12.523 6.45996 9.12301C6.45996 5.65217 9.26496 2.83301 12.75 2.83301C16.2208 2.83301 19.04 5.65217 19.04 9.12301C19.0258 12.523 16.3483 15.2855 12.9766 15.3988Z"
-                 stroke={`
+                  stroke={`
                  ${periodo === "MENSAL"
-                ? "var(--azul-claro)"
-                : periodo === "AVULSO"
-                  ? "var(--azul-escuro)"
-                  : periodo === "SEMESTRAL"
-                    ? "var(--laranja)"
-                    : ""
-              }`}
-              strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      ? "var(--azul-claro)"
+                      : periodo === "AVULSO"
+                        ? "var(--azul-escuro)"
+                        : periodo === "SEMESTRAL"
+                          ? "var(--laranja)"
+                          : ""
+                    }`}
+                  strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M23.2476 5.66699C25.996 5.66699 28.206 7.89116 28.206 10.6253C28.206 13.3028 26.081 15.4845 23.4318 15.5837C23.3185 15.5695 23.191 15.5695 23.0635 15.5837"
-                stroke={`
+                  stroke={`
                  ${periodo === "MENSAL"
-                ? "var(--azul-claro)"
-                : periodo === "AVULSO"
-                  ? "var(--azul-escuro)"
-                  : periodo === "SEMESTRAL"
-                    ? "var(--laranja)"
-                    : ""
-              }`}
-                strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      ? "var(--azul-claro)"
+                      : periodo === "AVULSO"
+                        ? "var(--azul-escuro)"
+                        : periodo === "SEMESTRAL"
+                          ? "var(--laranja)"
+                          : ""
+                    }`}
+                  strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M5.89352 20.627C2.46518 22.922 2.46518 26.662 5.89352 28.9428C9.78935 31.5495 16.1785 31.5495 20.0743 28.9428C23.5027 26.6478 23.5027 22.9078 20.0743 20.627C16.1927 18.0345 9.80352 18.0345 5.89352 20.627Z"
-                stroke={`
+                  stroke={`
                  ${periodo === "MENSAL"
-                ? "var(--azul-claro)"
-                : periodo === "AVULSO"
-                  ? "var(--azul-escuro)"
-                  : periodo === "SEMESTRAL"
-                    ? "var(--laranja)"
-                    : ""
-              }`}
-                strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      ? "var(--azul-claro)"
+                      : periodo === "AVULSO"
+                        ? "var(--azul-escuro)"
+                        : periodo === "SEMESTRAL"
+                          ? "var(--laranja)"
+                          : ""
+                    }`}
+                  strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M25.9814 28.333C27.0014 28.1205 27.9648 27.7097 28.7581 27.1005C30.9681 25.443 30.9681 22.7088 28.7581 21.0513C27.9789 20.4563 27.0298 20.0597 26.0239 19.833"
-                stroke={`
+                  stroke={`
                  ${periodo === "MENSAL"
-                ? "var(--azul-claro)"
-                : periodo === "AVULSO"
-                  ? "var(--azul-escuro)"
-                  : periodo === "SEMESTRAL"
-                    ? "var(--laranja)"
-                    : ""
-              }`}
-                 strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      ? "var(--azul-claro)"
+                      : periodo === "AVULSO"
+                        ? "var(--azul-escuro)"
+                        : periodo === "SEMESTRAL"
+                          ? "var(--laranja)"
+                          : ""
+                    }`}
+                  strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <span className="text-base sm:text-xl 2xl:text-2xl font-light text-[var(--cor-primaria)] leading-tight  ms-6">  {quantidadeAulas} {quantidadeAulas < 2 ? "aula" : "aulas"}</span>
             </li>
@@ -260,7 +258,6 @@ const CardPlano = ({
                   id={"btn-contratar-plano"}
                   texto={textoBotao}
                   cor="var(--azul-claro)"
-                  corHover="none"
                   corTexto="#fff"
                   width="100%"
                   height={height}

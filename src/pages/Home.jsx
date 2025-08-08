@@ -165,16 +165,16 @@ const Home = () => {
       title: "Alunos Ativos",
       value: alunosAtivos,
       description: "Número total de alunos ativos.",
-      icon: <FaUsers />,
+      icon: <FaUsers className="w-5 h-5 sm:w-7 sm:h-7" />,
       bgColor: "bg-[#748CAB1A]",
       iconColor: "text-[#748CAB]",
-      rota: "/gerenciar-alunos" 
+      rota: "/gerenciar-alunos"
     },
     {
       title: "Treinos Criados",
       value: treinosCriados,
       description: "Treinos criados recentemente.",
-      icon: <FaDumbbell />,
+      icon: <FaDumbbell className="w-5 h-5 sm:w-7 sm:h-7" />,
       bgColor: "bg-[#46982B38]",
       iconColor: "text-[#46982B]",
       rota: "/gerenciar-treinos"
@@ -183,7 +183,7 @@ const Home = () => {
       title: "Treinos Próximos do Vencimento",
       value: treinosVencimento,
       description: "Treinos que expiram em 2 semanas.",
-      icon: <FaClock />,
+      icon: <FaClock className="w-5 h-5 sm:w-7 sm:h-7" />,
       bgColor: "bg-[#E96E354F]",
       iconColor: "text-[#E96E35]",
       rota: "/gerenciar-treinos"
@@ -192,7 +192,7 @@ const Home = () => {
       title: "Anamneses Pendentes",
       value: anamnesesPendentes,
       description: "Anamneses aguardando preenchimento.",
-      icon: <FaClipboardList />,
+      icon: <FaClipboardList className="w-5 h-5 sm:w-7 sm:h-7" />,
       bgColor: "bg-yellow-100",
       iconColor: "text-yellow-600",
       rota: "/gerenciar-alunos"
@@ -203,7 +203,7 @@ const Home = () => {
   return (
     <div className="flex min-h-screen bg-[#fdfbf7]">
       <MenuLateral isOpen={isSidebarOpen} />
-      <div className="flex-1">
+      <div className="flex-1 overflow-y-auto max-h-[100vh]">
         <Header toggleSidebar={toggleSidebar} />
         <main className="p-8 space-y-8">
           {/* KPIs */}

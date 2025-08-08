@@ -9,7 +9,7 @@ const Atalho = ({ icon, label, onClick }) => {
       <div className="text-[28px] mb-2 [&_svg]:text-gray-800 group-hover:[&_svg]:text-white transition-colors">
         {icon}
         </div>
-      <span className="text-[23px] font-semibold text-center">
+      <span className="text-xl md:text-[24px] font-semibold text-center">
         {label}
       </span>{" "}
     </div>

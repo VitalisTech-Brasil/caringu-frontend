@@ -177,11 +177,10 @@ const ModalPersonalizarExercicio = ({
                             <Button
                                 texto="Cancelar"
                                 type="button"
-                                corTexto="#B41F1F"
-                                cor="var(--cor-secundaria)"
+                                corTexto="var(--cor-secundaria)"
+                                cor="#B41F1F"
                                 height="2.75rem"
                                 width="13.25rem"
-                                corHover="#1D2D4417"
                                 fontWeight="500"
                                 aria-label="Botão de Cancelar"
                                 onClick={onClose}
@@ -193,7 +192,6 @@ const ModalPersonalizarExercicio = ({
                                 cor="#46982B"
                                 height="2.75rem"
                                 width="9.2rem"
-                                corHover="#46982BE5"
                                 fontWeight="600"
                                 aria-label="Botão de Salvar"
                             />

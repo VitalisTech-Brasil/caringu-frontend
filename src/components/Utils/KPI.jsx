@@ -19,11 +19,11 @@ const KPI = ({ title, value, description, icon, bgColor, iconColor, rota }) => {
   return (
     <div className="bg-[var(--cor-secundaria)] rounded-xl shadow-sm p-6 flex justify-between items-center cursor-pointer hover:bg-[#eaeaea]" onClick={redirecionarPorKPI}>
       <div>
-        <p className="text-[23px] font-medium text-gray-700">{title}</p>
-        <p className="text-[23px] font-bold text-gray-900">{value}</p>
-        <p className="text-[23px] text-gray-500 mt-1">{description}</p>
+        <p className="text-xl sm:text-[24px] font-medium text-gray-700">{title}</p>
+        <p className="text-xl sm:text-[24px] font-bold text-gray-900">{value}</p>
+        <p className="text-xl sm:text-[24px] text-gray-500 mt-1">{description}</p>
       </div>
-      <div className={`${bgColor} p-4 rounded-full`}>
+      <div className={`${bgColor} w-12 h-12 sm:w-15 sm:h-15 flex flex-row items-center justify-center p-4 rounded-full`}>
         <div className={`${iconColor} text-[28px]`}>{icon}</div>
       </div>
     </div>

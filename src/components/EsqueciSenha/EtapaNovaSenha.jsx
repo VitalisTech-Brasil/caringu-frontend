@@ -9,6 +9,10 @@ import check from "../../assets/images/check.svg";
 import olhoAberto from '../../assets/images/eye.svg';
 import olhoFechado from '../../assets/images/eye-slash.svg';
 import Button from '../Utils/Button';
+import toast from 'react-hot-toast';
+import CustomToast from '../Utils/CustomToast';
+import { Toaster } from 'react-hot-toast';
+
 
 import { useEmail } from './Context/EsqueciSenhaContext';
 
@@ -31,17 +35,24 @@ const EtapaNovaSenha = ({ onAvancar }) => {
     try {
       const response = await caringuApi.patch("/esqueci-senha/nova-senha", {
         email,
-        novaSenha: senha, // agora está correto
+        novaSenha: senha,
       });
 
       if (response.status == 200) {
         onAvancar();
+        toast.custom((t) => (
+          <CustomToast t={t} type="success" message="Senha alterada com sucesso!" />
+        ));
       } else {
-        alert("Erro ao alterar a senha.");
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Erro ao alterar a senha." />
+        ));
       }
     } catch (error) {
       console.error("Erro ao alterar a senha:", error);
-      alert("Erro ao tentar alterar a senha.");
+      toast.custom((t) => (
+        <CustomToast t={t} type="error" message="Erro ao tentar alterar a senha." />
+      ));
     }
   };
 
@@ -214,7 +225,6 @@ const EtapaNovaSenha = ({ onAvancar }) => {
                 type="submit"
                 cor="var(--laranja)"
                 corTexto="var(--cor-secundaria)"
-                corHover="#ca6333"
                 width="100%"
                 height="50px"
                 fontSize="14px"
@@ -225,6 +235,7 @@ const EtapaNovaSenha = ({ onAvancar }) => {
           </form>
         </div>
       </div>
+      <Toaster position="top-right" reverseOrder={false} />
     </section>
   );
 };

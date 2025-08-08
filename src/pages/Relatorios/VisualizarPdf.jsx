@@ -261,13 +261,13 @@ const VisualizarPdf = () => {
 
 
     return (
-        <div className="flex flex-col items-center justify-center item min-h-screen bg-[#fdfbf7] w-screen">
-            <div ref={pdfRef} className="flex-1 flex flex-col items-center justify-start"
+        <div className="flex flex-col items-center justify-center h-full bg-transparent w-screen">
+            <div ref={pdfRef} className="flex-1 flex flex-col items-center justify-start overflow-y-auto"
                 style={{
                     width: "900px",
                     minHeight: "1400px",
                     margin: "0 auto",
-                    background: "var(--cor-secundaria)",
+                    background: "transparent",
                     boxSizing: "border-box",
                     display: "flex",
                     flexDirection: "column",
@@ -411,17 +411,16 @@ const VisualizarPdf = () => {
                     <Toaster position='top-right' reverseOrder={false} />
                 </main>
             </div>
-            <div className='flex flex-col items-center justify-center w-full pb-5'>
+            <div className='flex flex-col items-center justify-center w-screen pb-5'>
                 <Button
                     texto={"Exportar gráficos em PDF"}
                     logo={exportarPDF}
                     borderColor={"#E6E6E2"}
                     borderWidth={"2px"}
                     borderStyle={"solid"}
-                    width={"50%"}
+                    width={"300px"}
                     height={"50px"}
                     fontSize={fontSize}
-                    corHover={"#E6E6E2"}
                     cor={"#FFFDF6"}
                     onClick={exportarParaPDF}
 
