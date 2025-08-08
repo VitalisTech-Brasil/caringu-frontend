@@ -17,8 +17,9 @@ import logoLaranjaCaringu from '../assets/logos/caringu-logo-branco-fundo-laranj
 import githubLogo from '../assets/logos/github-logo.svg';
 import linkedinLogo from '../assets/logos/linkedin-logo.svg';
 import instaLogo from '../assets/logos/instagram-logo.svg';
+import CardObjetivo from "../components/Index/CardObjetivo";
 
-export default function HomePage() {
+export default function   HomePage() {
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
     if (section) {
@@ -28,13 +29,31 @@ export default function HomePage() {
 
   const { register, handleSubmit, control, formState: { errors } } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Formulário enviado:", data);
-    // Aqui você pode enviar para uma API ou tratar como quiser
-  };
+  const objetivos = [
+    {
+      titulo: "Pesquisas com personal trainers",
+      subTitulo: "Buscamos entender o personal e nos colocar no seu lugar para entender suas dores.",
+      descricao: "Para isso, passamos por uma série de pesquisas com aprofundamento das dificuldades do profissional da área.",
+      image:cardImage
+    },
+    {
+      titulo: "Foco nos alunos",
+      subTitulo: "Criamos a CaringU pensando na experiência dos alunos com foco em progresso e personalização.",
+      descricao: "Queremos tornar a jornada de treino mais engajadora, aumentando a disciplina e o alcance de resultados reais.",
+      image:cardImage2
+    },
+    {
+      titulo: "Resultado",
+      subTitulo: "Desenvolvemos uma solução prática que conta com funções que buscam suprir a necessidade de organização do personal.",
+      descricao: "Como gerenciamento de alunos, agenda e relatórios para acompanhar o desempenho do aluno.",
+      image:cardImage3
+    }
+
+  ];
+
+
   return (
     <>
-      {/* Menu Lateral visível apenas em telas menores que 800px  */}
       <MenuLateral />
 
       {/* Header principal (desktop) */}
@@ -92,65 +111,25 @@ export default function HomePage() {
       </section>
       <section id="sobre" className="h-screen w-full bg-[var(--cor-secundaria)]">
         <div className="flex flex-col items-center justify-center gap-4 h-1/3 w-full mb-2
-  max-[1050px]:mb-4
-  max-[700px]:mb-6
-  max-[500px]:mb-8
-  max-[425px]:mb-10">
+          max-[1050px]:mb-4
+          max-[700px]:mb-6
+          max-[500px]:mb-8
+          max-[425px]:mb-10">
           <h1 className="text-[48px] font-bold max-[1300px]:text-[40px] max-[1050px]:text-[36px] max-[850px]:text-[28px] max-[415px]:text-[24px]">Por que criamos a CaringU?</h1>
           <p className="text-[24px] max-w-300  text-center max-[1300px]:text-[20px] max-[1300px]:w-[1000px] max-[1050px]:text-[18px] max-[1050px]:w-[800px] max-[850px]:w-[600px] max-[650px]:w-[500px] max-[525px]:w-[400px] max-[525px]:text-[16px] max-[415px]:w-[300px] max-[415px]:text-[16px]">
             A  <b>CaringU</b> surgiu com o objetivo de conectar os personal trainers com seus alunos e facilitar a organização dos treinos, exercícios e aulas agendadas.
           </p>
         </div>
-
-        {/*CARD 1*/}
         <div className="flex items-center justify-center gap-4 h-1/2 flex-col md:flex-col lg:flex-row">
-          <div className="flex flex-col max-[1024px]:flex-row w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center rounded-[6px] max-[1350px]:w-[340px] max-[1350px]:h-[450px] max-[1150px]:w-[300px] max-[1150px]:h-[440px] max-[1025px]:w-[800px] max-[1025px]:h-[400px] max-[850px]:w-[650px] max-[850px]:h-[380px] max-[700px]:w-[550px] max-[700px]:h-[280px] max-[580px]:w-[390px] max-[580px]:h-[230px] max-[420px]:w-[320px] max-[420px]:h-[180px]">
-            <img src={cardImage} alt="Card" className="w-full h-full object-cover max-[1350px]:w-[340px] max-[1025px]:h-[172px] max-[700px]:w-[230px] max-[700px]:h-[150px] max-[850px]:gap-1 max-[580px]:w-[200px] max-[580px]:h-[140px] max-[420px]:w-[150px] max-[420px]:h-[130px]" />
-            <div className="flex m-5 max-[700px]:m-2 max-[580px]:m-1 max-[420px]:m-1 max-[420px]:gap-[1px]">
-              <div className="flex flex-col gap-4 max-[1024px]:gap-2 max-[850px]:gap-1 max-[420px]:gap-[2px]">
-                <p className="text-[20px] font-bold text-start max-[1350px]:text-[18px] max-[850px]:text-[16px] max-[580px]:text-[15px]">Pesquisas com personal trainers</p>
-                <p className="text-[16px] text-start max-[1350px]:text-[13px] max-[850px]:text-[12.5px] max-[580px]:text-[12px]">
-                  Buscamos entender o personal e nos colocar no seu lugar para entender suas dores.
-                  <span className="max-[580px]:hidden">
-                    Para isso, passamos por uma série de pesquisas com aprofundamento das dificuldades do profissional da área.
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/*CARD 2*/}
-          <div className="flex flex-col max-[1024px]:flex-row w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center rounded-[6px] max-[1350px]:w-[340px] max-[1350px]:h-[450px] max-[1150px]:w-[300px] max-[1150px]:h-[440px] max-[1025px]:w-[800px] max-[1025px]:h-[400px] max-[850px]:w-[650px] max-[850px]:h-[380px] max-[700px]:w-[550px] max-[700px]:h-[280px] max-[580px]:w-[390px] max-[580px]:h-[230px] max-[420px]:w-[320px] max-[420px]:h-[180px]">
-            <img src={cardImage2} alt="Card" className="w-full h-full object-cover max-[1350px]:w-[340px] max-[1025px]:h-[172px] max-[700px]:w-[230px] max-[700px]:h-[150px] max-[850px]:gap-1 max-[580px]:w-[200px] max-[580px]:h-[140px] max-[420px]:w-[150px] max-[420px]:h-[130px]" />
-            <div className="flex m-5 max-[700px]:m-2 max-[580px]:m-1 max-[580px]:gap-[1px] max-[420px]:m-1 max-[420px]:gap-[1px]">
-              <div className="flex flex-col gap-4 max-[1024px]:gap-0 max-[850px]:gap-1 max-[420px]:gap-[2px]">
-                <p className="text-[20px] font-bold text-start max-[1350px]:text-[18px] max-[850px]:text-[16px] max-[580px]:text-[15px]">Foco nos alunos</p>
-                <p className="text-[16px] text-start max-[1350px]:text-[13px] max-[850px]:text-[12.5px] max-[580px]:text-[12px]">
-                  Criamos a CaringU pensando na experiência dos alunos com foco em progresso e personalização.
-                  <span className="max-[580px]:hidden">
-                    Queremos tornar a jornada de treino mais engajadora, aumentando a disciplina e o alcance de resultados reais.
-                  </span>
-                </p>
-
-              </div>
-            </div>
-          </div>
-
-          {/*CARD 3*/}
-          <div className="flex flex-col max-[1024px]:flex-row w-[400px] h-[500px] border-[#15171b46] border-2 gap-4 text-center rounded-[6px] max-[1350px]:w-[340px] max-[1350px]:h-[450px] max-[1150px]:w-[300px] max-[1150px]:h-[440px] max-[1025px]:w-[800px] max-[1025px]:h-[400px] max-[850px]:w-[650px] max-[850px]:h-[380px] max-[700px]:w-[550px] max-[700px]:h-[280px] max-[580px]:w-[390px] max-[580px]:h-[230px] max-[420px]:w-[320px] max-[420px]:h-[180px]">
-            <img src={cardImage3} alt="Card" className="w-full h-full object-cover max-[1350px]:w-[340px] max-[1025px]:h-[172px] max-[700px]:w-[230px] max-[700px]:h-[150px] max-[850px]:gap-1 max-[580px]:w-[200px] max-[580px]:h-[140px] max-[420px]:w-[150px] max-[420px]:h-[160px]" />
-            <div className="flex m-5 max-[700px]:m-2 max-[580px]:m-1 max-[580px]:gap-[1px] max-[420px]:m-1 max-[420px]:gap-[1px]">
-              <div className="flex flex-col gap-4 max-[1024px]:gap-0 max-[850px]:gap-1 max-[420px]:gap-[2px]">
-                <p className="text-[20px] font-bold text-start max-[1350px]:text-[18px] max-[850px]:text-[16px] max-[580px]:text-[15px]">Resultado</p>
-                <p className="text-[16px] text-start max-[1350px]:text-[13px] max-[850px]:text-[12.5px] max-[580px]:text-[12px]">
-                  Desenvolvemos uma solução prática que conta com funções que buscam suprir a necessidade de organização do personal.
-                  <span className="max-[580px]:hidden">
-                    Como gerenciamento de alunos, agenda e relatórios para acompanhar o desempenho do aluno.
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
+          {objetivos.map((obj, index) => (
+            <CardObjetivo
+              key={index}
+              titulo={obj.titulo}
+              subTitulo={obj.subTitulo}
+              descricao={obj.descricao}
+              image={obj.image}
+            />
+          ))}
         </div>
       </section>
       <section id="servicos" className="h-screen w-full relative bg-cover flex items-start flex-col" style={{ backgroundImage: `url(${secondImage})` }}>

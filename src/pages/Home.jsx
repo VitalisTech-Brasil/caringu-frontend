@@ -168,7 +168,7 @@ const Home = () => {
       icon: <FaUsers className="w-5 h-5 sm:w-7 sm:h-7" />,
       bgColor: "bg-[#748CAB1A]",
       iconColor: "text-[#748CAB]",
-      rota: "/gerenciar-alunos" 
+      rota: "/gerenciar-alunos"
     },
     {
       title: "Treinos Criados",

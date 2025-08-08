@@ -230,8 +230,8 @@ const FormularioAnamnese = ({ aluno, onSubmit, respostasBack, onCancelar }) => {
         <div className="flex justify-center gap-4 bg-[var(--cor-secundaria)] pt-4 pb-6 sticky bottom-0 z-20 ">
           <ButtonInterno
             texto="Cancelar"
-            corTexto="#B41F1F"
-            cor="var(--cor-secundaria)"
+            corTexto="var(--cor-secundaria)"
+            cor="#B41F1F"
             height="2.75rem"
             width="13.25rem"
             fontWeight="500"

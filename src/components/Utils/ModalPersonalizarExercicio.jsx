@@ -177,8 +177,8 @@ const ModalPersonalizarExercicio = ({
                             <Button
                                 texto="Cancelar"
                                 type="button"
-                                corTexto="#B41F1F"
-                                cor="var(--cor-secundaria)"
+                                corTexto="var(--cor-secundaria)"
+                                cor="#B41F1F"
                                 height="2.75rem"
                                 width="13.25rem"
                                 fontWeight="500"

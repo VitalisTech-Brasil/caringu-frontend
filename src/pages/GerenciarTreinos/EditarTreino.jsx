@@ -13,6 +13,7 @@ import CustomToast from '../../components/Utils/CustomToast.jsx'
 import Modal from "../../components/Utils/Modal.jsx";
 import iconCancelar from "../../assets/images/cancelar.png";
 import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx'
+import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 
 
 
@@ -392,22 +393,15 @@ const EditarTreino = () => {
                             <h1 className="mt-6">Exercícios adicionados:</h1>
                             <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                 {exerciciosEditados.map((exercicio) => (
-
-                                    <div key={exercicio.exercicioId || exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
-                                        {exercicio.nomeExercicio || exercicio.nome}
-                                        <button onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            removerExercicio(exercicio.exercicioId || exercicio.id)
+                                    <ExercicioChip
+                                        key={exercicio.exercicioId || exercicio.id}
+                                        exercicio={{
+                                            id: exercicio.exercicioId || exercicio.id,
+                                            nome: exercicio.nomeExercicio || exercicio.nome
                                         }}
-                                            className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg></button>
-                                    </div>
-
-
+                                        onEdit={abrirModalExercicio}
+                                        onRemove={removerExercicio}
+                                    />
                                 ))}
                             </div>
                             <div className="flex items-center justify-center mt-7">

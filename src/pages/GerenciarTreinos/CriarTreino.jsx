@@ -14,7 +14,7 @@ import { caringuApi } from '../../provider/caringuApi.js'
 import toast, { Toaster } from 'react-hot-toast'
 import CustomToast from '../../components/Utils/CustomToast.jsx'
 import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx'
-
+import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 
 const CriarTreino = () => {
 
@@ -366,19 +366,12 @@ const CriarTreino = () => {
                                 <h1 className='mt-6'>Exercícios adicionados:</h1>
                                 <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                     {exerciciosSelecionados.map((exercicio) => (
-                                        <div key={exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => handleOpenModal(exercicio)}>
-                                            {exercicio.nome}
-                                            <button onClick={(e) => {
-                                                e.stopPropagation();
-                                                removerExercicio(exercicio.id)
-                                            }}
-                                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </button>
-                                        </div>
+                                        <ExercicioChip
+                                            key={exercicio.id}
+                                            exercicio={exercicio}
+                                            onEdit={handleOpenModal}
+                                            onRemove={removerExercicio}
+                                        />
                                     ))}
                                 </div>
                                 <div className="flex items-center justify-center mt-7">
