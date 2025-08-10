@@ -140,6 +140,7 @@ const GerenciarAlunos = () => {
         const aluno = response.data;
 
         setAlunosAtivos(aluno);
+        console.log("Alunos ativos:", aluno);
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
       }
@@ -320,20 +321,33 @@ const GerenciarAlunos = () => {
                     />
                   </div>
                 </div>
-                <div className="relative z-0 space-y-2 overflow-y-auto border-2 sm:h-[85%] h-[30vh] border-gray-200 rounded-md p-4">
+                <div className="relative z-0 space-y-2 border-2 sm:h-[85%] h-[30vh] border-gray-200 rounded-md p-4">
 
-                  {filteredAlunos.map((aluno) => (
-                    <CardAluno
-                      key={aluno.idAluno}
-                      aluno={aluno}
-                      onCardClick={handleCardClick}
-                      onMenuAction={handleMenuAction}
-                      openMenuId={openMenuId}
-                      setOpenMenuId={setOpenMenuId}
-                      imgErro={imgErro}
-                      setImgErro={setImgErro}
-                    />
-                  ))}
+                  {filteredAlunos.length === 0 ? (
+                    <div className="flex items-center justify-center h-full text-gray-500">
+                      Nenhum aluno encontrado
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[85%]">
+                      {filteredAlunos.slice(0, 4).map((aluno) => (
+                        <CardAluno
+                          key={aluno.idAluno}
+                          aluno={aluno}
+                          onCardClick={handleCardClick}
+                          onMenuAction={handleMenuAction}
+                          openMenuId={openMenuId}
+                          setOpenMenuId={setOpenMenuId}
+                          imgErro={imgErro}
+                          setImgErro={setImgErro}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  <div className="py-5 w-full h-auto bg-red-500">
+                    <span>
+                      1 2 3 4
+                    </span>
+                  </div>
                 </div>
               </div>
             </div >
