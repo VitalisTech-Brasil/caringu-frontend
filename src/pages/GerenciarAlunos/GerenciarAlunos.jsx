@@ -28,6 +28,9 @@ const GerenciarAlunos = () => {
   const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
   const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -186,6 +189,90 @@ const GerenciarAlunos = () => {
       return 0;
     });
 
+  const totalPages = Math.ceil(filteredAlunos.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentAlunos = filteredAlunos.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortOrder, anamnesesPendentes, aguardandoTreino]);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const goToPrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const PaginationComponent = () => {
+    if (filteredAlunos.length === 0) return null;
+
+    const isArrowsEnabled = totalPages > 3;
+
+    return (
+      <div className="flex items-center justify-center gap-25 py-2 w-full h-auto bg-blue-200">
+
+        <button
+          onClick={goToPrevious}
+          disabled={currentPage === 1 || !isArrowsEnabled}
+          className={`w-8 h-8 flex items-center justify-center rounded ${currentPage === 1 || !isArrowsEnabled
+            ? 'text-gray-400 cursor-not-allowed'
+            : 'text-gray-700 hover:bg-gray-200 cursor-pointer'
+            }`}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+
+        {/* Números das páginas */}
+        <div className="flex items-center gap-2">
+
+          {Array.from({ length: totalPages }, (_, index) => {
+            const pageNumber = index + 1;
+            return (
+              <button
+                key={pageNumber}
+                onClick={() => goToPage(pageNumber)}
+                className={`w-8 h-8 flex items-center justify-center rounded-full font-medium ${currentPage === pageNumber
+                  ? 'bg-[var(--laranja)] text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+              >
+                {pageNumber}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Seta Direita */}
+        <button
+          onClick={goToNext}
+          disabled={currentPage === totalPages || !isArrowsEnabled}
+          className={`w-8 h-8 flex items-center justify-center rounded ${currentPage === totalPages || !isArrowsEnabled
+            ? 'text-gray-400 cursor-not-allowed'
+            : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
+            }`}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+    );
+  };
+
+
+
   const handlePresencaAlunoClick = (aluno) => {
     navigate(`/perfil-aluno/${aluno.idAluno}`);
   };
@@ -328,8 +415,8 @@ const GerenciarAlunos = () => {
                       Nenhum aluno encontrado
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[85%]">
-                      {filteredAlunos.slice(0, 4).map((aluno) => (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[90%]">
+                      {currentAlunos.map((aluno) => (
                         <CardAluno
                           key={aluno.idAluno}
                           aluno={aluno}
@@ -339,15 +426,12 @@ const GerenciarAlunos = () => {
                           setOpenMenuId={setOpenMenuId}
                           imgErro={imgErro}
                           setImgErro={setImgErro}
+                          totalCards={currentAlunos.length}
                         />
                       ))}
                     </div>
                   )}
-                  <div className="py-5 w-full h-auto bg-red-500">
-                    <span>
-                      1 2 3 4
-                    </span>
-                  </div>
+                  <PaginationComponent />
                 </div>
               </div>
             </div >

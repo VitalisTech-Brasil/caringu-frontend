@@ -11,7 +11,8 @@ const CardAluno = ({
     openMenuId,
     setOpenMenuId,
     imgErro,
-    setImgErro
+    setImgErro,
+    totalCards
 }) => {
 
     const menuRef = useRef(null);
@@ -99,7 +100,7 @@ const CardAluno = ({
     );
 
     return (
-        <div className="flex flex-col w-full h-full items-start justify-start bg-[var(--cor-secundaria)] rounded-md sm:p-4 p-2 hover:bg-gray-50 border-2 border-gray-200"
+        <div className={`flex flex-col w-full ${totalCards > 2 ? 'h-full' : 'h-1/2'} items-start justify-start bg-[var(--cor-secundaria)] rounded-md sm:p-4 p-2 hover:bg-gray-50 border-2 border-gray-200`}
             key={aluno.idAluno}
         >
             <div
@@ -172,7 +173,7 @@ const CardAluno = ({
                     <span><b>Nível de atividade atual:</b> {formatarNivelAtividade(aluno.nivelAtividade)}</span>
                 </p>
             </div>
-            <div className="w-full h-1/3 flex flex-col items-center justify-end border-t border-gray-200 rounded-b-md">
+            <div className="w-full h-1/3 flex flex-col items-center justify-end border-t-2 border-gray-200 rounded-b-md">
                 <Button
                     id={"btn-visualizar-aluno"}
                     texto={"Ver Perfil do Aluno"}
