@@ -357,6 +357,7 @@ const Dashboard = () => {
                             <div className='flex flex-col justify-end lg:justify-start gap-5 m-0 mt-2 lg:mt-0 lg:m-3 w-full sm:w-[85%]'>
                                 <h1 className='text-xl font-semibold'>Evolução dos treinos cumpridos</h1>
                                 <GraficoEvolucaoTreinosCumpridos dadosAPI={dadosEvolucaoTreinosCumpridos} />
+                                <h1 className='text-xl font-semibold'>Total de horas treinadas por mês</h1>
                                 <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes} />
                             </div>
                         </div>
