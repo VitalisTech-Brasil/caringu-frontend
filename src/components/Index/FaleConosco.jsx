@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Utils/Button';
 import { caringuApi } from '../../provider/caringuApi';
+import loading from "../../assets/gifs/loading.gif";
 
 const FaleConosco = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -32,7 +33,6 @@ const FaleConosco = () => {
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         setResponseMessage('');
-        console.log(data);
 
         try {
             const response = await caringuApi.post('/fale-conosco', data);
@@ -116,9 +116,16 @@ const FaleConosco = () => {
                     </div>
                     <div className="flex items-center justify-center gap-4 max-[750px]:w-[300px] max-[750px]:h-[20px] max-[950px]:text-[16px] max-[500px]:w-[250px] max-[480px]:h-[15px]">
                         <Button
-                            texto={isSubmitting ? 'Enviando...' : responseMessage ? 'Enviado' : 'Enviar'}
+                            texto={
+                                isSubmitting ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        Enviando
+                                        <img src={loading} alt="Carregando" className="w-7 h-7 inline-block" />
+                                    </span>
+                                ) : responseMessage ? 'Enviado' : 'Enviar'
+                            }
                             cor="var(--azul-claro)"
-                            corTexto="var(--cor-secundaria)"
+                            corTexto={responseMessage == 'Enviado' ? "green" : "var(--cor-secundaria)"}
                             width="400px"
                             height="40px"
                             type="submit"
