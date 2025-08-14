@@ -99,91 +99,93 @@ const CardAluno = ({
         </div>
     );
 
+
+
     return (
-        <div className={`flex flex-col w-full ${totalCards > 2 ? 'h-full' : 'h-1/2'} items-start justify-start bg-[var(--cor-secundaria)] rounded-md sm:p-4 p-2 hover:bg-gray-50 border-2 border-gray-200`}
+        <div className={`flex flex-col w-full ${totalCards > 2 ? 'h-full' : 'h-full sm:h-full 2xl:h-1/2'} items-start justify-start bg-[var(--cor-secundaria)] rounded-md sm:p-4 p-2 hover:bg-gray-50 border-2 border-gray-200`}
             key={aluno.idAluno}
         >
             <div
-                className="relative flex flex-row sm:items-center items-start justify-between  sm:gap-4 w-full h-1/3"
+                className="relative flex flex-col-reverse sm:flex-row sm:items-center items-start justify-between  sm:gap-4 w-full h-[55%] sm:h-1/3 gap-3"
             >
-                <div className="gap-4 flex sm:flex-row flex-col items-center justify-end w-full h-full">
+                <div className="gap-1 sm:gap-4 flex sm:flex-row flex-col items-center justify-end w-full h-full">
                     {aluno.urlFotoPerfil && !imgErro ? (
                         <img
                             src={aluno.urlFotoPerfil}
                             alt="Imagem do aluno"
-                            className='sm:w-12 sm:h-12 w-20 h-20 lg:w-15 lg:h-15 rounded-full'
+                            className='sm:w-12 sm:h-12 w-20 h-20 lg:w-12 lg:h-12 rounded-full'
                             onError={() => setImgErro(true)}
                         />
 
                     ) : (
-                        <FaUserCircle className="flex-shrink-0 sm:w-12 sm:h-12 w-20 h-20 lg:w-15 lg:h-15 text-[#4B5563]" />
+                        <FaUserCircle className="flex-shrink-0 sm:w-12 sm:h-12 w-15 h-15 lg:w-12 lg:h-12 text-[#4B5563]" />
                     )}
 
                     <div className="flex-1 w-full flex flex-col items-start justify-center">
-                        <p className="font-bold text-xl w-full sm:text-left text-center">{aluno.nomeAluno}</p>
-                        <p className="text-base text-gray-600 flex items-start">
-                            <b>Telefone:</b> {MascaraTelefone(aluno.celular)}
+                        <p className="font-bold text-base w-full sm:text-left text-center">{aluno.nomeAluno}</p>
+                        <p className="text-[12px] w-full text-gray-600 flex flex-col sm:flex-row items-start justify-center sm:justify-start">
+                            <b className="text-center sm:w-auto w-full">Telefone:</b> <span className="text-center sm:w-auto w-full">{MascaraTelefone(aluno.celular)}</span>
                         </p>
                     </div>
                 </div>
-                <div className="text-[var(--azul-claro)] font-normal text-xs bg-[#748CAB36] rounded-[15px] h-auto w-[100px] p-[0.5rem] 2xl:p-2  flex flex-row items-center justify-center text-center">
-                    {aluno.nomePlano}
-                </div>
+                <div className="h-auto w-full sm:w-auto flex flex-row gap-4 sm:justify-start justify-between">
+                    <div className="text-[var(--azul-claro)] font-normal text-xs bg-[#748CAB36] rounded-[15px] h-auto w-[100px] p-[0.5rem] 2xl:p-2  flex flex-row items-center justify-center text-center">
+                        {aluno.nomePlano}
+                    </div>
 
-                {/* Botão + menu */}
-                <div onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click event
-                    setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
-                }}
-                    className="pt-2 sm:pt-0 flex justify-end items-center rounded-[5px] cursor-pointer sm:hover:bg-gray-300 transition duration-200">
-                    <div className="relative" ref={buttonRef}>
-                        <button
-                            className="flex items-center justify-center sm:w-8 w-4 sm:h-8 h-4 cursor-pointer"
-                        >
-                            <FaEllipsisV className="text-xl" />
-                        </button>
-
-                        {openMenuId === aluno.idAluno && (
-                            <div
-                                ref={menuRef}
-                                onClick={(e) => e.stopPropagation()}
-                                className="absolute right-0 mt-2 z-[9999] bg-[var(--cor-secundaria)] border-2 border-gray-200 rounded-md shadow-lg p-2 w-40 sm:w-55"
+                    {/* Botão + menu */}
+                    <div onClick={(e) => {
+                        e.stopPropagation(); // Prevent card click event
+                        setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
+                    }}
+                        className="w-8 h-8 pt-2 sm:pt-0 flex justify-center items-center rounded-[5px] cursor-pointer sm:hover:bg-gray-300 transition duration-200">
+                        <div className="relative" ref={buttonRef}>
+                            <button
+                                className="flex items-center justify-center sm:w-6 w-4 sm:h-6 h-4 cursor-pointer"
                             >
-                                <AlunoActionsMenu aluno={aluno} />
-                            </div>
-                        )}
+                                <FaEllipsisV className="text-xl" />
+                            </button>
+
+                            {openMenuId === aluno.idAluno && (
+                                <div
+                                    ref={menuRef}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="absolute right-0 mt-2 z-[9999] bg-[var(--cor-secundaria)] border-2 border-gray-200 rounded-md shadow-lg p-2 w-40 sm:w-55"
+                                >
+                                    <AlunoActionsMenu aluno={aluno} />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="w-full h-1/3 flex flex-col items-start justify-center">
-                <p className="flex items-start gap-0.5 text-base">
+            <div className="w-full h-[30%] sm:h-1/3 flex flex-col items-start justify-center">
+                <p className="flex items-start gap-0.5 text-[12px] sm:text-base">
                     {aluno.objetivoTreino ? (
                         <>
-                            <span className="text-gray-600"><b>Objetivo:</b> {aluno.objetivoTreino}</span>
+                            <span><b>Objetivo:</b> {aluno.objetivoTreino}</span>
                         </>
                     ) : (
                         <>
-                            <HiOutlineClock className="shrink-0 mt-1 w-4 h-4 text-[#4B5563]" />
+                            <HiOutlineClock className="shrink-0 mt-1 w-4 h-4" />
                             <span>Anamnese pendente</span>
                         </>
                     )
                     }
                 </p>
-                <p className="flex items-start text-base">
+                <p className="flex items-start text-[12px] sm:text-base">
                     <span><b>Nível de atividade atual:</b> {formatarNivelAtividade(aluno.nivelAtividade)}</span>
                 </p>
             </div>
-            <div className="w-full h-1/3 flex flex-col items-center justify-end border-t-2 border-gray-200 rounded-b-md">
+            <div className="w-full h-[15%] sm:h-1/3 flex flex-col items-center sm:justify-end justify-center border-t-2 border-gray-200 rounded-b-md">
                 <Button
                     id={"btn-visualizar-aluno"}
                     texto={"Ver Perfil do Aluno"}
                     cor={"var(--azul-claro)"}
                     corTexto="#fff"
-                    height={"50px"}
                     ariaLabel={"Visualizar Perfil"}
-                    fontSize={"16px"}
                     fontWeight={"600"}
-                    width={"80%"}
+                    classNameExtra={"sm:text-base text-xs sm:h-[50px] h-[30px] sm-w-[80%] w-[90%]"}
                     onClick={() => onCardClick(aluno.idAluno)}
                 />
             </div>

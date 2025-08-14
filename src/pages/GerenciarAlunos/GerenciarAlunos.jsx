@@ -16,6 +16,7 @@ import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
 import FormularioAnamnese from "../../components/Utils/GerenciarAlunos/FormularioAnamnese";
 import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../../components/Utils/CustomToast";
+import Pagination from "../../components/Utils/Pagination";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,9 +29,6 @@ const GerenciarAlunos = () => {
   const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
   const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -143,7 +141,6 @@ const GerenciarAlunos = () => {
         const aluno = response.data;
 
         setAlunosAtivos(aluno);
-        console.log("Alunos ativos:", aluno);
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
       }
@@ -189,9 +186,36 @@ const GerenciarAlunos = () => {
       return 0;
     });
 
+
+  //Configarações de paginação  
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    if (window.innerWidth >= 1536) return 4;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+  });
+
   const totalPages = Math.ceil(filteredAlunos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentAlunos = filteredAlunos.slice(startIndex, startIndex + itemsPerPage);
+  useEffect(() => {
+    const handleResize = () => {
+      let newItemsPerPage;
+      if (window.innerWidth >= 1536) {
+        newItemsPerPage = 4;
+      } else if (window.innerWidth >= 640) {
+        newItemsPerPage = 2;
+      } else {
+        newItemsPerPage = 1;
+      }
+      setItemsPerPage(newItemsPerPage);
+      setCurrentPage(1);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -212,66 +236,6 @@ const GerenciarAlunos = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-
-  const PaginationComponent = () => {
-    if (filteredAlunos.length === 0) return null;
-
-    const isArrowsEnabled = totalPages > 3;
-
-    return (
-      <div className="flex items-center justify-center gap-25 py-2 w-full h-auto bg-blue-200">
-
-        <button
-          onClick={goToPrevious}
-          disabled={currentPage === 1 || !isArrowsEnabled}
-          className={`w-8 h-8 flex items-center justify-center rounded ${currentPage === 1 || !isArrowsEnabled
-            ? 'text-gray-400 cursor-not-allowed'
-            : 'text-gray-700 hover:bg-gray-200 cursor-pointer'
-            }`}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-
-        {/* Números das páginas */}
-        <div className="flex items-center gap-2">
-
-          {Array.from({ length: totalPages }, (_, index) => {
-            const pageNumber = index + 1;
-            return (
-              <button
-                key={pageNumber}
-                onClick={() => goToPage(pageNumber)}
-                className={`w-8 h-8 flex items-center justify-center rounded-full font-medium ${currentPage === pageNumber
-                  ? 'bg-[var(--laranja)] text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-              >
-                {pageNumber}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Seta Direita */}
-        <button
-          onClick={goToNext}
-          disabled={currentPage === totalPages || !isArrowsEnabled}
-          className={`w-8 h-8 flex items-center justify-center rounded ${currentPage === totalPages || !isArrowsEnabled
-            ? 'text-gray-400 cursor-not-allowed'
-            : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
-            }`}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-      </div>
-    );
-  };
-
-
 
   const handlePresencaAlunoClick = (aluno) => {
     navigate(`/perfil-aluno/${aluno.idAluno}`);
@@ -408,14 +372,14 @@ const GerenciarAlunos = () => {
                     />
                   </div>
                 </div>
-                <div className="relative z-0 space-y-2 border-2 sm:h-[85%] h-[30vh] border-gray-200 rounded-md p-4">
+                <div className="relative z-0 space-y-2 border-2 sm:h-[600px] lg:h-[85%] h-[500px] border-gray-200 rounded-md p-4">
 
                   {filteredAlunos.length === 0 ? (
                     <div className="flex items-center justify-center h-full text-gray-500">
                       Nenhum aluno encontrado
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[90%]">
+                    <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4 h-[90%]">
                       {currentAlunos.map((aluno) => (
                         <CardAluno
                           key={aluno.idAluno}
@@ -431,7 +395,15 @@ const GerenciarAlunos = () => {
                       ))}
                     </div>
                   )}
-                  <PaginationComponent />
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    itemsLength={filteredAlunos.length}
+                    onPageChange={goToPage}
+                    onPrevious={goToPrevious}
+                    onNext={goToNext}
+                    maxVisible={3}
+                  />
                 </div>
               </div>
             </div >
