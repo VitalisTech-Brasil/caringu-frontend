@@ -1,10 +1,11 @@
-import { React, useEffect } from 'react';
+import { React, useEffect, useState } from 'react';
 import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
+import loadingGif from "../../assets/gifs/loading.gif";
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../Utils/Inputs';
-import Button from '../Utils/Button';
+import ButtonLoading from '../Utils/ButtonLoading';
 import { useForm } from 'react-hook-form';
 import { api } from '../../provider/api';
 import toast from 'react-hot-toast';
@@ -12,8 +13,9 @@ import CustomToast from '../Utils/CustomToast';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
-
 
   useEffect(() => {
     return () => {
@@ -23,7 +25,7 @@ const ColunaInputs = () => {
 
   const loginGoogle = useGoogleLogin({
     onSuccess: async (codeResponse) => {
-      
+      setLoadingGoogle(true);
       try {
         const response = await api.post('/login/google', {
           code: codeResponse.code
@@ -54,6 +56,8 @@ const ColunaInputs = () => {
         toast.custom((t) => (
           <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
         ));
+      } finally {
+        setLoadingGoogle(false);
       }
     },
     onError: () => {
@@ -65,7 +69,7 @@ const ColunaInputs = () => {
   });
 
   const verificarUsuario = async (data) => {
-
+    setLoading(true);
     const { email, senha } = data;
 
     try {
@@ -107,6 +111,8 @@ const ColunaInputs = () => {
           <CustomToast t={t} type="error" message="Erro ao conectar ao servidor. Tente novamente mais tarde." />
         ));
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,8 +169,15 @@ const ColunaInputs = () => {
             <a className="text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:scale-101 hover:after:scale-x-100" href="/esqueci-senha">Esqueci minha senha</a>
           </div>
 
-          <Button
-            texto="Entrar"
+          <ButtonLoading
+            texto={
+              loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  Entrando
+                  <img src={loadingGif} alt="Carregando" className="w-7 h-7 inline-block" />
+                </span>
+              ) : 'Entrar'
+            }
             type="submit"
             cor="var(--azul-claro)"
             corTexto="var(--cor-secundaria)"
@@ -173,9 +186,16 @@ const ColunaInputs = () => {
             font-size="14px"
           />
 
-          <Button
+          <ButtonLoading
             logo={googleLogo}
-            texto="Entrar com Google"
+            texto={
+              loadingGoogle ? (
+                <span className="flex items-center justify-center gap-2">
+                  Entrando com Google
+                  <img src={loadingGif} alt="Carregando" className="w-7 h-7 inline-block" />
+                </span>
+              ) : 'Entrar com Google'
+            }
             type="button"
             cor="var(--azul-escuro)"
             corTexto="var(--cor-secundaria)"

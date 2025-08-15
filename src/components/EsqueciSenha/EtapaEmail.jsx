@@ -1,9 +1,10 @@
 // src/components/EsqueciSenha/EtapaEmail.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { caringuApi } from '../../provider/caringuApi';
+import loadingGif from "../../assets/gifs/loading.gif";
 import Input from '../Utils/Inputs';
-import Button from '../Utils/Button';
+import ButtonLoading from '../Utils/ButtonLoading';
 import { useEmail } from './Context/EsqueciSenhaContext';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
@@ -12,10 +13,15 @@ import CustomToast from '../Utils/CustomToast';
 
 const EtapaEmail = ({ onAvancar }) => {
   const { atualizarEmail } = useEmail(); // pega o atualizarEmail do Context
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const handleEnviarEmail = async (data) => {
+    if (loading) return;
+
+    setLoading(true);
     const { email } = data;
+
     try {
       const response = await caringuApi.post('/esqueci-senha', { email });
 
@@ -33,8 +39,10 @@ const EtapaEmail = ({ onAvancar }) => {
     } catch (error) {
       console.error("Erro ao enviar e-mail:", error);
       toast.custom((t) => (
-          <CustomToast t={t} type="error" message="Ocorreu um erro ao tentar enviar o e-mail. Tente novamente." />
-        ));
+        <CustomToast t={t} type="error" message="Ocorreu um erro ao tentar enviar o e-mail. Tente novamente." />
+      ));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,8 +87,15 @@ const EtapaEmail = ({ onAvancar }) => {
             </div>
 
             <footer className="flex flex-col h-25 justify-between items-center max-[500px]:w-[400px] max-[415px]:w-[300px]">
-              <Button
-                texto="Resetar Senha"
+              <ButtonLoading
+                texto={
+                  loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      Enviando e-mail
+                      <img src={loadingGif} alt="Carregando" className="w-7 h-7 inline-block" />
+                    </span>
+                  ) : 'Resetar Senha'
+                }
                 type="submit"
                 cor="var(--laranja)"
                 corTexto="var(--cor-secundaria)"
@@ -88,6 +103,7 @@ const EtapaEmail = ({ onAvancar }) => {
                 classNameExtra="w-[270px] sm:w-[350px]"
                 height="50px"
                 fontSize="14px"
+                disabled={loading}
               />
               <a href="/Login">Voltar para Login</a>
             </footer>
