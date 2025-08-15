@@ -11,6 +11,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import CustomToast from '../../components/Utils/CustomToast';
 import GraficoEvolucaoTreinosCumpridos from '../../components/Dashboard/GraficoEvolucaoTreinosCumpridos';
 import GraficoEvolucaoCarga from '../../components/Dashboard/GraficoEvolucaoCarga';
+import GraficoHorasTreinadas from '../../components/Dashboard/GraficoHorasTreinadas';
 
 const VisualizarPdf = () => {
 
@@ -344,56 +345,7 @@ const VisualizarPdf = () => {
                                 <GraficoEvolucaoTreinosCumpridos dadosAPI={dadosEvolucaoTreinosCumpridos} />
                                 <h1 className='text-xl font-semibold'>Total de horas treinadas por mês</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-md p-5'>
-                                    <ReactApexChart
-                                        options={{
-                                            chart: {
-                                                type: 'bar',
-                                                toolbar: { show: false },
-                                            },
-                                            plotOptions: {
-                                                bar: {
-                                                    horizontal: false,
-                                                    borderRadius: 5,
-                                                    columnWidth: '50%',
-                                                },
-                                            },
-                                            dataLabels: { enabled: false },
-                                            stroke: {
-                                                show: true,
-                                                width: 2,
-                                                colors: ['transparent'],
-                                            },
-                                            colors: ['#748CAB'],
-                                            xaxis: {
-                                                categories: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'],
-                                            },
-                                            yaxis: {
-                                                title: {
-                                                    text: 'Total de Horas Treinadas',
-                                                    style: { fontWeight: 600, color: '#1D2D44' },
-                                                },
-                                            },
-                                            fill: {
-                                                opacity: 1,
-                                            },
-                                            tooltip: {
-                                                y: {
-                                                    formatter: (val) => `${val} horas`,
-                                                },
-                                            },
-                                            grid: {
-                                                borderColor: '#E6E6E2',
-                                            },
-                                        }}
-                                        series={[
-                                            {
-                                                name: 'Horas Treinadas',
-                                                data: dadosGraficoHorasPorMes,
-                                            },
-                                        ]}
-                                        type="bar"
-                                        height={215}
-                                    />
+                                    <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes}/>
                                 </div>
 
                             </div>
