@@ -8,6 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import MenuFiltro from '../../components/Utils/MenuFiltro'
 import { caringuApi } from '../../provider/caringuApi'
 import TreinoRelatorioCard from '../../components/Utils/GerenciarTreinos/TreinoRelatorioCard'
+import Pagination from '../../components/Utils/Pagination'
 
 const RelatorioTreinos = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -106,13 +107,62 @@ const RelatorioTreinos = () => {
 
     const menuWidth = useMenuWidth();
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 640) return 3;
+        return 1;
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            let newItemsPerPage;
+            if (window.innerWidth >= 1024) {
+                newItemsPerPage = 4;
+            } else if (window.innerWidth >= 640) {
+                newItemsPerPage = 3;
+            } else {
+                newItemsPerPage = 1;
+            }
+            setItemsPerPage(newItemsPerPage);
+            setCurrentPage(1);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, sortOrder, difficultyFilter]);
+
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const totalPages = Math.ceil(filteredTreinos.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentTreinos = filteredTreinos.slice(startIndex, startIndex + itemsPerPage);
+
     return (
         <div className="flex h-screen bg-[#fdfbf7]">
             <MenuLateral />
             <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header toggleSidebar={toggleSidebar} />
                 <main className="p-4 md:p-8 space-y-8 flex flex-col">
-                    <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border-2 border-[#E6E6E2]">
+                    <div className="bg-[#F9F9F9] rounded-lg p-4 md:p-6 border-2 border-[#E6E6E2]">
                         <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold font-['Inter'] flex flex-wrap items-center gap-5">
                             <Link to="/gerenciar-alunos">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
@@ -238,9 +288,9 @@ const RelatorioTreinos = () => {
                                 ]}
                             />
                         </div>
-                        <div className="flex flex-col items-center gap-4 mt-5 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-140 overflow-y-auto overflow-x-hidden border-2 border-[#E6E6E2]">
+                        <div className="flex flex-col items-center gap-4 mt-5 bg-transparent p-4 rounded-lg max-h-140 overflow-y-auto overflow-x-hidden ">
 
-                            {filteredTreinos.map((treino) => (
+                            {currentTreinos.map((treino) => (
                                 <TreinoRelatorioCard
                                     key={treino.treinoId}
                                     treino={treino}
@@ -248,6 +298,17 @@ const RelatorioTreinos = () => {
                                     formatarDificuldade={formatarDificuldade}
                                 />
                             ))}
+                            <div className="flex justify-center mt-4">
+                                <Pagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    itemsLength={filteredTreinos.length}
+                                    onPageChange={goToPage}
+                                    onPrevious={goToPrevious}
+                                    onNext={goToNext}
+                                    maxVisible={3}
+                                />
+                            </div>
                         </div>
                     </div>
                 </main>

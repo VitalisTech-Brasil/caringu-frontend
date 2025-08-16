@@ -18,6 +18,7 @@ import CustomToast from "../../components/Utils/CustomToast.jsx";
 import MascaraData from "../../components/Utils/Functions/MascaraData.js"
 import TreinoCard from "../../components/Utils/GerenciarTreinos/TreinoCard.jsx";
 import TreinoActionsMenu from "../../components/Utils/GerenciarTreinos/TreinoActionsMenu.jsx";
+import Pagination from "../../components/Utils/Pagination.jsx";
 
 
 const GerenciarTreinos = () => {
@@ -309,12 +310,63 @@ const GerenciarTreinos = () => {
 
     const menuWidth = useMenuWidth();
 
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 640) return 3;
+        return 1;
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            let newItemsPerPage;
+            if (window.innerWidth >= 1024) {
+                newItemsPerPage = 4;
+            } else if (window.innerWidth >= 640) {
+                newItemsPerPage = 3;
+            }else {
+                newItemsPerPage = 1;
+            }
+            setItemsPerPage(newItemsPerPage);
+            setCurrentPage(1);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
+
+    // Funções de paginação
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const totalPages = Math.ceil(filteredTreinos.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentTreinos = filteredTreinos.slice(startIndex, startIndex + itemsPerPage);
+
     return (
         <div className="flex min-h-screen bg-[#fdfbf7]">
             <MenuLateral />
             <div className="flex-1 overflow-y-auto">
                 <Header />
-                <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] max-h-full m-4 sm:m-8">
+                <div className="bg-[#F9F9F9] rounded-lg p-4 md:p-6 border border-[#E6E6E2] sm:h-[84%] m-4 sm:m-8">
                     <h1 className="text-zinc-900 md:text-3xl font-semibold font-['Inter']">Gerenciamento de Treinos</h1>
                     <div className="flex flex-col md:flex-row items-center gap-2 mt-5 justify-between max-w-full">
                         <div className="flex items-center gap-2 w-full">
@@ -536,13 +588,8 @@ const GerenciarTreinos = () => {
                             />
                         </div>
                     </div>
-                    <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-130 overflow-y-auto mt-5 border border-[#E6E6E2]">
-                        {filteredTreinos.length === 0 && (
-                            <div className="w-full flex justify-center items-center py-10 text-lg text-[var(--cor-primaria)]">
-                                Nenhum treino encontrado.
-                            </div>
-                        )}
-                        {filteredTreinos.map((treino) => (
+                    <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-110 sm:h-140 mt-5">
+                        {currentTreinos.map((treino) => (
                             <TreinoCard
                                 key={treino.treinoId}
                                 treino={treino}
@@ -847,6 +894,17 @@ const GerenciarTreinos = () => {
                             aria-label="Modal de Cancelamento"
                         />
                         <Toaster position='top-right' reverseOrder={false} />
+                    </div>
+                    <div className="flex justify-center mt-4">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            itemsLength={filteredTreinos.length}
+                            onPageChange={goToPage}
+                            onPrevious={goToPrevious}
+                            onNext={goToNext}
+                            maxVisible={3}
+                        />
                     </div>
                 </div>
             </div >
