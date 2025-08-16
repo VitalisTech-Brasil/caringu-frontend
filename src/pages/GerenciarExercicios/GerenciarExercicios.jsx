@@ -15,6 +15,8 @@ import { caringuApi } from "../../provider/caringuApi.js";
 import ExercicioCard from "../../components/Utils/GerenciarExercicios/ExercicioCard.jsx";
 import toast, { Toaster } from "react-hot-toast";
 import ModalCriarExercicio from "../../components/Utils/GerenciarExercicios/ModalCriarExercicio.jsx";
+import Pagination from "../../components/Utils/Pagination.jsx";
+
 
 const GerenciarExercicios = () => {
 
@@ -319,6 +321,55 @@ const GerenciarExercicios = () => {
     const menuWidth = useMenuWidth();
 
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        if (window.innerWidth >= 640) return 3;
+        return 1;
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            let newItemsPerPage;
+            if (window.innerWidth >= 640) {
+                newItemsPerPage = 3;
+            } else {
+                newItemsPerPage = 1;
+            }
+            setItemsPerPage(newItemsPerPage);
+            setCurrentPage(1);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
+
+    // Funções de paginação
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const totalPages = Math.ceil(filteredExercicios.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentExercicios = filteredExercicios.slice(startIndex, startIndex + itemsPerPage);
+
+
+
     return (
         <div className="flex min-h-screen bg-[#fdfbf7]">
             <MenuLateral />
@@ -326,7 +377,7 @@ const GerenciarExercicios = () => {
                 <Header />
 
                 {/* <div className="flex flex-col justify-center items-center w-full"> */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-5 md:gap-10 lg:gap-20 w-full my-5 md:my-10 sm:px-8 px-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-5 md:gap-10 lg:gap-20 w-full my-5 sm:px-8 px-4">
                     <div className="border border-[#E6E6E2] rounded-md  w-full sm:w-90 md:w-80 lg:w-100 lg:h-1/4 h-25 grid grid-cols-3 justify-center items-center p-5">
                         <svg className="col-span-1 max-w-15 max-h-15 md:max-w-15 sm:max-w-12 md:max-h-15 sm:max-h-12" viewBox="0 0 83 83" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="41.5" cy="41.5" r="41.5" fill="#748CAB" fillOpacity="0.21" />
@@ -355,7 +406,7 @@ const GerenciarExercicios = () => {
                         </div>
                     </div>
                 </div>
-                <div className="bg-[var(--cor-secundaria)] rounded-lg p-4 md:p-6 border border-[#E6E6E2] h-[85%] mx-8">
+                <div className="bg-[#F9F9F9] rounded-lg p-4 md:p-6 border border-[#E6E6E2] h-auto mx-8">
                     <h1 className="text-zinc-900 md:text-3xl font-semibold font-['Inter']">Gerenciamento de Exercícios</h1>
                     <div className="flex flex-wrap md:flex-nowrap items-start md:items-center gap-2 mt-5 justify-between w-full">
 
@@ -520,8 +571,8 @@ const GerenciarExercicios = () => {
                             />
                         </div>
                     </div>
-                    <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-[70%] md:max-h-[75%] overflow-y-auto mt-5 border border-[#E6E6E2]">
-                        {filteredExercicios.map((exercicio) => (
+                    <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-auto mt-5">
+                        {currentExercicios.map((exercicio) => (
                             <ExercicioCard
                                 key={exercicio.id}
                                 exercicio={exercicio}
@@ -729,6 +780,17 @@ const GerenciarExercicios = () => {
                             textoBotaoCancelar="Cancelar mesmo assim"
                             aria-label="Modal de Cancelamento"
                         />
+                        <div className="flex justify-center mt-4">
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                itemsLength={filteredExercicios.length}
+                                onPageChange={goToPage}
+                                onPrevious={goToPrevious}
+                                onNext={goToNext}
+                                maxVisible={3}
+                            />
+                        </div>
                     </div>
                     <Toaster position='top-right' reverseOrder={false} />
                 </div>
