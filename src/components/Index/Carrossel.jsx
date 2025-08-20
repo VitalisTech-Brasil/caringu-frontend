@@ -12,7 +12,8 @@ import iconeAlunos from '../../assets/images/iconeAlunos.svg';
 import iconeAgenda from '../../assets/images/iconeAgenda.svg';
 import setaVoltar from '../../assets/images/back.svg';
 import setaAvancar from '../../assets/images/next.svg';
-
+import iconPlano from '../../assets/images/plano-icon.svg';
+import iconFeedback from '../../assets/images/icon-feedback.svg';
 
 const features = [
   {
@@ -34,6 +35,16 @@ const features = [
     title: 'Agenda',
     description: 'Acesse suas aulas agendadas com um calendário mensal, semanal e diário para se manter informado sobre sua agenda.',
     icon: iconeAgenda,
+  },
+  {
+    title: 'Plano',
+    description: 'Crie e personalize planos para disponibilizar de forma prática aos seus alunos.',
+    icon: iconPlano,
+  },
+    {
+    title: 'Feedback',
+    description: 'Receba e envie feedbacks de forma prática, fortalecendo a comunicação entre aluno e treinador sobre os treinos.',
+    icon: iconFeedback,
   },
 ];
 
@@ -67,6 +78,8 @@ const FeatureCarousel = () => {
           loop
           centeredSlides
           spaceBetween={30}
+          preventInteractionOnTransition={true}
+          speed={600}
           breakpoints={{
             0:   { slidesPerView: 1, spaceBetween: 0 },
             700: { slidesPerView: 3, spaceBetween: 30 },
