@@ -33,6 +33,29 @@ export default function InputVerificacao({ length = 4, onComplete }) {
     }
   };
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('Text').replace(/\D/g, '').slice(0, length); // só números
+
+    if (!pastedData) return;
+
+    const newValues = [...values];
+
+    for (let i = 0; i < length; i++) {
+      newValues[i] = pastedData[i] || '';
+    }
+
+    setValues(newValues);
+
+    const firstEmptyIndex = newValues.findIndex(v => v === '');
+    if (firstEmptyIndex !== -1) {
+      inputsRef.current[firstEmptyIndex]?.focus();
+    } else {
+      inputsRef.current[length - 1]?.focus();
+      onComplete(newValues.join(''));
+    }
+  };
+
   return (
     <div className="flex gap-5 justify-center mb-6">
       {values.map((val, idx) => (
@@ -43,6 +66,7 @@ export default function InputVerificacao({ length = 4, onComplete }) {
           maxLength="1"
           className="w-17 h-20 text-2xl text-center rounded bg-[#EFEFEF] focus:outline-none focus:ring-2 ring-orange-500"
           value={val}
+          onPaste={handlePaste}
           onChange={(e) => handleChange(idx, e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, idx)}
           ref={(el) => inputsRef.current[idx] = el}
