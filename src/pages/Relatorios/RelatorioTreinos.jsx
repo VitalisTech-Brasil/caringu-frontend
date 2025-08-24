@@ -157,7 +157,7 @@ const RelatorioTreinos = () => {
     const currentTreinos = filteredTreinos.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className="flex h-screen bg-[#fdfbf7]">
+        <div className="flex h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header toggleSidebar={toggleSidebar} />
