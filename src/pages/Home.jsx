@@ -201,7 +201,7 @@ const Home = () => {
 
 
   return (
-    <div className="flex min-h-screen bg-[#fdfbf7]">
+    <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
       <MenuLateral isOpen={isSidebarOpen} />
       <div className="flex-1 overflow-y-auto max-h-[100vh]">
         <Header toggleSidebar={toggleSidebar} />
@@ -249,7 +249,7 @@ const Home = () => {
               />
             </div>
             <div className="2xl:w-[50%] w-full">
-              <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} />
+              <EstaSemana onDaySelect={setSelectedDay} compromissos={compromissos} borderType={"shadow"} />
 
             </div>
 

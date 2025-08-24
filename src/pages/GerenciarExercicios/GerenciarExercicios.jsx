@@ -371,7 +371,7 @@ const GerenciarExercicios = () => {
 
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 overflow-y-auto max-h-[100vh]">
                 <Header />

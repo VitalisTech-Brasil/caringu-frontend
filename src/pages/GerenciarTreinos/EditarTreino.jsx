@@ -255,7 +255,7 @@ const EditarTreino = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#fdfbf7]">
+        <div className="flex h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header />

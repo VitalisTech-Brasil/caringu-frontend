@@ -35,7 +35,7 @@ const Perfil = () => {
     };
 
     return (
-        <div className="flex md:flex-row min-h-screen bg-[#fdfcf9]">
+        <div className="flex md:flex-row min-h-screen bg-[var(--cor-secundaria)]">
             {/* Menu Lateral visível apenas em telas médias para cima */}
 
             <MenuLateral isOpen={true} />

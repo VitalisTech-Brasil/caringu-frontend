@@ -88,7 +88,7 @@ const Agenda = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral isOpen={isSidebarOpen} />
             <div className="flex-1 overflow-y-auto">
                 <Header toggleSidebar={toggleSidebar} />
