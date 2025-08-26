@@ -48,7 +48,7 @@ const ModalRemarcar = ({
                 aria-label="Fundo Escurecido"
             ></div>
 
-            <div aria-label="Modal com conteúdo dentro" className="relative p-4  w-2xl h-100 md:h-110 2xl:h-125">
+            <div aria-label="Modal com conteúdo dentro" className="relative p-4  w-2xl h-125">
                 <div aria-label="Fechar Modal" className="relative bg-[var(--cor-secundaria)] rounded-[6px] h-full flex flex-col justify-center items-center">
                     {/* Botão para fechar o modal */}
                     <button
@@ -78,24 +78,24 @@ const ModalRemarcar = ({
                     {/* Conteúdo do modal */}
                     <div aria-label="Texto de apoio e Botões" className="flex flex-col items-start text-center w-full  px-15">
                         <h1 aria-label="Título" className="text-[var(--cor-primaria)] font-bold text-[18px] sm:text-[24px] md:text-[32px] ">Remarcar Aula</h1>
-                        <div className="flex flex-col w-full items-start mt-5">
-                            <span className="text-xl">
+                        <div className="flex flex-col w-full items-start mt-1 sm:mt-5">
+                            <span className="text-base sm:text-xl">
                                 Email do Aluno
                             </span>
                             <span className="text-[#15171B87]">
                                 mariagladys@gmail.com
                             </span>
                         </div>
-                        <div className="w-full h-55 flex flex-col items-center justify-end">
+                        <div className="w-full h-80 sm:h-55 flex flex-col items-center justify-end">
                             <form className="flex flex-col gap-4 w-full">
                                 <div className="flex flex-col w-full py-2 border-2 rounded-2xl border-[#1D2D441A]" aria-label="Inputs de Data e Horário">
                                     <div>
-                                        <span className="text-xl font-medium">
+                                        <span className="text-sm sm:text-base md:text-xl font-medium">
                                             Escolha a data e horário para reposição da aula
                                         </span>
                                     </div>
-                                    <div className="w-full flex flex-row items-center justify-center gap-15" aria-label="Inputs de Data e Horário">
-                                        <div className="w-[30%] h-auto ">
+                                    <div className="w-full flex flex-col sm:flex-row items-center sm:justify-center gap-1 sm:gap-15" aria-label="Inputs de Data e Horário">
+                                        <div className="w-[80%] sm:w-[30%] h-auto ">
                                             <Input
                                                 id="data"
                                                 name="data"
@@ -108,12 +108,12 @@ const ModalRemarcar = ({
                                                 errorMessage={errors.data?.message}
                                             />
                                         </div>
-                                        <div className="w-[30%] h-auto">
+                                        <div className="w-[80%] sm:w-[30%] h-auto">
                                             <select
                                                 id="horario"
                                                 name="horario"
                                                 {...register('horario', { required: 'Horário é obrigatório' })}
-                                                className="w-full p-2 rounded-md focus:border-[var(--cor-primaria)] focus:outline-none bg-transparent"
+                                                className="w-full  p-1 sm:p-2 rounded-md focus:border-[var(--cor-primaria)] focus:outline-none bg-transparent"
                                                 style={{
                                                     borderWidth: "2px",
                                                     borderStyle: "solid",
