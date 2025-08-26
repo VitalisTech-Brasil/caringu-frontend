@@ -343,20 +343,23 @@ const GerenciarAlunos = () => {
                         },
                         {
                           id: "anamnese",
-                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`shrink-0 w-7 ${anamnesesPendentes ? "stroke-white" : "stroke-[#E96E35]"}`} viewBox="0 0 35 35" fill="none">
-                            <path d="M32.0833 17.5C32.0833 25.55 25.55 32.0833 17.5 32.0833C9.44996 32.0833 2.91663 25.55 2.91663 17.5C2.91663 9.45 9.44996 2.91666 17.5 2.91666C25.55 2.91666 32.0833 9.45 32.0833 17.5Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M22.9104 22.1375L18.3896 19.4396C17.6021 18.9729 16.9604 17.85 16.9604 16.9313V10.9521" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                          ,
+                          icon:<svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className={`w-7 ${anamnesesPendentes ? "stroke-white" : "stroke-[#4B5563]"}`}
+                              viewBox="0 0 35 35"
+                              fill="none">
+                              <path d="M22.225 2.91669H12.775C7.29164 2.91669 6.86872 7.84585 9.82914 10.5292L25.1708 24.4709C28.1312 27.1542 27.7083 32.0834 22.225 32.0834H12.775C7.29164 32.0834 6.86872 27.1542 9.82914 24.4709L25.1708 10.5292C28.1312 7.84585 27.7083 2.91669 22.225 2.91669Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>,
                           label: "Anamneses Pendentes",
                           active: anamnesesPendentes,
                           onClick: () => setAnamnesesPendentes((prev) => !prev),
                         },
                         {
                           id: "treino",
-                          label: "Aguardando Treino",
-                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${aguardandoTreino ? "stroke-white" : "stroke-[#4B5563]"}`} viewBox="0 0 35 35" fill="none">
-                            <path d="M22.225 2.91669H12.775C7.29164 2.91669 6.86872 7.84585 9.82914 10.5292L25.1708 24.4709C28.1312 27.1542 27.7083 32.0834 22.225 32.0834H12.775C7.29164 32.0834 6.86872 27.1542 9.82914 24.4709L25.1708 10.5292C28.1312 7.84585 27.7083 2.91669 22.225 2.91669Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                          label: "Agendamentos Pendentes",
+                          icon: <svg xmlns="http://www.w3.org/2000/svg" className={`shrink-0 w-7 ${aguardandoTreino ? "stroke-white" : "stroke-[#E96E35]"}`} viewBox="0 0 35 35" fill="none">
+                            <path d="M32.0833 17.5C32.0833 25.55 25.55 32.0833 17.5 32.0833C9.44996 32.0833 2.91663 25.55 2.91663 17.5C2.91663 9.45 9.44996 2.91666 17.5 2.91666C25.55 2.91666 32.0833 9.45 32.0833 17.5Z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M22.9104 22.1375L18.3896 19.4396C17.6021 18.9729 16.9604 17.85 16.9604 16.9313V10.9521" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>,
                           active: aguardandoTreino,
                           onClick: () => setAguardandoTreino((prev) => !prev),
@@ -407,7 +410,7 @@ const GerenciarAlunos = () => {
               <WidgetPresencaAlunos
                 valorSelecionado={valorSelecionado}
                 filter={filter}
-                alunosAtivos={alunosCompletos} 
+                alunosAtivos={alunosCompletos}
                 alunosFiltrados={alunosFiltrados}
                 imgErro={imgErro}
                 setImgErro={setImgErro}
@@ -416,7 +419,7 @@ const GerenciarAlunos = () => {
               />
 
               <WidgetAlunosPlano
-                alunosAtivos={alunosCompletos} 
+                alunosAtivos={alunosCompletos}
                 imgErro={imgErro}
                 setImgErro={setImgErro}
               />

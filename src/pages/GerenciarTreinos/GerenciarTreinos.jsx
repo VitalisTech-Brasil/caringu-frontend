@@ -542,7 +542,7 @@ const GerenciarTreinos = () => {
                                 ]}
                             />
                         </div>
-                        <div className="flex sm:flex-row flex-col w-full md:w-2xl gap-4 md:gap-4 lg:gap-13">
+                        <div className="flex sm:flex-row flex-col w-full md:w-100 gap-4">
                             <ButtonInterno
                                 texto="Criar Treino"
                                 type="submit"
@@ -550,7 +550,7 @@ const GerenciarTreinos = () => {
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
-                                classNameExtra="w-full sm:w-1/2"
+                                classNameExtra="w-full"
                                 height="50px"
                                 cor="var(--cor-secundaria)"
                                 font-size={fontSize}
@@ -566,7 +566,7 @@ const GerenciarTreinos = () => {
                                     </svg>
                                 }
                             />
-                            <ButtonInterno
+                            {/* <ButtonInterno
                                 texto="Atribuir Treinos"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
@@ -585,7 +585,7 @@ const GerenciarTreinos = () => {
                                     </svg>
                                 }
                                 onClick={handleOpenModal}
-                            />
+                            /> */}
                         </div>
                     </div>
                     <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-110 sm:h-140 mt-5">
