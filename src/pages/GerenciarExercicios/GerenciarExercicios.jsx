@@ -61,31 +61,103 @@ const GerenciarExercicios = () => {
     });
 
     useEffect(() => {
-        caringuApi.get("/exercicios/kpi/total-por-origem")
+        listarKPIs();
+        listarExercicios();
+    }, []);
+
+    const listarKPIs = async () => {
+
+        const idPersonal = sessionStorage.getItem("pessoaId");
+        try {
+            const response = await caringuApi.get(`/exercicios/kpi/total-por-origem/${idPersonal}`);
+            const data = response.data;
+
+            const kpi = {
+                kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
+                kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
+            };
+
+            setTotalExerciciosKpi(kpi);
+        } catch (err) {
+            console.error("Erro ao buscar KPI de exercícios:", err);
+        }
+    };
+
+    const listarExercicios = async () => {
+
+        const idPersonal = sessionStorage.getItem("pessoaId");
+
+        caringuApi.get(`/exercicios/por-personal/${idPersonal}`)
             .then(response => {
                 const data = response.data;
-
-                const kpi = {
-                    kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
-                    kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
-                };
-
-                setTotalExerciciosKpi(kpi);
-            })
-            .catch(err => {
-                console.error("Erro ao buscar KPI de exercícios:", err);
-            });
-
-        caringuApi.get("/exercicios")
-            .then(response => {
-                const data = response.data;
-
                 setExercicios(data);
             })
             .catch(err => {
                 console.error("Erro ao buscar exercícios: ", err);
             })
-    }, []);
+    }
+
+    const handleCriarExercicio = async (data) => {
+        try {
+            const response = await caringuApi.post("/exercicios/campos-essenciais", {
+                nome: data.nome,
+                grupoMuscular: data.grupoMuscular,
+                urlVideo: data.urlVideo,
+                observacoes: data.observacoes || "",
+            });
+
+            toast.success("Exercício criado com sucesso!");
+
+            setExercicios((prev) => [...prev, response.data]);
+            setShowCreateModal(false);
+            listarKPIs();
+        } catch (error) {
+            console.error("Erro ao criar exercício:", error);
+            toast.error("Erro ao criar exercício. Verifique os dados e tente novamente.");
+        }
+    };
+
+    const editarExercicio = async (data) => {
+        try {
+            const response = await caringuApi.put(`/exercicios/campos-essenciais/${exercicioSelecionado.id}`, {
+                nome: data.nome,
+                grupoMuscular: data.grupoMuscular,
+                urlVideo: data.urlVideo,
+                observacoes: data.observacoes || ""
+            });
+
+            toast.success("Exercício atualizado com sucesso!");
+
+            setExercicios(prev => prev.map(ex =>
+                ex.id === exercicioSelecionado.id ? response.data : ex
+            ));
+
+            setShowEditModal(false);
+            listarKPIs();
+        } catch (error) {
+            console.error("Erro ao atualizar o exercício:", error);
+            toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
+        }
+    }
+
+    const confirmDelete = () => {
+        if (!exercicioSelecionado) return;
+
+        caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
+            .then(() => {
+
+                setExercicios(prev => prev.filter(ex => ex.id !== exercicioSelecionado));
+                setModalDeletarVisivel(false);
+                setExercicioSelecionado(null);
+
+                toast.success("Exercício deletado com sucesso!");
+                listarKPIs();
+            })
+            .catch((err) => {
+                console.error("Erro ao deletar exercício:", err);
+                toast.error("Erro ao deletar exercício:", err);
+            });
+    };
 
     const toggleFavorito = async (id) => {
         const exercicioIndex = exercicios.findIndex((exercicio) => exercicio.id === id);
@@ -191,41 +263,6 @@ const GerenciarExercicios = () => {
         setModalDeletarVisivel(true);
     };
 
-    const atualizarKPIs = async () => {
-        try {
-            const response = await caringuApi.get("/exercicios/kpi/total-por-origem");
-            const data = response.data;
-
-            const kpi = {
-                kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
-                kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
-            };
-
-            setTotalExerciciosKpi(kpi);
-        } catch (err) {
-            console.error("Erro ao buscar KPI de exercícios:", err);
-        }
-    };
-
-    const confirmDelete = () => {
-        if (!exercicioSelecionado) return;
-
-        caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
-            .then(() => {
-
-                setExercicios(prev => prev.filter(ex => ex.id !== exercicioSelecionado));
-                setModalDeletarVisivel(false);
-                setExercicioSelecionado(null);
-
-                toast.success("Exercício deletado com sucesso!");
-                atualizarKPIs();
-            })
-            .catch((err) => {
-                console.error("Erro ao deletar exercício:", err);
-                toast.error("Erro ao deletar exercício:", err);
-            });
-    };
-
     const handleOpenModal = () => {
         setShowCreateModal(true);
     };
@@ -234,49 +271,6 @@ const GerenciarExercicios = () => {
         setExercicioSelecionado(exercicio);
         setShowEditModal(true);
     };
-
-    const handleCriarExercicio = async (data) => {
-        try {
-            const response = await caringuApi.post("/exercicios/campos-essenciais", {
-                nome: data.nome,
-                grupoMuscular: data.grupoMuscular,
-                urlVideo: data.urlVideo,
-                observacoes: data.observacoes || "",
-            });
-
-            toast.success("Exercício criado com sucesso!");
-
-            setExercicios((prev) => [...prev, response.data]);
-            setShowCreateModal(false);
-            atualizarKPIs();
-        } catch (error) {
-            console.error("Erro ao criar exercício:", error);
-            toast.error("Erro ao criar exercício. Verifique os dados e tente novamente.");
-        }
-    };
-
-    const editarExercicio = async (data) => {
-        try {
-            const response = await caringuApi.put(`/exercicios/campos-essenciais/${exercicioSelecionado.id}`, {
-                nome: data.nome,
-                grupoMuscular: data.grupoMuscular,
-                urlVideo: data.urlVideo,
-                observacoes: data.observacoes || ""
-            });
-
-            toast.success("Exercício atualizado com sucesso!");
-
-            setExercicios(prev => prev.map(ex =>
-                ex.id === exercicioSelecionado.id ? response.data : ex
-            ));
-
-            setShowEditModal(false);
-            atualizarKPIs();
-        } catch (error) {
-            console.error("Erro ao atualizar o exercício:", error);
-            toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
-        }
-    }
 
     const ExercicioActionsMenu = ({ exercicio }) => (
         <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
