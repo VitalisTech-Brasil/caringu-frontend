@@ -620,7 +620,7 @@ const ProcurandoPersonal = () => {
                         </div>
                       </div>
                       {/* conteúdo do card */}
-                      <div className="w-full h-1/2 flex flex-col gap-1 px-2">
+                      <div className="w-full flex flex-col gap-1 px-2">
                         <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
                         <p className="text-sm flex gap-1">
                           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
@@ -697,9 +697,9 @@ const ProcurandoPersonal = () => {
             <div
               id="filter-modal"
               className={`${isFilterOpen ? "flex" : "hidden"
-                } fixed inset-0 z-50 justify-center items-center bg-black/50 overflow-y-auto`}
+                } fixed inset-0 z-50 justify-center items-center bg-black/50 h-full md:h-auto`}
             >
-              <div className="relative p-4 w-full max-w-4xl">
+              <div className="p-4 w-full max-w-4xl overflow-y-auto max-h-full">
                 <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
                   <div className="flex justify-between items-center pb-4 mb-4 ">
                     <h3 className="text-4xl font-semibold text-[var(--cor-primaria)]">
@@ -723,7 +723,7 @@ const ProcurandoPersonal = () => {
 
                   <form onSubmit={handleSubmit(handleSaveFilters)}>
                     {/* depois mudar aqui */}
-                    <div className="grid grid-cols-2 gap-12">
+                    <div className="grid md:grid-cols-2 md:gap-20">
                       {/* Cidade */}
                       <div className="relative">
                         <Label
@@ -780,264 +780,266 @@ const ProcurandoPersonal = () => {
                             </div>
                           ))}
                         </div>
-                      </div>
-                      {/* Bairro */}
 
-                      <div className="relative">
-                        <Label
-                          id="bairro"
-                          nomeLabel="Bairro"
-                          fontSize="20px"
-                          fontWeight="500"
-                        />
-                        <InputPosLogin
-                          id="bairro"
-                          name="bairro"
-                          inputType="text"
-                          placeholder="Selecione um ou mais bairros desejados"
-                          fontSize="16px"
-                          fontWeight="400"
-                          fontSizeErro="16px"
-                          width="100%"
-                          {...register("bairro")}
-                          onChange={handleBairroInputChange}
-                        />
-                        {bairroSugestoes.length > 0 && (
-                          <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
-                            {bairroSugestoes.map((bairro, idx) => (
-                              <li
-                                key={idx}
-                                className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                onClick={() => handleSelectBairro(bairro)}
+                        {/* Bairro */}
+
+                        <div className="relative my-10">
+                          <Label
+                            id="bairro"
+                            nomeLabel="Bairro"
+                            fontSize="20px"
+                            fontWeight="500"
+                          />
+                          <InputPosLogin
+                            id="bairro"
+                            name="bairro"
+                            inputType="text"
+                            placeholder="Selecione um ou mais bairros desejados"
+                            fontSize="16px"
+                            fontWeight="400"
+                            fontSizeErro="16px"
+                            width="100%"
+                            {...register("bairro")}
+                            onChange={handleBairroInputChange}
+                          />
+                          {bairroSugestoes.length > 0 && (
+                            <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
+                              {bairroSugestoes.map((bairro, idx) => (
+                                <li
+                                  key={idx}
+                                  className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                  onClick={() => handleSelectBairro(bairro)}
+                                >
+                                  {bairro}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          {bairroQuery.length >= 2 && bairroSugestoes.length === 0 && (
+                            <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 p-2 text-gray-500 text-sm flex justify-between items-center">
+                              Nenhum bairro encontrado
+                              <button
+                                type="button"
+                                className="ml-2 text-orange-600 underline text-xs"
+                                onClick={() => {
+                                  if (
+                                    bairroQuery.trim() &&
+                                    !bairrosSelecionados.includes(bairroQuery.trim())
+                                  ) {
+                                    setBairrosSelecionados([...bairrosSelecionados, bairroQuery.trim()]);
+                                    setValue("bairro", "");
+                                    setBairroQuery("");
+                                    setBairroSugestoes([]);
+                                  }
+                                }}
+                              >
+                                Adicionar "{bairroQuery.trim()}"
+                              </button>
+                            </div>
+                          )}
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {draftFilters.bairrosSelecionados.map((bairro, idx) => (
+                              <div
+                                key={bairro}
+                                className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
                               >
                                 {bairro}
-                              </li>
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handleRemoveBairro(bairro);
+                                  }}
+                                  className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                              </div>
                             ))}
-                          </ul>
-                        )}
-                        {bairroQuery.length >= 2 && bairroSugestoes.length === 0 && (
-                          <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 p-2 text-gray-500 text-sm flex justify-between items-center">
-                            Nenhum bairro encontrado
-                            <button
-                              type="button"
-                              className="ml-2 text-orange-600 underline text-xs"
-                              onClick={() => {
-                                if (
-                                  bairroQuery.trim() &&
-                                  !bairrosSelecionados.includes(bairroQuery.trim())
-                                ) {
-                                  setBairrosSelecionados([...bairrosSelecionados, bairroQuery.trim()]);
-                                  setValue("bairro", "");
-                                  setBairroQuery("");
-                                  setBairroSugestoes([]);
-                                }
-                              }}
-                            >
-                              Adicionar "{bairroQuery.trim()}"
-                            </button>
                           </div>
-                        )}
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {draftFilters.bairrosSelecionados.map((bairro, idx) => (
-                            <div
-                              key={bairro}
-                              className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
-                            >
-                              {bairro}
-                              <button
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  handleRemoveBairro(bairro);
-                                }}
-                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                  <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </button>
-                            </div>
-                          ))}
                         </div>
-                      </div>
 
-                      {/* Gênero do Personal */}
-                      <div>
-                        <Label
-                          id="genero"
-                          nomeLabel="Gênero do Personal"
-                          fontSize="20px"
-                          fontWeight="500"
-                        />
-                        <div className="relative">
-                          <select defaultValue=""
+                        {/* Gênero do Personal */}
+                        <div className="relative my-10">
+                          <Label
                             id="genero"
-                            className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
-                            onChange={handleGeneroChange}
-                          >
-                            <option disabled className="text-[#15171B87]" value="">Selecione um ou mais gêneros desejados</option>
-                            <option value="TODOS">Todos</option>
-                            <option value="MASCULINO">Masculino</option>
-                            <option value="FEMININO">Feminino</option>
-                            <option value="NAO_BINARIO">Não Binário</option>
-                          </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
-                              <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                            </svg>
+                            nomeLabel="Gênero do Personal"
+                            fontSize="20px"
+                            fontWeight="500"
+                          />
+                          <div className="relative">
+                            <select defaultValue=""
+                              id="genero"
+                              className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                              onChange={handleGeneroChange}
+                            >
+                              <option disabled className="text-[#15171B87]" value="">Selecione um ou mais gêneros desejados</option>
+                              <option value="TODOS">Todos</option>
+                              <option value="MASCULINO">Masculino</option>
+                              <option value="FEMININO">Feminino</option>
+                              <option value="NAO_BINARIO">Não Binário</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
+                                <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
+                              </svg>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {draftFilters.generosSelecionados.map((genero) => (
+                              <div
+                                key={genero}
+                                className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                              >
+                                {genero === "TODOS"
+                                  ? "Todos"
+                                  : genero === "MASCULINO"
+                                    ? "Masculino"
+                                    : genero === "FEMININO"
+                                      ? "Feminino"
+                                      : "Não Binário"}
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handleRemoveGenero(genero);
+                                  }}
+                                  className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {draftFilters.generosSelecionados.map((genero) => (
-                            <div
-                              key={genero}
-                              className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
-                            >
-                              {genero === "TODOS"
-                                ? "Todos"
-                                : genero === "MASCULINO"
-                                  ? "Masculino"
-                                  : genero === "FEMININO"
-                                    ? "Feminino"
-                                    : "Não Binário"}
-                              <button
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  handleRemoveGenero(genero);
-                                }}
-                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                  <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </button>
+
+                        {/* Especialidade */}
+
+                        <div className="relative my-10">
+                          <Label
+                            id="especialidade"
+                            nomeLabel="Especialidade"
+                            fontSize="20px"
+                            fontWeight="500"
+                          />
+                          <InputPosLogin
+                            id="especialidade"
+                            name="especialidade"
+                            inputType="text"
+                            placeholder="Selecione uma ou mais especialidade desejadas"
+                            fontSize="16px"
+                            fontWeight="400"
+                            fontSizeErro="16px"
+                            width="100%"
+                            {...register("especialidade")}
+                            onChange={handleEspecialidadeInputChange}
+                          />
+                          {especialidadeSugestoes.length > 0 && (
+                            <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
+                              {especialidadeSugestoes.map((esp) => (
+                                <li
+                                  key={esp.id}
+                                  className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                                  onClick={() => handleSelectEspecialidade(esp)}
+                                >
+                                  {esp.nome}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                          {especialidadeQuery.length >= 2 && especialidadeSugestoes.length === 0 && (
+                            <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 p-2 text-gray-500 text-sm">
+                              Nenhuma especialidade encontrada
                             </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Especialidade */}
-
-                      <div className="relative">
-                        <Label
-                          id="especialidade"
-                          nomeLabel="Especialidade"
-                          fontSize="20px"
-                          fontWeight="500"
-                        />
-                        <InputPosLogin
-                          id="especialidade"
-                          name="especialidade"
-                          inputType="text"
-                          placeholder="Selecione uma ou mais especialidade desejadas"
-                          fontSize="16px"
-                          fontWeight="400"
-                          fontSizeErro="16px"
-                          width="100%"
-                          {...register("especialidade")}
-                          onChange={handleEspecialidadeInputChange}
-                        />
-                        {especialidadeSugestoes.length > 0 && (
-                          <ul className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 max-h-48 overflow-y-auto">
-                            {especialidadeSugestoes.map((esp) => (
-                              <li
+                          )}
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {draftFilters.especialidadesSelecionadas.map((esp) => (
+                              <div
                                 key={esp.id}
-                                className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
-                                onClick={() => handleSelectEspecialidade(esp)}
+                                className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
                               >
                                 {esp.nome}
-                              </li>
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handleRemoveEspecialidade(esp);
+                                  }}
+                                  className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                              </div>
                             ))}
-                          </ul>
-                        )}
-                        {especialidadeQuery.length >= 2 && especialidadeSugestoes.length === 0 && (
-                          <div className="absolute z-10 bg-white border border-gray-300 rounded-md w-full mt-1 p-2 text-gray-500 text-sm">
-                            Nenhuma especialidade encontrada
                           </div>
-                        )}
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {draftFilters.especialidadesSelecionadas.map((esp) => (
-                            <div
-                              key={esp.id}
-                              className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                        </div>
+
+                        {/* Período de Plano Desejado */}
+                        <div className="relative my-10">
+                          <Label
+                            id="duracao"
+                            nomeLabel="Período de Plano Desejado"
+                            fontSize="20px"
+                            fontWeight="500"
+                          />
+                          <div className="relative">
+                            <select defaultValue=""
+                              id="duracao"
+                              className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                              onChange={handleDuracaoChange}
                             >
-                              {esp.nome}
-                              <button
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  handleRemoveEspecialidade(esp);
-                                }}
-                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                  <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </button>
+                              <option disabled className="text-[#15171B87]" value="">Selecione o período</option>
+                              <option value="TODOS">Todos</option>
+                              <option value="MENSAL">Mensal</option>
+                              <option value="SEMESTRAL">Semestral</option>
+                              <option value="AVULSO">Avulso</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
+                                <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
+                              </svg>
                             </div>
-                          ))}
+                          </div>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {draftFilters.duracoesSelecionadas.map((duracao) => (
+                              <div
+                                key={duracao}
+                                className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
+                              >
+                                {duracao === "TODOS"
+                                  ? "Todos"
+                                  : duracao === "MENSAL"
+                                    ? "Mensal"
+                                    : duracao === "SEMESTRAL"
+                                      ? "Semestral"
+                                      : "Avulso"}
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    handleRemoveDuracao(duracao);
+                                  }}
+                                  className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
+                                    <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
 
-                      {/* Período de Plano Desejado */}
-                      <div>
-                        <Label
-                          id="duracao"
-                          nomeLabel="Período de Plano Desejado"
-                          fontSize="20px"
-                          fontWeight="500"
-                        />
-                        <div className="relative">
-                          <select defaultValue=""
-                            id="duracao"
-                            className="appearance-none text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
-                            onChange={handleDuracaoChange}
-                          >
-                            <option disabled className="text-[#15171B87]" value="">Selecione o período</option>
-                            <option value="TODOS">Todos</option>
-                            <option value="MENSAL">Mensal</option>
-                            <option value="SEMESTRAL">Semestral</option>
-                            <option value="AVULSO">Avulso</option>
-                          </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
-                              <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
-                            </svg>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {draftFilters.duracoesSelecionadas.map((duracao) => (
-                            <div
-                              key={duracao}
-                              className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
-                            >
-                              {duracao === "TODOS"
-                                ? "Todos"
-                                : duracao === "MENSAL"
-                                  ? "Mensal"
-                                  : duracao === "SEMESTRAL"
-                                    ? "Semestral"
-                                    : "Avulso"}
-                              <button
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  handleRemoveDuracao(duracao);
-                                }}
-                                className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                  <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
 
                       {/* Faixa de Preço */}
-                      <div>
+                      <div className="relative">
                         <label id="preco" className="text-[var(--cor-primaria)] font-medium text-xl mb-2">
                           Faixa de preço da aula
                         </label>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 mt-2">
                           <input
                             type="number"
                             name="min"
@@ -1046,6 +1048,11 @@ const ProcurandoPersonal = () => {
                             onChange={handleFaixaPrecoChange}
                             className="border border-gray-300 rounded-md p-2 w-full text-[#1D2D44]"
                           />
+                          <div className="flex items-center">
+                            <svg width="32" height="2" viewBox="0 0 32 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <line y1="1" x2="32" y2="1" stroke="#1D2D44" stroke-opacity="0.11" stroke-width="2" />
+                            </svg>
+                          </div>
                           <input
                             type="number"
                             name="max"
@@ -1054,6 +1061,31 @@ const ProcurandoPersonal = () => {
                             onChange={handleFaixaPrecoChange}
                             className="border border-gray-300 rounded-md p-2 w-full text-[#1D2D44]"
                           />
+                        </div>
+
+                        <div className="relative my-15">
+                          <label id="tipoPlano" className="text-[var(--cor-primaria)] font-medium text-xl mb-2">
+                            Tipo de plano
+                          </label>
+                          <div className="flex flex-col gap-2 mt-2">
+                            <span><input type="checkbox" />  Avulso</span>
+                            <span><input type="checkbox" />  Mensal</span>
+                            <span><input type="checkbox" />  Semestral</span>
+                          </div>
+                        </div>
+
+                        <div className="relative my-15">
+                          <label id="tipoPlano" className="text-[var(--cor-primaria)] font-medium text-xl mb-2">
+                            Quantidade de aulas por plano
+                          </label>
+                          <div className="flex flex-col gap-2 mt-2">
+                            <input
+                              type="number"
+                              name="qtdAulasPlanoMin"
+                              placeholder="0"
+                              className="border border-gray-300 rounded-md p-2 w-1/4 text-[#1D2D44]"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
