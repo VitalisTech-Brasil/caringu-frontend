@@ -99,7 +99,7 @@ const GerenciarExercicios = () => {
 
     const handleCriarExercicio = async (data) => {
         try {
-            const response = await caringuApi.post("/exercicios/campos-essenciais", {
+            const response = await caringuApi.post("/exercicios", {
                 nome: data.nome,
                 grupoMuscular: data.grupoMuscular,
                 urlVideo: data.urlVideo,
@@ -119,7 +119,7 @@ const GerenciarExercicios = () => {
 
     const editarExercicio = async (data) => {
         try {
-            const response = await caringuApi.put(`/exercicios/campos-essenciais/${exercicioSelecionado.id}`, {
+            const response = await caringuApi.put(`/exercicios/${exercicioSelecionado.id}`, {
                 nome: data.nome,
                 grupoMuscular: data.grupoMuscular,
                 urlVideo: data.urlVideo,
