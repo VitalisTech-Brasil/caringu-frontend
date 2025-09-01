@@ -98,8 +98,10 @@ const GerenciarExercicios = () => {
     }
 
     const handleCriarExercicio = async (data) => {
+        const idPersonal = sessionStorage.getItem("pessoaId");
         try {
             const response = await caringuApi.post("/exercicios", {
+                idPersonal: idPersonal,
                 nome: data.nome,
                 grupoMuscular: data.grupoMuscular,
                 urlVideo: data.urlVideo,
