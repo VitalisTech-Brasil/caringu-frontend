@@ -37,7 +37,7 @@ const RelatorioTreinos = () => {
     useEffect(() => {
         const relatoriosTreinosAluno = async () => {
             try {
-                const response = await caringuApi.get(`/treinos-exercicios/aluno/${idAluno}`);
+                const response = await caringuApi.get(`/alunos-treinos-exercicios/aluno/${idAluno}`);
                 setTreinos(response.data);
             } catch (error) {
                 console.error('Erro ao buscar os treinos:', error);
