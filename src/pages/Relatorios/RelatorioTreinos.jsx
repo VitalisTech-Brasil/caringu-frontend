@@ -17,7 +17,7 @@ const RelatorioTreinos = () => {
     const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
     const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
-    const [treinos, setTreinos] = useState([]);
+    const [treinos, setTreinos] = useState({ content: [], totalPages: 0, number: 0, size: 2 });
 
     const params = useParams();
     const navigate = useNavigate();
@@ -33,18 +33,17 @@ const RelatorioTreinos = () => {
         // pegarExercicios(params.id)
     }, [])
 
-
-    useEffect(() => {
-        const relatoriosTreinosAluno = async () => {
-            try {
-                const response = await caringuApi.get(`/alunos-treinos-exercicios/aluno/${idAluno}`);
-                setTreinos(response.data);
-            } catch (error) {
-                console.error('Erro ao buscar os treinos:', error);
-            }
+    const buscarTreinosAlunoRelatorios = async (page = 0, size = itemsPerPage) => {
+        try {
+            const { data } = await caringuApi.get(
+                `/alunos-treinos-exercicios/aluno-paginado/${idAluno}`,
+                { params: { page, size } }
+            );
+            setTreinos(data);
+        } catch (e) {
+            console.error(`Erro ao buscar os treinos do aluno com ID ${idAluno}:`, e);
         }
-        relatoriosTreinosAluno();
-    }, []);
+    };
 
     function formatarDificuldade(valor) {
         switch (valor) {
@@ -59,33 +58,10 @@ const RelatorioTreinos = () => {
         }
     }
 
-
-
-
     const handleGrupoMuscularSelect = (value) => {
         setGrupoMuscularSelecionado(value);
         setGrupoMuscularFilter(value);
     };
-
-
-    const filteredTreinos = treinos
-        .filter((treino) => {
-            if (searchTerm && !treino.nomeTreino.toLowerCase().includes(searchTerm.toLowerCase())) {
-                return false;
-            }
-            if (difficultyFilter && treino.grauDificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
-                return false;
-            }
-
-
-            return true;
-        })
-        .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nomeTreino);
-            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nomeTreino);
-            return 0;
-        });
-
 
     const irParaDash = (idTreino) => {
         navigate(`/dashboard/${idAluno}/${idTreino}`);
@@ -133,28 +109,46 @@ const RelatorioTreinos = () => {
     }, []);
 
     useEffect(() => {
+        buscarTreinosAlunoRelatorios(0, itemsPerPage);
+    }, [idAluno, itemsPerPage]);
+
+    const filteredTreinos = (treinos.content ?? [])
+        .filter((treino) => {
+            if (searchTerm && !treino.nomeTreino.toLowerCase().includes(searchTerm.toLowerCase())) {
+                return false;
+            }
+            if (difficultyFilter && treino.grauDificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
+                return false;
+            }
+
+
+            return true;
+        })
+        .sort((a, b) => {
+            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nomeTreino);
+            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nomeTreino);
+            return 0;
+        });
+
+    const currentTreinos = filteredTreinos;
+    const totalPages = treinos.totalPages ?? 0;
+
+    useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, sortOrder, difficultyFilter]);
 
     const goToPage = (page) => {
         setCurrentPage(page);
+        buscarTreinosAlunoRelatorios(page - 1, itemsPerPage);
     };
 
     const goToPrevious = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        if (currentPage > 1) goToPage(currentPage - 1);
     };
 
     const goToNext = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
+        if (currentPage < totalPages) goToPage(currentPage + 1);
     };
-
-    const totalPages = Math.ceil(filteredTreinos.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentTreinos = filteredTreinos.slice(startIndex, startIndex + itemsPerPage);
 
     return (
         <div className="flex h-screen bg-[var(--cor-secundaria)]">
@@ -302,7 +296,7 @@ const RelatorioTreinos = () => {
                                 <Pagination
                                     currentPage={currentPage}
                                     totalPages={totalPages}
-                                    itemsLength={filteredTreinos.length}
+                                    itemsLength={currentTreinos.length}
                                     onPageChange={goToPage}
                                     onPrevious={goToPrevious}
                                     onNext={goToNext}

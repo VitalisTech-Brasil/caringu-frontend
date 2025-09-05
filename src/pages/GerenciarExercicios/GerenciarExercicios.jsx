@@ -48,7 +48,7 @@ const GerenciarExercicios = () => {
         kpiPersonal: {}
     });
 
-    const [exercicios, setExercicios] = useState([]);
+    const [exercicios, setExercicios] = useState({ content: [], totalPages: 0, number: 0, size: 2 });
 
     const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm({
         defaultValues: {
@@ -83,22 +83,26 @@ const GerenciarExercicios = () => {
         }
     };
 
-    const listarExercicios = async () => {
+    const listarExercicios = async (page = 0, size = itemsPerPage) => {
 
         const idPersonal = sessionStorage.getItem("pessoaId");
 
-        caringuApi.get(`/exercicios/por-personal/${idPersonal}`)
-            .then(response => {
-                const data = response.data;
-                setExercicios(data);
-            })
-            .catch(err => {
-                console.error("Erro ao buscar exercícios: ", err);
-            })
+        try {
+            const { data } = await caringuApi.get(
+                `/exercicios/por-personal-paginado/${idPersonal}`,
+                { params: { page, size } }
+            )
+            setExercicios(data);
+
+        } catch (e) {
+            console.error(`Erro ao buscar os exercícios do personal com ID ${idPersonal}:`, e);
+        }
+
     }
 
     const handleCriarExercicio = async (data) => {
         const idPersonal = sessionStorage.getItem("pessoaId");
+        console.log(data);
         try {
             const response = await caringuApi.post("/exercicios", {
                 idPersonal: idPersonal,
@@ -110,7 +114,10 @@ const GerenciarExercicios = () => {
 
             toast.success("Exercício criado com sucesso!");
 
-            setExercicios((prev) => [...prev, response.data]);
+            setExercicios(prev => ({
+                ...prev,
+                content: [...prev.content, response.data]
+            }));
             setShowCreateModal(false);
             listarKPIs();
         } catch (error) {
@@ -130,9 +137,12 @@ const GerenciarExercicios = () => {
 
             toast.success("Exercício atualizado com sucesso!");
 
-            setExercicios(prev => prev.map(ex =>
-                ex.id === exercicioSelecionado.id ? response.data : ex
-            ));
+            setExercicios(prev => ({
+                ...prev,
+                content: prev.content.map(ex =>
+                    ex.id === exercicioSelecionado.id ? response.data : ex
+                )
+            }));
 
             setShowEditModal(false);
             listarKPIs();
@@ -148,7 +158,7 @@ const GerenciarExercicios = () => {
         caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
             .then(() => {
 
-                setExercicios(prev => prev.filter(ex => ex.id !== exercicioSelecionado));
+                setExercicios(prev => prev.content.filter(ex => ex.id !== exercicioSelecionado));
                 setModalDeletarVisivel(false);
                 setExercicioSelecionado(null);
 
@@ -162,10 +172,10 @@ const GerenciarExercicios = () => {
     };
 
     const toggleFavorito = async (id) => {
-        const exercicioIndex = exercicios.findIndex((exercicio) => exercicio.id === id);
+        const exercicioIndex = exercicios.content.findIndex((exercicio) => exercicio.id === id);
         if (exercicioIndex === -1) return;
 
-        const favoritoAtual = exercicios[exercicioIndex].favorito;
+        const favoritoAtual = exercicios.content[exercicioIndex].favorito;
         const novoValor = !favoritoAtual;
 
         try {
@@ -173,8 +183,10 @@ const GerenciarExercicios = () => {
                 favorito: novoValor
             });
 
-            const exerciciosAtualizados = [...exercicios];
-            exerciciosAtualizados[exercicioIndex].favorito = novoValor;
+            const exerciciosAtualizados = { ...exercicios };
+            exerciciosAtualizados.content = [...exercicios.content];
+            exerciciosAtualizados.content[exercicioIndex].favorito = novoValor;
+
             setExercicios(exerciciosAtualizados);
         } catch (error) {
             console.error("Erro ao atualizar favorito:", error);
@@ -221,33 +233,6 @@ const GerenciarExercicios = () => {
         setGrupoMuscularSelecionado(value);
         setGrupoMuscularFilter(value);
     };
-
-    const filteredExercicios = exercicios
-        .filter((exercicio) => {
-            if (searchTerm && !exercicio.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
-                return false;
-            }
-            if (grupoMuscularFilter && grupoMuscularFilter !== "" &&
-                exercicio.grupoMuscular.toLowerCase() !== grupoMuscularFilter.toLowerCase()) {
-                return false;
-            }
-            if (origemFilter && origemFilter !== "" &&
-                exercicio.origem.toLowerCase() !== origemFilter.toLowerCase()) {
-                return false;
-            }
-            if (showOnlyFavorites && !exercicio.favorito) {
-                return false;
-            }
-            if (difficultyFilter && exercicio.dificuldade !== difficultyFilter) {
-                return false;
-            }
-            return true;
-        })
-        .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
-            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
-            return 0;
-        });
 
     useEffect(() => {
         if (showEditModal && exercicioSelecionado) {
@@ -339,6 +324,36 @@ const GerenciarExercicios = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const filteredExercicios = (exercicios.content ?? [])
+        .filter((exercicio) => {
+            if (searchTerm && !exercicio.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
+                return false;
+            }
+            if (grupoMuscularFilter && grupoMuscularFilter !== "" &&
+                exercicio.grupoMuscular.toLowerCase() !== grupoMuscularFilter.toLowerCase()) {
+                return false;
+            }
+            if (origemFilter && origemFilter !== "" &&
+                exercicio.origem.toLowerCase() !== origemFilter.toLowerCase()) {
+                return false;
+            }
+            if (showOnlyFavorites && !exercicio.favorito) {
+                return false;
+            }
+            if (difficultyFilter && exercicio.dificuldade !== difficultyFilter) {
+                return false;
+            }
+            return true;
+        })
+        .sort((a, b) => {
+            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
+            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+            return 0;
+        });
+
+    const currentExercicios = filteredExercicios;
+    const totalPages = exercicios.totalPages ?? 0;
+
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
@@ -346,25 +361,20 @@ const GerenciarExercicios = () => {
     // Funções de paginação
     const goToPage = (page) => {
         setCurrentPage(page);
+        listarExercicios(page - 1, itemsPerPage);
     };
 
     const goToPrevious = () => {
         if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
+            goToPage(currentPage - 1);
         }
     };
 
     const goToNext = () => {
         if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+            goToPage(currentPage + 1);
         }
     };
-
-    const totalPages = Math.ceil(filteredExercicios.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentExercicios = filteredExercicios.slice(startIndex, startIndex + itemsPerPage);
-
-
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -780,7 +790,7 @@ const GerenciarExercicios = () => {
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={totalPages}
-                                itemsLength={filteredExercicios.length}
+                                itemsLength={currentExercicios.length}
                                 onPageChange={goToPage}
                                 onPrevious={goToPrevious}
                                 onNext={goToNext}
