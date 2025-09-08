@@ -112,7 +112,7 @@ const CompromissosHoje = ({ compromissos, selectedDay, listarTreinosFinalizados 
                 <div className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] flex items-center gap-2">
                   <HiOutlineClock />
                   {/* <span>{compromisso.horario}</span> */}
-                  <span>8:00 - 9:00</span>
+                  <span>{compromisso.horario}</span>
                 </div>
 
               </div>

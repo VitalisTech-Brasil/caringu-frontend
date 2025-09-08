@@ -157,7 +157,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                                 {/* <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span> */}
-                                                <span className="text-base font-medium text-[var(--cor-secundaria)]">8:00</span>
+                                                <span className="text-base font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
                                             </div>
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
@@ -172,9 +172,9 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                             <div>
                                                 <button
                                                     onClick={() => handleAbrirModalRemarcar(compromisso)}
-                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-8 cursor-pointer"
+                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-6 2xl:px-7 cursor-pointer"
                                                 >
-                                                    Remarca Aula
+                                                    Remarcar Aula
                                                 </button>
                                             </div>
                                             {/* {compromisso.dataHorarioFim === null && (
