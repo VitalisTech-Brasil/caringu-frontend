@@ -51,7 +51,7 @@ const VisualizarPdf = () => {
     }, [exercicioSelecionadoId]);
 
     useEffect(() => {
-        caringuApi.get(`/treinos-exercicios/exercicios-por-treino/${idTreino}/${idAluno}`)
+        caringuApi.get(`/alunos-treinos-exercicios/exercicios-por-treino/${idTreino}/${idAluno}`)
             .then(response => {
 
                 const lista = response.data;
@@ -78,14 +78,14 @@ const VisualizarPdf = () => {
 
     }, []);
 
-    const buscarEvolucaoCargaPorExercicio = async (exercicioId) => {
+    const buscarEvolucaoCargaPorExercicio = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-carga`,
+                `/sessao-treino/evolucao-carga`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId,
+                        idAluno: idAluno,
+                        idExercicio: idExercicio,
                     },
                 }
             );
@@ -99,14 +99,14 @@ const VisualizarPdf = () => {
         }
     };
 
-    const buscarEvolucaoTreinosCumpridosMensal = async (exercicioId) => {
+    const buscarEvolucaoTreinosCumpridosMensal = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-treinos-cumpridos`,
+                `/sessao-treino/evolucao-treinos-cumpridos`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId
+                        idAluno: idAluno,
+                        idExercicio: idExercicio
                     }
                 }
             );
@@ -143,12 +143,12 @@ const VisualizarPdf = () => {
         }
     };
 
-    const buscarHorasTreinadas = async (exercicioId) => {
+    const buscarHorasTreinadas = async (idExercicio) => {
         try {
-            const response = await caringuApi.get(`/treinos-finalizados/horas-treinadas`, {
+            const response = await caringuApi.get(`/sessao-treino/horas-treinadas`, {
                 params: {
-                    alunoId: idAluno,
-                    exercicioId: exercicioId
+                    idAluno: idAluno,
+                    idExercicio: idExercicio
                 }
             });
 

@@ -117,8 +117,9 @@ const GerenciarTreinos = () => {
     };
     const fetchInfosTreinos = async () => {
         try {
-            const response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
+            const response = await caringuApi.get(`/alunos-treinos-exercicios/personal/${idPersonal}`);
             setTreinos(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error("Erro ao buscar informações dos treinos:", error);
         }

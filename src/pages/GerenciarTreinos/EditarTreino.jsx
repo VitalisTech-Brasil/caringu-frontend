@@ -32,7 +32,7 @@ const EditarTreino = () => {
     const [indexExercicioAtual, setIndexExercicioAtual] = useState(null);
     const [selectAberto, setSelectAberto] = useState(false);
     const { id } = useParams();
-    const treinoId = parseInt(id);
+    const idTreino = parseInt(id);
     const idPersonal = sessionStorage.getItem('pessoaId');
     const sugestaoRef = useRef(null);
     const navigate = useNavigate();
@@ -61,7 +61,7 @@ const EditarTreino = () => {
     useEffect(() => {
         const buscarExercicios = async () => {
             try {
-                const response = await caringuApi.get('/exercicios');
+                const response = await caringuApi.get(`/exercicios/por-personal/${idPersonal}`);
                 setExercicios(response.data);
             } catch (error) {
                 console.error('Erro ao buscar exercícios:', error);
@@ -75,7 +75,7 @@ const EditarTreino = () => {
     useEffect(() => {
         const fetchInfosTreino = async () => {
             try {
-                const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${treinoId}`);
+                const response = await caringuApi.get(`/alunos-treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
                 const data = response.data;
                 if (data.length > 0) {
                     setTreino(data);
@@ -87,7 +87,7 @@ const EditarTreino = () => {
             }
         };
         fetchInfosTreino();
-    }, [idPersonal, treinoId]);
+    }, [idPersonal, idTreino]);
 
     useEffect(() => {
         if (treino && treino.length > 0) {
@@ -209,7 +209,7 @@ const EditarTreino = () => {
     // Salvar treino completo com exercícios editados
     const salvarTreino = async (data) => {
         const payload = {
-            treinoId: treinoId, // do useParams
+            idTreino: idTreino, // do useParams
             exercicios: exerciciosEditados.map((ex) => ({
                 exercicioId: ex.exercicioId || ex.id,
                 carga: parseFloat(ex.carga),
@@ -229,11 +229,11 @@ const EditarTreino = () => {
         }
         try {
             const response = await caringuApi.put(
-                `/treinos-exercicios/atualizar/treinos/${treinoId}/exercicios`,
+                `/alunos-treinos-exercicios/atualizar/treinos/${idTreino}/exercicios`,
                 payload
             );
 
-            const responseTreino = await caringuApi.put(`/treino/${treinoId}/personal/${idPersonal}`, payloadTreino)
+            const responseTreino = await caringuApi.put(`/treino/${idTreino}/personal/${idPersonal}`, payloadTreino)
 
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Treino atualizado com sucesso!" />

@@ -128,8 +128,8 @@ const CriarTreino = () => {
                 personalId: personalId
             });
 
-            const treinoId = treinoResponse.data.id;
-            if (!treinoId) {
+            const idTreino = treinoResponse.data.id;
+            if (!idTreino) {
                 throw new Error("ID do treino não retornado.");
             }
 
@@ -149,13 +149,13 @@ const CriarTreino = () => {
                 descanso: Number(exercicio.tempoDescanso) || 60, // Use 'tempoDescanso' se esse for o nome do input
                 dataHoraCriacao: new Date().toISOString(),
                 dataHoraModificacao: new Date().toISOString(),
-                origemTreinoExercicio: 'BIBLIOTECA',
+                origemTreinoExercicio: 'PERSONAL',
                 grauDificuldade: grauDificuldadeMap[data.dificuldade] || 'INICIANTE'
             }));
 
             // 4. Cadastrar lote de exercícios
-            await caringuApi.post('/treinos-exercicios/cadastrar-lote', {
-                treinoId,
+            await caringuApi.post('/alunos-treinos-exercicios/cadastrar-lote', {
+                idTreino,
                 exercicios: exerciciosPayload
             });
 
