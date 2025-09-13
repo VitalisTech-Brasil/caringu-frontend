@@ -547,9 +547,9 @@ const ProcurandoPersonal = () => {
           </div>
 
           {/* Lista de Personal Trainers */}
-          <div className="xl:w-[96%] m-6 p-4 h-auto flex flex-col mt-6 border-2 border-[#E4E8E8] rounded-lg bg-[#fffdf6]">
-            <div className="md:mt-6 pl-[1rem] sm:pl-[3.5rem] w-full h-auto rounded-md ">
-              <div className="w-full flex items-center gap-2 sm:gap-4 bg-[#fffdf6] py-4">
+          <div className="xl:w-[96%] m-6 p-4 h-auto flex flex-col mt-6 rounded-lg items-center bg-[#fffdf6]">
+            <div className="md:mt-6 w-full h-auto rounded-md ">
+              <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[#fffdf6] py-4">
                 <input
                   type="text"
                   placeholder="Pesquisar Personal"
@@ -584,7 +584,7 @@ const ProcurandoPersonal = () => {
               </div>
             </div>
             {currentTrainers.length > 0 ? (
-              <div className="flex flex-wrap w-full gap-4 mx-3 mt-4">
+              <div className="flex flex-wrap w-full gap-10 mt-4">
                 {currentTrainers.map((trainer, index) => {
                   // calcula o menor plano desse personal
                   const menorPlano = trainer.planos.reduce((menor, atual) =>
@@ -593,7 +593,7 @@ const ProcurandoPersonal = () => {
                   return (
                     <div
                       key={trainer.id}
-                      className="border-2 border-gray-200 mb-4 w-[44%] md:w-[45%] md:h-[40%] lg:w-[22%] lg:mx-2 xl: flex items-center flex-col gap-3 rounded"
+                      className="border-2 border-gray-200 mb-4 w-full h-110 sm:h-100 md:w-[45%] lg:w-[22%] lg:mx-2 flex items-center flex-col gap-3 rounded"
                       onClick={() => toggleCardExpansion(index)}
                     >
                       <div className="w-full h-1/2 sm:h-40  flex items-center justify-center relative">
@@ -620,15 +620,17 @@ const ProcurandoPersonal = () => {
                         </div>
                       </div>
                       {/* conteúdo do card */}
-                      <div className="w-full flex flex-col gap-1 px-2">
-                        <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
-                        <p className="text-sm flex gap-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
-                            <path d="M2.8848 5.25314C4.07807 -0.104942 11.8495 -0.0987544 13.0367 5.25933C13.7332 8.4024 11.8192 11.0629 10.1413 12.7087C8.92383 13.909 6.99764 13.909 5.77409 12.7087C4.1023 11.0629 2.18823 8.39622 2.8848 5.25314Z" fill="#FDFCFA" stroke="#1D2D44" stroke-width="1.5" />
-                            <path d="M7.96113 8.3094C9.00487 8.3094 9.85098 7.44513 9.85098 6.379C9.85098 5.31288 9.00487 4.44861 7.96113 4.44861C6.9174 4.44861 6.07129 5.31288 6.07129 6.379C6.07129 7.44513 6.9174 8.3094 7.96113 8.3094Z" stroke="#1D2D44" stroke-width="1.5" />
-                          </svg>
-                          {trainer.cidade}
-                        </p>
+                      <div className="w-full flex flex-col gap-1 px-2"> 
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4"> 
+                          <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
+                          <p className="text-sm flex gap-1 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
+                              <path d="M2.8848 5.25314C4.07807 -0.104942 11.8495 -0.0987544 13.0367 5.25933C13.7332 8.4024 11.8192 11.0629 10.1413 12.7087C8.92383 13.909 6.99764 13.909 5.77409 12.7087C4.1023 11.0629 2.18823 8.39622 2.8848 5.25314Z" fill="#FDFCFA" stroke="#1D2D44" stroke-width="1.5" />
+                              <path d="M7.96113 8.3094C9.00487 8.3094 9.85098 7.44513 9.85098 6.379C9.85098 5.31288 9.00487 4.44861 7.96113 4.44861C6.9174 4.44861 6.07129 5.31288 6.07129 6.379C6.07129 7.44513 6.9174 8.3094 7.96113 8.3094Z" stroke="#1D2D44" stroke-width="1.5" />
+                            </svg>
+                            {trainer.cidade}
+                          </p>
+                        </div>
                         <p className="text-sm flex gap-1">
                           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
                             <path d="M7.96015 1.25C4.62264 1.25 1.90295 4.05625 1.90295 7.5C1.90295 10.9438 4.62264 13.75 7.96015 13.75C11.2977 13.75 14.0174 10.9438 14.0174 7.5C14.0174 4.05625 11.2977 1.25 7.96015 1.25ZM10.595 9.73125C10.5102 9.88125 10.3588 9.9625 10.2013 9.9625C10.1226 9.9625 10.0438 9.94375 9.97114 9.89375L8.09341 8.7375C7.62701 8.45 7.28175 7.81875 7.28175 7.2625V4.7C7.28175 4.44375 7.48769 4.23125 7.73604 4.23125C7.98438 4.23125 8.19033 4.44375 8.19033 4.7V7.2625C8.19033 7.4875 8.37204 7.81875 8.55982 7.93125L10.4375 9.0875C10.6556 9.21875 10.7283 9.50625 10.595 9.73125Z" fill="#1D2D44" />
@@ -637,7 +639,7 @@ const ProcurandoPersonal = () => {
                         </p>
                         {/* especialidades */}
                         {trainer.especialidades?.length > 0 && (
-                          <div className="flex gap-1 items-center">
+                          <div className="flex gap-1 lg:gap-10 items-center ">
                             <span className="bg-[#E96E35]/11 text-xs px-1 py-1 rounded border-2 border-[#E96E35]/20 text-[#E96E35]">
                               {trainer.especialidades[0]}
                             </span>
@@ -650,14 +652,7 @@ const ProcurandoPersonal = () => {
                         )}
                         {/* plano mais barato */}
                         <p className="text-sm">
-                          <span className="font-bold text-2xl">R$ {menorPlano.valorAulas}</span> /{" "}
-                          {menorPlano.periodo === "MENSAL"
-                            ? "Mês"
-                            : menorPlano.periodo === "ANUAL"
-                              ? "Ano"
-                              : menorPlano.periodo === "SEMESTRAL"
-                                ? "Semestre"
-                                : "Aula"}
+                          <span className="font-bold text-2xl">R$ {menorPlano.valorAulas}</span> /{" "}plano mais acessível
                         </p>
                         <Button
                           texto="Ver Perfil"
@@ -667,7 +662,7 @@ const ProcurandoPersonal = () => {
                           height="35px"
                           cor="#748CAB"
                           corTexto="#FFFFFF"
-                          classNameExtra="mb-2"
+                          classNameExtra="my-4"
                           onClick={() => redirecionarPerfilPersonal(trainer)}
                         />
                       </div>
