@@ -335,7 +335,7 @@ const Dashboard = () => {
                                         >
                                             <option value="" disabled>Selecione o Exercício</option>
                                             {exercicios.map((exercicio) => (
-                                                <option key={exercicio.treinoExercicioId} value={exercicio.exercicioId}>
+                                                <option key={exercicio.alunoTreinoExercicioId} value={exercicio.exercicioId}>
                                                     {exercicio.nomeExercicio}
                                                 </option>
                                             ))}
