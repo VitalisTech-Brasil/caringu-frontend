@@ -98,7 +98,7 @@ const MenuLateralAluno = () => {
                 </svg>
             ,
             label: "Buscar Personal",
-            path: "/gerenciar-alunos",
+            path: "/procurando-personal",
         },
         {
             icon:
@@ -114,32 +114,30 @@ const MenuLateralAluno = () => {
             ,
             label: "Minhas Aulas",
             path: "/treinos",
-            children: [
-                {
-                    icon:
-                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7.37505 21.25H22.6126C24.9876 21.25 26.2375 20 26.2375 17.625V2.5H3.73755V17.625C3.75005 20 5.00005 21.25 7.37505 21.25Z" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M2.5 2.5H27.5" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M10 27.5L15 25V21.25" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M20 27.5L15 25" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M9.375 13.75L13.3125 10.4625C13.625 10.2 14.0375 10.275 14.25 10.625L15.75 13.125C15.9625 13.475 16.375 13.5375 16.6875 13.2875L20.625 10" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    ,
-                    label: "Minha Evolução",
-                    path: "/gerenciar-treinos",
-                },
-                {
-                    icon:
-                        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8.44997 27.5H21.55C25 27.5 26.375 25.3875 26.5375 22.8125L27.1875 12.4875C27.3625 9.7875 25.2125 7.5 22.5 7.5C21.7375 7.5 21.0375 7.0625 20.6875 6.3875L19.7875 4.575C19.2125 3.4375 17.7125 2.5 16.4375 2.5H13.575C12.2875 2.5 10.7875 3.4375 10.2125 4.575L9.31246 6.3875C8.96246 7.0625 8.26247 7.5 7.49997 7.5C4.78747 7.5 2.63747 9.7875 2.81247 12.4875L3.46247 22.8125C3.61247 25.3875 4.99997 27.5 8.44997 27.5Z" stroke="#1D2D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M13.125 10H16.875" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M15 22.5C17.2375 22.5 19.0625 20.675 19.0625 18.4375C19.0625 16.2 17.2375 14.375 15 14.375C12.7625 14.375 10.9375 16.2 10.9375 18.4375C10.9375 20.675 12.7625 22.5 15 22.5Z" stroke="#1D2D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    ,
-                    label: "Prograsso Corporal",
-                    path: "/gerenciar-exercicios",
-                },
-            ],
+        },  
+        {
+            icon:
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.37505 21.25H22.6126C24.9876 21.25 26.2375 20 26.2375 17.625V2.5H3.73755V17.625C3.75005 20 5.00005 21.25 7.37505 21.25Z" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M2.5 2.5H27.5" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M10 27.5L15 25V21.25" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M20 27.5L15 25" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M9.375 13.75L13.3125 10.4625C13.625 10.2 14.0375 10.275 14.25 10.625L15.75 13.125C15.9625 13.475 16.375 13.5375 16.6875 13.2875L20.625 10" stroke="#1D2D44" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            ,
+            label: "Minha Evolução",
+            path: "/gerenciar-treinos",
+        },
+        {
+            icon:
+                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.44997 27.5H21.55C25 27.5 26.375 25.3875 26.5375 22.8125L27.1875 12.4875C27.3625 9.7875 25.2125 7.5 22.5 7.5C21.7375 7.5 21.0375 7.0625 20.6875 6.3875L19.7875 4.575C19.2125 3.4375 17.7125 2.5 16.4375 2.5H13.575C12.2875 2.5 10.7875 3.4375 10.2125 4.575L9.31246 6.3875C8.96246 7.0625 8.26247 7.5 7.49997 7.5C4.78747 7.5 2.63747 9.7875 2.81247 12.4875L3.46247 22.8125C3.61247 25.3875 4.99997 27.5 8.44997 27.5Z" stroke="#1D2D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M13.125 10H16.875" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M15 22.5C17.2375 22.5 19.0625 20.675 19.0625 18.4375C19.0625 16.2 17.2375 14.375 15 14.375C12.7625 14.375 10.9375 16.2 10.9375 18.4375C10.9375 20.675 12.7625 22.5 15 22.5Z" stroke="#1D2D44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            ,
+            label: "Prograsso Corporal",
+            path: "/gerenciar-exercicios",
         },
         {
             icon: (
