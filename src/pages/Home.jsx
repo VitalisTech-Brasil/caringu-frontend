@@ -58,8 +58,8 @@ const Home = () => {
 
   const fetchTreinosFinalizados = async () => {
     try {
-      const treinosFinalizadosResponse = await caringuApi.get(`/treinos-finalizados/personal/${personalId}`);
-      setTreinosFinalizados(treinosFinalizadosResponse.data);
+      const aulasPersonalResponse = await caringuApi.get(`/sessao-treino/personal-aulas/${personalId}`);
+      setTreinosFinalizados(aulasPersonalResponse.data);
     } catch (error) {
       console.error("Erro ao buscar treinos finalizados:", error);
     }
@@ -135,8 +135,18 @@ const Home = () => {
       onClick: () => navigate("/planos"),
     },
     {
-      icon: <CiMedicalCase />,
-      label: "Adicionar Treino",
+      icon: (
+      <svg xmlns="http://www.w3.org/2000/svg"
+        className="w-7 h-7 text-gray-800 group-hover:text-white transition-colors"
+        viewBox="0 0 41 40"
+        fill="none">
+        <path d="M27.3333 6.70001C33.0221 7.00001 35.875 9.05001 35.875 16.6667V26.6667C35.875 33.3333 34.1667 36.6667 25.625 36.6667H15.375C6.83333 36.6667 5.125 33.3333 5.125 26.6667V16.6667C5.125 9.06668 7.97792 7.00001 13.6667 6.70001" stroke="currentColor" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M17.0834 9.99992H23.9167C27.3334 9.99992 27.3334 8.33325 27.3334 6.66659C27.3334 3.33325 25.6251 3.33325 23.9167 3.33325H17.0834C15.3751 3.33325 13.6667 3.33325 13.6667 6.66659C13.6667 9.99992 15.3751 9.99992 17.0834 9.99992Z" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M25.2837 23.6194H15.7166" stroke="currentColor" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M20.5001 19.047L20.5001 28.3808" stroke="currentColor" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      ),
+      label: "Agendar Aula",
       onClick: () => navigate("/gerenciar-treinos"),
     },
     {

@@ -16,11 +16,9 @@ import toast from 'react-hot-toast';
 import CustomToast from '../../components/Utils/CustomToast';
 import { Toaster } from 'react-hot-toast';
 import ModalPlano from "../../components/Utils/ModalPlano";
+import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 
 const Planos = () => {
-
-
-
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -32,7 +30,9 @@ const Planos = () => {
     const [planoIdParaDeletar, setPlanoIdParaDeletar] = useState(null);
     const [planoEditado, setPlanoEditado] = useState(null);
     const [alunosAtivos, setAlunosAtivos] = useState([]);
-    const [errosImagem, setErrosImagem] = useState({});
+    const [imgErro, setImgErro] = useState(false);
+    const [openMenuId, setOpenMenuId] = useState(null);
+    
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
@@ -72,8 +72,6 @@ const Planos = () => {
                 return nivel;
         }
     }
-
-
 
     useEffect(() => {
         document.title = "Planos | Caringu";
@@ -217,8 +215,8 @@ const Planos = () => {
 
 
     // Função para abrir o modal de criação
-   const handleOpenModal = () => {
-        setPlanoEditado(null); 
+    const handleOpenModal = () => {
+        setPlanoEditado(null);
         setShowCreateModal(true);
     };
 
@@ -297,20 +295,20 @@ const Planos = () => {
                     <div className="w-full  mt-3 sm:pl-10 pl-[1rem] ">
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com Planos Ativos</span>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                        {alunosAtivos.length === 0 ? (
+                    <div className="sm:pl-10 pl-[1rem] grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4 w-[91%] h-130 overflow-y-auto">                        {alunosAtivos.length === 0 ? (
                             <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
                                 Nenhum aluno com plano ativo no momento.
                             </div>
                         ) : (
                             alunosAtivos.map((aluno, idx) => (
-                                <CardAlunoAtivos
-                                    idAlunos={aluno.idAluno}
-                                    key={idx}
-                                    urlImagem={aluno.urlFotoPerfil}
-                                    nome={aluno.nomeAluno}
-                                    nomePlano={aluno.nomePlano}
-                                    niverExperiencia={formatarNivelExperiencia(aluno.nivelExperiencia)}
+                                <CardAluno
+                                    key={aluno.idAluno}
+                                    aluno={aluno}
+                                    onCardClick={(idAluno) => navigate(`/perfil-aluno/${idAluno}`)}
+                                    imgErro={imgErro}
+                                    setImgErro={setImgErro}
+                                    totalCards={alunosAtivos.length}
+                                    origemUsoOption={"Planos"}
                                 />
                             ))
                         )}

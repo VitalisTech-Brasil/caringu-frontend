@@ -14,6 +14,7 @@ import FormularioAnamnese from "../../components/Utils/GerenciarAlunos/Formulari
 import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../../components/Utils/CustomToast";
 import Pagination from "../../components/Utils/Pagination";
+import ModalAgendarAula from "../../components/Utils/ModalAgendarAula";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +28,8 @@ const GerenciarAlunos = () => {
 
   const [alunosCards, setAlunosCards] = useState([]); // Para os cards (paginados)
   const [alunosCompletos, setAlunosCompletos] = useState([]); // Para os widgets (todos)
+  const [showAgendarAulaModal, setShowAgendarAulaModal] = useState(false);
+  const [alunoParaAgendar, setAlunoParaAgendar] = useState(null);
 
   const [totalElements, setTotalElements] = useState(0);
   const [totalPagesAPI, setTotalPagesAPI] = useState(0);
@@ -54,8 +57,6 @@ const GerenciarAlunos = () => {
   const handleRadioChange = (id, value) => {
     setRespostas(prev => ({ ...prev, [id]: value }));
   };
-
-
   const now = new Date();
 
   const alunosFiltrados = alunosCompletos
@@ -100,6 +101,11 @@ const GerenciarAlunos = () => {
   //   mode: "onChange"
   // });
 
+
+  useEffect(() => {
+    console.log("alunosCompletos atualizado:", alunosCompletos);
+  }, [alunosCompletos]);
+
   useEffect(() => {
     const KpiAlunoSelecionada = sessionStorage.getItem("KPI_ALUNO_SELECIONADA");
 
@@ -123,6 +129,7 @@ const GerenciarAlunos = () => {
           setAlunosCards(responseCompletos.data);
           setTotalElements(responseCompletos.data.length);
           setTotalPagesAPI(0); // Reset para usar paginação local
+
         } else {
 
           const responsePaginado = await caringuApi.get(`/alunos/detalhes/personal/paginado/${personalId}`, {
@@ -159,6 +166,9 @@ const GerenciarAlunos = () => {
         break;
       case 'progressao':
         navigate(`/relatorios/registro-corporal/${aluno.idAluno}`);
+        break;
+      case 'agendarAula':
+        handleAbrirModalAgendarAula(aluno);
         break;
       default:
         break;
@@ -254,6 +264,11 @@ const GerenciarAlunos = () => {
   }
 
   const menuWidth = useMenuWidth();
+
+  const handleAbrirModalAgendarAula = (aluno) => {
+    setAlunoParaAgendar(aluno);
+    setShowAgendarAulaModal(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -407,7 +422,7 @@ const GerenciarAlunos = () => {
               <WidgetPresencaAlunos
                 valorSelecionado={valorSelecionado}
                 filter={filter}
-                alunosAtivos={alunosCompletos} 
+                alunosAtivos={alunosCompletos}
                 alunosFiltrados={alunosFiltrados}
                 imgErro={imgErro}
                 setImgErro={setImgErro}
@@ -416,7 +431,7 @@ const GerenciarAlunos = () => {
               />
 
               <WidgetAlunosPlano
-                alunosAtivos={alunosCompletos} 
+                alunosAtivos={alunosCompletos}
                 imgErro={imgErro}
                 setImgErro={setImgErro}
               />
@@ -543,7 +558,14 @@ const GerenciarAlunos = () => {
             </div >
           </div >
         </main >
-      </div >
+        {showAgendarAulaModal && alunoParaAgendar && (
+          <ModalAgendarAula
+            fecharModal={() => setShowAgendarAulaModal(false)}
+            ariaLabel="Modal para agendar aula com o aluno"
+            aluno={alunoParaAgendar}
+          />
+        )}
+      </div>
     </div >
   );
 };
