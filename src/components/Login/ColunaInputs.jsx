@@ -101,6 +101,10 @@ const ColunaInputs = () => {
         toast.custom((t) => (
           <CustomToast t={t} type="error" message="Credenciais inválidas. Verifique seu email e senha." />
         ));
+      } else if (error.response?.status === 423){
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Login bloqueado por excesso de tentativas. Tente novamente mais tarde" />
+        ));
       } else {
         console.error('Erro ao realizar login:', error);
         toast.custom((t) => (
