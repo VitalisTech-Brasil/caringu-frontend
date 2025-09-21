@@ -28,6 +28,8 @@ const GerenciarAlunos = () => {
 
   const [alunosCards, setAlunosCards] = useState([]); // Para os cards (paginados)
   const [alunosCompletos, setAlunosCompletos] = useState([]); // Para os widgets (todos)
+  const [showAgendarAulaModal, setShowAgendarAulaModal] = useState(false);
+  const [alunoParaAgendar, setAlunoParaAgendar] = useState(null);
 
   const [totalElements, setTotalElements] = useState(0);
   const [totalPagesAPI, setTotalPagesAPI] = useState(0);
@@ -165,6 +167,9 @@ const GerenciarAlunos = () => {
       case 'progressao':
         navigate(`/relatorios/registro-corporal/${aluno.idAluno}`);
         break;
+      case 'agendarAula':
+        handleAbrirModalAgendarAula(aluno);
+        break;
       default:
         break;
     }
@@ -259,6 +264,11 @@ const GerenciarAlunos = () => {
   }
 
   const menuWidth = useMenuWidth();
+
+  const handleAbrirModalAgendarAula = (aluno) => {
+    setAlunoParaAgendar(aluno);
+    setShowAgendarAulaModal(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -548,10 +558,13 @@ const GerenciarAlunos = () => {
             </div >
           </div >
         </main >
-        <ModalAgendarAula
-          ariaLabel={"Modal para agendar aula com o aluno"}
-        >
-        </ModalAgendarAula>
+        {showAgendarAulaModal && alunoParaAgendar && (
+          <ModalAgendarAula
+            fecharModal={() => setShowAgendarAulaModal(false)}
+            ariaLabel="Modal para agendar aula com o aluno"
+            aluno={alunoParaAgendar}
+          />
+        )}
       </div>
     </div >
   );

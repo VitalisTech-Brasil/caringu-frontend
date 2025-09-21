@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import EtapaAgendamento from "../../components/Utils/GerenciarAlunos/EtapaAgendamentoAula"
-// import EtapaAtribuicao from "../../components/Utils/GerenciarAlunos/EtapaAtribuicaoTreinos"
+import EtapaAtribuicao from "../../components/Utils/GerenciarAlunos/EtapaAtribuicaoTreinos"
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 import { addDays, isAfter } from "date-fns";
+import { AgendamentoProvider } from "./GerenciarAlunos/Context/AgendamentoContext";
 
 const ModalAgendarAula = ({
     fecharModal,
@@ -22,10 +23,13 @@ const ModalAgendarAula = ({
     const [checkedDates, setCheckedDates] = useState([]);
     const [horarios, setHorarios] = useState({});
     const [selectedDates, setSelectedDates] = useState([]);
-    const [horarioInput, setHorarioInput] = useState("");
+    const [horarioInicio, setHorarioInicio] = useState("");
+    const [horarioFim, setHorarioFim] = useState("");
     const todosHorariosPreenchidos = selectedDates.length > 0 &&
         selectedDates.every(d => horarios[d.toISOString()]);
 
+
+        //mock (apagar depois)
     const aluno = {
         altura: 1.75,
         celular: "11994455667",
@@ -187,10 +191,13 @@ const ModalAgendarAula = ({
     }, [diasSelecionados]);
 
     const handleSalvarHorarios = () => {
-        if (!horarioInput) return;
+        if (!horarioInicio || !horarioFim) return;
         const novosHorarios = { ...horarios };
         checkedDates.forEach(dateIso => {
-            novosHorarios[dateIso] = horarioInput;
+            novosHorarios[dateIso] = {
+                inicio: horarioInicio,
+                fim: horarioFim
+            };
         });
         setHorarios(novosHorarios);
         setCheckedDates([]);
@@ -198,7 +205,7 @@ const ModalAgendarAula = ({
 
     const [etapa, setEtapa] = useState(1);
     return (
-        <>
+        <AgendamentoProvider>
             {/* Modal */}
             <div
                 id="popup-modal"
@@ -276,8 +283,10 @@ const ModalAgendarAula = ({
                                     setHorarios={setHorarios}
                                     selectedDates={selectedDates}
                                     setSelectedDates={setSelectedDates}
-                                    horarioInput={horarioInput}
-                                    setHorarioInput={setHorarioInput}
+                                    horarioInicio={horarioInicio}
+                                    setHorarioInicio={setHorarioInicio}
+                                    horarioFim={horarioFim}
+                                    setHorarioFim={setHorarioFim}
                                     todosHorariosPreenchidos={todosHorariosPreenchidos}
                                     diasSelecionados={diasSelecionados}
                                     setDiasSelecionados={setDiasSelecionados}
@@ -295,11 +304,31 @@ const ModalAgendarAula = ({
                                     onProsseguir={() => setEtapa(2)}
                                 />
                             )}
+                            {etapa === 2 && (
+                                <EtapaAtribuicao
+                                    aluno={aluno}
+                                    diasSelecionados={diasSelecionados}
+                                    setDiasSelecionados={setDiasSelecionados}
+                                    datasAleatorias={selectedDates.map(d => {
+                                        const dia = String(d.getDate()).padStart(2, '0');
+                                        const mes = String(d.getMonth() + 1).padStart(2, '0');
+                                        const ano = d.getFullYear();
+                                        return `${dia}/${mes}/${ano}`;
+                                    })}
+                                    datasSelecionadas={checkedDates}
+                                    setDatasSelecionadas={setCheckedDates}
+                                    showDropdown={showDropdown}
+                                    setShowDropdown={setShowDropdown}
+                                    diasSemana={diasSemana}
+                                    handleCheckDia={handleCheckDia}
+                                    onVoltar={() => setEtapa(1)}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </AgendamentoProvider>
     );
 }
 
