@@ -51,7 +51,7 @@ const VisualizarPdf = () => {
     }, [exercicioSelecionadoId]);
 
     useEffect(() => {
-        caringuApi.get(`/alunos-treinos-exercicios/exercicios-por-treino/${idTreino}/${idAluno}`)
+        caringuApi.get(`/treinos-exercicios/exercicios-por-treino/${idTreino}/${idAluno}`)
             .then(response => {
 
                 const lista = response.data;
@@ -81,7 +81,7 @@ const VisualizarPdf = () => {
     const buscarEvolucaoCargaPorExercicio = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/sessao-treino/evolucao-carga`,
+                `/aulas/evolucao-carga`,
                 {
                     params: {
                         idAluno: idAluno,
@@ -102,7 +102,7 @@ const VisualizarPdf = () => {
     const buscarEvolucaoTreinosCumpridosMensal = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/sessao-treino/evolucao-treinos-cumpridos`,
+                `/aulas/evolucao-treinos-cumpridos`,
                 {
                     params: {
                         idAluno: idAluno,
@@ -145,7 +145,7 @@ const VisualizarPdf = () => {
 
     const buscarHorasTreinadas = async (idExercicio) => {
         try {
-            const response = await caringuApi.get(`/sessao-treino/horas-treinadas`, {
+            const response = await caringuApi.get(`/aulas/horas-treinadas`, {
                 params: {
                     idAluno: idAluno,
                     idExercicio: idExercicio

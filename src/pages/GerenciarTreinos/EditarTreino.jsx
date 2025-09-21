@@ -74,9 +74,13 @@ const EditarTreino = () => {
     // Busca treino e seus exercícios
     useEffect(() => {
         const fetchInfosTreino = async () => {
+            console.log(idPersonal);
+            console.log(idTreino);
+
             try {
-                const response = await caringuApi.get(`/alunos-treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
+                const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
                 const data = response.data;
+                console.log(data);
                 if (data.length > 0) {
                     setTreino(data);
                     setExerciciosSelecionados(data);
@@ -229,7 +233,7 @@ const EditarTreino = () => {
         }
         try {
             const response = await caringuApi.put(
-                `/alunos-treinos-exercicios/atualizar/treinos/${idTreino}/exercicios`,
+                `/treinos-exercicios/atualizar/treinos/${idTreino}/exercicios`,
                 payload
             );
 
