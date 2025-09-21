@@ -36,7 +36,7 @@ const RelatorioTreinos = () => {
     const buscarTreinosAlunoRelatorios = async (page = 0, size = itemsPerPage) => {
         try {
             const { data } = await caringuApi.get(
-                `/alunos-treinos-exercicios/aluno-paginado/${idAluno}`,
+                `/treinos-exercicios/aluno-paginado/${idAluno}`,
                 { params: { page, size } }
             );
             setTreinos(data);

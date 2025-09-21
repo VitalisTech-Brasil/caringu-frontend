@@ -154,7 +154,7 @@ const CriarTreino = () => {
             }));
 
             // 4. Cadastrar lote de exercícios
-            await caringuApi.post('/alunos-treinos-exercicios/cadastrar-lote', {
+            await caringuApi.post('/treinos-exercicios/cadastrar-lote', {
                 idTreino,
                 exercicios: exerciciosPayload
             });
