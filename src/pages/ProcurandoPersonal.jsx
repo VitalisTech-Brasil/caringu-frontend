@@ -12,6 +12,7 @@ import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 import axios from "axios";
 import Rating from 'react-rating'
 import Pagination from "../../src/components/Utils/Pagination";
+import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
 
 const ProcurandoPersonal = () => {
 
@@ -531,9 +532,10 @@ const ProcurandoPersonal = () => {
       [id]: true,
     }));
   };
-
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="flex min-h-screen bg-[#fffdf6]">
+      <MenuLateralAluno isOpen={menuOpen} toggleMenu={() => setMenuOpen(!menuOpen)} />
       <div className="flex-1 overflow-y-auto">
         <Header />
         <main className="w-full h-auto">
@@ -620,8 +622,8 @@ const ProcurandoPersonal = () => {
                         </div>
                       </div>
                       {/* conteúdo do card */}
-                      <div className="w-full flex flex-col gap-1 px-2"> 
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4"> 
+                      <div className="w-full flex flex-col gap-1 px-2">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
                           <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
                           <p className="text-sm flex gap-1 items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">

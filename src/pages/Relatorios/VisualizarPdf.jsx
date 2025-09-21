@@ -78,14 +78,14 @@ const VisualizarPdf = () => {
 
     }, []);
 
-    const buscarEvolucaoCargaPorExercicio = async (exercicioId) => {
+    const buscarEvolucaoCargaPorExercicio = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-carga`,
+                `/aulas/evolucao-carga`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId,
+                        idAluno: idAluno,
+                        idExercicio: idExercicio,
                     },
                 }
             );
@@ -99,14 +99,14 @@ const VisualizarPdf = () => {
         }
     };
 
-    const buscarEvolucaoTreinosCumpridosMensal = async (exercicioId) => {
+    const buscarEvolucaoTreinosCumpridosMensal = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-treinos-cumpridos`,
+                `/aulas/evolucao-treinos-cumpridos`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId
+                        idAluno: idAluno,
+                        idExercicio: idExercicio
                     }
                 }
             );
@@ -143,12 +143,12 @@ const VisualizarPdf = () => {
         }
     };
 
-    const buscarHorasTreinadas = async (exercicioId) => {
+    const buscarHorasTreinadas = async (idExercicio) => {
         try {
-            const response = await caringuApi.get(`/treinos-finalizados/horas-treinadas`, {
+            const response = await caringuApi.get(`/aulas/horas-treinadas`, {
                 params: {
-                    alunoId: idAluno,
-                    exercicioId: exercicioId
+                    idAluno: idAluno,
+                    idExercicio: idExercicio
                 }
             });
 

@@ -54,7 +54,7 @@ const Pagination = ({
           <button
             key={pageNumber}
             onClick={() => onPageChange(pageNumber)}
-            className={`w-8 h-8 flex items-center justify-center rounded-full font-medium ${currentPage === pageNumber
+            className={`w-8 h-8 flex cursor-pointer items-center justify-center rounded-full font-medium ${currentPage === pageNumber
               ? 'bg-[var(--laranja)] text-white'
               : 'text-gray-700 hover:bg-gray-100'
               }`}

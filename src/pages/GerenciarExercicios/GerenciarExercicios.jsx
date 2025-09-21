@@ -48,7 +48,7 @@ const GerenciarExercicios = () => {
         kpiPersonal: {}
     });
 
-    const [exercicios, setExercicios] = useState([]);
+    const [exercicios, setExercicios] = useState({ content: [], totalPages: 0, number: 0, size: 2 });
 
     const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm({
         defaultValues: {
@@ -61,37 +61,121 @@ const GerenciarExercicios = () => {
     });
 
     useEffect(() => {
-        caringuApi.get("/exercicios/kpi/total-por-origem")
-            .then(response => {
-                const data = response.data;
-
-                const kpi = {
-                    kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
-                    kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
-                };
-
-                setTotalExerciciosKpi(kpi);
-            })
-            .catch(err => {
-                console.error("Erro ao buscar KPI de exercícios:", err);
-            });
-
-        caringuApi.get("/exercicios")
-            .then(response => {
-                const data = response.data;
-
-                setExercicios(data);
-            })
-            .catch(err => {
-                console.error("Erro ao buscar exercícios: ", err);
-            })
+        listarKPIs();
+        listarExercicios();
     }, []);
 
+    const listarKPIs = async () => {
+
+        const idPersonal = sessionStorage.getItem("pessoaId");
+        try {
+            const response = await caringuApi.get(`/exercicios/kpi/total-por-origem/${idPersonal}`);
+            const data = response.data;
+
+            const kpi = {
+                kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
+                kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
+            };
+
+            setTotalExerciciosKpi(kpi);
+        } catch (err) {
+            console.error("Erro ao buscar KPI de exercícios:", err);
+        }
+    };
+
+    const listarExercicios = async (page = 0, size = itemsPerPage) => {
+
+        const idPersonal = sessionStorage.getItem("pessoaId");
+
+        try {
+            const { data } = await caringuApi.get(
+                `/exercicios/por-personal-paginado/${idPersonal}`,
+                { params: { page, size } }
+            )
+            setExercicios(data);
+
+        } catch (e) {
+            console.error(`Erro ao buscar os exercícios do personal com ID ${idPersonal}:`, e);
+        }
+
+    }
+
+    const handleCriarExercicio = async (data) => {
+        const idPersonal = sessionStorage.getItem("pessoaId");
+        console.log(data);
+        try {
+            const response = await caringuApi.post("/exercicios", {
+                idPersonal: idPersonal,
+                nome: data.nome,
+                grupoMuscular: data.grupoMuscular,
+                urlVideo: data.urlVideo,
+                observacoes: data.observacoes || "",
+            });
+
+            toast.success("Exercício criado com sucesso!");
+
+            setExercicios(prev => ({
+                ...prev,
+                content: [...prev.content, response.data]
+            }));
+            setShowCreateModal(false);
+            listarKPIs();
+        } catch (error) {
+            console.error("Erro ao criar exercício:", error);
+            toast.error("Erro ao criar exercício. Verifique os dados e tente novamente.");
+        }
+    };
+
+    const editarExercicio = async (data) => {
+        try {
+            const response = await caringuApi.put(`/exercicios/${exercicioSelecionado.id}`, {
+                nome: data.nome,
+                grupoMuscular: data.grupoMuscular,
+                urlVideo: data.urlVideo,
+                observacoes: data.observacoes || ""
+            });
+
+            toast.success("Exercício atualizado com sucesso!");
+
+            setExercicios(prev => ({
+                ...prev,
+                content: prev.content.map(ex =>
+                    ex.id === exercicioSelecionado.id ? response.data : ex
+                )
+            }));
+
+            setShowEditModal(false);
+            listarKPIs();
+        } catch (error) {
+            console.error("Erro ao atualizar o exercício:", error);
+            toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
+        }
+    }
+
+    const confirmDelete = () => {
+        if (!exercicioSelecionado) return;
+
+        caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
+            .then(() => {
+
+                setExercicios(prev => prev.content.filter(ex => ex.id !== exercicioSelecionado));
+                setModalDeletarVisivel(false);
+                setExercicioSelecionado(null);
+
+                toast.success("Exercício deletado com sucesso!");
+                listarKPIs();
+            })
+            .catch((err) => {
+                console.error("Erro ao deletar exercício:", err);
+                toast.error("Erro ao deletar exercício:", err);
+            });
+    };
+
     const toggleFavorito = async (id) => {
-        const exercicioIndex = exercicios.findIndex((exercicio) => exercicio.id === id);
+        const exercicioIndex = exercicios.content.findIndex((exercicio) => exercicio.id === id);
         if (exercicioIndex === -1) return;
 
-        const favoritoAtual = exercicios[exercicioIndex].favorito;
+        const favoritoAtual = exercicios.content[exercicioIndex].favorito;
         const novoValor = !favoritoAtual;
 
         try {
@@ -99,8 +183,10 @@ const GerenciarExercicios = () => {
                 favorito: novoValor
             });
 
-            const exerciciosAtualizados = [...exercicios];
-            exerciciosAtualizados[exercicioIndex].favorito = novoValor;
+            const exerciciosAtualizados = { ...exercicios };
+            exerciciosAtualizados.content = [...exercicios.content];
+            exerciciosAtualizados.content[exercicioIndex].favorito = novoValor;
+
             setExercicios(exerciciosAtualizados);
         } catch (error) {
             console.error("Erro ao atualizar favorito:", error);
@@ -148,33 +234,6 @@ const GerenciarExercicios = () => {
         setGrupoMuscularFilter(value);
     };
 
-    const filteredExercicios = exercicios
-        .filter((exercicio) => {
-            if (searchTerm && !exercicio.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
-                return false;
-            }
-            if (grupoMuscularFilter && grupoMuscularFilter !== "" &&
-                exercicio.grupoMuscular.toLowerCase() !== grupoMuscularFilter.toLowerCase()) {
-                return false;
-            }
-            if (origemFilter && origemFilter !== "" &&
-                exercicio.origem.toLowerCase() !== origemFilter.toLowerCase()) {
-                return false;
-            }
-            if (showOnlyFavorites && !exercicio.favorito) {
-                return false;
-            }
-            if (difficultyFilter && exercicio.dificuldade !== difficultyFilter) {
-                return false;
-            }
-            return true;
-        })
-        .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
-            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
-            return 0;
-        });
-
     useEffect(() => {
         if (showEditModal && exercicioSelecionado) {
             reset({
@@ -191,41 +250,6 @@ const GerenciarExercicios = () => {
         setModalDeletarVisivel(true);
     };
 
-    const atualizarKPIs = async () => {
-        try {
-            const response = await caringuApi.get("/exercicios/kpi/total-por-origem");
-            const data = response.data;
-
-            const kpi = {
-                kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
-                kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
-            };
-
-            setTotalExerciciosKpi(kpi);
-        } catch (err) {
-            console.error("Erro ao buscar KPI de exercícios:", err);
-        }
-    };
-
-    const confirmDelete = () => {
-        if (!exercicioSelecionado) return;
-
-        caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
-            .then(() => {
-
-                setExercicios(prev => prev.filter(ex => ex.id !== exercicioSelecionado));
-                setModalDeletarVisivel(false);
-                setExercicioSelecionado(null);
-
-                toast.success("Exercício deletado com sucesso!");
-                atualizarKPIs();
-            })
-            .catch((err) => {
-                console.error("Erro ao deletar exercício:", err);
-                toast.error("Erro ao deletar exercício:", err);
-            });
-    };
-
     const handleOpenModal = () => {
         setShowCreateModal(true);
     };
@@ -234,49 +258,6 @@ const GerenciarExercicios = () => {
         setExercicioSelecionado(exercicio);
         setShowEditModal(true);
     };
-
-    const handleCriarExercicio = async (data) => {
-        try {
-            const response = await caringuApi.post("/exercicios/campos-essenciais", {
-                nome: data.nome,
-                grupoMuscular: data.grupoMuscular,
-                urlVideo: data.urlVideo,
-                observacoes: data.observacoes || "",
-            });
-
-            toast.success("Exercício criado com sucesso!");
-
-            setExercicios((prev) => [...prev, response.data]);
-            setShowCreateModal(false);
-            atualizarKPIs();
-        } catch (error) {
-            console.error("Erro ao criar exercício:", error);
-            toast.error("Erro ao criar exercício. Verifique os dados e tente novamente.");
-        }
-    };
-
-    const editarExercicio = async (data) => {
-        try {
-            const response = await caringuApi.put(`/exercicios/campos-essenciais/${exercicioSelecionado.id}`, {
-                nome: data.nome,
-                grupoMuscular: data.grupoMuscular,
-                urlVideo: data.urlVideo,
-                observacoes: data.observacoes || ""
-            });
-
-            toast.success("Exercício atualizado com sucesso!");
-
-            setExercicios(prev => prev.map(ex =>
-                ex.id === exercicioSelecionado.id ? response.data : ex
-            ));
-
-            setShowEditModal(false);
-            atualizarKPIs();
-        } catch (error) {
-            console.error("Erro ao atualizar o exercício:", error);
-            toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
-        }
-    }
 
     const ExercicioActionsMenu = ({ exercicio }) => (
         <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
@@ -343,6 +324,36 @@ const GerenciarExercicios = () => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const filteredExercicios = (exercicios.content ?? [])
+        .filter((exercicio) => {
+            if (searchTerm && !exercicio.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
+                return false;
+            }
+            if (grupoMuscularFilter && grupoMuscularFilter !== "" &&
+                exercicio.grupoMuscular.toLowerCase() !== grupoMuscularFilter.toLowerCase()) {
+                return false;
+            }
+            if (origemFilter && origemFilter !== "" &&
+                exercicio.origem.toLowerCase() !== origemFilter.toLowerCase()) {
+                return false;
+            }
+            if (showOnlyFavorites && !exercicio.favorito) {
+                return false;
+            }
+            if (difficultyFilter && exercicio.dificuldade !== difficultyFilter) {
+                return false;
+            }
+            return true;
+        })
+        .sort((a, b) => {
+            if (sortOrder === "A-Z") return a.nome.localeCompare(b.nome);
+            if (sortOrder === "Z-A") return b.nome.localeCompare(a.nome);
+            return 0;
+        });
+
+    const currentExercicios = filteredExercicios;
+    const totalPages = exercicios.totalPages ?? 0;
+
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
@@ -350,28 +361,23 @@ const GerenciarExercicios = () => {
     // Funções de paginação
     const goToPage = (page) => {
         setCurrentPage(page);
+        listarExercicios(page - 1, itemsPerPage);
     };
 
     const goToPrevious = () => {
         if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
+            goToPage(currentPage - 1);
         }
     };
 
     const goToNext = () => {
         if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+            goToPage(currentPage + 1);
         }
     };
 
-    const totalPages = Math.ceil(filteredExercicios.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentExercicios = filteredExercicios.slice(startIndex, startIndex + itemsPerPage);
-
-
-
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 overflow-y-auto max-h-[100vh]">
                 <Header />
@@ -784,7 +790,7 @@ const GerenciarExercicios = () => {
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={totalPages}
-                                itemsLength={filteredExercicios.length}
+                                itemsLength={currentExercicios.length}
                                 onPageChange={goToPage}
                                 onPrevious={goToPrevious}
                                 onNext={goToNext}

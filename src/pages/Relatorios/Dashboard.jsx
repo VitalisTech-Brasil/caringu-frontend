@@ -61,7 +61,6 @@ const Dashboard = () => {
             .then(response => {
 
                 const lista = response.data;
-
                 if (lista.length > 0) {
                     setExercicioSelecionado(lista[0].exercicioId);
 
@@ -82,14 +81,14 @@ const Dashboard = () => {
 
     }, []);
 
-    const buscarEvolucaoCargaPorExercicio = async (exercicioId) => {
+    const buscarEvolucaoCargaPorExercicio = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-carga`,
+                `/aulas/evolucao-carga`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId
+                        idAluno: idAluno,
+                        idExercicio: idExercicio
                     }
                 }
             );
@@ -102,14 +101,14 @@ const Dashboard = () => {
         }
     };
 
-    const buscarEvolucaoTreinosCumpridosMensal = async (exercicioId) => {
+    const buscarEvolucaoTreinosCumpridosMensal = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-treinos-cumpridos`,
+                `/aulas/evolucao-treinos-cumpridos`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId
+                        idAluno: idAluno,
+                        idExercicio: idExercicio
                     }
                 }
             );
@@ -146,12 +145,12 @@ const Dashboard = () => {
         }
     };
 
-    const buscarHorasTreinadas = async (exercicioId) => {
+    const buscarHorasTreinadas = async (idExercicio) => {
         try {
-            const response = await caringuApi.get(`/treinos-finalizados/horas-treinadas`, {
+            const response = await caringuApi.get(`/aulas/horas-treinadas`, {
                 params: {
-                    alunoId: idAluno,
-                    exercicioId: exercicioId
+                    idAluno: idAluno,
+                    idExercicio: idExercicio
                 }
             });
 
@@ -265,7 +264,7 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header toggleSidebar={toggleSidebar} />
@@ -335,7 +334,7 @@ const Dashboard = () => {
                                         >
                                             <option value="" disabled>Selecione o Exercício</option>
                                             {exercicios.map((exercicio) => (
-                                                <option key={exercicio.treinoExercicioId} value={exercicio.exercicioId}>
+                                                <option key={exercicio.alunoTreinoExercicioId} value={exercicio.exercicioId}>
                                                     {exercicio.nomeExercicio}
                                                 </option>
                                             ))}
