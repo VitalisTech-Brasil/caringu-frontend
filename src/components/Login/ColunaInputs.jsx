@@ -241,11 +241,14 @@ const ColunaInputs = () => {
           />
 
           {tempoRestante && (
-            <div className="mt-2 w-full text-center font-bold text-[#D45C56] text-md flex justify-center gap-3">
-              <img src={alert} alt="Ícone de alerta" />
-              <span>Tente novamente em {formatarTempo(tempoRestante)}</span>
+            <div className="mt-2 w-full flex items-center justify-center gap-2 text-center font-bold text-[#D45C56] text-sm sm:text-base md:text-lg">
+              <img src={alert} alt="Ícone de alerta" className="w-5 h-5 shrink-0" />
+              <span className="whitespace-nowrap">
+                Tente novamente em {formatarTempo(tempoRestante)}
+              </span>
             </div>
           )}
+
 
         </form>
 
