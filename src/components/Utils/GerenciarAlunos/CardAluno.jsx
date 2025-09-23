@@ -13,7 +13,7 @@ const CardAluno = ({
     imgErro,
     setImgErro,
     totalCards,
-    alinhamentoCard = "justify-start",
+    alinhamentoCard = "justify-center",
     origemUso = "gerenciarAlunos",
     origemUsoOption = "gerenciarAlunos",
     heightCardInterno = "55%",
@@ -101,7 +101,7 @@ const CardAluno = ({
                     </svg>
                 </button>
             )}
-            {aluno.idSessaoTreino && (
+            {aluno.idAula && (
                 <button
                     className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
                     onClick={() => onMenuAction('visualizarTreino', aluno)}
@@ -198,7 +198,17 @@ const CardAluno = ({
                 </p>
             </div>
             {origemUso === "gerenciarAlunos" && (
-                <div className="w-full h-[15%] sm:h-1/3 flex flex-col items-center sm:justify-end justify-center border-t-2 border-gray-200 rounded-b-md">
+                <div className="w-full h-[15%] sm:h-1/3 flex flex-col sm:flex-row items-center justify-around gap-2 sm:gap-0 border-t-2 border-gray-200 rounded-b-md">
+                    <Button
+                        id={"btn-ver-feedbacks"}
+                        texto={"Ver feedbacks"}
+                        cor={"var(--laranja)"}
+                        corTexto="#fff"
+                        ariaLabel={"Ver feedbacks"}
+                        fontWeight={"600"}
+                        classNameExtra={"sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"}
+                        onClick={() => onCardClick(aluno.idFeedback)}
+                    />
                     <Button
                         id={"btn-visualizar-aluno"}
                         texto={"Ver Perfil do Aluno"}
@@ -206,7 +216,7 @@ const CardAluno = ({
                         corTexto="#fff"
                         ariaLabel={"Visualizar Perfil"}
                         fontWeight={"600"}
-                        classNameExtra={"sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm-w-[80%] w-[90%]"}
+                        classNameExtra={"sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%]"}
                         onClick={() => onCardClick(aluno.idAluno)}
                     />
                 </div>

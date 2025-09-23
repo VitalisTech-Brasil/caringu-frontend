@@ -40,7 +40,7 @@ const Agenda = () => {
 
     const exibirTreinos = async () => {
         try {
-            const response = await caringuApi.get(`/sessao-treino/personal-aulas/${pessoaId}`);
+            const response = await caringuApi.get(`/aulas/personal-aulas/${pessoaId}`);
             setTreinosFinalizados(response.data);
         } catch (error) {
             console.error("Erro ao exibir treinos:", error);

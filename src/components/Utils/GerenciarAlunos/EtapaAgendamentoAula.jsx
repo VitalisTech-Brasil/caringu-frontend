@@ -57,13 +57,32 @@ const EtapaAgendamentoAula = ({
                 .filter(date => horarios[date.toISOString()])
                 .map(date => {
                     const { inicio, fim } = horarios[date.toISOString()];
-                    const dataStr = date.toISOString().slice(0, 10); // "2025-09-25"
+                    const dataStr = date.toISOString().slice(0, 10);
                     return {
                         dataHorarioInicio: `${dataStr}T${inicio}:00`,
                         dataHorarioFim: `${dataStr}T${fim}:00`
                     };
                 })
         };
+    };
+
+    const handleProsseguir = () => {
+        const aulas = selectedDates
+            .filter(date => horarios[date.toISOString()])
+            .map(date => {
+                const { inicio, fim } = horarios[date.toISOString()];
+                const dataStr = date.toISOString().slice(0, 10);
+                return {
+                    dataHorarioInicio: `${dataStr}T${inicio}:00`,
+                    dataHorarioFim: `${dataStr}T${fim}:00`
+                };
+            });
+
+        atualizarAgendamento({
+            aulas,
+            diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
+        });
+        onProsseguir();
     };
 
     return (
@@ -89,14 +108,14 @@ const EtapaAgendamentoAula = ({
                             const str = format(date, "MMMM yyyy", { locale: ptBR });
                             return str.charAt(0).toUpperCase() + str.slice(1);
                         }}
-                        tileClassName={({ date: tileDate, view }) => {
-                            if (view === 'month' && tileDate < brasiliaToday) {
+                        tileClassName={({ date, view }) => {
+                            if (view === 'month' && date < brasiliaToday) {
                                 return 'text-gray-400';
                             }
-                            if (selectedDates.some(d => d.toDateString() === tileDate.toDateString())) {
+                            if (selectedDates.some(d => d.toDateString() === date.toDateString())) {
                                 return 'bg-orange-500 text-white rounded-full border-orange-500 border-2 border-solid';
                             }
-                            if (tileDate.toDateString() === brasiliaToday.toDateString()) {
+                            if (date.toDateString() === brasiliaToday.toDateString()) {
                                 return 'rounded-full';
                             }
                             return '';
@@ -283,8 +302,14 @@ const EtapaAgendamentoAula = ({
                         disabled={!todosHorariosPreenchidos}
                         onClick={() => {
                             const dadosParaEnvio = montarAulasParaEnvio();
-                            console.log(dadosParaEnvio);
-                            atualizarAgendamento(dadosParaEnvio);
+                            console.log({
+                                ...dadosParaEnvio,
+                                diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
+                            });
+                            atualizarAgendamento({
+                                ...dadosParaEnvio,
+                                diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
+                            });
                             onProsseguir();
                         }}
                     />
