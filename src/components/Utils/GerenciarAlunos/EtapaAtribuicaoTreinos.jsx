@@ -565,8 +565,6 @@ const EtapaAtribuicao = ({
                         console.log(resultado);
                     }}
                 />
-                {!todosCamposPreenchidos() && <div style={{ color: 'red' }}>Preencha todos os campos obrigatórios.</div>}
-                {!todasDatasAtribuidas() && <div style={{ color: 'red' }}>Todas as datas agendadas precisam estar atribuídas a um treino.</div>}
             </div >
         </>
     );
