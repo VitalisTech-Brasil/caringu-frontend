@@ -26,13 +26,14 @@ const Planos = () => {
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [modalCancelarPlanoVisivel, setModalCancelarPlanoVisivel] = useState(false);
     const [planos, setPlanos] = useState([])
     const [planoIdParaDeletar, setPlanoIdParaDeletar] = useState(null);
     const [planoEditado, setPlanoEditado] = useState(null);
     const [alunosAtivos, setAlunosAtivos] = useState([]);
     const [imgErro, setImgErro] = useState(false);
     const [openMenuId, setOpenMenuId] = useState(null);
-    
+
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
@@ -220,6 +221,11 @@ const Planos = () => {
         setShowCreateModal(true);
     };
 
+    // Função para abrir o modal de cancelamento
+    const openCancelarPlanoModal = () => {
+        setModalCancelarPlanoVisivel(true);
+    };
+
 
     return (
         <>
@@ -296,28 +302,28 @@ const Planos = () => {
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com Planos Ativos</span>
                     </div>
                     <div className="sm:pl-10 pl-[1rem] grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4 w-[91%] h-130 overflow-y-auto pb-4">                        {alunosAtivos.length === 0 ? (
-                            <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
-                                Nenhum aluno com plano ativo no momento.
-                            </div>
-                        ) : (
-                            alunosAtivos.map((aluno, idx) => (
-                                <CardAluno
-                                    key={aluno.idAluno}
-                                    aluno={aluno}
-                                    onCardClick={(idAluno) => navigate(`/perfil-aluno/${idAluno}`)}
-                                    imgErro={imgErro}
-                                    setImgErro={setImgErro}
-                                    totalCards={alunosAtivos.length}
-                                    origemUsoOption={"Planos"}
-                                    idButton="btn-cancelar-plano"
-                                    textoButton="Cancelar Plano"
-                                    corButton="#B41F1F"
-                                    ariaLabelButton="Cancelar Plano"
-                                    classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
-                                    onClickButton={null}
-                                />
-                            ))
-                        )}
+                        <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                            Nenhum aluno com plano ativo no momento.
+                        </div>
+                    ) : (
+                        alunosAtivos.map((aluno, idx) => (
+                            <CardAluno
+                                key={aluno.idAluno}
+                                aluno={aluno}
+                                onCardClick={(idAluno) => navigate(`/perfil-aluno/${idAluno}`)}
+                                imgErro={imgErro}
+                                setImgErro={setImgErro}
+                                totalCards={alunosAtivos.length}
+                                origemUsoOption={"Planos"}
+                                idButton="btn-cancelar-plano"
+                                textoButton="Cancelar Plano"
+                                corButton="#B41F1F"
+                                ariaLabelButton="Cancelar Plano"
+                                classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
+                                onClickButton={openCancelarPlanoModal}
+                            />
+                        ))
+                    )}
                     </div>
 
                     {/* Modal para criar */}
@@ -364,6 +370,25 @@ const Planos = () => {
                         textoBotaoCancelar="Deletar mesmo assim"
                         ariaLabel="Modal de Exclusão de Plano"
                     />
+
+                    <Modal
+                        visivel={modalCancelarPlanoVisivel}
+                        fecharModal={() => setModalCancelarPlanoVisivel(false)}
+                        titulo="Tem certeza que deseja cancelar esse plano?"
+                        descricao={
+                            <>
+                                Essa ação não poderá ser desfeita.<br />
+                                Negocie um possível reembolso antes de cancelar.
+                                Converse previamente com o aluno sobre o cancelamento.
+                            </>
+                        }
+                        icone={iconCancelar}
+                        textoBotaoConfirmar="Manter Plano"
+                        textoBotaoCancelar="Sim, desejo cancelar"
+                        ariaLabel="Modal de Cancelamento de Plano"
+                        heightModalWeb="h-132"
+                    />
+
 
                     {showModal && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>
