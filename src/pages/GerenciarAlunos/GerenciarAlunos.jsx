@@ -156,6 +156,10 @@ const GerenciarAlunos = () => {
     navigate(`/perfil-aluno/${alunoId}`);
   };
 
+  const handleCardFeedbacksClick = (alunoId) => {
+    navigate(`/feedbacks-aluno/${alunoId}`);
+  }
+
   const handleMenuAction = (action, aluno) => {
     switch (action) {
       case 'anamnese':
@@ -399,6 +403,12 @@ const GerenciarAlunos = () => {
                           imgErro={imgErro}
                           setImgErro={setImgErro}
                           totalCards={currentAlunos.length}
+                          idButton="btn-ver-feedbacks"
+                          textoButton="Ver feedbacks"
+                          corButton="var(--laranja)"
+                          ariaLabelButton="Ver feedbacks"
+                          classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
+                          onClickButton={handleCardFeedbacksClick}
                         />
                       ))}
                     </div>

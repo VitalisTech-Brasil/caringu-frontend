@@ -295,7 +295,7 @@ const Planos = () => {
                     <div className="w-full  mt-3 sm:pl-10 pl-[1rem] ">
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com Planos Ativos</span>
                     </div>
-                    <div className="sm:pl-10 pl-[1rem] grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4 w-[91%] h-130 overflow-y-auto">                        {alunosAtivos.length === 0 ? (
+                    <div className="sm:pl-10 pl-[1rem] grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4 w-[91%] h-130 overflow-y-auto pb-4">                        {alunosAtivos.length === 0 ? (
                             <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
                                 Nenhum aluno com plano ativo no momento.
                             </div>
@@ -309,6 +309,12 @@ const Planos = () => {
                                     setImgErro={setImgErro}
                                     totalCards={alunosAtivos.length}
                                     origemUsoOption={"Planos"}
+                                    idButton="btn-cancelar-plano"
+                                    textoButton="Cancelar Plano"
+                                    corButton="#B41F1F"
+                                    ariaLabelButton="Cancelar Plano"
+                                    classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
+                                    onClickButton={null}
                                 />
                             ))
                         )}
