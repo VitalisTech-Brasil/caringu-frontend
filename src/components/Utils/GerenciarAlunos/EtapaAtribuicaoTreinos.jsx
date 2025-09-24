@@ -73,8 +73,27 @@ const EtapaAtribuicao = ({
     };
 
     const { dadosAgendamento } = useAgendamento();
+    const aulasAgendadas = dadosAgendamento.aulas || [];
     const diasMarcados = (dadosAgendamento.diasSemanaMarcados || []).map(d => d.value);
-    const selectedDates = dadosAgendamento.selectedDates || [];
+    const selectedDates = (dadosAgendamento.aulas || []).map(aula => new Date(aula.dataHorarioInicio));
+
+    function buscarHorarioDaAula(dataISO) {
+        const dataStr = dataISO.slice(0, 10);
+        return aulasAgendadas.find(aula => aula.dataHorarioInicio.slice(0, 10) === dataStr);
+    }
+
+    const treinosDisponiveis = [
+        { id: 10, label: "Musculação" },
+        { id: 11, label: "Pernas" },
+        { id: 12, label: "Rosca" }
+    ];
+
+    const AlunoInfoMock = [
+        {
+            idPlanoContratado: 1,
+            idAluno: 1,
+        }
+    ]
 
     function todasDatasAtribuidas() {
         // Datas atribuídas em treinos personalizados
@@ -180,12 +199,65 @@ const EtapaAtribuicao = ({
             setDiasSelecionados(diasSemana.map(d => d.value));
         }
     };
+
     const handleRemoverTreino = (idx) => {
         setTreinos(prev => {
             const novos = prev.filter((_, i) => i !== idx);
             return novos;
         });
     };
+
+    function todosCamposPreenchidos() {
+        return treinos.length > 0 && treinos.every(treino =>
+            treino.treinoSelecionado &&
+            treino.dateVencimento &&
+            treino.tipoSelecao &&
+            (
+                (treino.tipoSelecao === "personalizado" && treino.datasSelecionadas.length > 0) ||
+                (treino.tipoSelecao === "semanal" && treino.diasSelecionados.length > 0)
+            )
+        );
+    }
+
+    const idAluno = AlunoInfoMock[0].idAluno;
+    const idPlanoContratado = AlunoInfoMock[0].idPlanoContratado;
+
+    function montarAulasTreinos() {
+        let aulasTreinos = [];
+        treinos.forEach(treino => {
+            if (treino.tipoSelecao === "personalizado") {
+                treino.datasSelecionadas.forEach(dataISO => {
+                    const aula = buscarHorarioDaAula(dataISO);
+                    aulasTreinos.push({
+                        idAluno,
+                        idPlanoContratado,
+                        idTreinoExercicio: treino.treinoSelecionado || null,
+                        dataHorarioInicio: aula ? aula.dataHorarioInicio : dataISO,
+                        dataHorarioFim: aula ? aula.dataHorarioFim : dataISO
+                    });
+                });
+            }
+            if (treino.tipoSelecao === "semanal") {
+                treino.diasSelecionados.forEach(diaSemana => {
+                    selectedDates.forEach(date => {
+                        const diaSemanaMap = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+                        if (diaSemanaMap[date.getDay()] === diaSemana) {
+                            const dataISO = date.toISOString();
+                            const aula = buscarHorarioDaAula(dataISO);
+                            aulasTreinos.push({
+                                idAluno,
+                                idPlanoContratado,
+                                idTreinoExercicio: treino.treinoSelecionado || null,
+                                dataHorarioInicio: aula ? aula.dataHorarioInicio : dataISO,
+                                dataHorarioFim: aula ? aula.dataHorarioFim : dataISO
+                            });
+                        }
+                    });
+                });
+            }
+        });
+        return { aulasTreinos };
+    }
 
 
     return (
@@ -250,10 +322,10 @@ const EtapaAtribuicao = ({
                                             value={treino.treinoSelecionado}
                                             onChange={e => handleTreinoChange(idx, "treinoSelecionado", e.target.value)}
                                         >
-                                            <option disabled className="text-[#15171B87]" value="">Selecione um Treino Para Prosseguir</option>
-                                            <option value="Musculacao">Musculação</option>
-                                            <option value="Pernas">Pernas</option>
-                                            <option value="Rosca">Rosca</option>
+                                            <option disabled value="">Selecione um Treino Para Prosseguir</option>
+                                            {treinosDisponiveis.map(treino => (
+                                                <option key={treino.id} value={treino.id}>{treino.label}</option>
+                                            ))}
                                         </select>
                                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
@@ -278,6 +350,8 @@ const EtapaAtribuicao = ({
                                             fontSize="16px"
                                             fontWeight="500"
                                             width="100%"
+                                            value={treino.dateVencimento}
+                                            onChange={e => handleTreinoChange(idx, "dateVencimento", e.target.value)}
                                             onFocus={() => handleTreinoChange(idx, "inputType", "date")}
                                             onBlur={e => {
                                                 if (!e.target.value) handleTreinoChange(idx, "inputType", "text");
@@ -479,12 +553,17 @@ const EtapaAtribuicao = ({
                 <Button
                     texto="Salvar"
                     corTexto="var(--cor-secundaria)"
-                    cor={todasDatasAtribuidas() ? "#46982B" : "#15171B87"}
+                    cor={todosCamposPreenchidos() && todasDatasAtribuidas() ? "#46982B" : "#15171B87"}
                     height="2.75rem"
                     width="10.5rem"
                     fontWeight="600"
                     ariaLabel="Botão de Salvar"
-                    type="submit"
+                    type="button"
+                    disabled={!(todosCamposPreenchidos() && todasDatasAtribuidas())}
+                    onClick={() => {
+                        const resultado = montarAulasTreinos();
+                        console.log(resultado);
+                    }}
                 />
             </div >
         </>

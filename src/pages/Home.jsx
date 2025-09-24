@@ -58,7 +58,7 @@ const Home = () => {
 
   const fetchTreinosFinalizados = async () => {
     try {
-      const aulasPersonalResponse = await caringuApi.get(`/sessao-treino/personal-aulas/${personalId}`);
+      const aulasPersonalResponse = await caringuApi.get(`/aulas/personal-aulas/${personalId}`);
       setTreinosFinalizados(aulasPersonalResponse.data);
     } catch (error) {
       console.error("Erro ao buscar treinos finalizados:", error);

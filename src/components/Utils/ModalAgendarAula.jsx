@@ -27,9 +27,11 @@ const ModalAgendarAula = ({
     const [horarioFim, setHorarioFim] = useState("");
     const todosHorariosPreenchidos = selectedDates.length > 0 &&
         selectedDates.every(d => horarios[d.toISOString()]);
+    const [diasSelecionados, setDiasSelecionados] = useState([]);
 
 
-        //mock (apagar depois)
+
+    //mock (apagar depois)
     const aluno = {
         altura: 1.75,
         celular: "11994455667",
@@ -121,8 +123,18 @@ const ModalAgendarAula = ({
         }
     };
 
+    useEffect(() => {
+        if (diasSelecionados.length > 0) {
+            const novasDatas = getNextDatesFromWeekdays(diasSelecionados, aluno.quantidade_aulas, getToday());
+            setSelectedDates(novasDatas);
+            setCheckedDates([]);
+        } else {
+            setSelectedDates([]);
+            setCheckedDates([]);
+        }
+    }, [diasSelecionados]);
+
     const [showDropdown, setShowDropdown] = useState(false);
-    const [diasSelecionados, setDiasSelecionados] = useState([]);
 
     const diasSemana = [
         { value: "segunda", label: "Todas as Segundas-feiras" },
