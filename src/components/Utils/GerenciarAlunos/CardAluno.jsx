@@ -19,6 +19,13 @@ const CardAluno = ({
     heightCardInterno = "55%",
     heightCardInternoWeb = "50%",
     gapConteudo = "gap-0",
+    idButton = "btn-ver-feedbacks",
+    textoButton = "Ver feedbacks",
+    corButton = "var(--laranja)",
+    ariaLabelButton = "Ver feedbacks",
+    classNameExtraButton = "sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1",
+    onClickButton = null
+
 }) => {
 
     const menuRef = useRef(null);
@@ -179,7 +186,7 @@ const CardAluno = ({
 
                 </div>
             </div>
-            <div className="w-full h-[30%] sm:h-1/3 flex flex-col items-start justify-center">
+            <div className="w-full h-auto sm:h-1/3 flex flex-col items-start justify-center">
                 <p className="flex items-start gap-0.5 text-[12px] sm:text-base">
                     {aluno.objetivoTreino ? (
                         <>
@@ -198,16 +205,16 @@ const CardAluno = ({
                 </p>
             </div>
             {origemUso === "gerenciarAlunos" && (
-                <div className="w-full h-[15%] sm:h-1/3 flex flex-col sm:flex-row items-center justify-around gap-2 sm:gap-0 border-t-2 border-gray-200 rounded-b-md">
+                <div className="w-full h-auto sm:h-1/3 flex flex-col sm:flex-row items-center justify-around gap-2 sm:gap-0 border-t-2 border-gray-200 rounded-b-md">
                     <Button
-                        id={"btn-ver-feedbacks"}
-                        texto={"Ver feedbacks"}
-                        cor={"var(--laranja)"}
+                        id={idButton}
+                        texto={textoButton}
+                        cor={corButton}
                         corTexto="#fff"
-                        ariaLabel={"Ver feedbacks"}
+                        ariaLabel={ariaLabelButton}
                         fontWeight={"600"}
-                        classNameExtra={"sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"}
-                        onClick={() => onCardClick(aluno.idFeedback)}
+                        classNameExtra={classNameExtraButton}
+                        onClick={onClickButton}
                     />
                     <Button
                         id={"btn-visualizar-aluno"}
