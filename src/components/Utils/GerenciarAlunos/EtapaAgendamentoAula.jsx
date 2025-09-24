@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from 'react-calendar';
 import Button from "../Button";
 import { format, addDays, isAfter } from "date-fns";
 import ptBR from 'date-fns/locale/pt-BR';
 import { useAgendamento } from "./Context/AgendamentoContext";
+import { caringuApi } from "../../../provider/caringuApi";
 
 const EtapaAgendamentoAula = ({
     aluno,
@@ -50,6 +51,22 @@ const EtapaAgendamentoAula = ({
         setHorarioFim("");
         setCheckedDates([]);
     };
+
+    /* const getBuscarAulasDisponiveis = () => {
+        caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`)
+            .then(response => {
+                const aulasDisponiveis = response.data;
+                console.log("aulasDisponiveis: ");
+                console.log(aulasDisponiveis);
+            })
+            .catch(error => console.error("Erro ao buscar aulas disponíveis:", error)
+            )
+    }
+
+    useEffect(() => {
+        console.log("Aluno na etapa de agendamento: ", aluno.idAluno);
+        getBuscarAulasDisponiveis();
+    }, []); */
 
     const montarAulasParaEnvio = () => {
         return {
@@ -113,12 +130,12 @@ const EtapaAgendamentoAula = ({
                                 return 'text-gray-400';
                             }
                             if (selectedDates.some(d => d.toDateString() === date.toDateString())) {
-                                return 'bg-orange-500 text-white rounded-full border-orange-500 border-2 border-solid';
+                                return 'bg-orange-500 cursor-pointer text-white rounded-full border-orange-500 border-2 border-solid';
                             }
                             if (date.toDateString() === brasiliaToday.toDateString()) {
                                 return 'rounded-full';
                             }
-                            return '';
+                            return 'cursor-pointer';
                         }}
                         prevLabel={<span className="text-[24px] font-medium">ᐸ</span>}
                         nextLabel={<span className="text-[24px] font-medium">ᐳ</span>}

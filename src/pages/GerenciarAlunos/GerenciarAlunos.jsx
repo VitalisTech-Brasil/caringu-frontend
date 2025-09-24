@@ -40,6 +40,11 @@ const GerenciarAlunos = () => {
     return 1;
   });
 
+  useEffect(() => {
+    console.log("alunoParaAgendar");
+    console.log(alunoParaAgendar);
+  }, []);
+
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);

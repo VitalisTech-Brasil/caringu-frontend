@@ -4,10 +4,14 @@ import EtapaAtribuicao from "../../components/Utils/GerenciarAlunos/EtapaAtribui
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 import { addDays, isAfter } from "date-fns";
 import { AgendamentoProvider } from "./GerenciarAlunos/Context/AgendamentoContext";
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../Utils/CustomToast';
 
 const ModalAgendarAula = ({
     fecharModal,
-    ariaLabel
+    ariaLabel,
+    aluno
 }) => {
     const getToday = () => {
         const now = new Date();
@@ -29,10 +33,13 @@ const ModalAgendarAula = ({
         selectedDates.every(d => horarios[d.toISOString()]);
     const [diasSelecionados, setDiasSelecionados] = useState([]);
 
-
+    useEffect(() => {
+        console.log("aluno: ");
+        console.log(aluno);
+    }, []);
 
     //mock (apagar depois)
-    const aluno = {
+    /* const aluno = {
         altura: 1.75,
         celular: "11994455667",
         dataVencimentoPlano: "2025-06-15",
@@ -78,7 +85,7 @@ const ModalAgendarAula = ({
         treinosTotal: 3,
         urlFotoPerfil: "https://storagevitalis.blob.core.windows.net/fotos-perfil/carla.png",
         quantidade_aulas: 8
-    };
+    }; */
 
     const currentAlunos = [aluno];
 
@@ -88,8 +95,10 @@ const ModalAgendarAula = ({
         const isSelected = selectedDates.some(d => d.toDateString() === dateStr);
 
         if (!isSelected && selectedDates.length >= aluno.quantidade_aulas) {
-            // trocar: mostrar TOAST
-            alert(`Você só pode selecionar até ${aluno.quantidade_aulas} datas.`);
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message={`Você só pode selecionar até ${aluno.quantidade_aulas} datas.`} />
+            ));
             return;
         }
 
@@ -278,6 +287,7 @@ const ModalAgendarAula = ({
                                     heightCardInternoWeb="100%"
                                 />
                             </div>
+                            <Toaster position="top-right" reverseOrder={false} />
                             {etapa === 1 && (
                                 <EtapaAgendamento
                                     aluno={aluno}
