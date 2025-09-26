@@ -534,16 +534,22 @@ const GerenciarExercicios = () => {
                         </div>
                     </div>
                     <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-auto mt-5">
-                        {currentExercicios.map((exercicio) => (
-                            <ExercicioCard
-                                key={exercicio.id}
-                                exercicio={exercicio}
-                                isOpen={openMenuId === exercicio.id}
-                                setOpenMenuId={setOpenMenuId}
-                                toggleFavorito={toggleFavorito}
-                                ExercicioActionsMenu={ExercicioActionsMenu}
-                            />
-                        ))}
+                        {currentExercicios.length === 0 ? (
+                            <div className="text-gray-500 text-lg py-8 text-center w-full">
+                                Nenhum exercício encontrado.
+                            </div>
+                        ) : (
+                            currentExercicios.map((exercicio) => (
+                                <ExercicioCard
+                                    key={exercicio.id}
+                                    exercicio={exercicio}
+                                    isOpen={openMenuId === exercicio.id}
+                                    setOpenMenuId={setOpenMenuId}
+                                    toggleFavorito={toggleFavorito}
+                                    ExercicioActionsMenu={ExercicioActionsMenu}
+                                />
+                            ))
+                        )}
                         {showCreateModal && (
                             <ModalCriarExercicio
                                 isVisible={showCreateModal}
