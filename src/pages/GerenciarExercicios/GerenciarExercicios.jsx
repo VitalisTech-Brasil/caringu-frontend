@@ -19,14 +19,12 @@ import Pagination from "../../components/Utils/Pagination.jsx";
 
 
 const GerenciarExercicios = () => {
-
-
     const [searchTerm, setSearchTerm] = useState("");
     const [openMenuId, setOpenMenuId] = useState(null);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false)
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
@@ -48,9 +46,18 @@ const GerenciarExercicios = () => {
         kpiPersonal: {}
     });
 
-    const [exercicios, setExercicios] = useState({ content: [], totalPages: 0, number: 0, size: 2 });
+    // Aqui guardamos todos os exercícios (sem paginação)
+    const [todosExercicios, setTodosExercicios] = useState([]);
 
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm({
+    // Estados para paginação
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        if (window.innerWidth >= 640) return 3;
+        return 1;
+    });
+
+    // Formulário
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             plano: "",
             duracao: "",
@@ -62,47 +69,37 @@ const GerenciarExercicios = () => {
 
     useEffect(() => {
         listarKPIs();
-        listarExercicios();
+        listarTodosExercicios();
     }, []);
 
     const listarKPIs = async () => {
-
         const idPersonal = sessionStorage.getItem("pessoaId");
         try {
             const response = await caringuApi.get(`/exercicios/kpi/total-por-origem/${idPersonal}`);
             const data = response.data;
-
             const kpi = {
                 kpiBiblioteca: data.find(item => item.origem === "BIBLIOTECA") || {},
                 kpiPersonal: data.find(item => item.origem === "PERSONAL") || {}
             };
-
             setTotalExerciciosKpi(kpi);
         } catch (err) {
             console.error("Erro ao buscar KPI de exercícios:", err);
         }
     };
 
-    const listarExercicios = async (page = 0, size = itemsPerPage) => {
-
+    // Busca todos os exercícios do personal (sem paginação)
+    const listarTodosExercicios = async () => {
         const idPersonal = sessionStorage.getItem("pessoaId");
-
         try {
-            const { data } = await caringuApi.get(
-                `/exercicios/por-personal-paginado/${idPersonal}`,
-                { params: { page, size } }
-            )
-            setExercicios(data);
-
+            const { data } = await caringuApi.get(`/exercicios/por-personal/${idPersonal}`);
+            setTodosExercicios(data);
         } catch (e) {
             console.error(`Erro ao buscar os exercícios do personal com ID ${idPersonal}:`, e);
         }
-
-    }
+    };
 
     const handleCriarExercicio = async (data) => {
         const idPersonal = sessionStorage.getItem("pessoaId");
-        console.log(data);
         try {
             const response = await caringuApi.post("/exercicios", {
                 idPersonal: idPersonal,
@@ -111,13 +108,8 @@ const GerenciarExercicios = () => {
                 urlVideo: data.urlVideo,
                 observacoes: data.observacoes || "",
             });
-
             toast.success("Exercício criado com sucesso!");
-
-            setExercicios(prev => ({
-                ...prev,
-                content: [...prev.content, response.data]
-            }));
+            setTodosExercicios(prev => [...prev, response.data]);
             setShowCreateModal(false);
             listarKPIs();
         } catch (error) {
@@ -134,34 +126,27 @@ const GerenciarExercicios = () => {
                 urlVideo: data.urlVideo,
                 observacoes: data.observacoes || ""
             });
-
             toast.success("Exercício atualizado com sucesso!");
-
-            setExercicios(prev => ({
-                ...prev,
-                content: prev.content.map(ex =>
+            setTodosExercicios(prev =>
+                prev.map(ex =>
                     ex.id === exercicioSelecionado.id ? response.data : ex
                 )
-            }));
-
+            );
             setShowEditModal(false);
             listarKPIs();
         } catch (error) {
             console.error("Erro ao atualizar o exercício:", error);
             toast.error("Erro ao atualizar exercício. Verifique os dados e tente novamente.");
         }
-    }
+    };
 
     const confirmDelete = () => {
         if (!exercicioSelecionado) return;
-
         caringuApi.delete(`/exercicios/${exercicioSelecionado}`)
             .then(() => {
-
-                setExercicios(prev => prev.content.filter(ex => ex.id !== exercicioSelecionado));
+                setTodosExercicios(prev => prev.filter(ex => ex.id !== exercicioSelecionado));
                 setModalDeletarVisivel(false);
                 setExercicioSelecionado(null);
-
                 toast.success("Exercício deletado com sucesso!");
                 listarKPIs();
             })
@@ -172,39 +157,32 @@ const GerenciarExercicios = () => {
     };
 
     const toggleFavorito = async (id) => {
-        const exercicioIndex = exercicios.content.findIndex((exercicio) => exercicio.id === id);
+        const exercicioIndex = todosExercicios.findIndex((exercicio) => exercicio.id === id);
         if (exercicioIndex === -1) return;
-
-        const favoritoAtual = exercicios.content[exercicioIndex].favorito;
+        const favoritoAtual = todosExercicios[exercicioIndex].favorito;
         const novoValor = !favoritoAtual;
-
         try {
             await caringuApi.patch(`/exercicios/${id}/favorito`, {
                 favorito: novoValor
             });
-
-            const exerciciosAtualizados = { ...exercicios };
-            exerciciosAtualizados.content = [...exercicios.content];
-            exerciciosAtualizados.content[exercicioIndex].favorito = novoValor;
-
-            setExercicios(exerciciosAtualizados);
+            setTodosExercicios(prev => {
+                const atualizados = [...prev];
+                atualizados[exercicioIndex] = { ...atualizados[exercicioIndex], favorito: novoValor };
+                return atualizados;
+            });
         } catch (error) {
             console.error("Erro ao atualizar favorito:", error);
         }
     };
 
+    // Responsividade
     const { fontSize, width } = useResponsiveStyles();
-
     function useResponsiveStyles() {
         const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
-
         useEffect(() => {
-
             document.title = "Gerenciar Exercícios | CaringU"
-
             const updateStyles = () => {
                 const screenWidth = window.innerWidth;
-
                 if (screenWidth >= 1536) {
                     setStyles({ fontSize: "24px", width: "33%" });
                 } else if (screenWidth >= 1280) {
@@ -215,14 +193,25 @@ const GerenciarExercicios = () => {
                     setStyles({ fontSize: "14px", width: "50%" });
                 }
             };
-
             updateStyles();
             window.addEventListener("resize", updateStyles);
             return () => window.removeEventListener("resize", updateStyles);
         }, []);
-
         return styles;
     }
+
+    function useMenuWidth() {
+        const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
+        useEffect(() => {
+            const handleResize = () => {
+                setWidth(window.innerWidth >= 640 ? "280px" : "235px");
+            };
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+        return width;
+    }
+    const menuWidth = useMenuWidth();
 
     const handleOrigemSelect = (value) => {
         setOrigemSelecionada(value);
@@ -259,72 +248,8 @@ const GerenciarExercicios = () => {
         setShowEditModal(true);
     };
 
-    const ExercicioActionsMenu = ({ exercicio }) => (
-        <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
-            <button
-                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
-                onClick={() => handleEditarExercicio(exercicio)}
-            >
-                Editar
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 22H3C2.59 22 2.25 21.66 2.25 21.25C2.25 20.84 2.59 20.5 3 20.5H21C21.41 20.5 21.75 20.84 21.75 21.25C21.75 21.66 21.41 22 21 22Z" fill="#738CAB" />
-                    <path d="M19.0201 3.47967C17.0801 1.53967 15.1801 1.48967 13.1901 3.47967L11.9801 4.68967C11.8801 4.78967 11.8401 4.94967 11.8801 5.08967C12.6401 7.73967 14.7601 9.85967 17.4101 10.6197C17.4501 10.6297 17.4901 10.6397 17.5301 10.6397C17.6401 10.6397 17.7401 10.5997 17.8201 10.5197L19.0201 9.30967C20.0101 8.32967 20.4901 7.37967 20.4901 6.41967C20.5001 5.42967 20.0201 4.46967 19.0201 3.47967Z" fill="#738CAB" />
-                    <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
-                </svg>
-            </button>
-            <button
-                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
-                onClick={() => openDeleteModal(exercicio.id)}
-            >
-                Excluir
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M21.0702 5.23C19.4602 5.07 17.8502 4.95 16.2302 4.86V4.85L16.0102 3.55C15.8602 2.63 15.6402 1.25 13.3002 1.25H10.6802C8.35016 1.25 8.13016 2.57 7.97016 3.54L7.76016 4.82C6.83016 4.88 5.90016 4.94 4.97016 5.03L2.93016 5.23C2.51016 5.27 2.21016 5.64 2.25016 6.05C2.29016 6.46 2.65016 6.76 3.07016 6.72L5.11016 6.52C10.3502 6 15.6302 6.2 20.9302 6.73C20.9602 6.73 20.9802 6.73 21.0102 6.73C21.3902 6.73 21.7202 6.44 21.7602 6.05C21.7902 5.64 21.4902 5.27 21.0702 5.23Z" fill="#B41F1F" />
-                    <path d="M19.2302 8.14C18.9902 7.89 18.6602 7.75 18.3202 7.75H5.68024C5.34024 7.75 5.00024 7.89 4.77024 8.14C4.54024 8.39 4.41024 8.73 4.43024 9.08L5.05024 19.34C5.16024 20.86 5.30024 22.76 8.79024 22.76H15.2102C18.7002 22.76 18.8402 20.87 18.9502 19.34L19.5702 9.09C19.5902 8.73 19.4602 8.39 19.2302 8.14ZM13.6602 17.75H10.3302C9.92024 17.75 9.58024 17.41 9.58024 17C9.58024 16.59 9.92024 16.25 10.3302 16.25H13.6602C14.0702 16.25 14.4102 16.59 14.4102 17C14.4102 17.41 14.0702 17.75 13.6602 17.75ZM14.5002 13.75H9.50024C9.09024 13.75 8.75024 13.41 8.75024 13C8.75024 12.59 9.09024 12.25 9.50024 12.25H14.5002C14.9102 12.25 15.2502 12.59 15.2502 13C15.2502 13.41 14.9102 13.75 14.5002 13.75Z" fill="#B41F1F" />
-                </svg>
-            </button>
-        </div>
-    );
-
-    function useMenuWidth() {
-        const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
-
-        useEffect(() => {
-            const handleResize = () => {
-                setWidth(window.innerWidth >= 640 ? "280px" : "235px");
-            };
-            window.addEventListener("resize", handleResize);
-            return () => window.removeEventListener("resize", handleResize);
-        }, []);
-
-        return width;
-    }
-
-    const menuWidth = useMenuWidth();
-
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(() => {
-        if (window.innerWidth >= 640) return 3;
-        return 1;
-    });
-
-    useEffect(() => {
-        const handleResize = () => {
-            let newItemsPerPage;
-            if (window.innerWidth >= 640) {
-                newItemsPerPage = 3;
-            } else {
-                newItemsPerPage = 1;
-            }
-            setItemsPerPage(newItemsPerPage);
-            setCurrentPage(1);
-        };
-
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    const filteredExercicios = (exercicios.content ?? [])
+    // Filtro aplicado em todos os exercícios
+    const filteredExercicios = todosExercicios
         .filter((exercicio) => {
             if (searchTerm && !exercicio.nome.toLowerCase().includes(searchTerm.toLowerCase())) {
                 return false;
@@ -351,17 +276,20 @@ const GerenciarExercicios = () => {
             return 0;
         });
 
-    const currentExercicios = filteredExercicios;
-    const totalPages = exercicios.totalPages ?? 0;
+    // Paginação no front-end
+    const totalPages = Math.ceil(filteredExercicios.length / itemsPerPage) || 1;
+    const currentExercicios = filteredExercicios.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
+    }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites, grupoMuscularFilter]);
 
     // Funções de paginação
     const goToPage = (page) => {
         setCurrentPage(page);
-        listarExercicios(page - 1, itemsPerPage);
     };
 
     const goToPrevious = () => {
@@ -375,6 +303,34 @@ const GerenciarExercicios = () => {
             goToPage(currentPage + 1);
         }
     };
+
+
+
+    const ExercicioActionsMenu = ({ exercicio }) => (
+        <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
+            <button
+                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
+                onClick={() => handleEditarExercicio(exercicio)}
+            >
+                Editar
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 22H3C2.59 22 2.25 21.66 2.25 21.25C2.25 20.84 2.59 20.5 3 20.5H21C21.41 20.5 21.75 20.84 21.75 21.25C21.75 21.66 21.41 22 21 22Z" fill="#738CAB" />
+                    <path d="M19.0201 3.47967C17.0801 1.53967 15.1801 1.48967 13.1901 3.47967L11.9801 4.68967C11.8801 4.78967 11.8401 4.94967 11.8801 5.08967C12.6401 7.73967 14.7601 9.85967 17.4101 10.6197C17.4501 10.6297 17.4901 10.6397 17.5301 10.6397C17.6401 10.6397 17.7401 10.5997 17.8201 10.5197L19.0201 9.30967C20.0101 8.32967 20.4901 7.37967 20.4901 6.41967C20.5001 5.42967 20.0201 4.46967 19.0201 3.47967Z" fill="#738CAB" />
+                    <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
+                </svg>
+            </button>
+            <button
+                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
+                onClick={() => openDeleteModal(exercicio.id)}
+            >
+                Excluir
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M21.0702 5.23C19.4602 5.07 17.8502 4.95 16.2302 4.86V4.85L16.0102 3.55C15.8602 2.63 15.6402 1.25 13.3002 1.25H10.6802C8.35016 1.25 8.13016 2.57 7.97016 3.54L7.76016 4.82C6.83016 4.88 5.90016 4.94 4.97016 5.03L2.93016 5.23C2.51016 5.27 2.21016 5.64 2.25016 6.05C2.29016 6.46 2.65016 6.76 3.07016 6.72L5.11016 6.52C10.3502 6 15.6302 6.2 20.9302 6.73C20.9602 6.73 20.9802 6.73 21.0102 6.73C21.3902 6.73 21.7202 6.44 21.7602 6.05C21.7902 5.64 21.4902 5.27 21.0702 5.23Z" fill="#B41F1F" />
+                    <path d="M19.2302 8.14C18.9902 7.89 18.6602 7.75 18.3202 7.75H5.68024C5.34024 7.75 5.00024 7.89 4.77024 8.14C4.54024 8.39 4.41024 8.73 4.43024 9.08L5.05024 19.34C5.16024 20.86 5.30024 22.76 8.79024 22.76H15.2102C18.7002 22.76 18.8402 20.87 18.9502 19.34L19.5702 9.09C19.5902 8.73 19.4602 8.39 19.2302 8.14ZM13.6602 17.75H10.3302C9.92024 17.75 9.58024 17.41 9.58024 17C9.58024 16.59 9.92024 16.25 10.3302 16.25H13.6602C14.0702 16.25 14.4102 16.59 14.4102 17C14.4102 17.41 14.0702 17.75 13.6602 17.75ZM14.5002 13.75H9.50024C9.09024 13.75 8.75024 13.41 8.75024 13C8.75024 12.59 9.09024 12.25 9.50024 12.25H14.5002C14.9102 12.25 15.2502 12.59 15.2502 13C15.2502 13.41 14.9102 13.75 14.5002 13.75Z" fill="#B41F1F" />
+                </svg>
+            </button>
+        </div>
+    );
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -791,9 +747,9 @@ const GerenciarExercicios = () => {
                                 currentPage={currentPage}
                                 totalPages={totalPages}
                                 itemsLength={currentExercicios.length}
-                                onPageChange={goToPage}
-                                onPrevious={goToPrevious}
-                                onNext={goToNext}
+                                onPageChange={setCurrentPage}
+                                onPrevious={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                                 maxVisible={3}
                             />
                         </div>
