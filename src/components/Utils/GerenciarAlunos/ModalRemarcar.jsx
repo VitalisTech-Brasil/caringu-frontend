@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../Button";
 import Input from '../Inputs';
 import { useForm } from "react-hook-form";
@@ -11,6 +11,39 @@ const ModalRemarcar = ({
     agendamento,
     ariaLabel = "Modal de Remarcar Agendamento"
 }) => {
+
+    const [treinos, setTreinos] = useState([
+        { id: 1, nome: "Pernas" },
+    ]);
+
+    const [treinosPersonal, setTreinosPersonal] = useState([
+        { id: 1, nome: "Pernas" },
+        { id: 2, nome: "Peito" },
+        { id: 3, nome: "Costas" },
+        { id: 4, nome: "Bíceps" },
+        { id: 5, nome: "Tríceps" }
+    ]);
+    const [treinosSelecionados, setTreinosSelecionados] = useState({});
+
+
+    useEffect(() => {
+        if (treinos && treinos.length > 0) {
+            const selecionados = {};
+            treinos.forEach(t => {
+                selecionados[t.id] = t.id; // valor inicial é o próprio id do treino agendado
+            });
+            setTreinosSelecionados(selecionados);
+        }
+    }, [treinos, visivel])
+
+
+    const handleTreinoChange = (treinoId, value) => {
+        setTreinosSelecionados(prev => ({
+            ...prev,
+            [treinoId]: value
+        }));
+    };
+
     const [novaData, setNovaData] = useState("");
     const [novoHorario, setNovoHorario] = useState("");
 
@@ -48,7 +81,7 @@ const ModalRemarcar = ({
                 aria-label="Fundo Escurecido"
             ></div>
 
-            <div aria-label="Modal com conteúdo dentro" className="relative p-4  w-2xl h-125">
+            <div aria-label="Modal com conteúdo dentro" className="relative p-4 w-[85%] sm:w-[60%] h-180">
                 <div aria-label="Fechar Modal" className="relative bg-[var(--cor-secundaria)] rounded-[6px] h-full flex flex-col justify-center items-center">
                     {/* Botão para fechar o modal */}
                     <button
@@ -76,9 +109,9 @@ const ModalRemarcar = ({
                     </button>
 
                     {/* Conteúdo do modal */}
-                    <div aria-label="Texto de apoio e Botões" className="flex flex-col items-start text-center w-full  px-15">
+                    <div aria-label="Texto de apoio e Botões" className="flex flex-col items-start text-center w-full h-auto px-4 sm:px-15">
                         <h1 aria-label="Título" className="text-[var(--cor-primaria)] font-bold text-[18px] sm:text-[24px] md:text-[32px] ">Remarcar Aula</h1>
-                        <div className="flex flex-col w-full items-start mt-1 sm:mt-5">
+                        <div className="flex flex-col w-full items-start mt-1 sm:mt-5 h-auto">
                             <span className="text-base sm:text-xl">
                                 Email do Aluno
                             </span>
@@ -86,16 +119,16 @@ const ModalRemarcar = ({
                                 mariagladys@gmail.com
                             </span>
                         </div>
-                        <div className="w-full h-80 sm:h-55 flex flex-col items-center justify-end">
-                            <form className="flex flex-col gap-4 w-full">
-                                <div className="flex flex-col w-full py-2 border-2 rounded-2xl border-[#1D2D441A]" aria-label="Inputs de Data e Horário">
+                        <div className="w-full h-auto flex flex-col items-center justify-end">
+                            <form className="flex flex-col gap-4 w-full h-auto">
+                                <div className="flex flex-col py-2 mt-4 border-2 rounded-2xl border-[#1D2D441A] h-auto  w-full 2xl:w-[55%]" aria-label="Inputs de Data e Horário">
                                     <div>
                                         <span className="text-sm sm:text-base md:text-xl font-medium">
                                             Escolha a data e horário para reposição da aula
                                         </span>
                                     </div>
-                                    <div className="w-full flex flex-col sm:flex-row items-center sm:justify-center gap-1 sm:gap-15" aria-label="Inputs de Data e Horário">
-                                        <div className="w-[80%] sm:w-[30%] h-auto ">
+                                    <div className="w-full flex flex-col md:flex-row items-center md:justify-center gap-1 md:gap-15" aria-label="Inputs de Data e Horário">
+                                        <div className="w-[80%] md:w-[30%] h-auto ">
                                             <Input
                                                 id="data"
                                                 name="data"
@@ -108,7 +141,7 @@ const ModalRemarcar = ({
                                                 errorMessage={errors.data?.message}
                                             />
                                         </div>
-                                        <div className="w-[80%] sm:w-[30%] h-auto">
+                                        <div className="w-[80%] md:w-[30%] h-auto">
                                             <select
                                                 id="horario"
                                                 name="horario"
@@ -135,6 +168,30 @@ const ModalRemarcar = ({
                                             )}
                                         </div>
                                     </div>
+                                </div>
+                                <div className="w-full h-auto ">
+                                    <h1 aria-label="Título" className="text-[var(--cor-primaria)] font-bold text-[18px] sm:text-[24px] md:text-[32px] ">Treino:</h1>
+                                    <div className="flex flex-col gap-12 w-full max-h-40 h-auto overflow-y-auto px-4 py-10 border-2 rounded-2xl border-[#1D2D441A] border-solid">
+                                        {treinos.map((treinoAgendado) => (
+                                            <div className="relative" key={treinoAgendado.id}>
+                                                <select
+                                                    className="appearance-none text-sm sm:text-base w-full flex items-center justify-center pt-[1%] pr-[1%] pb-[1%] pl-0 border-solid border-b-[2px] border-[var(--cor-primaria)] text-[#333]"
+                                                    value={treinosSelecionados[treinoAgendado.id] || ""}
+                                                    onChange={e => handleTreinoChange(treinoAgendado.id, e.target.value)}
+                                                >
+                                                    <option disabled value="">Selecione um Treino</option>
+                                                    {treinosPersonal.map(t => (
+                                                        <option key={t.id} value={t.id}>{t.nome}</option>
+                                                    ))}
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
+                                                        <path d="M0.532697 0.412777C-0.177566 0.956418 -0.177566 1.83792 0.532697 2.38154L9.43019 9.18545C10.851 10.2719 13.1531 10.2714 14.5732 9.18461L23.4672 2.37653C24.1776 1.8329 24.1776 0.951407 23.4672 0.407752C22.757 -0.135917 21.6054 -0.135917 20.8952 0.407752L13.2828 6.23469C12.5726 6.77845 11.421 6.77831 10.7107 6.23469L3.10474 0.412777C2.3945 -0.130892 1.24294 -0.130892 0.532697 0.412777Z" fill="#15171B" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        ))}
+                                   </div>
                                 </div>
                                 <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                     <Button
