@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../Button";
 import Input from '../Inputs';
 import { useForm } from "react-hook-form";
+import Label from "../Label";
 
 
 const ModalRemarcar = ({
@@ -34,7 +35,7 @@ const ModalRemarcar = ({
             });
             setTreinosSelecionados(selecionados);
         }
-    }, [treinos, visivel])
+    }, [treinos, visivel]);
 
 
     const handleTreinoChange = (treinoId, value) => {
@@ -81,7 +82,7 @@ const ModalRemarcar = ({
                 aria-label="Fundo Escurecido"
             ></div>
 
-            <div aria-label="Modal com conteúdo dentro" className="relative p-4 w-[85%] sm:w-[60%] h-180">
+            <div aria-label="Modal com conteúdo dentro" className="relative p-4 w-[85%] xl:w-[60%] h-180">
                 <div aria-label="Fechar Modal" className="relative bg-[var(--cor-secundaria)] rounded-[6px] h-full flex flex-col justify-center items-center">
                     {/* Botão para fechar o modal */}
                     <button
@@ -121,31 +122,72 @@ const ModalRemarcar = ({
                         </div>
                         <div className="w-full h-auto flex flex-col items-center justify-end">
                             <form className="flex flex-col gap-4 w-full h-auto">
-                                <div className="flex flex-col py-2 mt-4 border-2 rounded-2xl border-[#1D2D441A] h-auto  w-full 2xl:w-[55%]" aria-label="Inputs de Data e Horário">
+                                <div className="flex flex-col py-2 mt-4 border-2 rounded-2xl border-[#1D2D441A] h-auto  w-full 2xl:w-[65%]" aria-label="Inputs de Data e Horário">
                                     <div>
                                         <span className="text-sm sm:text-base md:text-xl font-medium">
                                             Escolha a data e horário para reposição da aula
                                         </span>
                                     </div>
-                                    <div className="w-full flex flex-col md:flex-row items-center md:justify-center gap-1 md:gap-15" aria-label="Inputs de Data e Horário">
-                                        <div className="w-[80%] md:w-[30%] h-auto ">
+                                    <div className="w-full flex flex-col md:flex-row items-center md:justify-center gap-3 md:gap-15" aria-label="Inputs de Data e Horário">
+                                        <div className="w-[80%] md:w-[23%] h-auto flex flex-col items-start">
+                                           <Label
+                                               id={"data"}
+                                               nomeLabel={"Data:"}
+                                               fontWeight={"600"}
+                                           />
                                             <Input
                                                 id="data"
                                                 name="data"
                                                 type="date"
                                                 marginBottomLinha="1.55rem"
-                                                margin="25px auto 0px 0px"
+                                                margin="10px auto 0px 0px"
                                                 corBordaInput={"#ccc"}
                                                 {...register('data', { required: 'Data é obrigatória' })}
                                                 isError={!!errors.data}
                                                 errorMessage={errors.data?.message}
                                             />
                                         </div>
-                                        <div className="w-[80%] md:w-[30%] h-auto">
+                                        <div className="w-[80%] md:w-[23%] h-auto flex flex-col items-start">
+                                             <Label
+                                               id={"horarioInicio"}
+                                               nomeLabel={"Início:"}
+                                               fontWeight={"600"}
+                                           />
                                             <select
-                                                id="horario"
-                                                name="horario"
-                                                {...register('horario', { required: 'Horário é obrigatório' })}
+                                                id="horarioInicio"
+                                                name="horarioInicio"
+                                                {...register('horarioInicio', { required: 'Horário é obrigatório' })}
+                                                className="w-full  p-1 sm:p-2 rounded-md focus:border-[var(--cor-primaria)] focus:outline-none bg-transparent"
+                                                style={{
+                                                    borderWidth: "2px",
+                                                    borderStyle: "solid",
+                                                    borderColor: "#1D2D441A",
+                                                    backgroundColor: "transparent"
+                                                }}                                        >
+                                                {Array.from({ length: 24 * 2 }, (_, i) => {
+                                                    const hour = String(Math.floor(i / 2)).padStart(2, '0');
+                                                    const min = i % 2 === 0 ? '00' : '30';
+                                                    return (
+                                                        <option key={`${hour}:${min}`} value={`${hour}:${min}`}>
+                                                            {hour}:{min}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                            {errors.horario && (
+                                                <span className="text-red-500 text-xs">{errors.horario.message}</span>
+                                            )}
+                                        </div>
+                                        <div className="w-[80%] md:w-[23%] h-auto flex flex-col items-start">
+                                             <Label
+                                               id={"horarioFim"}
+                                               nomeLabel={"Fim:"}
+                                               fontWeight={"600"}
+                                           />
+                                            <select
+                                                id="horarioFim"
+                                                name="horarioFim"
+                                                {...register('horarioFim', { required: 'Horário é obrigatório' })}
                                                 className="w-full  p-1 sm:p-2 rounded-md focus:border-[var(--cor-primaria)] focus:outline-none bg-transparent"
                                                 style={{
                                                     borderWidth: "2px",
@@ -191,7 +233,7 @@ const ModalRemarcar = ({
                                                 </div>
                                             </div>
                                         ))}
-                                   </div>
+                                    </div>
                                 </div>
                                 <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                                     <Button
