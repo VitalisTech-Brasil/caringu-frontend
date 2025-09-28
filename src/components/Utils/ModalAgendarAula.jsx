@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import EtapaAgendamento from "../../components/Utils/GerenciarAlunos/EtapaAgendamentoAula"
+import EtapaAgendamentoAula from "../../components/Utils/GerenciarAlunos/EtapaAgendamentoAula"
 import EtapaAtribuicao from "../../components/Utils/GerenciarAlunos/EtapaAtribuicaoTreinos"
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 import { addDays, isAfter } from "date-fns";
-import { AgendamentoProvider } from "./GerenciarAlunos/Context/AgendamentoContext";
+import { AgendamentoProvider, useAgendamento } from "./GerenciarAlunos/Context/AgendamentoContext";
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
+import { caringuApi } from "../../provider/caringuApi";
 
 const ModalAgendarAula = ({
     fecharModal,
@@ -28,67 +29,13 @@ const ModalAgendarAula = ({
     const [horarios, setHorarios] = useState({});
     const [selectedDates, setSelectedDates] = useState([]);
     const [horarioInicio, setHorarioInicio] = useState("");
-    const [horarioFim, setHorarioFim] = useState("");
+    const [horarioFim, setHorarioFim] = useState(""); ''
     const todosHorariosPreenchidos = selectedDates.length > 0 &&
         selectedDates.every(d => horarios[d.toISOString()]);
     const [diasSelecionados, setDiasSelecionados] = useState([]);
-
-    useEffect(() => {
-        console.log("aluno: ");
-        console.log(aluno);
-    }, []);
-
-    //mock (apagar depois)
-    /* const aluno = {
-        altura: 1.75,
-        celular: "11994455667",
-        dataVencimentoPlano: "2025-06-15",
-        deficiencia: false,
-        deficienciaDescricao: null,
-        desconforto: false,
-        desconfortoDescricao: null,
-        doencaMetabolica: false,
-        doencaMetabolicaDescricao: null,
-        email: "carla.mendes@gmail.com",
-        experiencia: true,
-        experienciaDescricao: "Musculação recreativa.",
-        frequenciaTreino: "3",
-        fumante: false,
-        horariosFimSemana: [],
-        horariosFimTotal: [
-            "2025-06-02 07:15",
-            "2025-09-11 09:00",
-            "2025-09-23 09:00"
-        ],
-        horariosInicioSemana: [],
-        horariosInicioTotal: [
-            "2025-06-02 06:30",
-            "2025-09-11 08:00",
-            "2025-09-23 08:00"
-        ],
-        idAluno: 6,
-        idAlunoTreino: null,
-        idAnamnese: 1,
-        lesao: false,
-        lesaoDescricao: null,
-        nivelAtividade: "MODERADAMENTE_ATIVO",
-        nivelExperiencia: "INTERMEDIARIO",
-        nomeAluno: "Carla Mendes",
-        nomePlano: "Mensal Fit",
-        objetivoTreino: "Perder peso e ganhar resistência.",
-        periodoPlano: "MENSAL",
-        peso: 75.5,
-        proteses: false,
-        protesesDescricao: null,
-        totalAulasContratadas: 8,
-        treinosSemana: 0,
-        treinosTotal: 3,
-        urlFotoPerfil: "https://storagevitalis.blob.core.windows.net/fotos-perfil/carla.png",
-        quantidade_aulas: 8
-    }; */
+    const [aulasDisponiveis, setAulasDisponiveis] = useState({})
 
     const currentAlunos = [aluno];
-
 
     const handleDateClick = (clickedDate) => {
         const dateStr = clickedDate.toDateString();
@@ -132,17 +79,6 @@ const ModalAgendarAula = ({
         }
     };
 
-    useEffect(() => {
-        if (diasSelecionados.length > 0) {
-            const novasDatas = getNextDatesFromWeekdays(diasSelecionados, aluno.quantidade_aulas, getToday());
-            setSelectedDates(novasDatas);
-            setCheckedDates([]);
-        } else {
-            setSelectedDates([]);
-            setCheckedDates([]);
-        }
-    }, [diasSelecionados]);
-
     const [showDropdown, setShowDropdown] = useState(false);
 
     const diasSemana = [
@@ -164,6 +100,22 @@ const ModalAgendarAula = ({
             setDiasSelecionados([...diasSelecionados, value]);
         }
     };
+
+    // Buscar disponibilidade + IDs de rascunhos
+    const getBuscarAulasDisponiveis = async () => {
+        try {
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`);
+            setAulasDisponiveis(response.data);
+            console.log("AulasDisponivei32s3232: ");
+            console.log(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar aulas disponíveis:", error);
+        }
+    };
+
+    useEffect(() => {
+        getBuscarAulasDisponiveis();
+    }, []);
 
     function getNextDatesFromWeekdays(weekdays, totalAulas, startDate = new Date()) {
         const diasMap = {
@@ -202,11 +154,29 @@ const ModalAgendarAula = ({
 
     useEffect(() => {
         if (diasSelecionados.length > 0) {
-            const novasDatas = getNextDatesFromWeekdays(diasSelecionados, aluno.quantidade_aulas, getToday());
-            setSelectedDates(novasDatas);
+            const novasDatas = getNextDatesFromWeekdays(
+                diasSelecionados,
+                aulasDisponiveis.aulasRestantes,
+                getToday()
+            );
+
+            // 🔑 junta as datas antigas (rascunhos, manuais) com as novas
+            setSelectedDates(prev => {
+                const todas = [...prev, ...novasDatas];
+                // remove duplicatas (mesma data no calendário)
+                const unicas = todas.filter(
+                    (d, idx, arr) =>
+                        idx === arr.findIndex(o => o.toDateString() === d.toDateString())
+                );
+                return unicas;
+            });
+
             setCheckedDates([]);
         } else {
-            setSelectedDates([]);
+            // Se desmarcar tudo, só mantém os rascunhos que já estavam
+            setSelectedDates(prev =>
+                prev.filter(d => horarios[d.toISOString()]) // mantém as que têm horário (rascunhos)
+            );
             setCheckedDates([]);
         }
     }, [diasSelecionados]);
@@ -265,11 +235,6 @@ const ModalAgendarAula = ({
                                     Agendar Aulas
                                 </h1>
                             </div>
-                            <div className="w-auto md:w-full">
-                                <span className="text-sm md:text-base 2xl:text-2xl font-semibold">
-                                    Aluno(a)
-                                </span>
-                            </div>
                             <div className=" w-[80%] md:w-[65%] h-80 sm:h-40 xl:h-50 2xl:h-35 flex flex-col justify-center md:justify-start">
                                 <CardAluno
                                     key={aluno.idAluno}
@@ -289,7 +254,7 @@ const ModalAgendarAula = ({
                             </div>
                             <Toaster position="top-right" reverseOrder={false} />
                             {etapa === 1 && (
-                                <EtapaAgendamento
+                                <EtapaAgendamentoAula
                                     aluno={aluno}
                                     currentAlunos={currentAlunos}
                                     brasiliaToday={brasiliaToday}

@@ -562,6 +562,7 @@ const EtapaAtribuicao = ({
                     disabled={!(todosCamposPreenchidos() && todasDatasAtribuidas())}
                     onClick={() => {
                         const resultado = montarAulasTreinos();
+                        sessionStorage.removeItem("RASCUNHO_RESPONDIDO");
                         console.log(resultado);
                     }}
                 />

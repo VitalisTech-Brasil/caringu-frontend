@@ -575,7 +575,11 @@ const GerenciarAlunos = () => {
         </main >
         {showAgendarAulaModal && alunoParaAgendar && (
           <ModalAgendarAula
-            fecharModal={() => setShowAgendarAulaModal(false)}
+            fecharModal={() => {
+              setShowAgendarAulaModal(false)
+              sessionStorage.setItem("RASCUNHO_RESPONDIDO", "false");
+              }
+            }
             ariaLabel="Modal para agendar aula com o aluno"
             aluno={alunoParaAgendar}
           />
