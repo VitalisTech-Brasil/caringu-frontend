@@ -126,7 +126,7 @@ const MenuLateralAluno = () => {
                 </svg>
             ,
             label: "Minha Evolução",
-            path: "/gerenciar-treinos",
+            path: "/minhaEvolucao",
         },
         {
             icon:
