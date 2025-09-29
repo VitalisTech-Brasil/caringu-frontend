@@ -5,6 +5,10 @@ import { format, addDays, isAfter } from "date-fns";
 import ptBR from 'date-fns/locale/pt-BR';
 import { useAgendamento } from "./Context/AgendamentoContext";
 import { caringuApi } from "../../../provider/caringuApi";
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../../Utils/CustomToast';
+import ButtonLoading from "../ButtonLoading";
 
 const EtapaAgendamentoAula = ({
     aluno,
@@ -34,14 +38,62 @@ const EtapaAgendamentoAula = ({
     handleCheckDia,
     diasSemana,
     fecharModal,
+    manualDates,
+    setManualDates,
+    rascunhosPersistidos,
+    setRascunhosPersistidos,
     onProsseguir
 }) => {
     const { atualizarAgendamento } = useAgendamento();
+
+    const rascunhosDates = rascunhosPersistidos ?? [];      // array de { id, date }
+    const setRascunhosDates = setRascunhosPersistidos;     // setter vindo do pai
 
     const [aulasDisponiveis, setAulasDisponiveis] = useState({})
     const [showRascunhoModal, setShowRascunhoModal] = useState(false);
     const [rascunhosCarregados, setRascunhosCarregados] = useState(false);
     const [idsRascunhos, setIdsRascunhos] = useState([]);
+    const [generatedDates, setGeneratedDates] = useState([]);
+
+    function getNextAvailableDates(weekdays, slotsToFill, startDate = new Date(), occupiedSet = new Set()) {
+        const diasMap = {
+            'domingo': 0, 'segunda': 1, 'terca': 2, 'terça': 2, 'quarta': 3,
+            'quinta': 4, 'sexta': 5, 'sabado': 6, 'sábado': 6,
+        };
+        const diasSelecionados = weekdays.map(d => diasMap[d.toLowerCase()]).sort((a, b) => a - b);
+        if (diasSelecionados.length === 0 || slotsToFill <= 0) return [];
+
+        const candidates = [];
+        let weekOffset = 0;
+        // geramos semana a semana até preencher slots
+        while (candidates.length < slotsToFill) {
+            const base = addDays(new Date(startDate), 7 * weekOffset);
+            base.setHours(0, 0, 0, 0);
+
+            for (let i = 0; i < diasSelecionados.length && candidates.length < slotsToFill; i++) {
+                const targetWeekday = diasSelecionados[i];
+                // calcula data desta semana para weekday
+                const prox = new Date(base);
+                const diff = (targetWeekday - prox.getDay() + 7) % 7;
+                prox.setDate(prox.getDate() + diff);
+                prox.setHours(0, 0, 0, 0);
+
+                // só inclui se for >= startDate (evita pegar dias passados)
+                if (prox >= startDate) {
+                    const key = prox.toDateString();
+                    if (!occupiedSet.has(key)) {
+                        candidates.push(new Date(prox));
+                    }
+                }
+            }
+            weekOffset++;
+            // safety: evita loop infinito (gera até 52 semanas caso necessário)
+            if (weekOffset > 52 && candidates.length === 0) break;
+        }
+
+        // já vêm em ordem cronológica porque percorremos semanas em ordem
+        return candidates.slice(0, slotsToFill);
+    }
 
     const handleSalvarHorarios = () => {
         const novosHorarios = { ...horarios };
@@ -59,29 +111,69 @@ const EtapaAgendamentoAula = ({
 
     // Função auxiliar para processar os rascunhos
     const processarRascunhos = (aulas, { carregar = false } = {}) => {
-        if (!aulas || aulas.length === 0) return;
+        if (!aulas || aulas.length === 0) {
+            setRascunhosDates([]);
+            return;
+        }
 
-        // IDs
-        const ids = aulas.map(a => a.idAula);
-        setIdsRascunhos(ids);
+        const datas = aulas.map(a => ({
+            id: a.idAula,
+            date: new Date(a.dataHorarioInicio)
+        }));
+        setRascunhosDates(datas);
 
         if (carregar) {
-            // Datas
-            const datas = aulas.map(a => new Date(a.dataHorarioInicio));
-            setSelectedDates(datas);
-
-            // Horários
             const novosHorarios = {};
             aulas.forEach(a => {
                 const dateKey = new Date(a.dataHorarioInicio).toISOString();
-                const inicio = a.dataHorarioInicio.split("T")[1].slice(0, 5); // HH:mm
-                const fim = a.dataHorarioFim.split("T")[1].slice(0, 5);       // HH:mm
+                const inicio = a.dataHorarioInicio.split("T")[1].slice(0, 5);
+                const fim = a.dataHorarioFim.split("T")[1].slice(0, 5);
                 novosHorarios[dateKey] = { inicio, fim };
             });
-
             setHorarios(prev => ({ ...prev, ...novosHorarios }));
             setRascunhosCarregados(true);
         }
+    };
+
+    // Remover data (local, dentro do EtapaAgendamentoAula)
+    const handleRemoveDateLocal = async (date) => {
+        const dateStr = date.toDateString();
+
+        // se é manual
+        if (manualDates && manualDates.some(d => d.toDateString() === dateStr)) {
+            setManualDates(prev => prev.filter(d => d.toDateString() !== dateStr));
+            return;
+        }
+
+        // se é rascunho (agora temos id)
+        const rascunho = rascunhosDates.find(r => r.date.toDateString() === dateStr);
+        if (rascunho) {
+            try {
+                await caringuApi.delete("/aulas/rascunhos", { data: [rascunho.id] });
+
+                setRascunhosDates(prev => prev.filter(r => r.id !== rascunho.id));
+                setSelectedDates(prev => prev.filter(d => d.toDateString() !== dateStr));
+
+                setHorarios(prev => {
+                    const copy = { ...prev };
+                    delete copy[date.toISOString()];
+                    return copy;
+                });
+
+                toast.custom(t => (
+                    <CustomToast t={t} type="success" message="Aula em rascunho removida." />
+                ));
+            } catch (error) {
+                console.error("Erro ao deletar rascunho:", error);
+                toast.custom(t => (
+                    <CustomToast t={t} type="error" message="Erro ao excluir aula em rascunho." />
+                ));
+            }
+            return;
+        }
+
+        // se é automática
+        setSelectedDates(prev => prev.filter(d => d.toDateString() !== dateStr));
     };
 
     // Buscar disponibilidade + verificar rascunhos
@@ -104,7 +196,10 @@ const EtapaAgendamentoAula = ({
     // Continuar com os rascunhos
     const carregarRascunhos = async () => {
         try {
+
             const response = await caringuApi.get(`/aulas/${aluno.idAluno}/rascunhos`);
+            console.log("response.data: ");
+            console.log(response.data);
             processarRascunhos(response.data.aulas, { carregar: true });
             setShowRascunhoModal(false);
 
@@ -117,23 +212,98 @@ const EtapaAgendamentoAula = ({
     // Deletar rascunhos
     const deletarRascunhos = async () => {
         try {
-            if (idsRascunhos.length > 0) {
-                await caringuApi.delete("/aulas/rascunhos", { data: idsRascunhos });
+            // Buscar rascunhos do backend
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/rascunhos`);
+            const rascunhos = response.data.aulas;
+
+            if (rascunhos.length > 0) {
+                // Montar lista de IDs para deletar
+                const lista = rascunhos.map(r => r.idAula);
+
+                // Deletar usando a lista correta
+                await caringuApi.delete("/aulas/rascunhos", { data: lista });
             }
+
+            // Limpar estado
             setSelectedDates([]);
             setIdsRascunhos([]);
             setShowRascunhoModal(false);
             setRascunhosCarregados(false);
 
-            sessionStorage.setItem("RASCUNHO_RESPONDIDO", "true")
+            sessionStorage.setItem("RASCUNHO_RESPONDIDO", "true");
         } catch (error) {
             console.error("Erro ao deletar aulas em rascunho:", error);
+        }
+    };
+
+    // Criar aulas como rascunhos
+    const criarAulasRascunho = async (listaAulas) => {
+        try {
+            await caringuApi.post(`/aulas/${aluno.idAluno}/rascunhos`, {
+                aulas: listaAulas
+
+            });
+
+            console.log("Sucesso ao criar aulas em rascunho!");
+            onProsseguir();
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message={`Erro ao criar aulas em rascunho - ${error.response.data.message}`} />
+            ));
+            console.error("Erro ao criar aulas em rascunho:", error);
         }
     };
 
     useEffect(() => {
         getBuscarAulasDisponiveis();
     }, []);
+
+    // manualDates vem via props do ModalAgendarAula
+    useEffect(() => {
+        // se não temos disponibilidade ainda, não faz nada
+        if (!aulasDisponiveis || typeof aulasDisponiveis.aulasRestantes !== 'number') {
+            setGeneratedDates([]);
+            // mas mantém rascunhos e manuais
+            setSelectedDates(prev => {
+                // garante que selectedDates contenha rascunhos e manuais (pelo menos)
+                return prev;
+            });
+            return;
+        }
+
+        const start = brasiliaToday ?? new Date();
+
+        // occupied = rascunhos + manuais (strings "Tue Sep 30 2025")
+        const occupiedKeys = new Set([
+            ...rascunhosDates.map(r => r.date.toDateString()),
+            ...(manualDates || []).map(d => d.toDateString())
+        ])
+
+        const occupiedCount = occupiedKeys.size;
+        const totalAllowed = aulasDisponiveis.aulasRestantes; // já considera confirmadas/rascunhos
+        const slotsToFill = Math.max(0, totalAllowed - occupiedCount);
+
+        // gera apenas as N datas necessárias (excluindo já ocupadas)
+        const novasGeradas = getNextAvailableDates(diasSelecionados, slotsToFill, start, occupiedKeys);
+
+        // atualiza generatedDates
+        setGeneratedDates(novasGeradas);
+
+        // monta selectedDates = union(rascunhos + manuais + geradas), sem duplicatas, ordenado
+        const all = [
+            ...rascunhosDates.map(r => new Date(r.date)),
+            ...(manualDates || []).map(d => new Date(d)),
+            ...novasGeradas
+        ];
+
+        // dedupe e ordenar
+        const unique = all
+            .filter((d, idx, arr) => idx === arr.findIndex(o => o.toDateString() === d.toDateString()))
+            .sort((a, b) => a - b);
+
+        setSelectedDates(unique);
+        setCheckedDates([]); // resetar checks ao recalcular
+    }, [diasSelecionados, aulasDisponiveis, manualDates, rascunhosDates]);
 
     const montarAulasParaEnvio = () => {
         return {
@@ -342,7 +512,7 @@ const EtapaAgendamentoAula = ({
                                                     <button
                                                         onClick={e => {
                                                             e.stopPropagation();
-                                                            handleRemoveDate(data);
+                                                            handleRemoveDateLocal(data);
                                                         }}
                                                         className="mr-2 font-bold bg-[#FFFDF6] rounded-[5px] h-4 w-4 flex items-center justify-center cursor-pointer"
                                                     >
@@ -392,7 +562,7 @@ const EtapaAgendamentoAula = ({
                             </div>
                         </div>
                         <div className="w-full h-auto flex flex-col md:flex-row items-center gap-2 pb-4 px-10 md:px-0">
-                            <Button
+                            <ButtonLoading
                                 texto="Salvar Horário Marcados"
                                 cor={horarioInicio && horarioFim && checkedDates.length > 0 ? "var(--azul-claro)" : "#15171B87"}
                                 corTexto="var(--cor-secundaria)"
@@ -424,7 +594,7 @@ const EtapaAgendamentoAula = ({
                     onClick={fecharModal}
                 />
                 <div className="relative flex items-center group">
-                    <Button
+                    <ButtonLoading
                         texto="Prosseguir"
                         corTexto="var(--cor-secundaria)"
                         cor={todosHorariosPreenchidos ? "#46982B" : "#15171B87"}
@@ -444,7 +614,7 @@ const EtapaAgendamentoAula = ({
                                 ...dadosParaEnvio,
                                 diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
                             });
-                            onProsseguir();
+                            criarAulasRascunho(dadosParaEnvio.aulas);
                         }}
                     />
                     <div className="absolute left-[16rem] xl:left-[18rem] -translate-x-1/2 bottom-full mb-2 hidden group-hover:hidden lg:group-hover:flex flex-col items-center z-50 pointer-events-none " >
