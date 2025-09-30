@@ -25,6 +25,7 @@ import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios
 import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
 import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
+import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 
 const AppRoutes = () => {
 
@@ -74,6 +75,7 @@ const AppRoutes = () => {
         <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/minhaEvolucao" element={<MinhaEvolucao />} />
+        <Route path="/minhasAulas" element={<MinhasAulas />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
