@@ -96,10 +96,6 @@ const EtapaAtribuicao = ({
         try {
             let response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
             setTreinosDisponiveis(response.data);
-            console.log("treinos disponiveis: ");
-            console.log(response.data);
-
-            console.log("Sucesso ao buscar treinos do personal!");
         } catch (error) {
             toast.custom((t) => (
                 <CustomToast t={t} type="error" message={`Erro ao buscar treinos do personal`} />
@@ -333,7 +329,6 @@ const EtapaAtribuicao = ({
                 payload
             );
 
-            console.log("Treinos associados com sucesso:", response.data);
             return response.data;
         } catch (error) {
             console.error("Erro ao associar treinos às aulas:", error);
@@ -358,7 +353,6 @@ const EtapaAtribuicao = ({
                 <CustomToast t={t} type="success" message="Treinos associados às aulas com sucesso!" />
             ));
 
-            console.log("Processo finalizado com sucesso!");
             sessionStorage.removeItem("RASCUNHO_RESPONDIDO");
             fecharModal();
         } catch (error) {

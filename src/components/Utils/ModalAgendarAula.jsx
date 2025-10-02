@@ -170,9 +170,6 @@ const ModalAgendarAula = ({
             const response = await caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`);
             const temAulasRascunho = response.data.aulasRascunho >= 1;
             setAulasDisponiveis(response.data);
-
-            console.log("AulasDisponiveis: ");
-            console.log(response.data);
         } catch (error) {
             console.error("Erro ao buscar aulas disponíveis:", error);
         }

@@ -198,8 +198,7 @@ const EtapaAgendamentoAula = ({
         try {
 
             const response = await caringuApi.get(`/aulas/${aluno.idAluno}/rascunhos`);
-            console.log("response.data: ");
-            console.log(response.data);
+
             processarRascunhos(response.data.aulas, { carregar: true });
             setShowRascunhoModal(false);
 
@@ -244,7 +243,6 @@ const EtapaAgendamentoAula = ({
 
             });
 
-            console.log("Sucesso ao criar aulas em rascunho!");
             onProsseguir();
         } catch (error) {
             toast.custom((t) => (

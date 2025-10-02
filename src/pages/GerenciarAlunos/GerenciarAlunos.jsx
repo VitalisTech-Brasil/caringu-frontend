@@ -40,11 +40,6 @@ const GerenciarAlunos = () => {
     return 1;
   });
 
-  useEffect(() => {
-    console.log("alunoParaAgendar");
-    console.log(alunoParaAgendar);
-  }, []);
-
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -105,11 +100,6 @@ const GerenciarAlunos = () => {
   //   },
   //   mode: "onChange"
   // });
-
-
-  useEffect(() => {
-    console.log("alunosCompletos atualizado:", alunosCompletos);
-  }, [alunosCompletos]);
 
   useEffect(() => {
     const KpiAlunoSelecionada = sessionStorage.getItem("KPI_ALUNO_SELECIONADA");
