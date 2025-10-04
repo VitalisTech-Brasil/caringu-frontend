@@ -23,7 +23,9 @@ import CriarTreino from "./pages/GerenciarTreinos/CriarTreino.jsx";
 import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
 import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios.jsx';
 import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
+import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
+import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 
 const AppRoutes = () => {
 
@@ -72,6 +74,8 @@ const AppRoutes = () => {
         <Route path="/perfil-personal/:id" element={<PerfilPersonal />} />
         <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
         <Route path="/agenda" element={<Agenda />} />
+        <Route path="/minhaEvolucao" element={<MinhaEvolucao />} />
+        <Route path="/minhasAulas" element={<MinhasAulas />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

@@ -15,6 +15,7 @@ import { Toaster } from "react-hot-toast";
 import toast from 'react-hot-toast';
 import CustomToast from '../components/Utils/CustomToast';
 import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
+import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
 
 
 const PerfilPersonal = () => {
@@ -274,9 +275,10 @@ const PerfilPersonal = () => {
     return (
         <>
             <div className="flex min-h-screen bg-[#fdfbf7]">
+                <MenuLateralAluno/>
                 <div className="flex-1 overflow-y-auto">
                     <Header />
-                    <div className="w-full h-auto">
+                    {/* <div className="w-full h-auto">
                         <div className="pl-[2.5rem] pt-2 pb-2 w-full h-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53" fill="none"
                                 className="cursor-pointer"
@@ -285,221 +287,219 @@ const PerfilPersonal = () => {
                                 <path d="M45.2717 26.5H8.10547" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </div>
-                    </div>
-                    <div>
-                        <CardPersonal
-                            nomePersonal={infoPersonal.nomePersonal}
-                            cidade={infoPersonal.cidade}
-                            experiencia={infoPersonal.experiencia}
-                            celular={MascaraTelefone(infoPersonal.celular)}
-                            email={infoPersonal.email}
-                            especialidades={infoPersonal.especialidades}
-                            urlFoto={
-                                infoPersonal.urlFotoPerfil
-                            }
-                        />
-                    </div>
-                    <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
-                        <div className="h-full flex pl-[2.5rem] pt-3">
-                            <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]"> Planos</span>
+                    </div> */}
+                    <div className="w-full h-auto pt-10">
+                        <div>
+                            <CardPersonal
+                                nomePersonal={infoPersonal.nomePersonal}
+                                cidade={infoPersonal.cidade}
+                                experiencia={infoPersonal.experiencia}
+                                celular={MascaraTelefone(infoPersonal.celular)}
+                                email={infoPersonal.email}
+                                especialidades={infoPersonal.especialidades}
+                                urlFoto={
+                                    infoPersonal.urlFotoPerfil
+                                }
+                            />
                         </div>
-                    </div>
-                    <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
-                        <div className="flex gap-9 w-fit">
-                            {infoPersonal.planos.map((item) => {
-                                const existePlanoContratado = verfificaStatus && ["PENDENTE", "EM_PROCESSO", "ATIVO"].includes(verfificaStatus.status);
-                                const isPlanoContratado = existePlanoContratado && item.id === verfificaStatus.planoId;
-                                const disabled = existePlanoContratado ? !isPlanoContratado : false;
-
-                                return (
-                                    <CardPlano
-                                        key={item.id}
-                                        id={item.id}
-                                        nome={item.nome}
-                                        periodo={item.periodo}
-                                        quantidadeAulas={item.quantidadeAulas}
-                                        valorAulas={item.valorAulas}
-                                        valorPlano={item.valorAulas * item.quantidadeAulas}
-                                        showDropdown={false}
-                                        showContratarPlano={true}
-                                        onModalContratar={() => {
-                                            if (!existePlanoContratado || isPlanoContratado) {
-                                                contratarPlano(item.id);
+                        <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
+                            <div className="h-full flex pl-[2.5rem] pt-3">
+                                <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]"> Planos</span>
+                            </div>
+                        </div>
+                        <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
+                            <div className="flex gap-9 w-fit">
+                                {infoPersonal.planos.map((item) => {
+                                    const existePlanoContratado = verfificaStatus && ["PENDENTE", "EM_PROCESSO", "ATIVO"].includes(verfificaStatus.status);
+                                    const isPlanoContratado = existePlanoContratado && item.id === verfificaStatus.planoId;
+                                    const disabled = existePlanoContratado ? !isPlanoContratado : false;
+                                    return (
+                                        <CardPlano
+                                            key={item.id}
+                                            id={item.id}
+                                            nome={item.nome}
+                                            periodo={item.periodo}
+                                            quantidadeAulas={item.quantidadeAulas}
+                                            valorAulas={item.valorAulas}
+                                            valorPlano={item.valorAulas * item.quantidadeAulas}
+                                            showDropdown={false}
+                                            showContratarPlano={true}
+                                            onModalContratar={() => {
+                                                if (!existePlanoContratado || isPlanoContratado) {
+                                                    contratarPlano(item.id);
+                                                }
+                                            }}
+                                            textoBotao={
+                                                isPlanoContratado
+                                                    ? "Verificar Status"
+                                                    : "Contratar Plano"
                                             }
-                                        }}
-                                        textoBotao={
-                                            isPlanoContratado
-                                                ? "Verificar Status"
-                                                : "Contratar Plano"
-                                        }
-                                        disabled={disabled}
-                                        className={disabled ? "card-plano-disabled" : ""
-
-                                        }
-                                    />
-                                );
-                            })}
-                        </div>
-                    </div>
-                    <div className="flex flex-row w-full h-auto">
-                        <div className="flex flex-col w-[95%] h-auto mt-3 mb-6 ml-[2.5rem] pt-5 border-solid border-[#1D2D441C] border-2 rounded-md">
-                            <div className="w-[95%] h-auto flex flex-col lg:flex-row items-start gap-3 lg:gap-0 lg:items-center justify-between pl-[10%] sm:pl-[5rem]">
-                                <span className="text-[var(--cor-primaria)] text-base xl:text-[28px] 2xl:text-[32px] font-medium">
-                                    Opiniões sobre o personal:
-                                </span>
-                                <div className="gap-5 pl-4 pr-4 pt-4 md:pt-0 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
-                                    <span>
-                                        Ordernar por avaliação
-                                    </span>
-                                    <div className="pt-2 pb-2">
-                                        <Rating
-                                            initialRating={rating}
-                                            fractions={2}
-                                            emptySymbol={<StarEmpty />}
-                                            fullSymbol={<StarFull />}
-                                            onChange={ratingChanged}
+                                            disabled={disabled}
+                                            className={disabled ? "card-plano-disabled" : ""
+                                            }
                                         />
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        <div className="flex flex-row w-full h-auto">
+                            <div className="flex flex-col w-[95%] h-auto mt-3 mb-6 ml-[2.5rem] pt-5 border-solid border-[#1D2D441C] border-2 rounded-md">
+                                <div className="w-[95%] h-auto flex flex-col lg:flex-row items-start gap-3 lg:gap-0 lg:items-center justify-between pl-[10%] sm:pl-[5rem]">
+                                    <span className="text-[var(--cor-primaria)] text-base xl:text-[28px] 2xl:text-[32px] font-medium">
+                                        Opiniões sobre o personal:
+                                    </span>
+                                    <div className="gap-5 pl-4 pr-4 pt-4 md:pt-0 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
+                                        <span>
+                                            Ordernar por avaliação
+                                        </span>
+                                        <div className="pt-2 pb-2">
+                                            <Rating
+                                                initialRating={rating}
+                                                fractions={2}
+                                                emptySymbol={<StarEmpty />}
+                                                fullSymbol={<StarFull />}
+                                                onChange={ratingChanged}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full">
-                                {(opinioes.filter(opiniao => rating === 0 || opiniao.pontuacao === rating).length === 0) ? (
-                                    <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
-                                        Ainda não existe nenhuma opinião ou comentário de usuários para este personal.
-                                    </div>
-                                ) : (
-                                    opinioes
-                                        .filter(opiniao => rating === 0 || opiniao.pontuacao === rating)
-                                        .map((opiniao, index) => (
-                                            <CardOpiniao
-                                                key={index}
-                                                pontuacao={opiniao.pontuacao}
-                                                nome={opiniao.nome}
-                                                comentario={opiniao.comentario}
-                                                dataPublicacao={opiniao.dataPublicacao}
-                                                urlFoto={opiniao.urlFoto}
-                                            />
-                                        ))
-                                )}
+                                <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full">
+                                    {(opinioes.filter(opiniao => rating === 0 || opiniao.pontuacao === rating).length === 0) ? (
+                                        <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                                            Ainda não existe nenhuma opinião ou comentário de usuários para este personal.
+                                        </div>
+                                    ) : (
+                                        opinioes
+                                            .filter(opiniao => rating === 0 || opiniao.pontuacao === rating)
+                                            .map((opiniao, index) => (
+                                                <CardOpiniao
+                                                    key={index}
+                                                    pontuacao={opiniao.pontuacao}
+                                                    nome={opiniao.nome}
+                                                    comentario={opiniao.comentario}
+                                                    dataPublicacao={opiniao.dataPublicacao}
+                                                    urlFoto={opiniao.urlFoto}
+                                                />
+                                            ))
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {modalContratar && (
-                        <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
-                            <div className="absolute inset-0 bg-[#000000] opacity-50"
-                                aria-label="Fundo Escurecido"
-                            ></div>
-                            <div className="relative p-4 w-full max-w-2xl">
-                                <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
-                                    {/* Header */}
-                                    <div className="flex justify-between items-center pb-4 mb-4 ">
-                                        <button
-                                            type="button"
-                                            onClick={closeModalContratar}
-                                            className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
-                                        >
-                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    fillRule="evenodd"
-                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                                    clipRule="evenodd"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div className="w-auto h-auto flex flex-row items-start justify-start gap-10 pl-0 md:pl-5">
-                                        <img
-                                            src={
-                                                statusEtapa === "INICIAL"
-                                                    ? barraProgresso
-                                                    : statusEtapa === "PENDENTE"
-                                                        ? barraProgresso2
-                                                        : statusEtapa === "COMBINADO"
-                                                            ? barraMetade
-                                                            : statusEtapa === "PAGO"
-                                                                ? barraCompleta
-                                                                : barraProgresso
-                                            }
-                                            alt="Status de contratação de plano"
-                                            className="pt-4 h-135 sm:h-115"
-                                        />
-                                        <div className="flex flex-col items-start justify-start sm:gap-8">
-                                            <div>
-                                                <h2 className="text-[var(--cor-primaria)]  font-semibold text-base sm:text-xl">
-                                                    Combinar com o Personal Trainer
-                                                </h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
-                                                    Antes de realizar o pagamento, é preciso combinar com o Personal Trainer a forma de pagamento. Entre em contato pelo número localizado no seu perfil antes de realizar qualquer pagamento.
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <h2 className="text-[var(--cor-primaria)] mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
-                                                    Confirmar pagamento</h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
-                                                    Para que o plano seja liberado, é necessário combinar uma forma de pagamento com o personal e realizar o pagamento. Quando essa etapa for completa, clique no botão “confirmar pagamento”.
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <h2 className="text-[var(--cor-primaria)]  mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
-                                                    Esperando confirmação do personal</h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
-                                                    Após isso, o personal deve confirmar se recebeu o pagamento. Aguarde até que essa etapa seja concluída.                                            </p>
-                                            </div>
-                                            <div>
-                                                <h2 className="text-[var(--cor-primaria)]  mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
-                                                    Plano liberado</h2>
-                                                <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
-                                                    Com todas as etapas anteriores concluídas, o plano será liberado para o seu acompanhamento.                                            </p>
+                        {modalContratar && (
+                            <div className="fixed inset-0 z-50 flex justify-center items-center overflow-y-auto">
+                                <div className="absolute inset-0 bg-[#000000] opacity-50"
+                                    aria-label="Fundo Escurecido"
+                                ></div>
+                                <div className="relative p-4 w-full max-w-2xl">
+                                    <div className="relative p-4 bg-[var(--cor-secundaria)] rounded-lg shadow sm:pl-12 sm:pr-12 sm:pt-10 sm:pb-10">
+                                        {/* Header */}
+                                        <div className="flex justify-between items-center pb-4 mb-4 ">
+                                            <button
+                                                type="button"
+                                                onClick={closeModalContratar}
+                                                className="bg-[#B41F1F] text-[var(--cor-secundaria)] rounded-lg text-xs sm:text-sm cursor-pointer w-10 h-10 md:w-13 md:h-13 inline-flex justify-center items-center absolute top-2 right-2"
+                                            >
+                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div className="w-auto h-auto flex flex-row items-start justify-start gap-10 pl-0 md:pl-5">
+                                            <img
+                                                src={
+                                                    statusEtapa === "INICIAL"
+                                                        ? barraProgresso
+                                                        : statusEtapa === "PENDENTE"
+                                                            ? barraProgresso2
+                                                            : statusEtapa === "COMBINADO"
+                                                                ? barraMetade
+                                                                : statusEtapa === "PAGO"
+                                                                    ? barraCompleta
+                                                                    : barraProgresso
+                                                }
+                                                alt="Status de contratação de plano"
+                                                className="pt-4 h-135 sm:h-115"
+                                            />
+                                            <div className="flex flex-col items-start justify-start sm:gap-8">
+                                                <div>
+                                                    <h2 className="text-[var(--cor-primaria)]  font-semibold text-base sm:text-xl">
+                                                        Combinar com o Personal Trainer
+                                                    </h2>
+                                                    <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
+                                                        Antes de realizar o pagamento, é preciso combinar com o Personal Trainer a forma de pagamento. Entre em contato pelo número localizado no seu perfil antes de realizar qualquer pagamento.
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-[var(--cor-primaria)] mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
+                                                        Confirmar pagamento</h2>
+                                                    <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
+                                                        Para que o plano seja liberado, é necessário combinar uma forma de pagamento com o personal e realizar o pagamento. Quando essa etapa for completa, clique no botão “confirmar pagamento”.
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-[var(--cor-primaria)]  mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
+                                                        Esperando confirmação do personal</h2>
+                                                    <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
+                                                        Após isso, o personal deve confirmar se recebeu o pagamento. Aguarde até que essa etapa seja concluída.                                            </p>
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-[var(--cor-primaria)]  mt-[11%] sm:mt-0 font-semibold text-base sm:text-xl">
+                                                        Plano liberado</h2>
+                                                    <p className="text-[var(--cor-primaria)] text-[13px] sm:text-base font-normal">
+                                                        Com todas as etapas anteriores concluídas, o plano será liberado para o seu acompanhamento.                                            </p>
+                                                </div>
                                             </div>
                                         </div>
-
-
-                                    </div>
-                                    <div aria-label="Opções de Botões" className="flex flex-col items-center pt-15 w-full justify-center">
-                                        {statusEtapa === "INICIAL" && (
-                                            <Button
-                                                texto="Já conversei com o personal"
-                                                corTexto="var(--cor-secundaria)"
-                                                cor="var(--azul-claro)"
-                                                height="3rem"
-                                                width="45%"
-                                                fontWeight="600"
-                                                ariaLabel="Já conversei com o personal"
-                                                fontSize="16px"
-                                                onClick={handleJaCombinei}
-                                            />
-                                        )}
-                                        {statusEtapa === "PENDENTE" && (
-                                            <Button
-                                                texto="Confirmar pagamento"
-                                                corTexto="var(--cor-secundaria)"
-                                                cor="var(--azul-claro)"
-                                                height="3rem"
-                                                width="45%"
-                                                fontWeight="600"
-                                                ariaLabel="Confirmar pagamento"
-                                                fontSize="16px"
-                                                onClick={handleConfirmarPagamento}
-                                            />
-                                        )}
-                                        {statusEtapa === "COMBINADO" && (
-                                            <Button
-                                                texto="Confirmar pagamento"
-                                                corTexto="var(--cor-secundaria)"
-                                                cor="#D9D9D9"
-                                                height="3rem"
-                                                width="45%"
-                                                fontWeight="600"
-                                                ariaLabel="Confirmar pagamento"
-                                                fontSize="16px"
-                                                disabled={true}
-                                            />
-                                        )}
+                                        <div aria-label="Opções de Botões" className="flex flex-col items-center pt-15 w-full justify-center">
+                                            {statusEtapa === "INICIAL" && (
+                                                <Button
+                                                    texto="Já conversei com o personal"
+                                                    corTexto="var(--cor-secundaria)"
+                                                    cor="var(--azul-claro)"
+                                                    height="3rem"
+                                                    width="45%"
+                                                    fontWeight="600"
+                                                    ariaLabel="Já conversei com o personal"
+                                                    fontSize="16px"
+                                                    onClick={handleJaCombinei}
+                                                />
+                                            )}
+                                            {statusEtapa === "PENDENTE" && (
+                                                <Button
+                                                    texto="Confirmar pagamento"
+                                                    corTexto="var(--cor-secundaria)"
+                                                    cor="var(--azul-claro)"
+                                                    height="3rem"
+                                                    width="45%"
+                                                    fontWeight="600"
+                                                    ariaLabel="Confirmar pagamento"
+                                                    fontSize="16px"
+                                                    onClick={handleConfirmarPagamento}
+                                                />
+                                            )}
+                                            {statusEtapa === "COMBINADO" && (
+                                                <Button
+                                                    texto="Confirmar pagamento"
+                                                    corTexto="var(--cor-secundaria)"
+                                                    cor="#D9D9D9"
+                                                    height="3rem"
+                                                    width="45%"
+                                                    fontWeight="600"
+                                                    ariaLabel="Confirmar pagamento"
+                                                    fontSize="16px"
+                                                    disabled={true}
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                 </div>
                 <Toaster position="top-right" reverseOrder={false} />
