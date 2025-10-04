@@ -60,7 +60,7 @@ const ColunaInputs = () => {
         });
 
         if (response.status === 200) {
-          sessionStorage.setItem('authToken', response.data.token);
+          // authToken agora é enviado via cookie HttpOnly
           sessionStorage.setItem('usuario', response.data.nome);
           sessionStorage.setItem('pessoaId', response.data.pessoaId);
           sessionStorage.setItem('tipo', response.data.tipo);
@@ -105,9 +105,9 @@ const ColunaInputs = () => {
         }
       });
 
-      if (response.status === 200 && response.data?.token) {
+      if (response.status === 200) {
+        // authToken agora é enviado via cookie HttpOnly
         sessionStorage.setItem('pessoaId', response.data.pessoaId);
-        sessionStorage.setItem('authToken', response.data.token);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
         sessionStorage.setItem('email', email);
