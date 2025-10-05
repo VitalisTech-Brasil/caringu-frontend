@@ -26,6 +26,7 @@ import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
 import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
+import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 
 const AppRoutes = () => {
 
@@ -76,6 +77,7 @@ const AppRoutes = () => {
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/minhaEvolucao" element={<MinhaEvolucao />} />
         <Route path="/minhasAulas" element={<MinhasAulas />} />
+        <Route path="/treinosAula" element={<TreinoAulas />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
