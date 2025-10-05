@@ -9,7 +9,7 @@ import { format } from "date-fns";
 
 
 
-const Header = () => {
+const Header = ({centerTitle = false }) => {
   const location = useLocation();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -346,20 +346,20 @@ const Header = () => {
 
 
   return (
-    <Navbar fluid className="navbar sticky h-[4.8rem] z-10 bg-white border-b-[1px] dark:border-gray-300 pt-4.5 flex flex-row items-center justify-center">
-      <NavbarBrand className="flex items-center gap-2">
+    <Navbar fluid className={`navbar relative h-[4.8rem] z-10 bg-white border-b dark:border-gray-300 flex items-center ${centerTitle ? "justify-center" : "justify-start"}`}>
+      <NavbarBrand className={`flex items-center gap-2 ${centerTitle ? "" : "ml-4"}`}>
         {currentPage.icon}
-        <span className="self-center whitespace-nowrap text-base sm:text-xl font-semibold text-[#1D2D44]">
+        <span className="whitespace-nowrap text-base sm:text-xl font-semibold text-[#1D2D44]">
           {currentPage.label}
         </span>
       </NavbarBrand>
       {/* Notifications */}
       {tipoUsuario === "PERSONAL" && (
-        <div className="ml-auto flex items-center" ref={notificationRef}>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center" ref={notificationRef}>
           <button
-            onClick={() => setShowNotifications((prev) => !prev)}
+            onClick={() => setShowNotifications(prev => !prev)}
             type="button"
-            className="p-2 text-gray-800 rounded-lg hover:text-gray-900 hover:bg-gray-200 mr-6 cursor-pointer"
+            className="p-2 text-gray-800 rounded-lg hover:text-gray-900 hover:bg-gray-200 cursor-pointer"
           >
             <span className="sr-only">View notifications</span>
             {notificacoesGeral.length > 0 ? (
@@ -379,17 +379,15 @@ const Header = () => {
           </button>
           <div
             id="dropdownNotification"
-            className={`z-100 ${showNotifications ? "flex" : "hidden"} flex-col absolute right-9 top-16 w-full max-w-[12rem] sm:max-w-sm md:max-w-xl bg-[var(--cor-secundaria)] rounded-md border-solid border-2 border-[#1D2D441C] shadow`}
+            className={`z-50 ${showNotifications ? "flex" : "hidden"} flex-col absolute right-0 top-14 w-[15rem] sm:w-[20rem] bg-[var(--cor-secundaria)] rounded-md border-2 border-[#1D2D441C] shadow`}
           >
-            <div className="flex flex-row justify-between items-center px-4 py-2 font-medium  text-[var(--cor-primaria)] text-base sm:text-xl md:text-2xl rounded-t-lg bg-[var(--cor-secundaria)] border-b-2 border-[#1D2D441C]">
-              <span>
-                Notificações
-              </span>
+            <div className="flex flex-row justify-between items-center px-4 py-2 font-medium text-[var(--cor-primaria)] text-lg sm:text-xl border-b-2 border-[#1D2D441C]">
+              <span>Notificações</span>
               <LucideCheckCheck
                 onClick={() => marcarTodasNotificacoesComoLidas()}
-                className="cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1 w-7 h-7 sm:h-9 sm:w-9" />
+                className="cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1 w-7 h-7" />
             </div>
-            <div className="divide-y divide-[#1D2D441A]">
+            <div className="divide-y divide-[#1D2D441A] max-h-80 overflow-y-auto">
               {notificacoesGeral.length > 0 ? (
                 notificacoesGeral.map((notification, index) => (
                   <div
@@ -399,7 +397,7 @@ const Header = () => {
                       }`}
                   >
                     <div className="w-full flex flex-row items-center">
-                      <div className="flex pl-3 flex-col w-[90%]">
+                      <div className="flex pl-1 flex-col w-[90%]">
                         <div className="text-xs sm:text-base md:text-xl text-[var(--cor-primaria)] font-bold">
                           {notification.titulo}
                         </div>
@@ -413,7 +411,7 @@ const Header = () => {
                             e.stopPropagation(); // impede que clique no ícone também dispare o redirecionamento
                             marcarNotificacaoComoLida(notification.id);
                           }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1"
+                          className="w-6 h-6 cursor-pointer transition-colors hover:bg-gray-200 rounded-full p-1"
                         />
                       )}
                     </div>
