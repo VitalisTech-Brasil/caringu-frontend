@@ -1,19 +1,24 @@
-import { React, useEffect } from 'react';
+import { React, useEffect, useState } from 'react';
 import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
+import loadingGif from "../../assets/gifs/loading.gif";
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../Utils/Inputs';
-import Button from '../Utils/Button';
+import ButtonLogin from '../Utils/ButtonLogin';
+import ButtonLoading from '../Utils/ButtonLoading';
 import { useForm } from 'react-hook-form';
 import { api } from '../../provider/api';
 import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
+import alert from "../../assets/images/alert.svg";
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
-
+  const [tempoRestante, setTempoRestante] = useState(null);
 
   useEffect(() => {
     return () => {
@@ -21,9 +26,32 @@ const ColunaInputs = () => {
     };
   }, []);
 
+  // efeito para fazer o contador regressivo
+  useEffect(() => {
+    if (tempoRestante === null) return;
+
+    if (tempoRestante <= 0) {
+      setTempoRestante(null); // desbloqueia quando chega a 0
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTempoRestante((prev) => (prev !== null ? prev - 1 : null));
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [tempoRestante]);
+
+  // formatar tempo em mm:ss
+  const formatarTempo = (segundos) => {
+    const min = Math.floor(segundos / 60);
+    const sec = segundos % 60;
+    return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  };
+
   const loginGoogle = useGoogleLogin({
     onSuccess: async (codeResponse) => {
-      
+      setLoadingGoogle(true);
       try {
         const response = await api.post('/login/google', {
           code: codeResponse.code
@@ -32,7 +60,7 @@ const ColunaInputs = () => {
         });
 
         if (response.status === 200) {
-          sessionStorage.setItem('authToken', response.data.token);
+          // authToken agora é enviado via cookie HttpOnly
           sessionStorage.setItem('usuario', response.data.nome);
           sessionStorage.setItem('pessoaId', response.data.pessoaId);
           sessionStorage.setItem('tipo', response.data.tipo);
@@ -54,6 +82,8 @@ const ColunaInputs = () => {
         toast.custom((t) => (
           <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
         ));
+      } finally {
+        setLoadingGoogle(false);
       }
     },
     onError: () => {
@@ -65,7 +95,7 @@ const ColunaInputs = () => {
   });
 
   const verificarUsuario = async (data) => {
-
+    setLoading(true);
     const { email, senha } = data;
 
     try {
@@ -75,9 +105,9 @@ const ColunaInputs = () => {
         }
       });
 
-      if (response.status === 200 && response.data?.token) {
+      if (response.status === 200) {
+        // authToken agora é enviado via cookie HttpOnly
         sessionStorage.setItem('pessoaId', response.data.pessoaId);
-        sessionStorage.setItem('authToken', response.data.token);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
         sessionStorage.setItem('email', email);
@@ -101,12 +131,20 @@ const ColunaInputs = () => {
         toast.custom((t) => (
           <CustomToast t={t} type="error" message="Credenciais inválidas. Verifique seu email e senha." />
         ));
+      } else if (error.response?.status === 423) {
+        toast.custom((t) => (
+          <CustomToast t={t} type="error" message="Login bloqueado por excesso de tentativas. Tente novamente mais tarde" />
+        ));
+        const tempo = error.response.data.tempoRestante;
+        setTempoRestante(tempo);
       } else {
         console.error('Erro ao realizar login:', error);
         toast.custom((t) => (
           <CustomToast t={t} type="error" message="Erro ao conectar ao servidor. Tente novamente mais tarde." />
         ));
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,27 +201,55 @@ const ColunaInputs = () => {
             <a className="text-base text-[var(--azul-escuro)] no-underline relative transition-transform duration-200 ease-in-out after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:bg-[var(--azul-escuro)] after:scale-x-0 after:origin-left after:transition-transform after:duration-300 hover:scale-101 hover:after:scale-x-100" href="/esqueci-senha">Esqueci minha senha</a>
           </div>
 
-          <Button
-            texto="Entrar"
+
+          <ButtonLogin
+            texto={
+              loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  Entrando
+                  <img src={loadingGif} alt="Carregando" className="w-7 h-7 inline-block" />
+                </span>
+              ) : 'Entrar'
+            }
             type="submit"
             cor="var(--azul-claro)"
             corTexto="var(--cor-secundaria)"
             width="100%"
             height="12.15%"
-            font-size="14px"
+            fontSize="14px"
+            disabled={!!tempoRestante}
           />
 
-          <Button
+          <ButtonLoading
             logo={googleLogo}
-            texto="Entrar com Google"
+            texto={
+              loadingGoogle ? (
+                <span className="flex items-center justify-center gap-2">
+                  Entrando com Google
+                  <img src={loadingGif} alt="Carregando" className="w-7 h-7 inline-block" />
+                </span>
+              ) : 'Entrar com Google'
+            }
             type="button"
             cor="var(--azul-escuro)"
             corTexto="var(--cor-secundaria)"
             width="100%"
             height="12.15%"
-            font-size="14px"
+            fontSize="14px"
             onClick={() => loginGoogle()}
+            disabled={!!tempoRestante}
           />
+
+          {tempoRestante && (
+            <div className="mt-2 w-full flex items-center justify-center gap-2 text-center font-bold text-[#D45C56] text-sm sm:text-base md:text-lg">
+              <img src={alert} alt="Ícone de alerta" className="w-5 h-5 shrink-0" />
+              <span className="whitespace-nowrap">
+                Tente novamente em {formatarTempo(tempoRestante)}
+              </span>
+            </div>
+          )}
+
+
         </form>
 
         <footer className="justify-center items-center flex">

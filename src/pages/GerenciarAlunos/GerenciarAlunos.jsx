@@ -1,22 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { isSameWeek, isSameMonth, parse } from "date-fns";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Utils/Modal";
-import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
-import { useForm } from "react-hook-form";
 import MenuFiltro from "../../components/Utils/MenuFiltro";
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 import WidgetPresencaAlunos from "../../components/Utils/GerenciarAlunos/WidgetPresencaAluno";
 import WidgetAlunosPlano from "../../components/Utils/GerenciarAlunos/WidgetAlunosPlano";
 import { caringuApi } from "../../provider/caringuApi";
-import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone";
 import FormularioAnamnese from "../../components/Utils/GerenciarAlunos/FormularioAnamnese";
 import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../../components/Utils/CustomToast";
 import Pagination from "../../components/Utils/Pagination";
+import ModalAgendarAula from "../../components/Utils/ModalAgendarAula";
 
 const GerenciarAlunos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,20 +23,28 @@ const GerenciarAlunos = () => {
   const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
   const [anamnesesPendentes, setAnamnesesPendentes] = useState(false);
   const [aguardandoTreino, setAguardandoTreino] = useState(false);
-  const [ordemAlfabetica, setOrdemAlfabetica] = useState(false);
-  const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
   const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const [alunosCards, setAlunosCards] = useState([]); // Para os cards (paginados)
+  const [alunosCompletos, setAlunosCompletos] = useState([]); // Para os widgets (todos)
+  const [showAgendarAulaModal, setShowAgendarAulaModal] = useState(false);
+  const [alunoParaAgendar, setAlunoParaAgendar] = useState(null);
+
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPagesAPI, setTotalPagesAPI] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(() => {
+    if (window.innerWidth >= 1536) return 4;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+  });
+
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
-  const menuRef = useRef(null);
-  const buttonRef = useRef(null);
-  const buttonRefFilter = useRef(null);
 
-  const [respostas, setRespostas] = useState({});
   const [respostasBack, setRespostasBack] = useState({});
-  const [alunosAtivos, setAlunosAtivos] = useState([]);
   const [alunoAtual, setAlunoAtual] = useState(null);
   const [imgErro, setImgErro] = useState(false);
 
@@ -51,12 +57,9 @@ const GerenciarAlunos = () => {
   const handleRadioChange = (id, value) => {
     setRespostas(prev => ({ ...prev, [id]: value }));
   };
-
-  const rect = buttonRefFilter.current?.getBoundingClientRect();
-
   const now = new Date();
 
-  const alunosFiltrados = alunosAtivos
+  const alunosFiltrados = alunosCompletos
     .filter((aluno) => aluno.frequenciaTreino != null)
     .map((aluno) => {
       const horarios = Array.isArray(aluno.horariosFimTotal) ? aluno.horariosFimTotal : [];
@@ -88,15 +91,15 @@ const GerenciarAlunos = () => {
       };
     });
 
-  const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
-    defaultValues: {
-      plano: "",
-      duracao: "",
-      preco: "",
-      aulas: ""
-    },
-    mode: "onChange"
-  });
+  // const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
+  //   defaultValues: {
+  //     plano: "",
+  //     duracao: "",
+  //     preco: "",
+  //     aulas: ""
+  //   },
+  //   mode: "onChange"
+  // });
 
   useEffect(() => {
     const KpiAlunoSelecionada = sessionStorage.getItem("KPI_ALUNO_SELECIONADA");
@@ -109,49 +112,48 @@ const GerenciarAlunos = () => {
   }, [])
 
   useEffect(() => {
-    document.title = "Gerenciar Alunos | CaringU"
-    const handleClickOutside = (event) => {
-      if (
-        openMenuId !== null &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target) &&
-        !buttonRef.current?.contains(event.target)
-      ) {
-        setOpenMenuId(null);
-      }
-    };
-
-    const handleScroll = () => setOpenMenuId(null);
-
-    document.addEventListener("click", handleClickOutside);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [openMenuId]);
-
-  useEffect(() => {
     const personalId = sessionStorage.getItem('pessoaId');
 
     const fetchData = async () => {
       try {
-        const response = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
-        const aluno = response.data;
+        const responseCompletos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
+        setAlunosCompletos(responseCompletos.data);
 
-        setAlunosAtivos(aluno);
+        if (searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder) {
+
+          setAlunosCards(responseCompletos.data);
+          setTotalElements(responseCompletos.data.length);
+          setTotalPagesAPI(0); // Reset para usar paginação local
+
+        } else {
+
+          const responsePaginado = await caringuApi.get(`/alunos/detalhes/personal/paginado/${personalId}`, {
+            params: {
+              page: currentPage - 1,
+              size: itemsPerPage
+            }
+          });
+
+          const data = responsePaginado.data;
+          setAlunosCards(data.content);
+          setTotalElements(data.totalElements);
+          setTotalPagesAPI(data.totalPages);
+        }
       } catch (error) {
         console.error("Erro ao buscar alunos ativos:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [currentPage, itemsPerPage, searchTerm, sortOrder, anamnesesPendentes, aguardandoTreino]);
 
   const handleCardClick = (alunoId) => {
     navigate(`/perfil-aluno/${alunoId}`);
   };
+
+  const handleCardFeedbacksClick = (alunoId) => {
+    navigate(`/feedbacks-aluno/${alunoId}`);
+  }
 
   const handleMenuAction = (action, aluno) => {
     switch (action) {
@@ -164,6 +166,9 @@ const GerenciarAlunos = () => {
       case 'progressao':
         navigate(`/relatorios/registro-corporal/${aluno.idAluno}`);
         break;
+      case 'agendarAula':
+        handleAbrirModalAgendarAula(aluno);
+        break;
       default:
         break;
     }
@@ -172,7 +177,7 @@ const GerenciarAlunos = () => {
 
 
   // Aplicar filtros e ordenação
-  const filteredAlunos = alunosAtivos
+  const filteredAlunos = alunosCards
     .filter((aluno) => {
       if (anamnesesPendentes && aluno.idAnamnese) return false;
       if (aguardandoTreino && aluno.idAlunoTreino) return false;
@@ -186,19 +191,16 @@ const GerenciarAlunos = () => {
       return 0;
     });
 
+  //Configurações de paginação
+  const totalPages = searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder
+    ? Math.ceil(filteredAlunos.length / itemsPerPage)
+    : totalPagesAPI || Math.ceil(filteredAlunos.length / itemsPerPage);
 
-  //Configarações de paginação  
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(() => {
-    if (window.innerWidth >= 1536) return 4;
-    if (window.innerWidth >= 768) return 2;
-    return 1;
-  });
-
-  const totalPages = Math.ceil(filteredAlunos.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentAlunos = filteredAlunos.slice(startIndex, startIndex + itemsPerPage);
+  const currentAlunos = searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder
+    ? filteredAlunos.slice(startIndex, startIndex + itemsPerPage)
+    : filteredAlunos;
+
   useEffect(() => {
     const handleResize = () => {
       let newItemsPerPage;
@@ -262,8 +264,13 @@ const GerenciarAlunos = () => {
 
   const menuWidth = useMenuWidth();
 
+  const handleAbrirModalAgendarAula = (aluno) => {
+    setAlunoParaAgendar(aluno);
+    setShowAgendarAulaModal(true);
+  };
+
   return (
-    <div className="flex min-h-screen bg-[#fdfbf7]">
+    <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
       <MenuLateral />
       <div className="flex-1 overflow-y-auto">
         <Header />
@@ -391,6 +398,12 @@ const GerenciarAlunos = () => {
                           imgErro={imgErro}
                           setImgErro={setImgErro}
                           totalCards={currentAlunos.length}
+                          idButton="btn-ver-feedbacks"
+                          textoButton="Ver feedbacks"
+                          corButton="var(--laranja)"
+                          ariaLabelButton="Ver feedbacks"
+                          classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
+                          onClickButton={handleCardFeedbacksClick}
                         />
                       ))}
                     </div>
@@ -414,7 +427,7 @@ const GerenciarAlunos = () => {
               <WidgetPresencaAlunos
                 valorSelecionado={valorSelecionado}
                 filter={filter}
-                alunosAtivos={alunosAtivos}
+                alunosAtivos={alunosCompletos}
                 alunosFiltrados={alunosFiltrados}
                 imgErro={imgErro}
                 setImgErro={setImgErro}
@@ -422,9 +435,8 @@ const GerenciarAlunos = () => {
                 onAlunoClick={handlePresencaAlunoClick}
               />
 
-              {/* Conteúdo do widget */}
               <WidgetAlunosPlano
-                alunosAtivos={alunosAtivos}
+                alunosAtivos={alunosCompletos}
                 imgErro={imgErro}
                 setImgErro={setImgErro}
               />
@@ -535,21 +547,6 @@ const GerenciarAlunos = () => {
 
               <Toaster position="top-right" reverseOrder={false} />
               <Modal
-                visivel={modalDeletarVisivel}
-                fecharModal={() => setModalDeletarVisivel(false)}
-                titulo="Tem certeza que deseja excluir esse treino?"
-                descricao="Você não poderá disponibilizá-lo futuramente"
-                onConfirm={() => {
-                  setModalConfirmarCancelarVisivel(false);
-                  setShowCreateModal(false);
-                }}
-                icone={lixeira}
-                textoBotaoConfirmar="Manter Treino"
-                textoBotaoCancelar="Deletar mesmo assim"
-                aria-label="Modal de Exclusão de Treino"
-              />
-
-              <Modal
                 visivel={modalConfirmarCancelarVisivel}
                 fecharModal={() => setModalConfirmarCancelarVisivel(false)}
                 titulo="Tem certeza que deseja cancelar?"
@@ -566,7 +563,18 @@ const GerenciarAlunos = () => {
             </div >
           </div >
         </main >
-      </div >
+        {showAgendarAulaModal && alunoParaAgendar && (
+          <ModalAgendarAula
+            fecharModal={() => {
+              setShowAgendarAulaModal(false)
+              sessionStorage.setItem("RASCUNHO_RESPONDIDO", "false");
+              }
+            }
+            ariaLabel="Modal para agendar aula com o aluno"
+            aluno={alunoParaAgendar}
+          />
+        )}
+      </div>
     </div >
   );
 };

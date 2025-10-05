@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../Utils/Button';
 import { caringuApi } from '../../provider/caringuApi';
+import loading from "../../assets/gifs/loading.gif";
 
 const FaleConosco = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors, isDirty }, reset } = useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
-
     const [telefone, setTelefone] = useState('')
 
     const handleTelefoneChange = (e) => {
@@ -32,12 +32,13 @@ const FaleConosco = () => {
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         setResponseMessage('');
-        console.log(data);
 
         try {
             const response = await caringuApi.post('/fale-conosco', data);
             if (response.status === 200) {
                 setResponseMessage('Mensagem enviada com sucesso!');
+                reset();
+                setTelefone('');
             } else {
                 setResponseMessage('Erro ao enviar mensagem. Tente novamente.');
             }
@@ -48,6 +49,14 @@ const FaleConosco = () => {
             setIsSubmitting(false);
         }
     };
+
+    // Volta o botão para estado inicial após 4 segundos do sucesso
+    useEffect(() => {
+        if (responseMessage === 'Mensagem enviada com sucesso!') {
+            const timer = setTimeout(() => setResponseMessage(''), 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [responseMessage]);
 
     return (
         <section id="fale" className="h-180 w-full bg-[var(--cor-secundaria)] flex flex-col items-center justify-center">
@@ -116,9 +125,26 @@ const FaleConosco = () => {
                     </div>
                     <div className="flex items-center justify-center gap-4 max-[750px]:w-[300px] max-[750px]:h-[20px] max-[950px]:text-[16px] max-[500px]:w-[250px] max-[480px]:h-[15px]">
                         <Button
-                            texto={isSubmitting ? 'Enviando...' : responseMessage ? 'Enviado' : 'Enviar'}
-                            cor="var(--azul-claro)"
-                            corTexto="var(--cor-secundaria)"
+                            texto={
+                                isSubmitting ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        Enviando
+                                        <img src={loading} alt="Carregando" className="w-7 h-7 inline-block" />
+                                    </span>
+                                ) : responseMessage === 'Mensagem enviada com sucesso!' ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Mensagem enviada!
+                                    </span>
+                                ) : 'Enviar'
+                            }
+                            cor={responseMessage === 'Mensagem enviada com sucesso!' 
+                                ? "linear-gradient(90deg, var(--azul-claro), #5dade2)"
+                                : "var(--azul-claro)"
+                            }
+                            corTexto="white"
                             width="400px"
                             height="40px"
                             type="submit"

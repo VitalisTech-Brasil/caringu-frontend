@@ -40,7 +40,7 @@ const Agenda = () => {
 
     const exibirTreinos = async () => {
         try {
-            const response = await caringuApi.get(`/treinos-finalizados/personal/${pessoaId}`);
+            const response = await caringuApi.get(`/aulas/personal-aulas/${pessoaId}`);
             setTreinosFinalizados(response.data);
         } catch (error) {
             console.error("Erro ao exibir treinos:", error);
@@ -57,24 +57,27 @@ const Agenda = () => {
         return data.toLocaleDateString('pt-BR');
     }
 
-    const compromissos = treinosFinalizados.map(item => ({
-        id: item.id,
-        horario: item.dataHorarioFim
-            ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
-            : `${formatarHora(item.dataHorarioInicio)}`,
-        data: formatarData(item.dataHorarioInicio),
-        aluno: {
-            nome: item.nomeAluno,
-            foto: item.urlFotoPerfil,
-        },
-        finalizado: item.finalizado,
+    const compromissos = treinosFinalizados.map(item => {
+        const status = item.status?.toUpperCase().trim();
+        return {
+            id: item.id,
+            horario: item.status === "REALIZADO"
+                ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
+                : `${formatarHora(item.dataHorarioInicio)}`,
+            data: formatarData(item.dataHorarioInicio),
+            aluno: {
+                nome: item.nomeAluno,
+                foto: item.urlFotoPerfil,
+            },
+            finalizado: item.finalizado,
 
-        dataHorarioFim: item.dataHorarioFim,
-        dataHorarioInicio: item.dataHorarioInicio,
-        nomeAluno: item.nomeAluno,
-        urlFotoPerfil: item.urlFotoPerfil,
-        idAluno: item.idAluno
-    }));
+            dataHorarioFim: item.dataHorarioFim,
+            dataHorarioInicio: item.dataHorarioInicio,
+            nomeAluno: item.nomeAluno,
+            urlFotoPerfil: item.urlFotoPerfil,
+            idAluno: item.idAluno
+        }
+    });
 
     useEffect(() => {
         document.title = "Agenda | Caringu";
@@ -88,7 +91,7 @@ const Agenda = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral isOpen={isSidebarOpen} />
             <div className="flex-1 overflow-y-auto">
                 <Header toggleSidebar={toggleSidebar} />

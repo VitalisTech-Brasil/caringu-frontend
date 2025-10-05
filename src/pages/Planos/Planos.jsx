@@ -16,23 +16,23 @@ import toast from 'react-hot-toast';
 import CustomToast from '../../components/Utils/CustomToast';
 import { Toaster } from 'react-hot-toast';
 import ModalPlano from "../../components/Utils/ModalPlano";
+import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 
 const Planos = () => {
-
-
-
-
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [modalCancelarPlanoVisivel, setModalCancelarPlanoVisivel] = useState(false);
     const [planos, setPlanos] = useState([])
     const [planoIdParaDeletar, setPlanoIdParaDeletar] = useState(null);
     const [planoEditado, setPlanoEditado] = useState(null);
     const [alunosAtivos, setAlunosAtivos] = useState([]);
-    const [errosImagem, setErrosImagem] = useState({});
+    const [imgErro, setImgErro] = useState(false);
+    const [openMenuId, setOpenMenuId] = useState(null);
+
 
     const { fontSize, width } = useResponsiveStyles();
     const navigate = useNavigate();
@@ -72,8 +72,6 @@ const Planos = () => {
                 return nivel;
         }
     }
-
-
 
     useEffect(() => {
         document.title = "Planos | Caringu";
@@ -184,11 +182,8 @@ const Planos = () => {
     }
 
     useEffect(() => {
-        let tokenExistente = sessionStorage.getItem("authToken");
-
-        if (!tokenExistente) {
-            setShowModal(true);
-        }
+        // Com cookies HttpOnly, a autenticação é verificada automaticamente pelo backend
+        // Se houver erro 401, o interceptor da API irá disparar o evento de sessão expirada
     }, [])
 
     const closeModal = () => {
@@ -217,15 +212,22 @@ const Planos = () => {
 
 
     // Função para abrir o modal de criação
-   const handleOpenModal = () => {
-        setPlanoEditado(null); 
+    const handleOpenModal = () => {
+        setPlanoEditado(null);
         setShowCreateModal(true);
     };
 
+    // Função para abrir o modal de cancelamento
+    const openCancelarPlanoModal = () => {
+        setModalCancelarPlanoVisivel(true);
+    };
+
+
+    // A autenticação é verificada no nível das rotas
 
     return (
         <>
-            <div className="flex min-h-screen bg-[#fdfbf7]">
+            <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
                 <MenuLateral isOpen={isSidebarOpen} />
                 <div className="flex-1 overflow-y-auto">
                     <Header toggleSidebar={toggleSidebar} />
@@ -297,23 +299,29 @@ const Planos = () => {
                     <div className="w-full  mt-3 sm:pl-10 pl-[1rem] ">
                         <span className="font-medium  text-lg sm:text-[24px] xl:text-[32px] text-[var(--cor-primaria)]">Alunos com Planos Ativos</span>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-                        {alunosAtivos.length === 0 ? (
-                            <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
-                                Nenhum aluno com plano ativo no momento.
-                            </div>
-                        ) : (
-                            alunosAtivos.map((aluno, idx) => (
-                                <CardAlunoAtivos
-                                    idAlunos={aluno.idAluno}
-                                    key={idx}
-                                    urlImagem={aluno.urlFotoPerfil}
-                                    nome={aluno.nomeAluno}
-                                    nomePlano={aluno.nomePlano}
-                                    niverExperiencia={formatarNivelExperiencia(aluno.nivelExperiencia)}
-                                />
-                            ))
-                        )}
+                    <div className="sm:pl-10 pl-[1rem] grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4 w-[91%] h-130 overflow-y-auto pb-4">                        {alunosAtivos.length === 0 ? (
+                        <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                            Nenhum aluno com plano ativo no momento.
+                        </div>
+                    ) : (
+                        alunosAtivos.map((aluno, idx) => (
+                            <CardAluno
+                                key={aluno.idAluno}
+                                aluno={aluno}
+                                onCardClick={(idAluno) => navigate(`/perfil-aluno/${idAluno}`)}
+                                imgErro={imgErro}
+                                setImgErro={setImgErro}
+                                totalCards={alunosAtivos.length}
+                                origemUsoOption={"Planos"}
+                                idButton="btn-cancelar-plano"
+                                textoButton="Cancelar Plano"
+                                corButton="#B41F1F"
+                                ariaLabelButton="Cancelar Plano"
+                                classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
+                                onClickButton={openCancelarPlanoModal}
+                            />
+                        ))
+                    )}
                     </div>
 
                     {/* Modal para criar */}
@@ -360,6 +368,25 @@ const Planos = () => {
                         textoBotaoCancelar="Deletar mesmo assim"
                         ariaLabel="Modal de Exclusão de Plano"
                     />
+
+                    <Modal
+                        visivel={modalCancelarPlanoVisivel}
+                        fecharModal={() => setModalCancelarPlanoVisivel(false)}
+                        titulo="Tem certeza que deseja cancelar esse plano?"
+                        descricao={
+                            <>
+                                Essa ação não poderá ser desfeita.<br />
+                                Negocie um possível reembolso antes de cancelar.
+                                Converse previamente com o aluno sobre o cancelamento.
+                            </>
+                        }
+                        icone={iconCancelar}
+                        textoBotaoConfirmar="Manter Plano"
+                        textoBotaoCancelar="Sim, desejo cancelar"
+                        ariaLabel="Modal de Cancelamento de Plano"
+                        heightModalWeb="h-132"
+                    />
+
 
                     {showModal && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black z-50" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}>

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const caringuApi = axios.create({
-  baseURL: import.meta.env.VITE_CARINGU_URL_BACKEND,
+export const pythonApi = axios.create({
+  baseURL: import.meta.env.VITE_CREF_URL_BACKEND,
   headers: {
     "Content-Type": "application/json"
   },
@@ -9,7 +9,7 @@ export const caringuApi = axios.create({
 });
 
 // request = requisição
-caringuApi.interceptors.request.use(
+pythonApi.interceptors.request.use(
   (config) => {
     // Com cookies HttpOnly, o token é enviado automaticamente
     // Não precisamos mais adicionar o Authorization header manualmente
@@ -19,7 +19,7 @@ caringuApi.interceptors.request.use(
 );
 
 // response = resposta
-caringuApi.interceptors.response.use(
+pythonApi.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {

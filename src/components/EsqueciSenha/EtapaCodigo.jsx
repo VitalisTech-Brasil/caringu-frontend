@@ -13,6 +13,8 @@ const EtapaCodigo = ({ onAvancar }) => {
   const { email } = useEmail(); // Pega o email do Context
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [codigo, setCodigo] = useState('');
+  const [contadorReset, setContadorReset] = useState(60);
+  const [permiteReenviar, setPermiteReenviar] = useState(false);
 
   // Função para verificar o código
   const handleVerificarCodigo = async (codigo) => {
@@ -27,7 +29,7 @@ const EtapaCodigo = ({ onAvancar }) => {
         toast.custom((t) => (
           <CustomToast t={t} type="success" message="Código verificado com sucesso!" />
         ));
-      } else { 
+      } else {
         toast.custom((t) => (
           <CustomToast t={t} type="error" message="Código incorreto." />
         ));
@@ -40,9 +42,29 @@ const EtapaCodigo = ({ onAvancar }) => {
     }
   };
 
+  const handleReenviarCodigo = async () => {
+    if (!permiteReenviar) return;
+
+    setPermiteReenviar(false);
+    setContadorReset(60);
+
+    try {
+      const response = await caringuApi.post('/esqueci-senha', { email });
+      if (response.status === 200) {
+        toast.custom((t) => (
+          <CustomToast t={t} type="success" message="Novo código enviado!" />
+        ));
+      }
+    } catch (error) {
+      console.error('Erro ao reenviar código:', error);
+      toast.custom((t) => (
+        <CustomToast t={t} type="error" message="Erro ao enviar o código. Tente novamente." />
+      ));
+    }
+  };
+
   const handleComplete = (codigo) => {
     setCodigo(codigo);  // Atualiza o estado do código
-    handleVerificarCodigo(codigo);  // Chama a função de verificação
   };
 
   useEffect(() => {
@@ -53,6 +75,20 @@ const EtapaCodigo = ({ onAvancar }) => {
       window.location.href = '/esqueci-senha';
     }
   }, [email]);
+
+  useEffect(() => {
+    let interval = null;
+
+    if (!permiteReenviar && contadorReset > 0) {
+      interval = setInterval(() => {
+        setContadorReset(prev => prev - 1);
+      }, 1000);
+    } else if (contadorReset === 0) {
+      setPermiteReenviar(true);
+    }
+
+    return () => clearInterval(interval);
+  }, [contadorReset, permiteReenviar]);
 
   return (
     <section className="flex justify-center items-center min-h-screen w-full xl:w-1/2 px-4 py-8">
@@ -77,7 +113,10 @@ const EtapaCodigo = ({ onAvancar }) => {
 
         {/* Formulário */}
         <form
-          onSubmit={handleSubmit(handleVerificarCodigo)}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleVerificarCodigo(codigo);
+          }}
           className="w-full max-w-xs md:max-w-md"
         >
           <InputVerificacao
@@ -96,6 +135,18 @@ const EtapaCodigo = ({ onAvancar }) => {
               height="40px"
               fontSize="14px"
             />
+
+            <div className='text-sm'>
+              Não recebeu o código?
+              <button
+                type="button"
+                onClick={handleReenviarCodigo}
+                disabled={!permiteReenviar}
+                className={`ml-1 underline ${permiteReenviar ? 'cursor-pointer font-bold' : 'cursor-not-allowed opacity-50'}`}
+              >
+                {permiteReenviar ? 'Clique aqui para reenviar' : `Reenviar código em ${contadorReset}s`}
+              </button>
+            </div>
 
             <a
               href="/login"

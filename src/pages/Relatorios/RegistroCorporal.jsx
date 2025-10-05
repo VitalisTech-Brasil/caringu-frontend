@@ -52,7 +52,7 @@ const RelatorioTreinos = () => {
     ];
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7] ">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header />

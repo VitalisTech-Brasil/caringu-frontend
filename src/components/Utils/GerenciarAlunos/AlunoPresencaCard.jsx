@@ -14,7 +14,7 @@ const AlunoPresencaCard = ({
     return (
         <div
             key={aluno.idAluno}
-            className="relative flex sm:flex-row flex-col items-center justify-between bg-[var(--cor-secundaria)] rounded-md p-2 sm:p-4 gap-4 w-full border-2 border-[#E6E6E2] hover:bg-gray-50 cursor-pointer transition duration-200"
+            className="relative flex sm:flex-row flex-col items-center justify-between bg-[var(--cor-secundaria)] rounded-md p-2 sm:p-4 gap-4 w-full border-2 border-[#E6E6E2] hover:bg-gray-50 transition duration-200"
         >
             {aluno.urlFotoPerfil && !imgErro ? (
                 <img

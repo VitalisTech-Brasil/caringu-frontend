@@ -10,7 +10,8 @@ function Modal({
          icone,
          textoBotaoConfirmar,
          textoBotaoCancelar,
-         ariaLabel
+         ariaLabel,
+         heightModalWeb = "md:h-110 2xl:h-132"
 }) {
   if (!visivel) return null;
 
@@ -27,7 +28,7 @@ function Modal({
               aria-label="Fundo Escurecido"
         ></div>
 
-        <div aria-label="Modal com conteúdo dentro" className="relative p-4  w-2xl 2xl:w-4xl h-100 md:h-110 2xl:h-132">
+        <div aria-label="Modal com conteúdo dentro" className={`relative p-4  w-2xl 2xl:w-4xl h-100 ${heightModalWeb}`}>
           <div aria-label="Fechar Modal" className="relative bg-[var(--cor-secundaria)] rounded-[6px] h-full flex flex-col justify-center items-center">
             {/* Botão para fechar o modal */}
             <button
@@ -67,13 +68,16 @@ function Modal({
               <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                 <Button
                   texto={textoBotaoCancelar}
-                  corTexto="var(--cor-secundaria)"
-                  cor="#B41F1F"
+                  corTexto="#B41F1F"
+                  cor="var(--cor-secundaria)"
                   height="2.75rem"
                   width="13.25rem"
                   fontWeight="500"
                   onClick={onConfirm}
                   ariaLabel={"Botão de Cancelar"}
+                  borderStyle={"solid"}
+                  borderWidth={"2px"}
+                  borderColor={"#B41F1F"}
                 >
                 </Button>
 
