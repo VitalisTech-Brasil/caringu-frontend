@@ -23,6 +23,7 @@ import CriarTreino from "./pages/GerenciarTreinos/CriarTreino.jsx";
 import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
 import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios.jsx';
 import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
+import Feedback from './pages/GerenciarAlunos/Feedback.jsx';
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
@@ -152,6 +153,11 @@ const AppRoutes = () => {
         <Route path="/treinosAula" element={
           <ProtectedRoute>
             <TreinoAulas />
+          </ProtectedRoute>
+        } />
+        <Route path="/feedback/:idAluno" element={
+          <ProtectedRoute>
+            <Feedback />
           </ProtectedRoute>
         } />
         

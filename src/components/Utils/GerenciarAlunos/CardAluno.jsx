@@ -24,7 +24,7 @@ const CardAluno = ({
     corButton = "var(--laranja)",
     ariaLabelButton = "Ver feedbacks",
     classNameExtraButton = "sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1",
-    onClickButton = null
+    onClickButton,
 
 }) => {
 
@@ -214,7 +214,7 @@ const CardAluno = ({
                         ariaLabel={ariaLabelButton}
                         fontWeight={"600"}
                         classNameExtra={classNameExtraButton}
-                        onClick={onClickButton}
+                        onClick={() => onClickButton(aluno.idAluno)}
                     />
                     <Button
                         id={"btn-visualizar-aluno"}
