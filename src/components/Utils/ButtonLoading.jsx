@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Botton = ({
+const ButtonLoading = ({
   id,
   texto,
   onClick,
@@ -61,4 +61,4 @@ const Botton = ({
 };
 
 
-export default Botton;
+export default ButtonLoading;

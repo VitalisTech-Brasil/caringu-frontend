@@ -8,7 +8,7 @@ const AlunoCardPlanoFim = ({ aluno,  imgErro, setImgErro }) => {
     return (
         <div
             key={aluno.idAluno}
-            className="relative flex items-center justify-between bg-[var(--cor-secundaria)] border-2 border-[#E6E6E2] p-4 gap-4 rounded-md hover:bg-gray-50 cursor-pointer transition duration-200"
+            className="relative flex items-center justify-between bg-[var(--cor-secundaria)] border-2 border-[#E6E6E2] p-4 gap-4 rounded-md hover:bg-gray-50 transition duration-200"
         >
             {aluno.urlFotoPerfil && !imgErro ? (
                 <img

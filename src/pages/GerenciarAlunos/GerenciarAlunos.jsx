@@ -101,11 +101,6 @@ const GerenciarAlunos = () => {
   //   mode: "onChange"
   // });
 
-
-  useEffect(() => {
-    console.log("alunosCompletos atualizado:", alunosCompletos);
-  }, [alunosCompletos]);
-
   useEffect(() => {
     const KpiAlunoSelecionada = sessionStorage.getItem("KPI_ALUNO_SELECIONADA");
 
@@ -570,7 +565,11 @@ const GerenciarAlunos = () => {
         </main >
         {showAgendarAulaModal && alunoParaAgendar && (
           <ModalAgendarAula
-            fecharModal={() => setShowAgendarAulaModal(false)}
+            fecharModal={() => {
+              setShowAgendarAulaModal(false)
+              sessionStorage.setItem("RASCUNHO_RESPONDIDO", "false");
+              }
+            }
             ariaLabel="Modal para agendar aula com o aluno"
             aluno={alunoParaAgendar}
           />

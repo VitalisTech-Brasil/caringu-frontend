@@ -19,7 +19,6 @@ import ModalPlano from "../../components/Utils/ModalPlano";
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 
 const Planos = () => {
-
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
@@ -183,11 +182,8 @@ const Planos = () => {
     }
 
     useEffect(() => {
-        let tokenExistente = sessionStorage.getItem("authToken");
-
-        if (!tokenExistente) {
-            setShowModal(true);
-        }
+        // Com cookies HttpOnly, a autenticação é verificada automaticamente pelo backend
+        // Se houver erro 401, o interceptor da API irá disparar o evento de sessão expirada
     }, [])
 
     const closeModal = () => {
@@ -226,6 +222,8 @@ const Planos = () => {
         setModalCancelarPlanoVisivel(true);
     };
 
+
+    // A autenticação é verificada no nível das rotas
 
     return (
         <>
