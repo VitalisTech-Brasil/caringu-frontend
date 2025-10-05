@@ -27,6 +27,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
+import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 
 const AppRoutes = () => {
 
@@ -61,7 +62,7 @@ const AppRoutes = () => {
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
         <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
         <Route path="/perfil-personal/:id" element={<PerfilPersonal />} />
-        
+
         {/* Rotas protegidas */}
         <Route path="/home" element={
           <ProtectedRoute>
@@ -146,6 +147,11 @@ const AppRoutes = () => {
         <Route path="/minhasAulas" element={
           <ProtectedRoute>
             <MinhasAulas />
+          </ProtectedRoute>
+        } />
+        <Route path="/treinosAula" element={
+          <ProtectedRoute>
+            <TreinoAulas />
           </ProtectedRoute>
         } />
         
