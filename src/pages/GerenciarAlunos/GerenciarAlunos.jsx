@@ -157,7 +157,7 @@ const GerenciarAlunos = () => {
   };
 
   const handleCardFeedbacksClick = (alunoId) => {
-    navigate(`/feedbacks-aluno/${alunoId}`);
+    navigate(`/feedback/${alunoId}`);
   }
 
   const handleMenuAction = (action, aluno) => {
