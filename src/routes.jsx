@@ -23,6 +23,7 @@ import CriarTreino from "./pages/GerenciarTreinos/CriarTreino.jsx";
 import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
 import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios.jsx';
 import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
+import Feedback from './pages/GerenciarAlunos/Feedback.jsx';
 import "./styles/global.css";
 
 const AppRoutes = () => {
@@ -72,6 +73,7 @@ const AppRoutes = () => {
         <Route path="/perfil-personal/:id" element={<PerfilPersonal />} />
         <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
         <Route path="/agenda" element={<Agenda />} />
+        <Route path="/feedback/:idAluno" element={<Feedback />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
