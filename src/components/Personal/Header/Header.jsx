@@ -346,7 +346,7 @@ const Header = () => {
 
 
   return (
-    <Navbar fluid className="navbar sticky h-[4.8rem] z-10 bg-white border-b-[1px] dark:border-gray-300 pt-4.5">
+    <Navbar fluid className="navbar sticky h-[4.8rem] z-10 bg-white border-b-[1px] dark:border-gray-300 pt-4.5 flex flex-row items-center justify-center">
       <NavbarBrand className="flex items-center gap-2">
         {currentPage.icon}
         <span className="self-center whitespace-nowrap text-base sm:text-xl font-semibold text-[#1D2D44]">

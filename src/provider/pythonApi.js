@@ -5,16 +5,14 @@ export const pythonApi = axios.create({
   headers: {
     "Content-Type": "application/json"
   },
+  withCredentials: true, // Necessário para enviar cookies HttpOnly
 });
 
 // request = requisição
 pythonApi.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem("authToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
+    // Com cookies HttpOnly, o token é enviado automaticamente
+    // Não precisamos mais adicionar o Authorization header manualmente
     return config;
   },
   (error) => Promise.reject(error)

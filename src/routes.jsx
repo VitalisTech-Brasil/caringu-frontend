@@ -24,7 +24,11 @@ import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
 import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios.jsx';
 import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
 import Feedback from './pages/GerenciarAlunos/Feedback.jsx';
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
+import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
+import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 
 const AppRoutes = () => {
 
@@ -52,28 +56,112 @@ const AppRoutes = () => {
         mensagem={modalMensagem} */
       />
       <Routes>
+        {/* Rotas públicas */}
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/gerenciar-alunos" element={<GerenciarAlunos />} />
-        <Route path="/gerenciar-treinos" element={<GerenciarTreinos />} />
-        <Route path="/gerenciar-exercicios" element={<GerenciarExercicios />} />
-        <Route path="/criar-treino" element={<CriarTreino />} />
-        <Route path="/editar-treino/:id" element={<EditarTreino />} />
-        <Route path="/relatorio-treino/:id" element={<RelatorioTreino />} />
-        <Route path="/dashboard/:idAluno/:idTreino" element={<Dashboard />} />
-        <Route path="/visualizar-pdf/:idAluno/:idTreino" element={<VisualizarPdf />} />
-        <Route path="/relatorios/registro-corporal/:idAluno" element={<RegistroCorporal />} />
-        <Route path="/perfil-aluno/:idAluno" element={<PerfilAluno />} />
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/planos" element={<Planos />} />
         <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
         <Route path="/perfil-personal/:id" element={<PerfilPersonal />} />
-        <Route path="/solicitacoes-pendentes" element={<SolicitacoesPendentes />} />
-        <Route path="/agenda" element={<Agenda />} />
-        <Route path="/feedback/:idAluno" element={<Feedback />} />
+
+        {/* Rotas protegidas */}
+        <Route path="/home" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
+        <Route path="/gerenciar-alunos" element={
+          <ProtectedRoute>
+            <GerenciarAlunos />
+          </ProtectedRoute>
+        } />
+        <Route path="/gerenciar-treinos" element={
+          <ProtectedRoute>
+            <GerenciarTreinos />
+          </ProtectedRoute>
+        } />
+        <Route path="/gerenciar-exercicios" element={
+          <ProtectedRoute>
+            <GerenciarExercicios />
+          </ProtectedRoute>
+        } />
+        <Route path="/criar-treino" element={
+          <ProtectedRoute>
+            <CriarTreino />
+          </ProtectedRoute>
+        } />
+        <Route path="/editar-treino/:id" element={
+          <ProtectedRoute>
+            <EditarTreino />
+          </ProtectedRoute>
+        } />
+        <Route path="/relatorio-treino/:id" element={
+          <ProtectedRoute>
+            <RelatorioTreino />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard/:idAluno/:idTreino" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/visualizar-pdf/:idAluno/:idTreino" element={
+          <ProtectedRoute>
+            <VisualizarPdf />
+          </ProtectedRoute>
+        } />
+        <Route path="/relatorios/registro-corporal/:idAluno" element={
+          <ProtectedRoute>
+            <RegistroCorporal />
+          </ProtectedRoute>
+        } />
+        <Route path="/perfil-aluno/:idAluno" element={
+          <ProtectedRoute>
+            <PerfilAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/perfil" element={
+          <ProtectedRoute>
+            <Perfil />
+          </ProtectedRoute>
+        } />
+        <Route path="/planos" element={
+          <ProtectedRoute>
+            <Planos />
+          </ProtectedRoute>
+        } />
+        <Route path="/solicitacoes-pendentes" element={
+          <ProtectedRoute>
+            <SolicitacoesPendentes />
+          </ProtectedRoute>
+        } />
+        <Route path="/agenda" element={
+          <ProtectedRoute>
+            <Agenda />
+          </ProtectedRoute>
+        } />
+        <Route path="/minhaEvolucao" element={
+          <ProtectedRoute>
+            <MinhaEvolucao />
+          </ProtectedRoute>
+        } />
+        <Route path="/minhasAulas" element={
+          <ProtectedRoute>
+            <MinhasAulas />
+          </ProtectedRoute>
+        } />
+        <Route path="/treinosAula" element={
+          <ProtectedRoute>
+            <TreinoAulas />
+          </ProtectedRoute>
+        } />
+        <Route path="/feedback/:idAluno" element={
+          <ProtectedRoute>
+            <Feedback />
+          </ProtectedRoute>
+        } />
+        
+        {/* Rota de erro */}
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>

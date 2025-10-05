@@ -12,7 +12,6 @@ import CustomToast from "../components/Utils/CustomToast";
 
 
 const SolicitacoesPendentes = () => {
-
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [solicitacoesPendentes, setSolicitacoesPendentes] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -26,7 +25,7 @@ const SolicitacoesPendentes = () => {
         setIsSidebarOpen(!isSidebarOpen);
     }
     const pessoaId = sessionStorage.getItem("pessoaId");
-    const token = sessionStorage.getItem("authToken");
+    // authToken agora é enviado via cookie HttpOnly
 
     const listarSolicitacoesPendentes = async () => {
         try {
@@ -61,14 +60,6 @@ const SolicitacoesPendentes = () => {
         listarSolicitacoesPendentes();
     }, []);
 
-    useEffect(() => {
-        let tokenExistente = sessionStorage.getItem("authToken");
-
-        if (!tokenExistente) {
-            setShowModal(true);
-        }
-    }, [])
-
     const closeModal = () => {
         setShowModal(false);
         navigate("/login");
@@ -78,6 +69,8 @@ const SolicitacoesPendentes = () => {
         setSolicitacaoParaCancelar(solicitacaoId);
         setModalCancelarVisivel(true);
     };
+
+    // A autenticação é verificada no nível das rotas
 
     return (
         <>

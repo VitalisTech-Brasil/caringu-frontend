@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaBars, FaChevronDown, FaChevronUp, FaUserCircle, FaTimes } from "react-icons/fa";
 import logo from "../../assets/logos/caringu-logotipo-light.svg";
+import { logout } from "../../utils/authUtils";
 
 const MenuLateral = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,9 +19,8 @@ const MenuLateral = () => {
 
 
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/");
+  const handleLogout = async () => {
+    await logout();
   };
 
   const scrollToSection = (sectionId) => {

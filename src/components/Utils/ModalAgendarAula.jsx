@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-import EtapaAgendamento from "../../components/Utils/GerenciarAlunos/EtapaAgendamentoAula"
+import EtapaAgendamentoAula from "../../components/Utils/GerenciarAlunos/EtapaAgendamentoAula"
 import EtapaAtribuicao from "../../components/Utils/GerenciarAlunos/EtapaAtribuicaoTreinos"
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 import { addDays, isAfter } from "date-fns";
-import { AgendamentoProvider } from "./GerenciarAlunos/Context/AgendamentoContext";
+import { AgendamentoProvider, useAgendamento } from "./GerenciarAlunos/Context/AgendamentoContext";
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../Utils/CustomToast';
+import { caringuApi } from "../../provider/caringuApi";
 
 const ModalAgendarAula = ({
     fecharModal,
-    ariaLabel
+    ariaLabel,
+    aluno
 }) => {
     const getToday = () => {
         const now = new Date();
@@ -28,82 +33,96 @@ const ModalAgendarAula = ({
     const todosHorariosPreenchidos = selectedDates.length > 0 &&
         selectedDates.every(d => horarios[d.toISOString()]);
     const [diasSelecionados, setDiasSelecionados] = useState([]);
-
-
-
-    //mock (apagar depois)
-    const aluno = {
-        altura: 1.75,
-        celular: "11994455667",
-        dataVencimentoPlano: "2025-06-15",
-        deficiencia: false,
-        deficienciaDescricao: null,
-        desconforto: false,
-        desconfortoDescricao: null,
-        doencaMetabolica: false,
-        doencaMetabolicaDescricao: null,
-        email: "carla.mendes@gmail.com",
-        experiencia: true,
-        experienciaDescricao: "Musculação recreativa.",
-        frequenciaTreino: "3",
-        fumante: false,
-        horariosFimSemana: [],
-        horariosFimTotal: [
-            "2025-06-02 07:15",
-            "2025-09-11 09:00",
-            "2025-09-23 09:00"
-        ],
-        horariosInicioSemana: [],
-        horariosInicioTotal: [
-            "2025-06-02 06:30",
-            "2025-09-11 08:00",
-            "2025-09-23 08:00"
-        ],
-        idAluno: 6,
-        idAlunoTreino: null,
-        idAnamnese: 1,
-        lesao: false,
-        lesaoDescricao: null,
-        nivelAtividade: "MODERADAMENTE_ATIVO",
-        nivelExperiencia: "INTERMEDIARIO",
-        nomeAluno: "Carla Mendes",
-        nomePlano: "Mensal Fit",
-        objetivoTreino: "Perder peso e ganhar resistência.",
-        periodoPlano: "MENSAL",
-        peso: 75.5,
-        proteses: false,
-        protesesDescricao: null,
-        totalAulasContratadas: 8,
-        treinosSemana: 0,
-        treinosTotal: 3,
-        urlFotoPerfil: "https://storagevitalis.blob.core.windows.net/fotos-perfil/carla.png",
-        quantidade_aulas: 8
-    };
+    const [aulasDisponiveis, setAulasDisponiveis] = useState({})
+    const [manualDates, setManualDates] = useState([]);
+    const [rascunhosPersistidos, setRascunhosPersistidos] = useState([]);
 
     const currentAlunos = [aluno];
 
-
     const handleDateClick = (clickedDate) => {
         const dateStr = clickedDate.toDateString();
-        const isSelected = selectedDates.some(d => d.toDateString() === dateStr);
 
-        if (!isSelected && selectedDates.length >= aluno.quantidade_aulas) {
-            // trocar: mostrar TOAST
-            alert(`Você só pode selecionar até ${aluno.quantidade_aulas} datas.`);
+        // valores atuais (síncronos)
+        const existeNoManual = manualDates.some(d => d.toDateString() === dateStr);
+        const isSelected = selectedDates.some(d => d.toDateString() === dateStr);
+        const limite = aulasDisponiveis?.aulasRestantes ?? Infinity;
+
+        // se já é manual → remove imediatamente
+        if (existeNoManual) {
+            setManualDates(prev => prev.filter(d => d.toDateString() !== dateStr));
             return;
         }
 
-        if (isSelected) {
-
-            setSelectedDates(selectedDates.filter(d => d.toDateString() !== dateStr));
-        } else {
-
-            setSelectedDates([...selectedDates, clickedDate]);
+        // se já está selecionada mas não é manual → avisa (não remove aqui)
+        if (isSelected && !existeNoManual) {
+            toast.custom(t => (
+                <CustomToast
+                    t={t}
+                    type="error"
+                    message="Esta data já está selecionada (rascunho ou gerada automaticamente). Para removê-la, use o botão específico."
+                />
+            ), { id: "already-selected" });
+            return;
         }
+
+        // valida limite com base no "futuro" (selectedDates + 1)
+        const totalFuturo = selectedDates.length + 1;
+        if (totalFuturo > limite) {
+            toast.custom(t => (
+                <CustomToast
+                    t={t}
+                    type="error"
+                    message={`Você só pode selecionar até ${limite} datas.`}
+                />
+            ), { id: "limit-error" });
+            return;
+        }
+
+        // tudo ok -> adiciona ao manual
+        setManualDates(prev => [...prev, clickedDate]);
     };
 
-    const handleRemoveDate = (dateToRemove) => {
-        setSelectedDates(selectedDates.filter(d => d.toDateString() !== dateToRemove.toDateString()));
+    const handleRemoveDate = async (dateObj) => {
+        const dateStr = new Date(dateObj.dataHorarioInicio).toDateString();
+
+        // Se tiver id → é rascunho
+        if (dateObj.id) {
+            try {
+                await caringuApi.delete("/aulas/rascunhos", { data: [dateObj.id] });
+
+                setSelectedDates(prev =>
+                    prev.filter(d => d.id !== dateObj.id) // remove pelo id
+                );
+                setHorarios(prev => {
+                    const copy = { ...prev };
+                    delete copy[dateObj.dataHorarioInicio];
+                    return copy;
+                });
+            } catch (err) {
+                console.error("Erro ao excluir rascunho:", err);
+                toast.custom(t => (
+                    <CustomToast
+                        t={t}
+                        type="error"
+                        message="Erro ao excluir aula em rascunho."
+                    />
+                ));
+            }
+            return;
+        }
+
+        // Caso seja manual (sem id, só Date)
+        if (dateObj instanceof Date) {
+            setManualDates(prev =>
+                prev.filter(d => d.toDateString() !== dateObj.toDateString())
+            );
+            return;
+        }
+
+        // Caso seja automática (sem id, mas veio como string convertida)
+        setSelectedDates(prev =>
+            prev.filter(d => new Date(d.dataHorarioInicio).toDateString() !== dateStr)
+        );
     };
 
     const handleSelectAll = (e) => {
@@ -122,17 +141,6 @@ const ModalAgendarAula = ({
             setCheckedDates([...checkedDates, iso]);
         }
     };
-
-    useEffect(() => {
-        if (diasSelecionados.length > 0) {
-            const novasDatas = getNextDatesFromWeekdays(diasSelecionados, aluno.quantidade_aulas, getToday());
-            setSelectedDates(novasDatas);
-            setCheckedDates([]);
-        } else {
-            setSelectedDates([]);
-            setCheckedDates([]);
-        }
-    }, [diasSelecionados]);
 
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -155,6 +163,32 @@ const ModalAgendarAula = ({
             setDiasSelecionados([...diasSelecionados, value]);
         }
     };
+
+    // Buscar disponibilidade + IDs de rascunhos
+    const getBuscarAulasDisponiveis = async () => {
+        try {
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`);
+            const temAulasRascunho = response.data.aulasRascunho >= 1;
+            setAulasDisponiveis(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar aulas disponíveis:", error);
+        }
+    };
+
+    useEffect(() => {
+        getBuscarAulasDisponiveis();
+    }, []);
+
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            sessionStorage.setItem("RASCUNHO_RESPONDIDO", "false");
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, []);
 
     function getNextDatesFromWeekdays(weekdays, totalAulas, startDate = new Date()) {
         const diasMap = {
@@ -192,15 +226,35 @@ const ModalAgendarAula = ({
     }
 
     useEffect(() => {
-        if (diasSelecionados.length > 0) {
-            const novasDatas = getNextDatesFromWeekdays(diasSelecionados, aluno.quantidade_aulas, getToday());
-            setSelectedDates(novasDatas);
+        if (diasSelecionados.length > 0 && aulasDisponiveis?.aulasRestantes) {
+            const novasDatas = getNextDatesFromWeekdays(
+                diasSelecionados,
+                aulasDisponiveis.aulasRestantes,
+                getToday()
+            );
+
+            setSelectedDates(prev => {
+                const todas = [...prev, ...novasDatas];
+
+                // remove duplicatas
+                const unicas = todas.filter(
+                    (d, idx, arr) =>
+                        idx === arr.findIndex(o => o.toDateString() === d.toDateString())
+                );
+
+                // 🔑 limita ao máximo permitido
+                return unicas.slice(0, aulasDisponiveis.aulasRestantes);
+            });
+
             setCheckedDates([]);
         } else {
-            setSelectedDates([]);
+            // Se desmarcar tudo, só mantém os rascunhos que já estavam
+            setSelectedDates(prev =>
+                prev.filter(d => horarios[d.toISOString()])
+            );
             setCheckedDates([]);
         }
-    }, [diasSelecionados]);
+    }, [diasSelecionados, aulasDisponiveis]);
 
     const handleSalvarHorarios = () => {
         if (!horarioInicio || !horarioFim) return;
@@ -256,11 +310,6 @@ const ModalAgendarAula = ({
                                     Agendar Aulas
                                 </h1>
                             </div>
-                            <div className="w-auto md:w-full">
-                                <span className="text-sm md:text-base 2xl:text-2xl font-semibold">
-                                    Aluno(a)
-                                </span>
-                            </div>
                             <div className=" w-[80%] md:w-[65%] h-80 sm:h-40 xl:h-50 2xl:h-35 flex flex-col justify-center md:justify-start">
                                 <CardAluno
                                     key={aluno.idAluno}
@@ -278,8 +327,9 @@ const ModalAgendarAula = ({
                                     heightCardInternoWeb="100%"
                                 />
                             </div>
+                            <Toaster position="top-right" reverseOrder={false} />
                             {etapa === 1 && (
-                                <EtapaAgendamento
+                                <EtapaAgendamentoAula
                                     aluno={aluno}
                                     currentAlunos={currentAlunos}
                                     brasiliaToday={brasiliaToday}
@@ -313,6 +363,10 @@ const ModalAgendarAula = ({
                                     handleSalvarHorarios={handleSalvarHorarios}
                                     diasSemana={diasSemana}
                                     fecharModal={fecharModal}
+                                    manualDates={manualDates}
+                                    setManualDates={setManualDates}
+                                    rascunhosPersistidos={rascunhosPersistidos}
+                                    setRascunhosPersistidos={setRascunhosPersistidos}
                                     onProsseguir={() => setEtapa(2)}
                                 />
                             )}
@@ -333,6 +387,7 @@ const ModalAgendarAula = ({
                                     setShowDropdown={setShowDropdown}
                                     diasSemana={diasSemana}
                                     handleCheckDia={handleCheckDia}
+                                    fecharModal={fecharModal}
                                     onVoltar={() => setEtapa(1)}
                                 />
                             )}
