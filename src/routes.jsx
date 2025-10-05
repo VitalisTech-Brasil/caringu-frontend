@@ -24,7 +24,9 @@ import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
 import GerenciarExercicios from './pages/GerenciarExercicios/GerenciarExercicios.jsx';
 import VisualizarPdf from "./pages/Relatorios/VisualizarPdf.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
+import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 
 const AppRoutes = () => {
 
@@ -134,6 +136,16 @@ const AppRoutes = () => {
         <Route path="/agenda" element={
           <ProtectedRoute>
             <Agenda />
+          </ProtectedRoute>
+        } />
+        <Route path="/minhaEvolucao" element={
+          <ProtectedRoute>
+            <MinhaEvolucao />
+          </ProtectedRoute>
+        } />
+        <Route path="/minhasAulas" element={
+          <ProtectedRoute>
+            <MinhasAulas />
           </ProtectedRoute>
         } />
         
