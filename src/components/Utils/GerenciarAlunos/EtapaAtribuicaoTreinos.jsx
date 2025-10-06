@@ -4,9 +4,14 @@ import Button from "../Button";
 import Input from "../InputPosLogin";
 import { useAgendamento } from "./Context/AgendamentoContext";
 import { format } from "date-fns";
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../../Utils/CustomToast';
 import ptBR from "date-fns/locale/pt-BR";
+import { caringuApi } from "../../../provider/caringuApi";
 
 const EtapaAtribuicao = ({
+    aluno,
     diasSelecionados,
     setDiasSelecionados,
     datasSelecionadas,
@@ -14,8 +19,11 @@ const EtapaAtribuicao = ({
     showDropdown,
     setShowDropdown,
     diasSemana,
+    fecharModal,
     onVoltar
 }) => {
+
+    const [treinosDisponiveis, setTreinosDisponiveis] = useState([])
 
     function useResponsiveFontSize() {
         const [fontSize, setFontSize] = useState("20px");
@@ -73,8 +81,32 @@ const EtapaAtribuicao = ({
     };
 
     const { dadosAgendamento } = useAgendamento();
+    const aulasAgendadas = dadosAgendamento.aulas || [];
     const diasMarcados = (dadosAgendamento.diasSemanaMarcados || []).map(d => d.value);
-    const selectedDates = dadosAgendamento.selectedDates || [];
+    const selectedDates = (dadosAgendamento.aulas || []).map(aula => new Date(aula.dataHorarioInicio));
+
+    function buscarHorarioDaAula(dataISO) {
+        const dataStr = dataISO.slice(0, 10);
+        return aulasAgendadas.find(aula => aula.dataHorarioInicio.slice(0, 10) === dataStr);
+    }
+
+    const buscarTreinosDoPersonal = async () => {
+        let idPersonal = sessionStorage.getItem("pessoaId");
+
+        try {
+            let response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
+            setTreinosDisponiveis(response.data);
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message={`Erro ao buscar treinos do personal`} />
+            ));
+            console.error("Erro ao buscar treinos do personal:", error);
+        }
+    };
+
+    useEffect(() => {
+        buscarTreinosDoPersonal();
+    }, [])
 
     function todasDatasAtribuidas() {
         // Datas atribuídas em treinos personalizados
@@ -162,7 +194,20 @@ const EtapaAtribuicao = ({
     };
 
     const getDiasSemanaDisponiveis = () => {
-        return diasSemana.filter(diaObj => diasMarcados.includes(diaObj.value));
+        const diaSemanaMap = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+
+        // pega os dias únicos que realmente existem em selectedDates
+        const diasUsados = Array.from(
+            new Set(
+                selectedDates.map(date => {
+                    const d = typeof date === "string" ? new Date(date) : date;
+                    return diaSemanaMap[d.getDay()];
+                })
+            )
+        );
+
+        // filtra só os dias que estão na lista padrão (diasSemana)
+        return diasSemana.filter(diaObj => diasUsados.includes(diaObj.value));
     };
 
     const handleCheckData = (data) => {
@@ -180,6 +225,7 @@ const EtapaAtribuicao = ({
             setDiasSelecionados(diasSemana.map(d => d.value));
         }
     };
+
     const handleRemoverTreino = (idx) => {
         setTreinos(prev => {
             const novos = prev.filter((_, i) => i !== idx);
@@ -187,6 +233,139 @@ const EtapaAtribuicao = ({
         });
     };
 
+    function todosCamposPreenchidos() {
+        return treinos.length > 0 && treinos.every(treino =>
+            treino.treinoSelecionado &&
+            treino.tipoSelecao &&
+            (
+                (treino.tipoSelecao === "personalizado" && treino.datasSelecionadas.length > 0) ||
+                (treino.tipoSelecao === "semanal" && treino.diasSelecionados.length > 0)
+            )
+        );
+    }
+
+    const idAluno = aluno.idAluno;
+    const idPlanoContratado = aluno.idPlanoContratado;
+
+    async function montarAulasTreinos() {
+        try {
+            // 1️⃣ Buscar todas as aulas rascunho do backend
+            const response = await caringuApi.get(`/aulas/${idAluno}/rascunhos`);
+            const rascunhos = response.data.aulas;
+
+            const aulasMap = new Map();
+            const diaSemanaMap = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+
+            // 2️⃣ Filtrar apenas as aulas que foram realmente agendadas na etapa 1
+            const aulasFiltradas = rascunhos.filter(rascunho => {
+                return aulasAgendadas.some(agendada => {
+                    const inicioRascunho = new Date(rascunho.dataHorarioInicio).getTime();
+                    const fimRascunho = new Date(rascunho.dataHorarioFim).getTime();
+
+                    const inicioAgendada = new Date(agendada.dataHorarioInicio).getTime();
+                    const fimAgendada = new Date(agendada.dataHorarioFim).getTime();
+
+                    return inicioRascunho === inicioAgendada && fimRascunho === fimAgendada;
+                });
+            });
+
+            function formatISOWithoutZ(date) {
+                const d = new Date(date);
+                const pad = (n) => String(n).padStart(2, "0");
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            }
+
+            // 3️⃣ Agrupar as aulas filtradas por treino
+            treinos.forEach(treino => {
+                const idTreino = treino.treinoSelecionado || null;
+
+                // Filtra as aulas deste treino específico
+                const aulasDoTreino = aulasFiltradas.filter(aula => {
+                    const dataISO = aula.dataHorarioInicio;
+
+                    if (treino.tipoSelecao === "personalizado") {
+                        return treino.datasSelecionadas.some(d =>
+                            new Date(d).getTime() === new Date(dataISO).getTime()
+                        );
+                    }
+
+                    if (treino.tipoSelecao === "semanal") {
+                        return treino.diasSelecionados.some(dia =>
+                            diaSemanaMap[new Date(dataISO).getDay()] === dia
+                        );
+                    }
+
+                    return false;
+                }).map(aula => ({
+                    dataHorarioInicio: formatISOWithoutZ(aula.dataHorarioInicio),
+                    dataHorarioFim: formatISOWithoutZ(aula.dataHorarioFim)
+                }));
+
+                if (aulasDoTreino.length > 0) {
+                    aulasMap.set(idTreino, {
+                        idAluno,
+                        idPlanoContratado,
+                        idTreino: parseInt(idTreino),
+                        listaHorariosAula: aulasDoTreino
+                    });
+                }
+            });
+
+            return { aulasTreinos: Array.from(aulasMap.values()) };
+
+        } catch (error) {
+            console.error("Erro ao montar aulas de treino:", error);
+            return { aulasTreinos: [] };
+        }
+    }
+
+    async function enviarAulasTreinos(aulasTreinos) {
+        try {
+            // Chamada POST para associar treinos às aulas
+            const payload = { aulasTreinos };
+
+            const response = await caringuApi.post(
+                "/aulas-treinos-exercicios/atribuicao/treinos",
+                payload
+            );
+
+            return response.data;
+        } catch (error) {
+            console.error("Erro ao associar treinos às aulas:", error);
+            throw error;
+        }
+    }
+
+    async function montarEEnviarAulasTreinos() {
+        try {
+            const { aulasTreinos } = await montarAulasTreinos();
+
+            if (aulasTreinos.length === 0) {
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Nenhuma aula encontrada para associar aos treinos." />
+                ));
+                return;
+            }
+
+            await enviarAulasTreinos(aulasTreinos);
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Treinos associados às aulas com sucesso!" />
+            ));
+
+            sessionStorage.removeItem("RASCUNHO_RESPONDIDO");
+            fecharModal();
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast
+                    t={t}
+                    type="error"
+                    message={`Erro ao associar treinos às aulas - ${error?.response?.data?.message || error.message}`}
+                />
+            ));
+            console.error("Erro no processo de montar e enviar aulas de treino:", error);
+        }
+    }
 
     return (
         <>
@@ -250,10 +429,10 @@ const EtapaAtribuicao = ({
                                             value={treino.treinoSelecionado}
                                             onChange={e => handleTreinoChange(idx, "treinoSelecionado", e.target.value)}
                                         >
-                                            <option disabled className="text-[#15171B87]" value="">Selecione um Treino Para Prosseguir</option>
-                                            <option value="Musculacao">Musculação</option>
-                                            <option value="Pernas">Pernas</option>
-                                            <option value="Rosca">Rosca</option>
+                                            <option disabled value="">Selecione um Treino Para Prosseguir</option>
+                                            {treinosDisponiveis.map(treino => (
+                                                <option key={treino.treinoId} value={treino.treinoId}>{treino.nomeTreino}</option>
+                                            ))}
                                         </select>
                                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="10" viewBox="0 0 24 10" fill="none">
@@ -263,7 +442,7 @@ const EtapaAtribuicao = ({
                                     </div>
                                 </div>
                                 <div className="w-[95%] mt-3 md:mt-5 flex flex-col md:flex-row md:gap-10 xl:gap-25">
-                                    <div className="w-full md:w-[15rem]">
+                                    {/* <div className="w-full md:w-[15rem]">
                                         <Label
                                             id={`date_vencimento_${idx}`}
                                             nomeLabel="Data de Vencimento"
@@ -278,12 +457,14 @@ const EtapaAtribuicao = ({
                                             fontSize="16px"
                                             fontWeight="500"
                                             width="100%"
+                                            value={treino.dateVencimento}
+                                            onChange={e => handleTreinoChange(idx, "dateVencimento", e.target.value)}
                                             onFocus={() => handleTreinoChange(idx, "inputType", "date")}
                                             onBlur={e => {
                                                 if (!e.target.value) handleTreinoChange(idx, "inputType", "text");
                                             }}
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="w-full md:w-auto mt-3 md:mt-0">
                                         <div className="w-full gap-2 flex flex-row items-center">
                                             <Label
@@ -461,6 +642,7 @@ const EtapaAtribuicao = ({
                     );
                 })
             )}
+            <Toaster position="top-right" reverseOrder={false} />
             <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center mt-4 h-auto 2xl:h-full">
                 <Button
                     texto="Voltar"
@@ -479,12 +661,16 @@ const EtapaAtribuicao = ({
                 <Button
                     texto="Salvar"
                     corTexto="var(--cor-secundaria)"
-                    cor={todasDatasAtribuidas() ? "#46982B" : "#15171B87"}
+                    cor={todosCamposPreenchidos() && todasDatasAtribuidas() ? "#46982B" : "#15171B87"}
                     height="2.75rem"
                     width="10.5rem"
                     fontWeight="600"
                     ariaLabel="Botão de Salvar"
-                    type="submit"
+                    type="button"
+                    disabled={!(todosCamposPreenchidos() && todasDatasAtribuidas())}
+                    onClick={async () => {
+                        await montarEEnviarAulasTreinos();
+                    }}
                 />
             </div >
         </>

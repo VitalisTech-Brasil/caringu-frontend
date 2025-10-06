@@ -7,6 +7,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
 import { caringuApi } from "../../../provider/caringuApi";
+import { logout } from "../../../utils/authUtils";
 
 
 

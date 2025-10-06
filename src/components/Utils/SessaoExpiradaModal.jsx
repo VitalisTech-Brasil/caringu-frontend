@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import alert from "../../assets/images/alert.svg";
+import { logout } from "../../utils/authUtils";
 
 export default function SessaoExpiradaModal({
     visible,
@@ -12,11 +13,9 @@ export default function SessaoExpiradaModal({
 
     if (!visible) return null;
 
-    const handleLogout = () => {
-        sessionStorage.clear();
+    const handleLogout = async () => {
         if (onClose) onClose();
-
-        navigate('/login');
+        await logout();
     };
 
     return (

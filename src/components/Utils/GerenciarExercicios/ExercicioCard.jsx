@@ -51,7 +51,7 @@ const ExercicioCard = ({
                         <FaEllipsisV />
                     </button>
                     {isOpen && (
-                        <div className="absolute right-2 top-[15%] sm:top-[90%] mt-2 w-[10rem] sm:w-[11rem] md:w-[12rem] max-w-[25vw] z-50 bg-[var(--cor-secundaria)] border border-gray-200 rounded-md shadow-lg p-2">
+                        <div className="absolute right-2 top-[15%] sm:top-[90%] mt-2 w-[10rem] sm:w-[11rem] md:w-[12rem] z-50 bg-[var(--cor-secundaria)] border border-gray-200 rounded-md shadow-lg p-2">
                             <ExercicioActionsMenu exercicio={exercicio} />
                         </div>
                     )}

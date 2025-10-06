@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from 'react-calendar';
 import Button from "../Button";
 import { format, addDays, isAfter } from "date-fns";
 import ptBR from 'date-fns/locale/pt-BR';
 import { useAgendamento } from "./Context/AgendamentoContext";
+import { caringuApi } from "../../../provider/caringuApi";
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../../Utils/CustomToast';
+import ButtonLoading from "../ButtonLoading";
 
 const EtapaAgendamentoAula = ({
     aluno,
@@ -33,9 +38,62 @@ const EtapaAgendamentoAula = ({
     handleCheckDia,
     diasSemana,
     fecharModal,
+    manualDates,
+    setManualDates,
+    rascunhosPersistidos,
+    setRascunhosPersistidos,
     onProsseguir
 }) => {
     const { atualizarAgendamento } = useAgendamento();
+
+    const rascunhosDates = rascunhosPersistidos ?? [];      // array de { id, date }
+    const setRascunhosDates = setRascunhosPersistidos;     // setter vindo do pai
+
+    const [aulasDisponiveis, setAulasDisponiveis] = useState({})
+    const [showRascunhoModal, setShowRascunhoModal] = useState(false);
+    const [rascunhosCarregados, setRascunhosCarregados] = useState(false);
+    const [idsRascunhos, setIdsRascunhos] = useState([]);
+    const [generatedDates, setGeneratedDates] = useState([]);
+
+    function getNextAvailableDates(weekdays, slotsToFill, startDate = new Date(), occupiedSet = new Set()) {
+        const diasMap = {
+            'domingo': 0, 'segunda': 1, 'terca': 2, 'terça': 2, 'quarta': 3,
+            'quinta': 4, 'sexta': 5, 'sabado': 6, 'sábado': 6,
+        };
+        const diasSelecionados = weekdays.map(d => diasMap[d.toLowerCase()]).sort((a, b) => a - b);
+        if (diasSelecionados.length === 0 || slotsToFill <= 0) return [];
+
+        const candidates = [];
+        let weekOffset = 0;
+        // geramos semana a semana até preencher slots
+        while (candidates.length < slotsToFill) {
+            const base = addDays(new Date(startDate), 7 * weekOffset);
+            base.setHours(0, 0, 0, 0);
+
+            for (let i = 0; i < diasSelecionados.length && candidates.length < slotsToFill; i++) {
+                const targetWeekday = diasSelecionados[i];
+                // calcula data desta semana para weekday
+                const prox = new Date(base);
+                const diff = (targetWeekday - prox.getDay() + 7) % 7;
+                prox.setDate(prox.getDate() + diff);
+                prox.setHours(0, 0, 0, 0);
+
+                // só inclui se for >= startDate (evita pegar dias passados)
+                if (prox >= startDate) {
+                    const key = prox.toDateString();
+                    if (!occupiedSet.has(key)) {
+                        candidates.push(new Date(prox));
+                    }
+                }
+            }
+            weekOffset++;
+            // safety: evita loop infinito (gera até 52 semanas caso necessário)
+            if (weekOffset > 52 && candidates.length === 0) break;
+        }
+
+        // já vêm em ordem cronológica porque percorremos semanas em ordem
+        return candidates.slice(0, slotsToFill);
+    }
 
     const handleSalvarHorarios = () => {
         const novosHorarios = { ...horarios };
@@ -51,13 +109,207 @@ const EtapaAgendamentoAula = ({
         setCheckedDates([]);
     };
 
+    // Função auxiliar para processar os rascunhos
+    const processarRascunhos = (aulas, { carregar = false } = {}) => {
+        if (!aulas || aulas.length === 0) {
+            setRascunhosDates([]);
+            return;
+        }
+
+        const datas = aulas.map(a => ({
+            id: a.idAula,
+            date: new Date(a.dataHorarioInicio)
+        }));
+        setRascunhosDates(datas);
+
+        if (carregar) {
+            const novosHorarios = {};
+            aulas.forEach(a => {
+                const dateKey = new Date(a.dataHorarioInicio).toISOString();
+                const inicio = a.dataHorarioInicio.split("T")[1].slice(0, 5);
+                const fim = a.dataHorarioFim.split("T")[1].slice(0, 5);
+                novosHorarios[dateKey] = { inicio, fim };
+            });
+            setHorarios(prev => ({ ...prev, ...novosHorarios }));
+            setRascunhosCarregados(true);
+        }
+    };
+
+    // Remover data (local, dentro do EtapaAgendamentoAula)
+    const handleRemoveDateLocal = async (date) => {
+        const dateStr = date.toDateString();
+
+        // se é manual
+        if (manualDates && manualDates.some(d => d.toDateString() === dateStr)) {
+            setManualDates(prev => prev.filter(d => d.toDateString() !== dateStr));
+            return;
+        }
+
+        // se é rascunho (agora temos id)
+        const rascunho = rascunhosDates.find(r => r.date.toDateString() === dateStr);
+        if (rascunho) {
+            try {
+                await caringuApi.delete("/aulas/rascunhos", { data: [rascunho.id] });
+
+                setRascunhosDates(prev => prev.filter(r => r.id !== rascunho.id));
+                setSelectedDates(prev => prev.filter(d => d.toDateString() !== dateStr));
+
+                setHorarios(prev => {
+                    const copy = { ...prev };
+                    delete copy[date.toISOString()];
+                    return copy;
+                });
+
+                toast.custom(t => (
+                    <CustomToast t={t} type="success" message="Aula em rascunho removida." />
+                ));
+            } catch (error) {
+                console.error("Erro ao deletar rascunho:", error);
+                toast.custom(t => (
+                    <CustomToast t={t} type="error" message="Erro ao excluir aula em rascunho." />
+                ));
+            }
+            return;
+        }
+
+        // se é automática
+        setSelectedDates(prev => prev.filter(d => d.toDateString() !== dateStr));
+    };
+
+    // Buscar disponibilidade + verificar rascunhos
+    const getBuscarAulasDisponiveis = async () => {
+        try {
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`);
+            setAulasDisponiveis(response.data);
+
+            const rascunhoRespondido = sessionStorage.getItem("RASCUNHO_RESPONDIDO") === "true";
+
+            if (response.data.aulasRascunho > 0 && !rascunhoRespondido) {
+                // só mostra o modal se ainda não respondeu
+                setShowRascunhoModal(true);
+            }
+        } catch (error) {
+            console.error("Erro ao buscar aulas disponíveis:", error);
+        }
+    };
+
+    // Continuar com os rascunhos
+    const carregarRascunhos = async () => {
+        try {
+
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/rascunhos`);
+
+            processarRascunhos(response.data.aulas, { carregar: true });
+            setShowRascunhoModal(false);
+
+            sessionStorage.setItem("RASCUNHO_RESPONDIDO", "true")
+        } catch (error) {
+            console.error("Erro ao buscar aulas em rascunho:", error);
+        }
+    };
+
+    // Deletar rascunhos
+    const deletarRascunhos = async () => {
+        try {
+            // Buscar rascunhos do backend
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/rascunhos`);
+            const rascunhos = response.data.aulas;
+
+            if (rascunhos.length > 0) {
+                // Montar lista de IDs para deletar
+                const lista = rascunhos.map(r => r.idAula);
+
+                // Deletar usando a lista correta
+                await caringuApi.delete("/aulas/rascunhos", { data: lista });
+            }
+
+            // Limpar estado
+            setSelectedDates([]);
+            setIdsRascunhos([]);
+            setShowRascunhoModal(false);
+            setRascunhosCarregados(false);
+
+            sessionStorage.setItem("RASCUNHO_RESPONDIDO", "true");
+        } catch (error) {
+            console.error("Erro ao deletar aulas em rascunho:", error);
+        }
+    };
+
+    // Criar aulas como rascunhos
+    const criarAulasRascunho = async (listaAulas) => {
+        try {
+            await caringuApi.post(`/aulas/${aluno.idAluno}/rascunhos`, {
+                aulas: listaAulas
+
+            });
+
+            onProsseguir();
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message={`Erro ao criar aulas em rascunho - ${error.response.data.message}`} />
+            ));
+            console.error("Erro ao criar aulas em rascunho:", error);
+        }
+    };
+
+    useEffect(() => {
+        getBuscarAulasDisponiveis();
+    }, []);
+
+    // manualDates vem via props do ModalAgendarAula
+    useEffect(() => {
+        // se não temos disponibilidade ainda, não faz nada
+        if (!aulasDisponiveis || typeof aulasDisponiveis.aulasRestantes !== 'number') {
+            setGeneratedDates([]);
+            // mas mantém rascunhos e manuais
+            setSelectedDates(prev => {
+                // garante que selectedDates contenha rascunhos e manuais (pelo menos)
+                return prev;
+            });
+            return;
+        }
+
+        const start = brasiliaToday ?? new Date();
+
+        // occupied = rascunhos + manuais (strings "Tue Sep 30 2025")
+        const occupiedKeys = new Set([
+            ...rascunhosDates.map(r => r.date.toDateString()),
+            ...(manualDates || []).map(d => d.toDateString())
+        ])
+
+        const occupiedCount = occupiedKeys.size;
+        const totalAllowed = aulasDisponiveis.aulasRestantes; // já considera confirmadas/rascunhos
+        const slotsToFill = Math.max(0, totalAllowed - occupiedCount);
+
+        // gera apenas as N datas necessárias (excluindo já ocupadas)
+        const novasGeradas = getNextAvailableDates(diasSelecionados, slotsToFill, start, occupiedKeys);
+
+        // atualiza generatedDates
+        setGeneratedDates(novasGeradas);
+
+        // monta selectedDates = union(rascunhos + manuais + geradas), sem duplicatas, ordenado
+        const all = [
+            ...rascunhosDates.map(r => new Date(r.date)),
+            ...(manualDates || []).map(d => new Date(d)),
+            ...novasGeradas
+        ];
+
+        // dedupe e ordenar
+        const unique = all
+            .filter((d, idx, arr) => idx === arr.findIndex(o => o.toDateString() === d.toDateString()))
+            .sort((a, b) => a - b);
+
+        setSelectedDates(unique);
+        setCheckedDates([]); // resetar checks ao recalcular
+    }, [diasSelecionados, aulasDisponiveis, manualDates, rascunhosDates]);
+
     const montarAulasParaEnvio = () => {
         return {
             aulas: selectedDates
                 .filter(date => horarios[date.toISOString()])
                 .map(date => {
                     const { inicio, fim } = horarios[date.toISOString()];
-                    const dataStr = date.toISOString().slice(0, 10); // "2025-09-25"
+                    const dataStr = date.toISOString().slice(0, 10);
                     return {
                         dataHorarioInicio: `${dataStr}T${inicio}:00`,
                         dataHorarioFim: `${dataStr}T${fim}:00`
@@ -66,11 +318,68 @@ const EtapaAgendamentoAula = ({
         };
     };
 
+    const handleProsseguir = () => {
+        const aulas = selectedDates
+            .filter(date => horarios[date.toISOString()])
+            .map(date => {
+                const { inicio, fim } = horarios[date.toISOString()];
+                const dataStr = date.toISOString().slice(0, 10);
+                return {
+                    dataHorarioInicio: `${dataStr}T${inicio}:00`,
+                    dataHorarioFim: `${dataStr}T${fim}:00`
+                };
+            });
+
+        atualizarAgendamento({
+            aulas,
+            diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
+        });
+        onProsseguir();
+    };
+
     return (
         <>
+            {showRascunhoModal && (
+                <div className="fixed inset-0 flex items-center justify-center 
+                  bg-black/30 backdrop-brightness-50 z-50">
+                    <div className="bg-white p-6 rounded-2xl shadow-xl w-[90%] max-w-md">
+                        <h2 className="text-lg font-semibold mb-4 text-center">
+                            Você possui {aulasDisponiveis.aulasRascunho} aula(s) em rascunho.
+                        </h2>
+                        <p className="text-center mb-6">
+                            Deseja continuar com essas aulas ou descartá-las?
+                        </p>
+                        <div className="flex justify-around">
+                            <Button
+                                texto="Continuar"
+                                cor="var(--azul-claro)"
+                                corTexto="white"
+                                classNameExtra="p-3"
+                                onClick={carregarRascunhos}
+                            />
+                            <Button
+                                texto="Deletar"
+                                cor="var(--cor-secundaria)"
+                                corTexto="#B41F1F"
+                                classNameExtra="p-3"
+                                onClick={deletarRascunhos}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
             <div>
                 <div className="flex flex-row gap-2 mt-12 md:mt-3 text-base sm:text-lg 2xl:text-2xl">
-                    <span className="text-[var(--laranja)] font-semibold">{aluno.quantidade_aulas}</span>
+                    <span className="text-[var(--laranja)] font-semibold">
+                        {rascunhosCarregados && aulasDisponiveis.aulasRascunho > 0 ? (
+                            <>
+                                {aulasDisponiveis.aulasRestantes} restantes |{" "}
+                                {aulasDisponiveis.aulasRascunho} rascunho(s)
+                            </>
+                        ) : (
+                            aulasDisponiveis.aulasRestantes
+                        )}
+                    </span>
                     <span>Aulas Para Agendar</span>
                 </div>
             </div>
@@ -89,17 +398,17 @@ const EtapaAgendamentoAula = ({
                             const str = format(date, "MMMM yyyy", { locale: ptBR });
                             return str.charAt(0).toUpperCase() + str.slice(1);
                         }}
-                        tileClassName={({ date: tileDate, view }) => {
-                            if (view === 'month' && tileDate < brasiliaToday) {
+                        tileClassName={({ date, view }) => {
+                            if (view === 'month' && date < brasiliaToday) {
                                 return 'text-gray-400';
                             }
-                            if (selectedDates.some(d => d.toDateString() === tileDate.toDateString())) {
-                                return 'bg-orange-500 text-white rounded-full border-orange-500 border-2 border-solid';
+                            if (selectedDates.some(d => d.toDateString() === date.toDateString())) {
+                                return 'bg-orange-500 cursor-pointer text-white rounded-full border-orange-500 border-2 border-solid';
                             }
-                            if (tileDate.toDateString() === brasiliaToday.toDateString()) {
+                            if (date.toDateString() === brasiliaToday.toDateString()) {
                                 return 'rounded-full';
                             }
-                            return '';
+                            return 'cursor-pointer';
                         }}
                         prevLabel={<span className="text-[24px] font-medium">ᐸ</span>}
                         nextLabel={<span className="text-[24px] font-medium">ᐳ</span>}
@@ -176,42 +485,54 @@ const EtapaAgendamentoAula = ({
                         </div>
                         <div className="w-[95%] md:w-full">
                             <div className="flex flex-col gap-4 xl:gap-1 mt-2 max-h-65 h-auto md:max-h-31 md:h-31  overflow-y-auto">
-                                {selectedDates.map((data, idx) => (
-                                    <div key={data.toISOString()} className="w-full h-auto flex flex-col xl:flex-row xl:items-center">
-                                        <div className="flex flex-row gap-2 w-full xl:w-[60%] h-auto items-center text-[14px]">
-                                            <input
-                                                type="checkbox"
-                                                checked={checkedDates.includes(data.toISOString())}
-                                                onChange={() => handleCheck(data)}
-                                                className="w-5 h-5"
-                                            />
-                                            <div className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer w-full ">
-                                                <button
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        handleRemoveDate(data);
-                                                    }}
-                                                    className="mr-2 font-bold bg-[#FFFDF6] rounded-[5px] h-4 w-4 flex items-center justify-center cursor-pointer"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="4" viewBox="0 0 14 4" fill="none">
-                                                        <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                </button>
-                                                {(() => {
-                                                    const str = format(data, "EEEE, dd/MM/yyyy", { locale: ptBR });
-                                                    return str.charAt(0).toUpperCase() + str.slice(1);
-                                                })()}
+                                {[...selectedDates]
+                                    .sort((a, b) => {
+                                        const horarioA = horarios[a.toISOString()]?.inicio || "23:59";
+                                        const horarioB = horarios[b.toISOString()]?.inicio || "23:59";
+
+                                        // compara primeiro pela data
+                                        if (a.toDateString() !== b.toDateString()) {
+                                            return a - b; // data mais próxima vem primeiro
+                                        }
+                                        // se a data for igual, compara pelo horário
+                                        return horarioA.localeCompare(horarioB);
+                                    })
+                                    .map((data, idx) => (
+                                        <div key={data.toISOString()} className="w-full h-auto flex flex-col xl:flex-row xl:items-center">
+                                            <div className="flex flex-row gap-2 w-full xl:w-[60%] h-auto items-center text-[14px]">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checkedDates.includes(data.toISOString())}
+                                                    onChange={() => handleCheck(data)}
+                                                    className="w-5 h-5"
+                                                />
+                                                <div className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer w-full ">
+                                                    <button
+                                                        onClick={e => {
+                                                            e.stopPropagation();
+                                                            handleRemoveDateLocal(data);
+                                                        }}
+                                                        className="mr-2 font-bold bg-[#FFFDF6] rounded-[5px] h-4 w-4 flex items-center justify-center cursor-pointer"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="4" viewBox="0 0 14 4" fill="none">
+                                                            <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+                                                    {(() => {
+                                                        const str = format(data, "EEEE, dd/MM/yyyy", { locale: ptBR });
+                                                        return str.charAt(0).toUpperCase() + str.slice(1);
+                                                    })()}
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-row w-full xl:w-[40%] h-auto items-center justify-center text-sm mt-0 sm:mt-1.5 xl:mt-0">
+                                                <span>
+                                                    {horarios[data.toISOString()] && horarios[data.toISOString()].inicio && horarios[data.toISOString()].fim
+                                                        ? `${horarios[data.toISOString()].inicio} - ${horarios[data.toISOString()].fim}`
+                                                        : "Sem Horário Definido"}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-row w-full xl:w-[40%] h-auto items-center justify-center text-sm mt-0 sm:mt-1.5 xl:mt-0">
-                                            <span>
-                                                {horarios[data.toISOString()] && horarios[data.toISOString()].inicio && horarios[data.toISOString()].fim
-                                                    ? `${horarios[data.toISOString()].inicio} - ${horarios[data.toISOString()].fim}`
-                                                    : "Sem Horário Definido"}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
                         </div>
                         <div className="w-full h-auto flex flex-col md:flex-row  items-center mt-4 md:justify-between pb-4 px-6 md:gap-0 gap-4 text-[20px]">
@@ -239,7 +560,7 @@ const EtapaAgendamentoAula = ({
                             </div>
                         </div>
                         <div className="w-full h-auto flex flex-col md:flex-row items-center gap-2 pb-4 px-10 md:px-0">
-                            <Button
+                            <ButtonLoading
                                 texto="Salvar Horário Marcados"
                                 cor={horarioInicio && horarioFim && checkedDates.length > 0 ? "var(--azul-claro)" : "#15171B87"}
                                 corTexto="var(--cor-secundaria)"
@@ -271,7 +592,7 @@ const EtapaAgendamentoAula = ({
                     onClick={fecharModal}
                 />
                 <div className="relative flex items-center group">
-                    <Button
+                    <ButtonLoading
                         texto="Prosseguir"
                         corTexto="var(--cor-secundaria)"
                         cor={todosHorariosPreenchidos ? "#46982B" : "#15171B87"}
@@ -283,9 +604,15 @@ const EtapaAgendamentoAula = ({
                         disabled={!todosHorariosPreenchidos}
                         onClick={() => {
                             const dadosParaEnvio = montarAulasParaEnvio();
-                            console.log(dadosParaEnvio);
-                            atualizarAgendamento(dadosParaEnvio);
-                            onProsseguir();
+                            console.log({
+                                ...dadosParaEnvio,
+                                diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
+                            });
+                            atualizarAgendamento({
+                                ...dadosParaEnvio,
+                                diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
+                            });
+                            criarAulasRascunho(dadosParaEnvio.aulas);
                         }}
                     />
                     <div className="absolute left-[16rem] xl:left-[18rem] -translate-x-1/2 bottom-full mb-2 hidden group-hover:hidden lg:group-hover:flex flex-col items-center z-50 pointer-events-none " >
