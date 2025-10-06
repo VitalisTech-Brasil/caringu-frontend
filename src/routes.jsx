@@ -29,6 +29,7 @@ import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
+import HomeAluno from "./pages/HomeAluno";
 
 const AppRoutes = () => {
 
@@ -160,7 +161,11 @@ const AppRoutes = () => {
             <Feedback />
           </ProtectedRoute>
         } />
-        
+        <Route path="/home-aluno" element={
+           <ProtectedRoute>
+          <HomeAluno />
+          </ProtectedRoute>
+        } />        
         {/* Rota de erro */}
         <Route path="*" element={<Error />} />
       </Routes>
