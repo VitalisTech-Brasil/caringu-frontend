@@ -7,6 +7,7 @@ const InputPosLogin = ({
     inputType,
     placeholder,
     required = false,
+    disabled = false,
     value,
     fontSize,
     fontWeight,
@@ -24,6 +25,7 @@ const InputPosLogin = ({
         <>
         <div className="relative">
             <input
+                disabled={disabled}
                 onChange={onChange}
                 onFocus={onFocus}
                 onBlur={onBlur}

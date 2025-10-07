@@ -9,7 +9,7 @@ import Index from "./pages/Index";
 import Login from "./pages/login.jsx";
 import Perfil from "./pages/Perfil/Perfil";
 import Planos from "./pages/Planos/Planos.jsx";
-import ProcurandoPersonal from "./pages/ProcurandoPersonal"; // Importação da nova página
+import ProcurandoPersonal from "./pages/ProcurandoPersonal";
 import RelatorioTreino from "./pages/Relatorios/RelatorioTreinos.jsx";
 import Dashboard from "./pages/Relatorios/Dashboard.jsx";
 import Agenda from './pages/Agenda/Agenda.jsx';
@@ -29,6 +29,7 @@ import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
+import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
 
 const AppRoutes = () => {
 
@@ -160,7 +161,11 @@ const AppRoutes = () => {
             <Feedback />
           </ProtectedRoute>
         } />
-        
+        <Route path="/visualizar-treino/:idAluno" element={
+          <ProtectedRoute>
+            <VisualizarTreino />
+          </ProtectedRoute>
+        } />
         {/* Rota de erro */}
         <Route path="*" element={<Error />} />
       </Routes>

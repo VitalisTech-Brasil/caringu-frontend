@@ -210,6 +210,14 @@ const Header = () => {
       </svg>,
       label: "Feedbacks",
     },
+    "/visualizar-treino/*": {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 45 45" fill="none">
+        <path d="M22.5 7.43127C28.758 7.43127 34.8081 11.1057 39 17.693V17.694C39.813 18.9705 40.25 20.7085 40.25 22.4977C40.25 24.2872 39.8134 26.0199 39.002 27.2858L39 27.2877C36.8966 30.5877 34.3389 33.1549 31.5205 34.9039C28.7018 36.6344 25.6374 37.5504 22.5 37.5504C16.2409 37.5504 10.1919 33.8932 6.00098 27.2897L6 27.2877L5.85156 27.0436C5.13336 25.7944 4.75003 24.1656 4.75 22.4908C4.75 20.7046 5.18673 18.9709 6 17.694C8.10438 14.3923 10.6634 11.824 13.4834 10.0748L13.4824 10.0739C16.3001 8.34483 19.3639 7.43127 22.5 7.43127ZM22.5 13.9254C17.7462 13.9254 13.925 17.7679 13.9248 22.4996C13.9248 27.2316 17.7461 31.0748 22.5 31.0748C27.2539 31.0748 31.0752 27.2316 31.0752 22.4996C31.075 17.7679 27.2538 13.9254 22.5 13.9254Z" stroke="#1D2D44" strokeWidth="2" />
+        <path d="M22.5 18.1375C24.8914 18.1375 26.8622 20.1084 26.8623 22.4998C26.8623 24.8867 24.896 26.8436 22.5 26.8436C20.1085 26.8436 18.1562 24.8913 18.1562 22.4998C18.1564 20.0874 20.1109 18.1375 22.5 18.1375Z" stroke="#1D2D44" strokeWidth="2" />
+      </svg>,
+      label: "Visualizar Aulas",
+
+    }
 
   };
 
@@ -346,7 +354,7 @@ const Header = () => {
 
 
   return (
-    <Navbar fluid className="navbar sticky h-[4.8rem] z-10 bg-white border-b-[1px] dark:border-gray-300 pt-4.5 flex flex-row items-center justify-center">
+    <Navbar fluid className="navbar sticky h-[4.8rem] z-10 bg-white border-b-[1px] dark:border-gray-300 pt-4.5">
       <NavbarBrand className="flex items-center gap-2">
         {currentPage.icon}
         <span className="self-center whitespace-nowrap text-base sm:text-xl font-semibold text-[#1D2D44]">
