@@ -169,6 +169,9 @@ const GerenciarAlunos = () => {
       case 'agendarAula':
         handleAbrirModalAgendarAula(aluno);
         break;
+      case 'visualizarTreino':
+        navigate(`/visualizar-treino/${aluno.idAluno}`);
+        break;
       default:
         break;
     }
