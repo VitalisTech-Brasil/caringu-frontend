@@ -60,7 +60,7 @@ const Agenda = () => {
     const compromissos = treinosFinalizados.map(item => {
         const status = item.status?.toUpperCase().trim();
         return {
-            id: item.id,
+            id: item.idAula,
             horario: item.status === "REALIZADO"
                 ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
                 : `${formatarHora(item.dataHorarioInicio)}`,
