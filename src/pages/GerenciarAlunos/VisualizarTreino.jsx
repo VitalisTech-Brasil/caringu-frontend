@@ -51,13 +51,11 @@ const VisualizarTreino = () => {
         if (!exercicioAberto) setIsPlaying(false);
     }, [exercicioAberto]);
 
-    const toggleExercicio = () => setExercicioAberto(v => !v);
-
     useEffect(() => {
         document.title = "Visualizar Aula | Caringu"
         const fetchInfosAlunoFeedback = async () => {
             try {
-                const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, dese ser sempre estar aberto o ultimo card do treino)
+                const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, deve ser sempre estar aberto o ultimo card do treino)
                 setAluno(response.data);
                 console.log("Informações do aluno:", response.data);
             } catch (error) {
