@@ -42,6 +42,7 @@ const Agenda = () => {
         try {
             const response = await caringuApi.get(`/aulas/personal-aulas/${pessoaId}`);
             setTreinosFinalizados(response.data);
+            console.log("Treinos finalizados:", response.data);
         } catch (error) {
             console.error("Erro ao exibir treinos:", error);
         }
@@ -61,6 +62,7 @@ const Agenda = () => {
         const status = item.status?.toUpperCase().trim();
         return {
             id: item.idAula,
+            status,
             horario: item.status === "REALIZADO"
                 ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
                 : `${formatarHora(item.dataHorarioInicio)}`,
@@ -70,7 +72,6 @@ const Agenda = () => {
                 foto: item.urlFotoPerfil,
             },
             finalizado: item.finalizado,
-
             dataHorarioFim: item.dataHorarioFim,
             dataHorarioInicio: item.dataHorarioInicio,
             nomeAluno: item.nomeAluno,

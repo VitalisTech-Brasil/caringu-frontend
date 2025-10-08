@@ -3,10 +3,12 @@ import { useState } from "react";
 import { caringuApi } from "../../provider/caringuApi";
 import { format } from "date-fns";
 import ModalRemarcar from "./GerenciarAlunos/ModalRemarcar";
+import { useNavigate } from "react-router-dom";
 
 const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
 
     const [errosImagem, setErrosImagem] = useState({});
+    const navigate = useNavigate();
 
     const [modalRemarcarVisivel, setModalRemarcarVisivel] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
@@ -22,20 +24,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
 
     const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-    const marcarComoConcluido = async (idTreinoFinalizado) => {
-        try {
-            await caringuApi.patch(
-                `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
-                {
-                    dataHorarioFim: treinoFim,
-                }
-            );
 
-            if (atualizarTreinos) atualizarTreinos();
-        } catch (error) {
-            console.error("Erro ao marcar compromisso como concluído:", error);
-        }
-    };
 
 
     const handleAbrirModalRemarcar = (compromisso) => {
@@ -162,29 +151,25 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
                                             <div>
-                                                <button
-                                                    onClick={() => marcarComoConcluido(compromisso.id)}
-                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
-                                                >
-                                                    Marcar como feito
-                                                </button>
+                                                <div>
+                                                    <button
+                                                        onClick={() => navigate(`/acompanhar-aula/${compromisso.idAluno}`)}
+                                                        className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-4 cursor-pointer"
+                                                    >
+                                                        Acompanhar aula
+                                                    </button>
+                                                </div>
                                             </div>
                                             <div>
-                                                <button
-                                                    onClick={() => handleAbrirModalRemarcar(compromisso)}
-                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-6 2xl:px-7 cursor-pointer"
-                                                >
-                                                    Remarcar Aula
-                                                </button>
+                                                {compromisso.status !== 'REALIZADO' && (
+                                                    <button
+                                                        onClick={() => handleAbrirModalRemarcar(compromisso)}
+                                                        className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-6 2xl:px-7 cursor-pointer"
+                                                    >
+                                                        Remarcar Aula
+                                                    </button>
+                                                )}
                                             </div>
-                                            {/* {compromisso.dataHorarioFim === null && (
-                                                <button
-                                                    onClick={() => marcarComoConcluido(compromisso.id)}
-                                                    className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
-                                                >
-                                                    Marcar como feito
-                                                </button>
-                                            )} */}
                                         </div>
                                     </div>
                                 </div>
