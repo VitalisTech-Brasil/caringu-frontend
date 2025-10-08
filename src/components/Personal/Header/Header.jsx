@@ -165,7 +165,64 @@ const Header = () => {
       </svg>,
       label: "Gerenciar Treinos",
     },
+    "/minhaEvolucao": {
+      icon: <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.37505 21.25H22.6126C24.9876 21.25 26.2375 20 26.2375 17.625V2.5H3.73755V17.625C3.75005 20 5.00005 21.25 7.37505 21.25Z" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2.5 2.5H27.5" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 27.5L15 25V21.25" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M20 27.5L15 25" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.375 13.75L13.3125 10.4625C13.625 10.2 14.0375 10.275 14.25 10.625L15.75 13.125C15.9625 13.475 16.375 13.5375 16.6875 13.2875L20.625 10" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Minha Evolução",
+    },
+    "/minhasAulas": {
+      icon:
+        <svg width="30" height="27" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24.375 6.00008H26.25C26.7675 6.00008 27.1875 6.56008 27.1875 7.25008V19.7501C27.1875 20.4401 26.7675 21.0001 26.25 21.0001H24.375C23.8575 21.0001 23.4375 20.4401 23.4375 19.7501V7.25008C23.4375 6.56008 23.8575 6.00008 24.375 6.00008Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M20.625 1H22.5C23.0175 1 23.4375 1.56 23.4375 2.25V24.75C23.4375 25.44 23.0175 26 22.5 26H20.625C20.1075 26 19.6875 25.44 19.6875 24.75V2.25C19.6875 1.56 20.1075 1 20.625 1Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M7.5 1H9.375C9.8925 1 10.3125 1.56 10.3125 2.25V24.75C10.3125 25.44 9.8925 26 9.375 26H7.5C6.9825 26 6.5625 25.44 6.5625 24.75V2.25C6.5625 1.56 6.9825 1 7.5 1Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M3.75 6.00018H5.625C6.1425 6.00018 6.5625 6.56018 6.5625 7.25018V19.7502C6.5625 20.4402 6.1425 21.0002 5.625 21.0002H3.75C3.2325 21.0002 2.8125 20.4402 2.8125 19.7502V7.25018C2.8125 6.56018 3.2325 6.00018 3.75 6.00018Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M27.1875 13.5H30" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M10.3125 13.5H19.6875" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M0 13.5H2.8125" stroke="#1D2D44" strokeWidth="2" />
+        </svg>,
+      label: "Minhas Aulas",
+    },
+    "/treinosAula": {
+      icon:
+        <svg width="30" height="27" viewBox="0 0 30 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24.375 6.00008H26.25C26.7675 6.00008 27.1875 6.56008 27.1875 7.25008V19.7501C27.1875 20.4401 26.7675 21.0001 26.25 21.0001H24.375C23.8575 21.0001 23.4375 20.4401 23.4375 19.7501V7.25008C23.4375 6.56008 23.8575 6.00008 24.375 6.00008Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M20.625 1H22.5C23.0175 1 23.4375 1.56 23.4375 2.25V24.75C23.4375 25.44 23.0175 26 22.5 26H20.625C20.1075 26 19.6875 25.44 19.6875 24.75V2.25C19.6875 1.56 20.1075 1 20.625 1Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M7.5 1H9.375C9.8925 1 10.3125 1.56 10.3125 2.25V24.75C10.3125 25.44 9.8925 26 9.375 26H7.5C6.9825 26 6.5625 25.44 6.5625 24.75V2.25C6.5625 1.56 6.9825 1 7.5 1Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M3.75 6.00018H5.625C6.1425 6.00018 6.5625 6.56018 6.5625 7.25018V19.7502C6.5625 20.4402 6.1425 21.0002 5.625 21.0002H3.75C3.2325 21.0002 2.8125 20.4402 2.8125 19.7502V7.25018C2.8125 6.56018 3.2325 6.00018 3.75 6.00018Z" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M27.1875 13.5H30" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M10.3125 13.5H19.6875" stroke="#1D2D44" strokeWidth="2" />
+          <path d="M0 13.5H2.8125" stroke="#1D2D44" strokeWidth="2" />
+        </svg>,
+      label: "Treinos",
+    },
+    "/feedback/*": {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 31 30" fill="none">
+        <path d="M15.678 15.0005C19.1882 15.0005 22.0339 12.2023 22.0339 8.75049C22.0339 5.29871 19.1882 2.50049 15.678 2.50049C12.1677 2.50049 9.32202 5.29871 9.32202 8.75049C9.32202 12.2023 12.1677 15.0005 15.678 15.0005Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4.75854 27.5005C4.75854 22.663 9.65265 18.7505 15.6781 18.7505" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M23.5595 26.7505C25.8061 26.7505 27.6273 24.9596 27.6273 22.7505C27.6273 20.5414 25.8061 18.7505 23.5595 18.7505C21.3129 18.7505 19.4917 20.5414 19.4917 22.7505C19.4917 24.9596 21.3129 26.7505 23.5595 26.7505Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M28.3901 27.5005L27.1189 26.2505" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Feedbacks",
+    },
+    "/visualizar-treino/*": {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 45 45" fill="none">
+        <path d="M22.5 7.43127C28.758 7.43127 34.8081 11.1057 39 17.693V17.694C39.813 18.9705 40.25 20.7085 40.25 22.4977C40.25 24.2872 39.8134 26.0199 39.002 27.2858L39 27.2877C36.8966 30.5877 34.3389 33.1549 31.5205 34.9039C28.7018 36.6344 25.6374 37.5504 22.5 37.5504C16.2409 37.5504 10.1919 33.8932 6.00098 27.2897L6 27.2877L5.85156 27.0436C5.13336 25.7944 4.75003 24.1656 4.75 22.4908C4.75 20.7046 5.18673 18.9709 6 17.694C8.10438 14.3923 10.6634 11.824 13.4834 10.0748L13.4824 10.0739C16.3001 8.34483 19.3639 7.43127 22.5 7.43127ZM22.5 13.9254C17.7462 13.9254 13.925 17.7679 13.9248 22.4996C13.9248 27.2316 17.7461 31.0748 22.5 31.0748C27.2539 31.0748 31.0752 27.2316 31.0752 22.4996C31.075 17.7679 27.2538 13.9254 22.5 13.9254Z" stroke="#1D2D44" strokeWidth="2" />
+        <path d="M22.5 18.1375C24.8914 18.1375 26.8622 20.1084 26.8623 22.4998C26.8623 24.8867 24.896 26.8436 22.5 26.8436C20.1085 26.8436 18.1562 24.8913 18.1562 22.4998C18.1564 20.0874 20.1109 18.1375 22.5 18.1375Z" stroke="#1D2D44" strokeWidth="2" />
+      </svg>,
+      label: "Visualizar Aulas",
+
+    }
+
   };
+
+
+
 
   useEffect(() => {
 
@@ -300,7 +357,7 @@ const Header = () => {
     <Navbar fluid className="navbar sticky h-[4.8rem] z-10 bg-white border-b-[1px] dark:border-gray-300 pt-4.5">
       <NavbarBrand className="flex items-center gap-2">
         {currentPage.icon}
-        <span className="self-center whitespace-nowrap text-xl font-semibold text-[#1D2D44]">
+        <span className="self-center whitespace-nowrap text-base sm:text-xl font-semibold text-[#1D2D44]">
           {currentPage.label}
         </span>
       </NavbarBrand>

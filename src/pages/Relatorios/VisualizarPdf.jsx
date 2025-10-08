@@ -11,6 +11,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import CustomToast from '../../components/Utils/CustomToast';
 import GraficoEvolucaoTreinosCumpridos from '../../components/Dashboard/GraficoEvolucaoTreinosCumpridos';
 import GraficoEvolucaoCarga from '../../components/Dashboard/GraficoEvolucaoCarga';
+import GraficoHorasTreinadas from '../../components/Dashboard/GraficoHorasTreinadas';
 
 const VisualizarPdf = () => {
 
@@ -77,14 +78,14 @@ const VisualizarPdf = () => {
 
     }, []);
 
-    const buscarEvolucaoCargaPorExercicio = async (exercicioId) => {
+    const buscarEvolucaoCargaPorExercicio = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-carga`,
+                `/aulas/evolucao-carga`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId,
+                        idAluno: idAluno,
+                        idExercicio: idExercicio,
                     },
                 }
             );
@@ -98,14 +99,14 @@ const VisualizarPdf = () => {
         }
     };
 
-    const buscarEvolucaoTreinosCumpridosMensal = async (exercicioId) => {
+    const buscarEvolucaoTreinosCumpridosMensal = async (idExercicio) => {
         try {
             const response = await caringuApi.get(
-                `/treinos-finalizados/evolucao-treinos-cumpridos`,
+                `/aulas/evolucao-treinos-cumpridos`,
                 {
                     params: {
-                        alunoId: idAluno,
-                        exercicioId: exercicioId
+                        idAluno: idAluno,
+                        idExercicio: idExercicio
                     }
                 }
             );
@@ -142,12 +143,12 @@ const VisualizarPdf = () => {
         }
     };
 
-    const buscarHorasTreinadas = async (exercicioId) => {
+    const buscarHorasTreinadas = async (idExercicio) => {
         try {
-            const response = await caringuApi.get(`/treinos-finalizados/horas-treinadas`, {
+            const response = await caringuApi.get(`/aulas/horas-treinadas`, {
                 params: {
-                    alunoId: idAluno,
-                    exercicioId: exercicioId
+                    idAluno: idAluno,
+                    idExercicio: idExercicio
                 }
             });
 
@@ -261,13 +262,13 @@ const VisualizarPdf = () => {
 
 
     return (
-        <div className="flex flex-col items-center justify-center item min-h-screen bg-[#fdfbf7] w-screen">
-            <div ref={pdfRef} className="flex-1 flex flex-col items-center justify-start"
+        <div className="flex flex-col items-center justify-center h-full bg-transparent w-screen">
+            <div ref={pdfRef} className="flex-1 flex flex-col items-center justify-start overflow-y-auto"
                 style={{
                     width: "900px",
                     minHeight: "1400px",
                     margin: "0 auto",
-                    background: "var(--cor-secundaria)",
+                    background: "transparent",
                     boxSizing: "border-box",
                     display: "flex",
                     flexDirection: "column",
@@ -344,56 +345,7 @@ const VisualizarPdf = () => {
                                 <GraficoEvolucaoTreinosCumpridos dadosAPI={dadosEvolucaoTreinosCumpridos} />
                                 <h1 className='text-xl font-semibold'>Total de horas treinadas por mês</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-md p-5'>
-                                    <ReactApexChart
-                                        options={{
-                                            chart: {
-                                                type: 'bar',
-                                                toolbar: { show: false },
-                                            },
-                                            plotOptions: {
-                                                bar: {
-                                                    horizontal: false,
-                                                    borderRadius: 5,
-                                                    columnWidth: '50%',
-                                                },
-                                            },
-                                            dataLabels: { enabled: false },
-                                            stroke: {
-                                                show: true,
-                                                width: 2,
-                                                colors: ['transparent'],
-                                            },
-                                            colors: ['#748CAB'],
-                                            xaxis: {
-                                                categories: ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'],
-                                            },
-                                            yaxis: {
-                                                title: {
-                                                    text: 'Total de Horas Treinadas',
-                                                    style: { fontWeight: 600, color: '#1D2D44' },
-                                                },
-                                            },
-                                            fill: {
-                                                opacity: 1,
-                                            },
-                                            tooltip: {
-                                                y: {
-                                                    formatter: (val) => `${val} horas`,
-                                                },
-                                            },
-                                            grid: {
-                                                borderColor: '#E6E6E2',
-                                            },
-                                        }}
-                                        series={[
-                                            {
-                                                name: 'Horas Treinadas',
-                                                data: dadosGraficoHorasPorMes,
-                                            },
-                                        ]}
-                                        type="bar"
-                                        height={215}
-                                    />
+                                    <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes}/>
                                 </div>
 
                             </div>
@@ -411,17 +363,16 @@ const VisualizarPdf = () => {
                     <Toaster position='top-right' reverseOrder={false} />
                 </main>
             </div>
-            <div className='flex flex-col items-center justify-center w-full pb-5'>
+            <div className='flex flex-col items-center justify-center w-screen pb-5'>
                 <Button
                     texto={"Exportar gráficos em PDF"}
                     logo={exportarPDF}
                     borderColor={"#E6E6E2"}
                     borderWidth={"2px"}
                     borderStyle={"solid"}
-                    width={"50%"}
+                    width={"300px"}
                     height={"50px"}
                     fontSize={fontSize}
-                    corHover={"#E6E6E2"}
                     cor={"#FFFDF6"}
                     onClick={exportarParaPDF}
 

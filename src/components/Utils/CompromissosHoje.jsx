@@ -83,7 +83,7 @@ const CompromissosHoje = ({ compromissos, selectedDay, listarTreinosFinalizados 
         overflowY: compromissosDoDia.length > 3 ? "auto" : "hidden",
       }}
     >
-      <h2 className="text-[28px] font-bold text-gray-900">
+      <h2 className="text-xl md:text-[28px] font-bold text-gray-900">
         Compromissos de {isToday ? "Hoje" : selectedDay?.day || "Hoje"}
       </h2>
       {compromissosDoDia.length > 0 ? (
@@ -112,7 +112,7 @@ const CompromissosHoje = ({ compromissos, selectedDay, listarTreinosFinalizados 
                 <div className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)] flex items-center gap-2">
                   <HiOutlineClock />
                   {/* <span>{compromisso.horario}</span> */}
-                  <span>8:00 - 9:00</span>
+                  <span>{compromisso.horario}</span>
                 </div>
 
               </div>

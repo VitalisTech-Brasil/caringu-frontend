@@ -1,13 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
-import { FaEllipsisV } from "react-icons/fa";
-import { Popover, Button } from "flowbite-react"; // Certifique-se de que Modal está correto
-import ButtonInterno from "../../components/Utils/Button"; // Certifique-se de que ButtonInterno está correto
-import { HiOutlineFilter } from "react-icons/hi";
+import ButtonInterno from "../../components/Utils/Button";
 import { useParams, useNavigate } from "react-router-dom";
 import iconCancelar from "../../assets/images/cancelar.png";
-import Modal from "../../components/Utils/Modal.jsx"; // Certifique-se de que o caminho está correto
+import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import { Controller, useForm } from "react-hook-form";
 import InputPosLogin from "../../components/Utils/InputPosLogin";
@@ -19,12 +16,16 @@ import Select from 'react-select';
 import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../../components/Utils/CustomToast.jsx";
 import MascaraData from "../../components/Utils/Functions/MascaraData.js"
+import TreinoCard from "../../components/Utils/GerenciarTreinos/TreinoCard.jsx";
+import TreinoActionsMenu from "../../components/Utils/GerenciarTreinos/TreinoActionsMenu.jsx";
+import Pagination from "../../components/Utils/Pagination.jsx";
+
 
 const GerenciarTreinos = () => {
     const [searchTerm, setSearchTerm] = useState("");
-    const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
+    const [sortOrder, setSortOrder] = useState(null);
     const [openMenuId, setOpenMenuId] = useState(null);
-    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
+    const [difficultyFilter, setDifficultyFilter] = useState(null);
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
@@ -34,7 +35,6 @@ const GerenciarTreinos = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
-    const params = useParams();
     const navigate = useNavigate();
     const [treinosAtribuidos, setTreinosAtribuidos] = useState([]);
     const [treinos, setTreinos] = useState([]);
@@ -119,6 +119,7 @@ const GerenciarTreinos = () => {
         try {
             const response = await caringuApi.get(`/treinos-exercicios/personal/${idPersonal}`);
             setTreinos(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error("Erro ao buscar informações dos treinos:", error);
         }
@@ -257,15 +258,21 @@ const GerenciarTreinos = () => {
         } catch (error) {
             if (error.response) {
                 console.error('Erro do servidor:', error.response.data);
-                alert(error.response.data.message || 'Erro ao deletar exercício');
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message={error.response.data.message || 'Erro ao deletar exercício'} />
+                ));
                 setModalDeletarVisivel(false);
             } else if (error.request) {
                 console.error('Sem resposta do servidor:', error.request);
-                alert('Sem resposta do servidor');
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Sem resposta do servidor" />
+                ));
                 setModalDeletarVisivel(false);
             } else {
                 console.error('Erro inesperado:', error.message);
-                alert('Erro inesperado ao deletar exercício');
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Erro inesperado ao deletar exercício" />
+                ));
                 setModalDeletarVisivel(false);
             }
         }
@@ -276,49 +283,103 @@ const GerenciarTreinos = () => {
         setShowCreateModal(true);
     };
 
-    const TreinoActionsMenu = ({ treino }) => (
-        <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
-            <button className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
-                onClick={() => { navigate(`/editar-treino/${treino.treinoId}`) }}
-            >
-                Editar
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 22H3C2.59 22 2.25 21.66 2.25 21.25C2.25 20.84 2.59 20.5 3 20.5H21C21.41 20.5 21.75 20.84 21.75 21.25C21.75 21.66 21.41 22 21 22Z" fill="#738CAB" />
-                    <path d="M19.0201 3.47967C17.0801 1.53967 15.1801 1.48967 13.1901 3.47967L11.9801 4.68967C11.8801 4.78967 11.8401 4.94967 11.8801 5.08967C12.6401 7.73967 14.7601 9.85967 17.4101 10.6197C17.4501 10.6297 17.4901 10.6397 17.5301 10.6397C17.6401 10.6397 17.7401 10.5997 17.8201 10.5197L19.0201 9.30967C20.0101 8.32967 20.4901 7.37967 20.4901 6.41967C20.5001 5.42967 20.0201 4.46967 19.0201 3.47967Z" fill="#738CAB" />
-                    <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
-                </svg>
-            </button>
-            <button
-                className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
-                onClick={() => openDeleteModal(treino.treinoId)}
-            >
-                Excluir
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M21.0702 5.23C19.4602 5.07 17.8502 4.95 16.2302 4.86V4.85L16.0102 3.55C15.8602 2.63 15.6402 1.25 13.3002 1.25H10.6802C8.35016 1.25 8.13016 2.57 7.97016 3.54L7.76016 4.82C6.83016 4.88 5.90016 4.94 4.97016 5.03L2.93016 5.23C2.51016 5.27 2.21016 5.64 2.25016 6.05C2.29016 6.46 2.65016 6.76 3.07016 6.72L5.11016 6.52C10.3502 6 15.6302 6.2 20.9302 6.73C20.9602 6.73 20.9802 6.73 21.0102 6.73C21.3902 6.73 21.7202 6.44 21.7602 6.05C21.7902 5.64 21.4902 5.27 21.0702 5.23Z" fill="#B41F1F" />
-                    <path d="M19.2302 8.14C18.9902 7.89 18.6602 7.75 18.3202 7.75H5.68024C5.34024 7.75 5.00024 7.89 4.77024 8.14C4.54024 8.39 4.41024 8.73 4.43024 9.08L5.05024 19.34C5.16024 20.86 5.30024 22.76 8.79024 22.76H15.2102C18.7002 22.76 18.8402 20.87 18.9502 19.34L19.5702 9.09C19.5902 8.73 19.4602 8.39 19.2302 8.14ZM13.6602 17.75H10.3302C9.92024 17.75 9.58024 17.41 9.58024 17C9.58024 16.59 9.92024 16.25 10.3302 16.25H13.6602C14.0702 16.25 14.4102 16.59 14.4102 17C14.4102 17.41 14.0702 17.75 13.6602 17.75ZM14.5002 13.75H9.50024C9.09024 13.75 8.75024 13.41 8.75024 13C8.75024 12.59 9.09024 12.25 9.50024 12.25H14.5002C14.9102 12.25 15.2502 12.59 15.2502 13C15.2502 13.41 14.9102 13.75 14.5002 13.75Z" fill="#B41F1F" />
-                </svg>
-            </button>
-        </div>
-    );
+    const handleEditTreino = (treinoId) => {
+        navigate(`/editar-treino/${treinoId}`);
+    };
+
+    const handleDeleteTreino = (treinoId) => {
+        openDeleteModal(treinoId);
+    };
+
+    const handleMenuClick = (treinoId) => {
+        setOpenMenuId(openMenuId === treinoId ? null : treinoId);
+    };
+
+    function useMenuWidth() {
+        const [width, setWidth] = useState(window.innerWidth >= 640 ? "280px" : "235px");
+
+        useEffect(() => {
+            const handleResize = () => {
+                setWidth(window.innerWidth >= 640 ? "300px" : "235px");
+            };
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        return width;
+    }
+
+    const menuWidth = useMenuWidth();
+
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 640) return 3;
+        return 1;
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            let newItemsPerPage;
+            if (window.innerWidth >= 1024) {
+                newItemsPerPage = 4;
+            } else if (window.innerWidth >= 640) {
+                newItemsPerPage = 3;
+            }else {
+                newItemsPerPage = 1;
+            }
+            setItemsPerPage(newItemsPerPage);
+            setCurrentPage(1);
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
+
+    // Funções de paginação
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const totalPages = Math.ceil(filteredTreinos.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentTreinos = filteredTreinos.slice(startIndex, startIndex + itemsPerPage);
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 overflow-y-auto">
                 <Header />
-                <div className="bg-[var(--cor-secundaria)] rounded-lg p-6 md:p-6 border border-[#E6E6E2] max-h-full m-8">
+                <div className="bg-[#F9F9F9] rounded-lg p-4 md:p-6 border border-[#E6E6E2] sm:h-[84%] m-4 sm:m-8">
                     <h1 className="text-zinc-900 md:text-3xl font-semibold font-['Inter']">Gerenciamento de Treinos</h1>
                     <div className="flex flex-col md:flex-row items-center gap-2 mt-5 justify-between max-w-full">
-                        <div className="flex items-center gap-2 md:w-full">
+                        <div className="flex items-center gap-2 w-full">
                             <input
                                 type="text"
                                 placeholder="Pesquisar treino"
-                                className="flex-1 border max-w-50 border-gray-300 rounded-md p-2 md:max-w-1/2"
+                                className="flex-1 border border-gray-300 rounded-md p-2 w-full"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                             <MenuFiltro
-                                menuWidth="310px"
+                                menuWidth={menuWidth}
                                 buttonIcon={
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -350,6 +411,16 @@ const GerenciarTreinos = () => {
                                         label: "A-Z",
                                         active: sortOrder === "A-Z",
                                         onClick: () => setSortOrder((prev) => (prev === "A-Z" ? null : "A-Z")),
+                                        icon: <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className={`w-7 ${sortOrder === "A-Z" ? "stroke-white" : "stroke-black"}`}
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                        >                            <path d="M10.4498 6.71997L6.72974 3L3.00977 6.71997" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M6.72949 21V3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M13.5498 17.2803L17.2698 21.0002L20.9898 17.2803" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M17.2695 3V21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>,
                                         width: "40%",
                                     },
                                     {
@@ -357,6 +428,17 @@ const GerenciarTreinos = () => {
                                         label: "Z-A",
                                         active: sortOrder === "Z-A",
                                         onClick: () => setSortOrder((prev) => (prev === "Z-A" ? null : "Z-A")),
+                                        icon: <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className={`w-7 ${sortOrder === "Z-A" ? "stroke-white" : "stroke-black"}`}
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                        >
+                                            <path d="M10.4498 6.71997L6.72974 3L3.00977 6.71997" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M6.72949 21V3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M13.5498 17.2803L17.2698 21.0002L20.9898 17.2803" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="M17.2695 3V21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>,
                                         width: "40%",
                                     },
                                     {
@@ -381,13 +463,13 @@ const GerenciarTreinos = () => {
                                         selected: origemSelecionada,
                                         icon:
                                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="25" viewBox="0 0 29 25" fill="none">
-                                                <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M19.9375 1H21.75C22.2502 1 22.6562 1.51284 22.6562 2.14474V22.75C22.6562 23.3819 22.2502 23.8947 21.75 23.8947H19.9375C19.4373 23.8947 19.0312 23.3819 19.0312 22.75V2.14474C19.0312 1.51284 19.4373 1 19.9375 1Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M7.25 1H9.0625C9.56275 1 9.96875 1.51284 9.96875 2.14474V22.75C9.96875 23.3819 9.56275 23.8947 9.0625 23.8947H7.25C6.74975 23.8947 6.34375 23.3819 6.34375 22.75V2.14474C6.34375 1.51284 6.74975 1 7.25 1Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M3.625 5.5791H5.4375C5.93775 5.5791 6.34375 6.09194 6.34375 6.72384V18.1712C6.34375 18.8031 5.93775 19.3159 5.4375 19.3159H3.625C3.12475 19.3159 2.71875 18.8031 2.71875 18.1712V6.72384C2.71875 6.09194 3.12475 5.5791 3.625 5.5791Z" stroke="#46982B" stroke-width="2" />
-                                                <path d="M26.2812 12.4473H29" stroke="#46982B" stroke-width="2" />
-                                                <path d="M9.96875 12.4473H19.0312" stroke="#46982B" stroke-width="2" />
-                                                <path d="M0 12.4473H2.71875" stroke="#46982B" stroke-width="2" />
+                                                <path d="M23.5625 5.5791H25.375C25.8752 5.5791 26.2812 6.09194 26.2812 6.72384V18.1712C26.2812 18.8031 25.8752 19.3159 25.375 19.3159H23.5625C23.0623 19.3159 22.6562 18.8031 22.6562 18.1712V6.72384C22.6562 6.09194 23.0623 5.5791 23.5625 5.5791Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M19.9375 1H21.75C22.2502 1 22.6562 1.51284 22.6562 2.14474V22.75C22.6562 23.3819 22.2502 23.8947 21.75 23.8947H19.9375C19.4373 23.8947 19.0312 23.3819 19.0312 22.75V2.14474C19.0312 1.51284 19.4373 1 19.9375 1Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M7.25 1H9.0625C9.56275 1 9.96875 1.51284 9.96875 2.14474V22.75C9.96875 23.3819 9.56275 23.8947 9.0625 23.8947H7.25C6.74975 23.8947 6.34375 23.3819 6.34375 22.75V2.14474C6.34375 1.51284 6.74975 1 7.25 1Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M3.625 5.5791H5.4375C5.93775 5.5791 6.34375 6.09194 6.34375 6.72384V18.1712C6.34375 18.8031 5.93775 19.3159 5.4375 19.3159H3.625C3.12475 19.3159 2.71875 18.8031 2.71875 18.1712V6.72384C2.71875 6.09194 3.12475 5.5791 3.625 5.5791Z" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M26.2812 12.4473H29" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M9.96875 12.4473H19.0312" stroke="#46982B" strokeWidth="2" />
+                                                <path d="M0 12.4473H2.71875" stroke="#46982B" strokeWidth="2" />
                                             </svg>,
                                         items: [
                                             { label: "Limpar filtro", value: "" },
@@ -436,8 +518,8 @@ const GerenciarTreinos = () => {
                                         icon: (
                                             <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "INTERMEDIARIO" ? "stroke-white" : "stroke-[#E8CD00]"}`
                                             } viewBox="0 0 31 31" fill="none">
-                                                <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M6.6521 2.58325V28.4166" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         ),
                                         onClick: () =>
@@ -451,8 +533,8 @@ const GerenciarTreinos = () => {
                                         icon: (
                                             <svg xmlns="http://www.w3.org/2000/svg" className={`w-7 ${difficultyFilter === "AVANCADO" ? "stroke-white" : "stroke-[#B41F1F]"}`
                                             } viewBox="0 0 31 31" fill="none">
-                                                <path d="M6.6521 2.58325V28.4166" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M6.6521 2.58325V28.4166" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M6.6521 5.16675H21.1188C24.6063 5.16675 25.3813 7.10425 22.9271 9.55841L21.3771 11.1084C20.3438 12.1417 20.3438 13.8209 21.3771 14.7251L22.9271 16.2751C25.3813 18.7292 24.4771 20.6667 21.1188 20.6667H6.6521" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         ),
                                         onClick: () =>
@@ -461,17 +543,17 @@ const GerenciarTreinos = () => {
                                 ]}
                             />
                         </div>
-                        <div className="flex md:w-2xl gap-4 md:gap-13">
+                        <div className="flex sm:flex-row flex-col w-full md:w-100 gap-4">
                             <ButtonInterno
                                 texto="Criar Treino"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
-                                corHover="#F9FAFB"
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
-                                width="50%"
+                                classNameExtra="w-full"
                                 height="50px"
+                                cor="var(--cor-secundaria)"
                                 font-size={fontSize}
                                 onClick={() => navigate("/criar-treino")}
                                 logoSvg={
@@ -485,15 +567,15 @@ const GerenciarTreinos = () => {
                                     </svg>
                                 }
                             />
-                            <ButtonInterno
+                            {/* <ButtonInterno
                                 texto="Atribuir Treinos"
                                 type="submit"
                                 corTexto="var(--azul-escuro)"
-                                corHover="#F9FAFB"
                                 borderColor={"#E6E6E2"}
                                 borderStyle={"solid"}
                                 borderWidth={"2px"}
-                                width="50%"
+                                cor="var(--cor-secundaria)"
+                                classNameExtra="w-full sm:w-1/2"
                                 height="50px"
                                 font-size={fontSize}
                                 logoSvg={
@@ -504,146 +586,26 @@ const GerenciarTreinos = () => {
                                     </svg>
                                 }
                                 onClick={handleOpenModal}
-                            />
+                            /> */}
                         </div>
                     </div>
-                    <div className="relative flex flex-col items-center gap-4 bg-[var(--cor-secundaria)] p-4 rounded-lg max-h-130 overflow-y-auto mt-5 border border-[#E6E6E2]">
-                        {filteredTreinos.map((treino) => (
-                            <div key={treino.treinoId} className="relative w-full bg-[var(--cor-secundaria)] border border-[#E6E6E2] flex flex-wrap items-center rounded-lg p-2">
-                                <div className="relative flex flex-col gap-10 md:flex-row items-center justify-between md:gap-8 w-full p-5">
-                                    <div className="relative  flex flex-col md:flex-row gap-5 md:gap-10 items-center md:items-start justify-start w-full">
-                                        <div className="relative flex grid-cols-2 items-center justify-between bg-[#FFFDF6] rounded-lg w-[90%] md:w-10">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-15 col-span-1" viewBox="0 0 60 49" fill="none">
-                                                <path d="M48.3716 10.4004H52.0925C53.1194 10.4004 53.9529 11.4532 53.9529 12.7504V36.2504C53.9529 37.5476 53.1194 38.6004 52.0925 38.6004H48.3716C47.3447 38.6004 46.5112 37.5476 46.5112 36.2504V12.7504C46.5112 11.4532 47.3447 10.4004 48.3716 10.4004Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M40.9298 1H44.6506C45.6775 1 46.511 2.0528 46.511 3.35V45.65C46.511 46.9472 45.6775 48 44.6506 48H40.9298C39.9028 48 39.0693 46.9472 39.0693 45.65V3.35C39.0693 2.0528 39.9028 1 40.9298 1Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M14.8834 1H18.6042C19.6311 1 20.4646 2.0528 20.4646 3.35V45.65C20.4646 46.9472 19.6311 48 18.6042 48H14.8834C13.8564 48 13.0229 46.9472 13.0229 45.65V3.35C13.0229 2.0528 13.8564 1 14.8834 1Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M7.44147 10.4004H11.1623C12.1893 10.4004 13.0227 11.4532 13.0227 12.7504V36.2504C13.0227 37.5476 12.1893 38.6004 11.1623 38.6004H7.44147C6.41452 38.6004 5.58105 37.5476 5.58105 36.2504V12.7504C5.58105 11.4532 6.41452 10.4004 7.44147 10.4004Z" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M53.9531 24.5H59.5344" stroke="#E96E35" strokeWidth="2" />
-                                                <path d="M20.4648 24.5H39.069" stroke="#E96E35" strokeWidth="2" />
-                                                    // <path d="M0 24.5H5.58125" stroke="#E96E35" strokeWidth="2" />
-                                            </svg>
-                                            <div className="flex flex-col gap-2 col-span-1 md:hidden">
-
-                                                <div className="flex justify-end items-center">
-                                                    <div className="relative" ref={buttonRef}>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation(); // Prevent card click event
-                                                                setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
-                                                            }}
-                                                            className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
-                                                        >
-                                                            <FaEllipsisV className="text-xl cursor-pointer" />
-                                                        </button>
-
-                                                        {openMenuId === treino.treinoId && (
-                                                            <div
-                                                                style={{
-                                                                    position: 'fixed',
-                                                                    top: buttonRef.current?.getBoundingClientRect().top || 0,
-                                                                    left: (buttonRef.current?.getBoundingClientRect().left || 0) - 180,
-                                                                }}
-                                                                className="bg-white border border-gray-200 rounded-md shadow-lg p-2 z-0 min-w-[160px]"
-                                                            >
-                                                                <TreinoActionsMenu treino={treino} />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col md:flex-row md:grid-cols-2 md:gap-5 w-full">
-                                            <div className="md:col-span-1 text-sm md:text-lg">
-                                                <p><b>Treino: </b>{treino.nomeTreino}</p>
-                                                <p><b>Quantidade de exercícios: </b>{treino.quantidadeExercicios}</p>
-                                            </div>
-                                            <div className="md:col-span-1 text-sm md:text-lg ">
-                                                <p>
-                                                    <b>Dificuldade: </b>
-                                                    {
-                                                        treino.grauDificuldade === 'INICIANTE' ? 'Iniciante' :
-                                                            treino.grauDificuldade === 'INTERMEDIARIO' ? 'Intermediário' :
-                                                                treino.grauDificuldade === 'AVANCADO' ? 'Avançado' :
-                                                                    treino.grauDificuldade
-                                                    }
-                                                </p>
-                                                <p>
-                                                    <b>Origem: </b>
-                                                    {
-                                                        treino.origemTreinoExercicio === 'BIBLIOTECA' ? 'Biblioteca' :
-                                                            treino.origemTreinoExercicio === 'PERSONAL' ? 'Personal' :
-                                                                treino.origemTreinoExercicio
-                                                    }
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="md:flex flex-col-reverse justify-end md:flex-row md:gap-10 hidden">
-                                        <div>
-                                            <ButtonInterno
-                                                logoSvg={
-                                                    treino.favorito ? (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                            <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#E96E35" />
-                                                        </svg>
-                                                    ) : (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                            <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#FFFDF6" stroke="#15171B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                                        </svg>
-                                                    )
-                                                }
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // Prevent card click event
-                                                    toggleFavorito(treino.treinoId);
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="flex justify-end items-center">
-                                            <div className="relative" ref={buttonRef}>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // Prevent card click event
-                                                        setOpenMenuId(openMenuId === treino.treinoId ? null : treino.treinoId);
-                                                    }}
-                                                    className="flex items-center justify-center w-8 h-8 rounded-[5px] bg-gray-200 hover:bg-gray-300 transition duration-200"
-                                                >
-                                                    <FaEllipsisV className="text-xl cursor-pointer" />
-                                                </button>
-
-                                                {openMenuId === treino.treinoId && (
-                                                    <div
-                                                        ref={menuRef}
-                                                        onClick={(e) => e.stopPropagation()} // Prevent card click event
-                                                        className="absolute top-0 right-full mr-2 z-50 bg-white border border-gray-200 rounded-md shadow-lg p-2"
-                                                    >
-                                                        <TreinoActionsMenu treino={treino} />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col md:hidden gap-2">
-                                        <ButtonInterno
-                                            logoSvg={
-                                                treino.favorito ? (
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                        <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#E96E35" />
-                                                    </svg>
-                                                ) : (
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                                                        <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#FFFDF6" stroke="#15171B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                )
-                                            }
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent card click event
-                                                toggleFavorito(treino.treinoId);
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-110 sm:h-140 mt-5">
+                        {currentTreinos.map((treino) => (
+                            <TreinoCard
+                                key={treino.treinoId}
+                                treino={treino}
+                                onToggleFavorito={toggleFavorito}
+                                onMenuClick={handleMenuClick}
+                                openMenuId={openMenuId}
+                                menuRef={menuRef}
+                                buttonRef={buttonRef}
+                            >
+                                <TreinoActionsMenu
+                                    treino={treino}
+                                    onEdit={handleEditTreino}
+                                    onDelete={handleDeleteTreino}
+                                />
+                            </TreinoCard>
                         ))}
                         {showCreateModal && (
                             <div className="fixed inset-0 z-[49] flex justify-center items-center overflow-y-auto">
@@ -864,7 +826,6 @@ const GerenciarTreinos = () => {
                                                             type="submit"
                                                             cor="#748CAB"
                                                             corTexto="#ffffff"
-                                                            corHover="#677e9c"
                                                             width="40%"
                                                             height="50px"
                                                             font-size="14px"
@@ -881,7 +842,6 @@ const GerenciarTreinos = () => {
                                                     cor="var(--cor-secundaria)"
                                                     height="2.75rem"
                                                     width="13.25rem"
-                                                    corHover="#1D2D4417"
                                                     fontWeight="500"
                                                     aria-label={"Botão de Cancelar"}
                                                     onClick={() => setModalConfirmarCancelarVisivel(true)}
@@ -894,7 +854,6 @@ const GerenciarTreinos = () => {
                                                     cor="#46982B"
                                                     height="2.75rem"
                                                     width="9.2rem"
-                                                    corHover="#46982BE5"
                                                     fontWeight="600"
                                                     aria-label={"Botão de Salvar"}
                                                     onClick={handleSalvarTodos}
@@ -937,8 +896,20 @@ const GerenciarTreinos = () => {
                         />
                         <Toaster position='top-right' reverseOrder={false} />
                     </div>
+                    <div className="flex justify-center mt-4">
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            itemsLength={filteredTreinos.length}
+                            onPageChange={goToPage}
+                            onPrevious={goToPrevious}
+                            onNext={goToNext}
+                            maxVisible={3}
+                        />
+                    </div>
                 </div>
             </div >
+            <Toaster position="top-right" reverseOrder={false} />
         </div >
     )
 }

@@ -2,10 +2,16 @@ import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import { caringuApi } from "../../provider/caringuApi";
 import { format } from "date-fns";
+import ModalRemarcar from "./GerenciarAlunos/ModalRemarcar";
 
 const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
 
     const [errosImagem, setErrosImagem] = useState({});
+
+    const [modalRemarcarVisivel, setModalRemarcarVisivel] = useState(false);
+    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
+
+
 
     const lidarErroImagem = (id) => {
         setErrosImagem((prev) => ({
@@ -31,6 +37,21 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         }
     };
 
+
+    const handleAbrirModalRemarcar = (compromisso) => {
+        setAgendamentoSelecionado({
+            id: compromisso.id,
+            nomeAluno: compromisso.aluno.nome,
+            dataAtual: compromisso.data,
+            horarioAtual: compromisso.horario
+        });
+        setModalRemarcarVisivel(true);
+    };
+
+    const handleFecharModalRemarcar = () => {
+        setModalRemarcarVisivel(false);
+        setAgendamentoSelecionado(null);
+    };
 
 
     const today = new Date();
@@ -115,40 +136,55 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                     </div>
                                     <div className="flex sm:flex-row flex-col items-center justify-between w-full h-auto sm:gap-0 gap-4">
                                         <div className="flex flex-col justify-center gap-4 ml-4">
+                                            <div className="flex sm:flex-row flex-col items-center gap-2">
+                                                {compromisso.urlFotoPerfil && !errosImagem[compromisso.idAluno] ? (
+                                                    <img
+                                                        src={compromisso.urlFotoPerfil}
+                                                        alt={compromisso.nomeAluno}
+                                                        className="w-13 h-13 2xl:w-12 2xl:h-12 rounded-full object-cover"
+                                                        onError={() => lidarErroImagem(compromisso.idAluno)}
+                                                    />
+                                                ) : (
+                                                    <FaUserCircle className="w-13 h-13 2xl:w-12 2xl:h-12 text-[var(--cor-secundaria)]" />
+                                                )}
+                                                <span className="text-[var(--cor-secundaria)] font-medium text-base">
+                                                    {compromisso.aluno.nome}
+                                                </span>
+                                            </div>
                                             <div className="text-white text-sm flex items-center gap-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 2xl:w-6 2xl:h-6 shrink-0" viewBox="0 0 25 25" fill="none">
                                                     <path d="M22.9168 12.4997C22.9168 18.2497 18.2502 22.9163 12.5002 22.9163C6.75016 22.9163 2.0835 18.2497 2.0835 12.4997C2.0835 6.74967 6.75016 2.08301 12.5002 2.08301C18.2502 2.08301 22.9168 6.74967 22.9168 12.4997Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                                 {/* <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span> */}
-                                                <span className="text-base font-medium text-[var(--cor-secundaria)]">8:00 - 9:00</span>
-
+                                                <span className="text-base font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
                                             </div>
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
-                                            <div className="flex sm:flex-row flex-col items-center gap-2">
-                                                {compromisso.urlFotoPerfil && !errosImagem[compromisso.idAluno] ? (
-                                                    <img
-                                                        src={compromisso.urlFotoPerfil}
-                                                        alt={compromisso.nomeAluno}
-                                                        className="w-13 h-13 2xl:w-15 2xl:h-15 rounded-full object-cover"
-                                                        onError={() => lidarErroImagem(compromisso.idAluno)}
-                                                    />
-                                                ) : (
-                                                    <FaUserCircle className="w-13 h-13 2xl:w-15 2xl:h-15 text-[var(--cor-secundaria)]" />
-                                                )}
-                                                <span className="text-[var(--cor-secundaria)] font-medium text-base">
-                                                    {compromisso.aluno.nome}
-                                                </span>
+                                            <div>
+                                                <button
+                                                    onClick={() => marcarComoConcluido(compromisso.id)}
+                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
+                                                >
+                                                    Marcar como feito
+                                                </button>
                                             </div>
-                                            {compromisso.dataHorarioFim === null && (
+                                            <div>
+                                                <button
+                                                    onClick={() => handleAbrirModalRemarcar(compromisso)}
+                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-6 2xl:px-7 cursor-pointer"
+                                                >
+                                                    Remarcar Aula
+                                                </button>
+                                            </div>
+                                            {/* {compromisso.dataHorarioFim === null && (
                                                 <button
                                                     onClick={() => marcarComoConcluido(compromisso.id)}
                                                     className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
                                                 >
                                                     Marcar como feito
                                                 </button>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 </div>
@@ -156,16 +192,22 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                         })
                     ) : (
                         <div className="w-full h-[95%] overflow-y-auto flex flex-col items-center justify-center gap-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 sm:w-40.5 sm:h-40.5" viewBox="0 0 162 162" fill="none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-20 h-20 md:w-30 md:h-30 xl:w-40.5 xl:h-40.5" viewBox="0 0 162 162" fill="none">
                                 <path d="M81 0C36.369 0 0 36.369 0 81C0 125.631 36.369 162 81 162C125.631 162 162 125.631 162 81C162 36.369 125.631 0 81 0ZM108.216 99.63C110.565 101.979 110.565 105.867 108.216 108.216C107.001 109.431 105.462 109.998 103.923 109.998C102.384 109.998 100.845 109.431 99.63 108.216L81 89.586L62.37 108.216C61.155 109.431 59.616 109.998 58.077 109.998C56.538 109.998 54.999 109.431 53.784 108.216C51.435 105.867 51.435 101.979 53.784 99.63L72.414 81L53.784 62.37C51.435 60.021 51.435 56.133 53.784 53.784C56.133 51.435 60.021 51.435 62.37 53.784L81 72.414L99.63 53.784C101.979 51.435 105.867 51.435 108.216 53.784C110.565 56.133 110.565 60.021 108.216 62.37L89.586 81L108.216 99.63Z" fill="#E96E35" />
                             </svg>
-                            <span className="text-xl sm:text-3xl font-normal text-[#15171BAD]">
+                            <span className="text-base sm:text-xl lg:text-2xl font-normal text-[#15171BAD]">
                                 Não existem treinos agendados para o dia selecionado.
                             </span>
                         </div>
                     )}
                 </div>
             </div>
+            <ModalRemarcar
+                visivel={modalRemarcarVisivel}
+                fecharModal={handleFecharModalRemarcar}
+                agendamento={agendamentoSelecionado}
+                ariaLabel="Modal de Remarcar Agendamento"
+            />
         </>
     );
 }

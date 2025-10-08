@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 
-const EstaSemana = ({ onDaySelect, compromissos }) => {
+const EstaSemana = ({ onDaySelect, compromissos, borderType }) => {
 
-      const today = new Date();
+  const today = new Date();
 
   // Lógica para calcular os dias da semana
   const getCurrentWeek = () => {
@@ -34,8 +34,12 @@ const EstaSemana = ({ onDaySelect, compromissos }) => {
     return data < today;
   };
 
+  const containerClass = borderType === "shadow"
+    ? "shadow-sm"
+    : "border-solid border-[#1D2D441C] border-4";
+
   return (
-    <div className="bg-[var(--cor-secundaria)] rounded-md border-solid border-[#1D2D441C] border-4 p-6" style={{ height: "auto" }}>
+    <div className={`bg-[var(--cor-secundaria)] rounded-md p-6 ${containerClass}`} style={{ height: "auto" }}>
       <h2 className="text-base font-semibold text-[var(--cor-primaria)]">Esta Semana</h2>
       <div className="2xl:grid 2xl:grid-cols-7 flex  gap-2 mt-4 overflow-x-auto">
         {weekDays.map((day, index) => {

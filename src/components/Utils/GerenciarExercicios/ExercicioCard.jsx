@@ -36,9 +36,26 @@ const ExercicioCard = ({
     }, [isOpen]);
 
     return (
-        <div className="relative w-full border border-[#E6E6E2] bg-white rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-end gap-4">
+        <div className="relative w-full border border-[#E6E6E2] bg-[var(--cor-secundaria)] rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-end gap-4">
             {/* Infos principais */}
-            <div className="flex flex-1 flex-col md:flex-row gap-4 md:items-center">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-start w-full">
+                {/* Ações para mobile */}
+                <div className="flex sm:hidden flex-row justify-end w-full gap-2position: fixed; top: 524.797px; left: 31px; width: 280px;">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenMenuId(isOpen ? null : exercicio.id);
+                        }}
+                        className="flex items-center justify-center sm:w-8 w-4 sm:h-8 h-4 rounded-[5px] cursor-pointer hover:bg-gray-300 transition duration-200"
+                    >
+                        <FaEllipsisV />
+                    </button>
+                    {isOpen && (
+                        <div className="absolute right-2 top-[15%] sm:top-[90%] mt-2 w-[10rem] sm:w-[11rem] md:w-[12rem] z-50 bg-[var(--cor-secundaria)] border border-gray-200 rounded-md shadow-lg p-2">
+                            <ExercicioActionsMenu exercicio={exercicio} />
+                        </div>
+                    )}
+                </div>
                 <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-[#FFFDF6] rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-15 col-span-1" viewBox="0 0 70 70" fill="none">
                         <path d="M58.3334 24.0622V52.4997C58.3334 61.2497 53.1126 64.1663 46.6667 64.1663H23.3334C16.8876 64.1663 11.6667 61.2497 11.6667 52.4997V24.0622C11.6667 14.583 16.8876 12.3955 23.3334 12.3955C23.3334 14.2038 24.0625 15.8372 25.2583 17.033C26.4542 18.2288 28.0876 18.958 29.8959 18.958H40.1042C43.7209 18.958 46.6667 16.0122 46.6667 12.3955C53.1126 12.3955 58.3334 14.583 58.3334 24.0622Z" stroke="#1D2D44" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
@@ -71,9 +88,7 @@ const ExercicioCard = ({
                         }</p>
                 </div>
             </div>
-
-            {/* Ações - visíveis em telas grandes */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="flex flex-row justify-center items-center md:gap-4 gap-2 w-full sm:w-auto">
                 <ButtonInterno
                     logoSvg={
                         exercicio.favorito ? (
@@ -91,58 +106,25 @@ const ExercicioCard = ({
                         toggleFavorito(exercicio.id);
                     }}
                 />
-                <div ref={buttonRef} className="relative mb-[55%]">
+                <div ref={buttonRef} className="relative hidden sm:flex">
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setOpenMenuId(isOpen ? null : exercicio.id);
                         }}
-                        className="flex items-center justify-center w-8 h-8 rounded-[5px] cursor-pointer bg-gray-200 hover:bg-gray-300 transition duration-200"
+                        className="flex items-center justify-center sm:w-8 w-4 sm:h-8 h-4 rounded-[5px] cursor-pointer hover:bg-gray-300 transition duration-200"
                     >
                         <FaEllipsisV />
                     </button>
                     {isOpen && (
                         <div
                             ref={menuRef}
-                            className="absolute right-0 mt-2 w-30 z-10 bg-white shadow-md rounded"
+                            className="absolute top-0 right-full mr-2 z-50 bg-[var(--cor-secundaria)] border border-gray-200 rounded-md shadow-lg p-2"
                         >
                             <ExercicioActionsMenu exercicio={exercicio} />
                         </div>
                     )}
                 </div>
-            </div>
-
-            {/* Ações para mobile */}
-            <div className="flex md:hidden flex-row justify-end w-full gap-2">
-                <ButtonInterno
-                    logoSvg={exercicio.favorito ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                            <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#E96E35" />
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" viewBox="0 0 58 58" fill="none">
-                            <path d="M33.1809 8.48238L37.4342 16.9891C38.0142 18.1732 39.5609 19.309 40.8659 19.5266L48.575 20.8074C53.505 21.629 54.665 25.2057 51.1125 28.7341L45.1192 34.7274C44.1042 35.7424 43.5484 37.6999 43.8625 39.1016L45.5784 46.5207C46.9317 52.3932 43.8142 54.6649 38.6184 51.5957L31.3925 47.3182C30.0875 46.5449 27.9367 46.5449 26.6075 47.3182L19.3817 51.5957C14.21 54.6649 11.0684 52.3691 12.4217 46.5207L14.1375 39.1016C14.4517 37.6999 13.8959 35.7424 12.8809 34.7274L6.88752 28.7341C3.35919 25.2057 4.49502 21.629 9.42502 20.8074L17.1342 19.5266C18.415 19.309 19.9617 18.1732 20.5417 16.9891L24.795 8.48238C27.115 3.86655 30.885 3.86655 33.1809 8.48238Z" fill="#FFFDF6" stroke="#15171B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                    )}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorito(exercicio.id);
-                    }}
-                />
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenMenuId(isOpen ? null : exercicio.id);
-                    }}
-                    className="flex items-center justify-center w-8 h-8 rounded-[5px] cursor-pointer bg-gray-200 hover:bg-gray-300 transition duration-200"
-                >
-                    <FaEllipsisV />
-                </button>
-                {isOpen && (
-                    <div className="absolute right-2 top-[90%] mt-2 w-[10rem] sm:w-[11rem] md:w-[12rem] max-w-[25vw] z-50 bg-white shadow-md rounded">
-                        <ExercicioActionsMenu exercicio={exercicio} />
-                    </div>
-                )}
             </div>
         </div>
     );

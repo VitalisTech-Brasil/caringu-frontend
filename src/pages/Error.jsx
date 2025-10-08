@@ -7,7 +7,7 @@ const Error = () => {
 
     return (
         <>
-        <div className="w-screen h-[100dvh]">
+        <div className="w-screen h-[100dvh] bg-[var(--cor-secundaria)]">
             <div className="flex flex-col items-center justify-center h-full">
                 <img className="w-auto h-auto" src={imgErro} alt="carguru Imagem  de erro" />
                 <span className="text-[var(--azul-escuro)] text-2xl sm:text-[32px] font-bold">
@@ -21,7 +21,6 @@ const Error = () => {
                     texto="Ir para a tela inicial"
                     cor="var(--azul-claro)"
                     corTexto="var(--cor-secundaria)"
-                    corHover="#1D2D44"
                     width="250px"
                     height="50px"
                     fontSize="20px"

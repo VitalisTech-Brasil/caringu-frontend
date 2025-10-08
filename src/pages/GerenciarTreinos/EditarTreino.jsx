@@ -13,6 +13,7 @@ import CustomToast from '../../components/Utils/CustomToast.jsx'
 import Modal from "../../components/Utils/Modal.jsx";
 import iconCancelar from "../../assets/images/cancelar.png";
 import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx'
+import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 
 
 
@@ -31,7 +32,7 @@ const EditarTreino = () => {
     const [indexExercicioAtual, setIndexExercicioAtual] = useState(null);
     const [selectAberto, setSelectAberto] = useState(false);
     const { id } = useParams();
-    const treinoId = parseInt(id);
+    const idTreino = parseInt(id);
     const idPersonal = sessionStorage.getItem('pessoaId');
     const sugestaoRef = useRef(null);
     const navigate = useNavigate();
@@ -60,7 +61,7 @@ const EditarTreino = () => {
     useEffect(() => {
         const buscarExercicios = async () => {
             try {
-                const response = await caringuApi.get('/exercicios');
+                const response = await caringuApi.get(`/exercicios/por-personal/${idPersonal}`);
                 setExercicios(response.data);
             } catch (error) {
                 console.error('Erro ao buscar exercícios:', error);
@@ -73,9 +74,13 @@ const EditarTreino = () => {
     // Busca treino e seus exercícios
     useEffect(() => {
         const fetchInfosTreino = async () => {
+            console.log(idPersonal);
+            console.log(idTreino);
+
             try {
-                const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${treinoId}`);
+                const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
                 const data = response.data;
+                console.log(data);
                 if (data.length > 0) {
                     setTreino(data);
                     setExerciciosSelecionados(data);
@@ -86,7 +91,7 @@ const EditarTreino = () => {
             }
         };
         fetchInfosTreino();
-    }, [idPersonal, treinoId]);
+    }, [idPersonal, idTreino]);
 
     useEffect(() => {
         if (treino && treino.length > 0) {
@@ -208,7 +213,7 @@ const EditarTreino = () => {
     // Salvar treino completo com exercícios editados
     const salvarTreino = async (data) => {
         const payload = {
-            treinoId: treinoId, // do useParams
+            idTreino: idTreino, // do useParams
             exercicios: exerciciosEditados.map((ex) => ({
                 exercicioId: ex.exercicioId || ex.id,
                 carga: parseFloat(ex.carga),
@@ -228,11 +233,11 @@ const EditarTreino = () => {
         }
         try {
             const response = await caringuApi.put(
-                `/treinos-exercicios/atualizar/treinos/${treinoId}/exercicios`,
+                `/treinos-exercicios/atualizar/treinos/${idTreino}/exercicios`,
                 payload
             );
 
-            const responseTreino = await caringuApi.put(`/treino/${treinoId}/personal/${idPersonal}`, payloadTreino)
+            const responseTreino = await caringuApi.put(`/treino/${idTreino}/personal/${idPersonal}`, payloadTreino)
 
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Treino atualizado com sucesso!" />
@@ -254,7 +259,7 @@ const EditarTreino = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#fdfbf7]">
+        <div className="flex h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 flex flex-col">
                 <Header />
@@ -392,22 +397,15 @@ const EditarTreino = () => {
                             <h1 className="mt-6">Exercícios adicionados:</h1>
                             <div className="flex flex-wrap gap-2 mt-2 md:max-w-1/2">
                                 {exerciciosEditados.map((exercicio) => (
-
-                                    <div key={exercicio.exercicioId || exercicio.id} className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer" onClick={() => abrirModalExercicio(exercicio)}>
-                                        {exercicio.nomeExercicio || exercicio.nome}
-                                        <button onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            removerExercicio(exercicio.exercicioId || exercicio.id)
+                                    <ExercicioChip
+                                        key={exercicio.exercicioId || exercicio.id}
+                                        exercicio={{
+                                            id: exercicio.exercicioId || exercicio.id,
+                                            nome: exercicio.nomeExercicio || exercicio.nome
                                         }}
-                                            className="ml-2 font-bold bg-[#FFFDF6] rounded-[5px] h-5 w-5 flex items-center justify-center cursor-pointer"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4" fill="none">
-                                                <path d="M12 2H2" stroke="#B41F1F" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg></button>
-                                    </div>
-
-
+                                        onEdit={abrirModalExercicio}
+                                        onRemove={removerExercicio}
+                                    />
                                 ))}
                             </div>
                             <div className="flex items-center justify-center mt-7">
@@ -417,7 +415,6 @@ const EditarTreino = () => {
                                     cor="#46982B"
                                     height="2.75rem"
                                     width="9.2rem"
-                                    corHover="#46982BE5"
                                     fontWeight="600"
                                     aria-label={"Botão de Salvar"}
                                     type="submit"
