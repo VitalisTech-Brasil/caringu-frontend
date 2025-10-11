@@ -162,7 +162,16 @@ const AppRoutes = () => {
             <Feedback />
           </ProtectedRoute>
         } />
-        
+        <Route path="/home-aluno" element={
+          <ProtectedRoute>
+            <HomeAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/visualizar-treino/:idAluno" element={
+          <ProtectedRoute>
+            <VisualizarTreino />
+          </ProtectedRoute>
+        } />
         {/* Rota de erro */}
         <Route path="*" element={<Error />} />
       </Routes>

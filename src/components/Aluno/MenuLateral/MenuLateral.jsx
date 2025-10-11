@@ -106,7 +106,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </svg>
       ),
       label: "Página Inicial",
-      path: "/home",
+      path: "/home-aluno",
     },
     {
       icon: (
@@ -185,7 +185,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </svg>
       ),
       label: "Minhas Aulas",
-      path: "/treinos",
+      path: "/minhasAulas",
     },
     {
       icon: (
@@ -275,6 +275,19 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
       ),
       label: "Prograsso Corporal",
       path: "/gerenciar-exercicios",
+    },
+    {
+      icon: (
+        <div className="relative flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <path d="M27.5 14.375V19.375C27.5 23.75 25 25.625 21.25 25.625H8.75C5 25.625 2.5 23.75 2.5 19.375V10.625C2.5 6.25 5 4.375 8.75 4.375H15" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M8.75 11.25L12.6625 14.375C13.95 15.4 16.0625 15.4 17.35 14.375" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M24.35 3.52499L24.7 4.23748C24.875 4.58748 25.3125 4.91249 25.7 4.98749L26.175 5.06248C27.6 5.29998 27.9375 6.34998 26.9125 7.38748L26.475 7.82497C26.1875 8.12497 26.025 8.69998 26.1125 9.09998L26.175 9.36249C26.5625 11.0875 25.65 11.75 24.15 10.85L23.825 10.6625C23.4375 10.4375 22.8125 10.4375 22.425 10.6625L22.1 10.85C20.5875 11.7625 19.675 11.0875 20.075 9.36249L20.1375 9.09998C20.225 8.69998 20.0625 8.12497 19.775 7.82497L19.3375 7.38748C18.3125 6.34998 18.65 5.29998 20.075 5.06248L20.55 4.98749C20.925 4.92499 21.375 4.58748 21.55 4.23748L21.9 3.52499C22.575 2.16249 23.675 2.16249 24.35 3.52499Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+      ),
+      label: "Feedback",
+      path: "/feedback-aluno",
     },
     {
       icon: (
@@ -473,11 +486,10 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
               {menuItems.map((item, index) => (
                 <li key={index} className="flex flex-col">
                   <div
-                    className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${
-                      location.pathname === item.path
+                    className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
                         ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
                         : "hover:bg-[#1D2D4417]"
-                    }`}
+                      }`}
                     onClick={() => {
                       if (item.label === "Treinos") {
                         setIsTreinosOpen(!isTreinosOpen);
@@ -489,9 +501,8 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className={`${
-                          location.pathname === item.path ? "filter invert" : ""
-                        }`}
+                        className={`${location.pathname === item.path ? "filter invert" : ""
+                          }`}
                       >
                         {item.icon}
                       </div>
@@ -506,18 +517,16 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
                   </div>
                   {item.children && (
                     <ul
-                      className={`ml-6 mt-2 overflow-hidden transition-[max-height] duration-300 ease-in-out ${
-                        isTreinosOpen ? "max-h-40" : "max-h-0"
-                      }`}
+                      className={`ml-6 mt-2 overflow-hidden transition-[max-height] duration-300 ease-in-out ${isTreinosOpen ? "max-h-40" : "max-h-0"
+                        }`}
                     >
                       {item.children.map((child, childIndex) => (
                         <li
                           key={childIndex}
-                          className={`flex items-center p-2 rounded cursor-pointer ${
-                            location.pathname === child.path
+                          className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
                               ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
                               : "hover:bg-[#1D2D4417]"
-                          }`}
+                            }`}
                           onClick={() => {
                             navigate(child.path);
                             toggleMenu(); // Fecha o menu após navegação
@@ -525,11 +534,10 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
                         >
                           <div className="flex items-center gap-2">
                             {React.cloneElement(child.icon, {
-                              className: `${child.icon.props.className ?? ""} ${
-                                location.pathname === child.path
+                              className: `${child.icon.props.className ?? ""} ${location.pathname === child.path
                                   ? "filter invert"
                                   : ""
-                              }`,
+                                }`,
                             })}
                             <span className="flex-grow whitespace-nowrap text-left">
                               {child.label}
