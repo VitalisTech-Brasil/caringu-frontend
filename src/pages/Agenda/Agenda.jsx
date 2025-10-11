@@ -6,6 +6,7 @@ import CompromissosAgenda from "../../components/Utils/CompromissosAgenda";
 import Calendario from "../../components/Utils/Calendario";
 import { isSameDay } from "date-fns";
 import { caringuApi } from "../../provider/caringuApi";
+import { Toaster } from 'react-hot-toast';
 
 
 
@@ -175,6 +176,7 @@ const Agenda = () => {
                     </div>
                 </div>
             </div>
+             <Toaster position="top-right" reverseOrder={false} />
         </div>
     );
 };
