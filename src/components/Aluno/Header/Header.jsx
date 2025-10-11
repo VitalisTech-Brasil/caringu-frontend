@@ -1,7 +1,9 @@
+import homeIcon from '../../../assets/images/home-2.svg';
+
 const Header = ({
   menuRef,
   title = "Página inicial",
-  icon = "/src/assets/images/home-2.svg",
+  icon = homeIcon,
 }) => {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
