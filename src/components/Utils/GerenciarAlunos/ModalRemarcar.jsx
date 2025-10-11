@@ -109,8 +109,6 @@ const ModalRemarcar = ({
                     ]);
                     setAgendamentoCompleto(aulaRes.data);
                     setTreinosPersonal(treinosRes.data);
-                    console.log("Dados da aula:", aulaRes.data);
-                    console.log("Dados dos treinos:", treinosRes.data);
                 } catch (error) {
                     console.error("Erro ao buscar dados:", error);
                 }
