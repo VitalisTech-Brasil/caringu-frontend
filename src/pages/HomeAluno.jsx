@@ -28,6 +28,15 @@ const HomeAluno = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const getMesAtual = () => {
+    const meses = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+    const hoje = new Date();
+    return meses[hoje.getMonth()];
+  };
+
   useEffect(() => {
     const fetchDadosAluno = async () => {
       try {
@@ -41,17 +50,41 @@ const HomeAluno = () => {
             caringuApi.get(`/alunos/${alunoId}/maior-evolucao-exercicio`),
           ]);
 
-        // Atualizar estados com os dados recebidos
-        setProgressoAulas(progressoResponse.data);
-        setTopTreinos(treinosResponse.data || []);
-        setExercicioEvolucao(
-          evolucaoResponse.data || {
-            exercicioId: null,
-            nome: "Nenhum exercício encontrado",
-            cargaAntiga: 0,
-            cargaAtual: 0,
-          }
-        );
+          const progressoData = progressoResponse?.data || {};
+          const mappedProgresso = {
+            total: progressoData.totalAulas ?? 0,
+            realizadas: progressoData.aulasRealizadas ?? 0,
+            pendentes: progressoData.aulasPendentes ?? 0,
+            percentual: progressoData.percentualConclusao ?? 0,
+          };
+
+          const treinosData = Array.isArray(treinosResponse?.data)
+            ? treinosResponse.data
+            : [];
+          const mappedTreinos = treinosData.map((t) => ({
+            treinoId: t.treinoId ?? null,
+            nome: t.treinoNome ?? t.nome ?? "",
+            ocorrencias: t.qtdVezesRealizado ?? t.ocorrencias ?? 0,
+          }));
+
+          setProgressoAulas(mappedProgresso);
+          setTopTreinos(mappedTreinos);
+          const evolucaoData = evolucaoResponse?.data || null;
+          const mappedEvolucao = evolucaoData
+            ? {
+                exercicioId: evolucaoData.exercicioId ?? null,
+                nome: evolucaoData.nomeExercicio ?? evolucaoData.nome ?? "",
+                cargaAntiga: evolucaoData.cargaAntiga ?? 0,
+                cargaAtual: evolucaoData.cargaAtual ?? 0,
+              }
+            : {
+                exercicioId: null,
+                nome: "Nenhum exercício encontrado",
+                cargaAntiga: 0,
+                cargaAtual: 0,
+              };
+
+          setExercicioEvolucao(mappedEvolucao);
 
         console.log("Dados carregados com sucesso:", {
           progresso: progressoResponse.data,
@@ -330,14 +363,14 @@ const HomeAluno = () => {
                     <h4 className="text-sm font-medium text-gray-600">
                       Exercício com maior evolução
                     </h4>
-                    <span
+                      <span
                       className="ml-1 text-gray-500"
                       style={{
-                        fontSize: "8px",
+                        fontSize: "15px",
                         fontFamily: "Inter, sans-serif",
                       }}
                     >
-                      - Últimos 30 dias
+                      De {getMesAtual()}
                     </span>
                   </div>
                   <div className="text-center">
