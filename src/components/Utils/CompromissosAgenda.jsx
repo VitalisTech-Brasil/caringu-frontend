@@ -1,17 +1,18 @@
 import { FaUserCircle } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { caringuApi } from "../../provider/caringuApi";
 import { format } from "date-fns";
 import ModalRemarcar from "./GerenciarAlunos/ModalRemarcar";
+import { useNavigate } from "react-router-dom";
+
 
 const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
 
     const [errosImagem, setErrosImagem] = useState({});
-
     const [modalRemarcarVisivel, setModalRemarcarVisivel] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
 
-
+    const navigate = useNavigate();
 
     const lidarErroImagem = (id) => {
         setErrosImagem((prev) => ({
@@ -22,31 +23,14 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
 
     const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-    const marcarComoConcluido = async (idTreinoFinalizado) => {
-        try {
-            await caringuApi.patch(
-                `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
-                {
-                    dataHorarioFim: treinoFim,
-                }
-            );
 
-            if (atualizarTreinos) atualizarTreinos();
-        } catch (error) {
-            console.error("Erro ao marcar compromisso como concluído:", error);
-        }
-    };
 
 
     const handleAbrirModalRemarcar = (compromisso) => {
-        setAgendamentoSelecionado({
-            id: compromisso.id,
-            nomeAluno: compromisso.aluno.nome,
-            dataAtual: compromisso.data,
-            horarioAtual: compromisso.horario
-        });
+        setAgendamentoSelecionado({ id: compromisso.id });
         setModalRemarcarVisivel(true);
     };
+
 
     const handleFecharModalRemarcar = () => {
         setModalRemarcarVisivel(false);
@@ -99,6 +83,12 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         return compromissoDate.getTime() === selectedDate.getTime();
     });
 
+    const carregarEventosCalendario = () => {
+        if (typeof atualizarTreinos === "function") {
+            atualizarTreinos();
+        }
+    };
+
     return (
         <>
             {/* Mostrar cabeçalho apenas se houver compromissos */}
@@ -148,7 +138,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                     <FaUserCircle className="w-13 h-13 2xl:w-12 2xl:h-12 text-[var(--cor-secundaria)]" />
                                                 )}
                                                 <span className="text-[var(--cor-secundaria)] font-medium text-base">
-                                                    {compromisso.aluno.nome}
+                                                    {compromisso.nomeAluno}
                                                 </span>
                                             </div>
                                             <div className="text-white text-sm flex items-center gap-2">
@@ -156,35 +146,35 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                     <path d="M22.9168 12.4997C22.9168 18.2497 18.2502 22.9163 12.5002 22.9163C6.75016 22.9163 2.0835 18.2497 2.0835 12.4997C2.0835 6.74967 6.75016 2.08301 12.5002 2.08301C18.2502 2.08301 22.9168 6.74967 22.9168 12.4997Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
-                                                {/* <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span> */}
-                                                <span className="text-base font-medium text-[var(--cor-secundaria)]">{compromisso.horario}</span>
+                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">
+                                                    {compromisso.dataHorarioInicio ? compromisso.dataHorarioInicio.slice(11, 16) : ""}
+                                                </span>
+                                                <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">
+                                                    {compromisso.dataHorarioFim ? compromisso.dataHorarioFim.slice(11, 16) : ""}
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="flex sm:flex-col flex-col sm:items-end items-center justify-center gap-2 mr-0 sm:mr-4">
                                             <div>
-                                                <button
-                                                    onClick={() => marcarComoConcluido(compromisso.id)}
-                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
-                                                >
-                                                    Marcar como feito
-                                                </button>
+                                                <div>
+                                                    <button
+                                                        onClick={() => navigate(`/acompanhar-aula/${compromisso.idAluno}`)}
+                                                        className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-4 cursor-pointer"
+                                                    >
+                                                        Acompanhar aula
+                                                    </button>
+                                                </div>
                                             </div>
                                             <div>
-                                                <button
-                                                    onClick={() => handleAbrirModalRemarcar(compromisso)}
-                                                    className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-6 2xl:px-7 cursor-pointer"
-                                                >
-                                                    Remarcar Aula
-                                                </button>
+                                                {compromisso.status !== 'REALIZADO' && (
+                                                    <button
+                                                        onClick={() => handleAbrirModalRemarcar(compromisso)}
+                                                        className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-6 2xl:px-7 cursor-pointer"
+                                                    >
+                                                        Remarcar Aula
+                                                    </button>
+                                                )}
                                             </div>
-                                            {/* {compromisso.dataHorarioFim === null && (
-                                                <button
-                                                    onClick={() => marcarComoConcluido(compromisso.id)}
-                                                    className="bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-3 cursor-pointer"
-                                                >
-                                                    Marcar como feito
-                                                </button>
-                                            )} */}
                                         </div>
                                     </div>
                                 </div>
@@ -207,6 +197,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                 fecharModal={handleFecharModalRemarcar}
                 agendamento={agendamentoSelecionado}
                 ariaLabel="Modal de Remarcar Agendamento"
+                atualizarCalendario={carregarEventosCalendario}
             />
         </>
     );

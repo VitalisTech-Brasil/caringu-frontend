@@ -6,6 +6,7 @@ import CompromissosAgenda from "../../components/Utils/CompromissosAgenda";
 import Calendario from "../../components/Utils/Calendario";
 import { isSameDay } from "date-fns";
 import { caringuApi } from "../../provider/caringuApi";
+import { Toaster } from 'react-hot-toast';
 
 
 
@@ -60,7 +61,8 @@ const Agenda = () => {
     const compromissos = treinosFinalizados.map(item => {
         const status = item.status?.toUpperCase().trim();
         return {
-            id: item.id,
+            id: item.idAula,
+            status,
             horario: item.status === "REALIZADO"
                 ? `${formatarHora(item.dataHorarioInicio)} - ${formatarHora(item.dataHorarioFim)}`
                 : `${formatarHora(item.dataHorarioInicio)}`,
@@ -70,7 +72,6 @@ const Agenda = () => {
                 foto: item.urlFotoPerfil,
             },
             finalizado: item.finalizado,
-
             dataHorarioFim: item.dataHorarioFim,
             dataHorarioInicio: item.dataHorarioInicio,
             nomeAluno: item.nomeAluno,
@@ -174,6 +175,7 @@ const Agenda = () => {
                     </div>
                 </div>
             </div>
+             <Toaster position="top-right" reverseOrder={false} />
         </div>
     );
 };

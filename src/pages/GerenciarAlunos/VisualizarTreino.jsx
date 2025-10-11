@@ -3,23 +3,59 @@ import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
 import { useParams, Link } from 'react-router-dom'
 import { FaUserCircle } from 'react-icons/fa'
-import AulaResumoCard from '../../components/Utils/GerenciarAlunos/CardAula'
-import Input from '../../components/Utils/InputPosLogin'
-import Button from '../../components/Utils/Button'
-import CaixaFeedback from '../../components/Utils/GerenciarAlunos/CaixaFeedback'
+import AulaResumoCard from '../../components/Utils/GerenciarAlunos/CardAulaTreino'
 import { caringuApi } from '../../provider/caringuApi'
+import Input from "../../components/Utils/InputPosLogin"
+import ExercicioVideoCard from "../../components/Utils/GerenciarAlunos/ExercicioVideoCard"
 
-const Feedback = () => {
+const VisualizarTreino = () => {
     const { idAluno } = useParams();
     const [imgErro, setImgErro] = useState(false);
     const [aluno, setAluno] = useState();
 
+    const exercicios = [
+        {
+            id: 1,
+            titulo: 'Rosca Direta Barra',
+            carga: '20kg',
+            repeticoes: '3x12',
+            grupoMuscular: 'Bíceps',
+            observacoes: 'Executar controlado.',
+            videoUrl: 'https://www.youtube.com/watch?v=VXY9_csZXUY',
+            inicialmenteAberto: true
+        },
+        {
+            id: 2,
+            titulo: 'Rosca Alternada',
+            carga: '10kg',
+            repeticoes: '4x10',
+            grupoMuscular: 'Bíceps',
+            observacoes: '',
+            videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        }
+    ];
+
+    const videoUrl = "https://www.youtube.com/watch?v=VXY9_csZXUY";
+
+    const getYoutubeId = (url) => {
+        const m = url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+        return m ? m[1] : null;
+    };
+    const videoId = getYoutubeId(videoUrl);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const handlePlay = () => setIsPlaying(true);
+
+    const [exercicioAberto, setExercicioAberto] = useState(false);
 
     useEffect(() => {
-        document.title = "Feedback | Caringu"
+        if (!exercicioAberto) setIsPlaying(false);
+    }, [exercicioAberto]);
+
+    useEffect(() => {
+        document.title = "Visualizar Aula | Caringu"
         const fetchInfosAlunoFeedback = async () => {
             try {
-                const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT (!!!por padrão, deve ser sempre estar aberto o ultimo card do feedback)
+                const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, deve ser sempre estar aberto o ultimo card do treino)
                 setAluno(response.data);
                 console.log("Informações do aluno:", response.data);
             } catch (error) {
@@ -31,21 +67,15 @@ const Feedback = () => {
     }, [idAluno]);
 
     const aulas = [
-        { id: 1, data: "10/05/2025", diaSemana: "Segunda-Feira", horarioInicio: "15:00", horarioFim: "16:00", quantidadeFeedbacks: 4, nomePersoal: "João Pedro", nomeTreino: "Treino A" },
-        { id: 2, data: "11/05/2025", diaSemana: "Terça-Feira", horarioInicio: "09:00", horarioFim: "10:00", quantidadeFeedbacks: 0, nomePersoal: "João Pedro", nomeTreino: "Treino B" },
-        { id: 3, data: "12/05/2025", diaSemana: "Quarta-Feira", horarioInicio: "18:00", horarioFim: "19:00", quantidadeFeedbacks: 2, nomePersoal: "João Pedro", nomeTreino: "Treino C" },
-        { id: 4, data: "13/05/2025", diaSemana: "Quinta-Feira", horarioInicio: "07:00", horarioFim: "08:00", quantidadeFeedbacks: 1, nomePersoal: "João Pedro", nomeTreino: "Treino D" },
-        { id: 5, data: "14/05/2025", diaSemana: "Sexta-Feira", horarioInicio: "17:00", horarioFim: "18:00", quantidadeFeedbacks: 3, nomePersoal: "João Pedro", nomeTreino: "Treino E" },
-        { id: 6, data: "15/05/2025", diaSemana: "Sábado", horarioInicio: "10:00", horarioFim: "11:00", quantidadeFeedbacks: 0, nomePersoal: "João Pedro", nomeTreino: "Treino F" },
+        { id: 1, data: "10/05/2025", diaSemana: "Segunda-Feira", horarioInicio: "15:00", horarioFim: "16:00", nomePersoal: "João Pedro", nomeTreino: "Treino A" },
+        { id: 2, data: "11/05/2025", diaSemana: "Terça-Feira", horarioInicio: "09:00", horarioFim: "10:00", nomePersoal: "João Pedro", nomeTreino: "Treino B" },
+        { id: 3, data: "12/05/2025", diaSemana: "Quarta-Feira", horarioInicio: "18:00", horarioFim: "19:00", nomePersoal: "João Pedro", nomeTreino: "Treino C" },
+        { id: 4, data: "13/05/2025", diaSemana: "Quinta-Feira", horarioInicio: "07:00", horarioFim: "08:00", nomePersoal: "João Pedro", nomeTreino: "Treino D" },
+        { id: 5, data: "14/05/2025", diaSemana: "Sexta-Feira", horarioInicio: "17:00", horarioFim: "18:00", nomePersoal: "João Pedro", nomeTreino: "Treino E" },
+        { id: 6, data: "15/05/2025", diaSemana: "Sábado", horarioInicio: "10:00", horarioFim: "11:00", nomePersoal: "João Pedro", nomeTreino: "Treino F" },
     ];
 
     const [aulaSelecionada, setAulaSelecionada] = useState(aulas[0] || null);
-
-    const mensagensFeedback = [
-        { id: 1, label: 'Resposta do Aluno(a):', texto: 'Não senti mais dor!' },
-        { id: 2, label: 'Seu comentário:', texto: 'Que bom!' },
-        { id: 3, label: 'Resposta do Aluno(a):', texto: 'Consegui fazer todos os exercícios!' },
-    ];
 
 
     return (
@@ -53,8 +83,8 @@ const Feedback = () => {
             <MenuLateral />
             <div className="flex-1 overflow-y-auto">
                 <Header />
-                <div className="w-full h-auto p-2 md:p-4 2xl:">
-                    <div className="w-full h-auto flex flex-row ">
+                <div className="w-full h-auto p-2 md:p-4 flex flex-col items-start gap-2">
+                    <div className="w-full h-auto flex flex-row pl-4">
                         <div className=" h-auto">
                             <Link to={`/gerenciar-alunos`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 sm:h-8 sm:w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
@@ -65,8 +95,8 @@ const Feedback = () => {
                         </div>
                     </div>
                     <div className="h-auto w-full flex flex-row items-center justify-center">
-                        <div className="h-auto w-[95%] bg-[rgba(29,45,68,0.11)] border-2 border-gray-300 rounded-md flex lg:flex-row flex-col gap-10 justify-center lg:items-start items-center py-5">
-                            <div className="lg:w-[28%] w-[90%] bg-[var(--cor-secundaria)] min-h-[400px] lg:min-h-[468px] h-auto p-4 border-2 border-gray-300 rounded-md flex flex-col gap-6">
+                        <div className="h-auto w-full bg-[rgba(29,45,68,0.11)] border-2 border-gray-300 rounded-md flex lg:flex-row flex-col gap-10 justify-center lg:items-start items-center py-5">
+                            <div className="lg:w-[23%] w-[90%] bg-[var(--cor-secundaria)] min-h-[400px] lg:min-h-[468px] h-auto p-4 border-2 border-gray-300 rounded-md flex flex-col gap-6">
                                 <div className="flex flex-row w-full h-auto gap-4 items-center">
                                     {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
                                         <img
@@ -124,15 +154,13 @@ const Feedback = () => {
                                             diaSemana={a.diaSemana}
                                             horarioInicio={a.horarioInicio}
                                             horarioFim={a.horarioFim}
-                                            quantidadeFeedbacks={a.quantidadeFeedbacks}
                                             onVerFeedbacks={() => setAulaSelecionada(a)}
                                         />
                                     ))
                                 )}
                             </div>
-                            <div className="lg:w-[28%] w-[90%] bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md py-4 h-[700px] gap-3 flex flex-col overflow-y-auto">
-
-                                <div className="flex flex-col border-b-2 border-solid border-gray-300 px-6 2xl:px-14 pb-6 gap-1">
+                            <div className="lg:w-[41%] w-[90%] bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md py-4 px-6 2xl:px-10 h-[700px] gap-3 flex flex-col overflow-y-auto">
+                                <div className="flex flex-col  pb-2 gap-1">
                                     <span className="text-2xl font-bold text-[var(--azul-escuro)]">
                                         Aula {aulaSelecionada.data}
                                     </span>
@@ -163,59 +191,27 @@ const Feedback = () => {
                                                 {aulaSelecionada.horarioInicio} - {aulaSelecionada.horarioFim}
                                             </span>
                                         </div>
-                                        <div className="flex flex-row items-center gap-3">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17" fill="none">
-                                                <path d="M15.5111 3.91675H16.7043C17.0336 3.91675 17.3009 4.24341 17.3009 4.64591V11.9376C17.3009 12.3401 17.0336 12.6667 16.7043 12.6667H15.5111C15.1818 12.6667 14.9146 12.3401 14.9146 11.9376V4.64591C14.9146 4.24341 15.1818 3.91675 15.5111 3.91675Z" stroke="#1D2D44" />
-                                                <path d="M13.1249 1H14.3181C14.6474 1 14.9147 1.32667 14.9147 1.72917V14.8542C14.9147 15.2567 14.6474 15.5833 14.3181 15.5833H13.1249C12.7956 15.5833 12.5283 15.2567 12.5283 14.8542V1.72917C12.5283 1.32667 12.7956 1 13.1249 1Z" stroke="#1D2D44" />
-                                                <path d="M4.77286 1H5.96604C6.29536 1 6.56263 1.32667 6.56263 1.72917V14.8542C6.56263 15.2567 6.29536 15.5833 5.96604 15.5833H4.77286C4.44354 15.5833 4.17627 15.2567 4.17627 14.8542V1.72917C4.17627 1.32667 4.44354 1 4.77286 1Z" stroke="#1D2D44" />
-                                                <path d="M2.38614 3.91675H3.57932C3.90864 3.91675 4.17591 4.24341 4.17591 4.64591V11.9376C4.17591 12.3401 3.90864 12.6667 3.57932 12.6667H2.38614C2.05682 12.6667 1.78955 12.3401 1.78955 11.9376V4.64591C1.78955 4.24341 2.05682 3.91675 2.38614 3.91675Z" stroke="#1D2D44" />
-                                                <path d="M17.3013 8.29175H19.091" stroke="#1D2D44" />
-                                                <path d="M6.5625 8.29175H12.5284" stroke="#1D2D44" />
-                                                <path d="M0 8.29175H1.78977" stroke="#1D2D44" />
-                                            </svg>
-                                            <div className="flex 2xl:flex-row flex-col gap-1">
-                                                <span className="break-words">Treino da Aula:</span>
-                                                <span className="break-words">{aulaSelecionada.nomeTreino}</span>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="flex flex-col h-full  justify-between items-center">
-                                    <CaixaFeedback
-                                        aula={aulaSelecionada}
-                                        mensagens={mensagensFeedback}
-                                    />
-                                    <form className="border-t-2 border-solid border-gray-300 px-4 flex flex-col h-auto gap-2 w-full pt-5">
-                                        <Input
-                                            id={`feedback`}
-                                            name={`feedback`}
-                                            inputType={"text"}
-                                            placeholder={"Escreva seu Feedback"}
-                                            fontSize="16px"
-                                            fontWeight="500"
-                                            width="100%"
-                                        />
-                                        <div className="w-full h-auto flex flex-col items-center">
-                                            <Button
-                                                id="enviarFeedback"
-                                                texto="Enviar Feedback"
-                                                corTexto="#fff"
-                                                cor="var(--azul-claro)"
-                                                classNameExtra="w-full h-10 text-base"
-                                                ariaLabel={"Botão Enviar Feedback"}
-                                                fontWeight="600"
-                                                logoSvg={
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                                        <path d="M8.25 1.5H6.75C3 1.5 1.5 3 1.5 6.75V11.25C1.5 15 3 16.5 6.75 16.5H11.25C15 16.5 16.5 15 16.5 11.25V9.75" stroke="#FDFFFD" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                        <path d="M12.0299 2.26495L6.11991 8.17495C5.89491 8.39995 5.66991 8.84245 5.62491 9.16495L5.30241 11.4224C5.18241 12.2399 5.75991 12.8099 6.57741 12.6974L8.83491 12.3749C9.14991 12.3299 9.59241 12.1049 9.82491 11.8799L15.7349 5.96995C16.7549 4.94995 17.2349 3.76495 15.7349 2.26495C14.2349 0.764945 13.0499 1.24495 12.0299 2.26495Z" stroke="#FDFFFD" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                        <path d="M11.1826 3.11255C11.6851 4.90505 13.0876 6.30755 14.8876 6.81755" stroke="#FDFFFD" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
-                                                }
-                                            />
-
-                                        </div>
-                                    </form>
+                                <div className="flex flex-col h-[700px] w-full  gap-4 overflow-y-auto">
+                                    <div className="flex flex-row items-center justify-start font-semibold text-2xl text-[var(--azul-escuro)] h-auto gap-2">
+                                        <svg className="shrink-0" xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                                            <ellipse cx="20.6176" cy="20.6177" rx="20.6176" ry="20.6176" fill="#748CAB" />
+                                            <path d="M29.3258 15.2845H31.0671C31.5477 15.2845 31.9378 15.7482 31.9378 16.3195V26.6689C31.9378 27.2402 31.5477 27.7038 31.0671 27.7038H29.3258C28.8451 27.7038 28.4551 27.2402 28.4551 26.6689V16.3195C28.4551 15.7482 28.8451 15.2845 29.3258 15.2845Z" stroke="#FFFDF6" strokeWidth="2" />
+                                            <path d="M25.8433 11.1449H27.5847C28.0653 11.1449 28.4554 11.6085 28.4554 12.1798V30.8087C28.4554 31.38 28.0653 31.8437 27.5847 31.8437H25.8433C25.3627 31.8437 24.9727 31.38 24.9727 30.8087V12.1798C24.9727 11.6085 25.3627 11.1449 25.8433 11.1449Z" stroke="#FFFDF6" strokeWidth="2" />
+                                            <path d="M13.6519 11.1449H15.3933C15.8739 11.1449 16.264 11.6085 16.264 12.1798V30.8087C16.264 31.38 15.8739 31.8437 15.3933 31.8437H13.6519C13.1713 31.8437 12.7812 31.38 12.7812 30.8087V12.1798C12.7812 11.6085 13.1713 11.1449 13.6519 11.1449Z" stroke="#FFFDF6" strokeWidth="2" />
+                                            <path d="M10.1695 15.2845H11.9109C12.3915 15.2845 12.7816 15.7482 12.7816 16.3195V26.6689C12.7816 27.2402 12.3915 27.7038 11.9109 27.7038H10.1695C9.68889 27.7038 9.29883 27.2402 9.29883 26.6689V16.3195C9.29883 15.7482 9.68889 15.2845 10.1695 15.2845Z" stroke="#FFFDF6" strokeWidth="2" />
+                                            <path d="M31.9375 21.4941H34.5495" stroke="#FFFDF6" strokeWidth="2" />
+                                            <path d="M16.2656 21.4941H24.9724" stroke="#FFFDF6" strokeWidth="2" />
+                                            <path d="M6.6875 21.4941H9.29955" stroke="#FFFDF6" strokeWidth="2" />
+                                        </svg>
+                                        <span>
+                                            {aulaSelecionada?.nomeTreino}
+                                        </span>
+                                    </div>
+                                    {exercicios.map(ex => (
+                                        <ExercicioVideoCard key={ex.id} {...ex} />
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -224,6 +220,6 @@ const Feedback = () => {
             </div>
         </div>
     )
-}
+};
 
-export default Feedback;
+export default VisualizarTreino;
