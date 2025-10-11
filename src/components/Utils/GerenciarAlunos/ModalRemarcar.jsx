@@ -35,6 +35,26 @@ const ModalRemarcar = ({
         const novoHorarioInicio = toBrasiliaISOString(dataAula, horarioInicio);
         const novoHorarioFim = toBrasiliaISOString(dataAula, horarioFim);
 
+        const now = new Date();
+        const pad = (n) => n.toString().padStart(2, '0');
+        const brasiliaDateStr = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+        const brasiliaTimeStr = pad(now.getHours()) + ':' + pad(now.getMinutes());
+        const agoraBrasiliaISO = toBrasiliaISOString(brasiliaDateStr, brasiliaTimeStr);
+
+        if (new Date(novoHorarioInicio) <= new Date(agoraBrasiliaISO)) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="O horário de início deve estar no futuro." />
+            ));
+            return;
+        }
+
+        if (horarioFim <= horarioInicio) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="O horário de fim deve ser após o horário de início." />
+            ));
+            return;
+        }
+
         const payload = {
             idAula,
             idTreinoNovo,
@@ -193,7 +213,7 @@ const ModalRemarcar = ({
                         </div>
                         <div className="w-full h-auto flex flex-col items-center justify-end">
                             <form className="flex flex-col gap-4 w-full h-auto" onSubmit={handleSubmit(onSubmit)}>
-                                <div className="flex flex-col py-2 mt-4 border-2 rounded-2xl border-[#1D2D441A] h-auto  w-full 2xl:w-[65%]" aria-label="Inputs de Data e Horário">
+                                <div className="flex flex-col py-2 mt-4 border-2 rounded-2xl border-[#1D2D441A] h-auto  w-full 2xl:w-[75%]" aria-label="Inputs de Data e Horário">
                                     <div>
                                         <span className="text-sm sm:text-base md:text-xl font-medium">
                                             Escolha a data e horário para reposição da aula
