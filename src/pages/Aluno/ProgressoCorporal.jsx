@@ -4,7 +4,6 @@ import Button from "../../components/Utils/Button";
 import Header from '../../components/Aluno/Header/Header';
 import { Link, useParams } from 'react-router-dom';
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro';
-import MenuLateral from '../../components/Index/MenuLateralIndex';
 
 const ProgressoCorporal = () => {
     const menuRef = useRef(null);
@@ -55,7 +54,7 @@ const ProgressoCorporal = () => {
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
-            <MenuLateral />
+            <MenuLateralAluno ref={menuRef} />
             <div className="flex-1 flex flex-col overflow-y-auto">
                 <Header
                     title="Progresso Corporal"

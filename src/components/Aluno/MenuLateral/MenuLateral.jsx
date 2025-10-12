@@ -274,7 +274,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </svg>
       ),
       label: "Prograsso Corporal",
-      path: "/gerenciar-exercicios",
+      path: "/progresso-corporal-aluno",
     },
     {
       icon: (
