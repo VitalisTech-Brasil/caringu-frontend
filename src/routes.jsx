@@ -59,8 +59,6 @@ const AppRoutes = () => {
       <SessaoExpiradaModal
         visible={sessaoExpirada}
         onClose={() => setSessaoExpirada(false)}
-      /* titulo={modalTitulo}
-      mensagem={modalMensagem} */
       />
       <Routes>
         {/* Rotas públicas */}
@@ -185,12 +183,14 @@ const AppRoutes = () => {
         <Route path="/aluno-planos" element={
           <ProtectedRoute>
             <AlunoPlanos />
+          </ProtectedRoute>
+        } />
         <Route path="/feedback-aluno" element={
           <ProtectedRoute>
             <FeedbackAluno />
           </ProtectedRoute>
         } />
-         <Route path="/feedback-mensagem" element={
+        <Route path="/feedback-mensagem" element={
           <ProtectedRoute>
             <FeedbackMensagem />
           </ProtectedRoute>
