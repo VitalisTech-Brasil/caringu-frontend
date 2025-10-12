@@ -18,6 +18,8 @@ const HomeAluno = () => {
 
   const [topTreinos, setTopTreinos] = useState([]);
 
+  const [proximasAulas, setProximasAulas] = useState([]);
+
   const [exercicioEvolucao, setExercicioEvolucao] = useState({
     exercicioId: null,
     nome: "",
@@ -43,11 +45,12 @@ const HomeAluno = () => {
         setLoading(true);
         setError(null);
 
-        const [progressoResponse, treinosResponse, evolucaoResponse] =
+        const [progressoResponse, treinosResponse, evolucaoResponse /*, proximasResponse */] =
           await Promise.all([
             caringuApi.get(`/alunos/${alunoId}/progresso-aulas`),
             caringuApi.get(`/alunos/${alunoId}/top-treinos`),
             caringuApi.get(`/alunos/${alunoId}/maior-evolucao-exercicio`),
+            // caringuApi.get(`/alunos/${alunoId}/proximas-aulas`), 
           ]);
 
           const progressoData = progressoResponse?.data || {};
@@ -86,10 +89,30 @@ const HomeAluno = () => {
 
           setExercicioEvolucao(mappedEvolucao);
 
+          const mockedProximas = [
+            {
+              id: 1,
+              data: "2025-10-15 18:00",
+              treino: "Treino Funcional",
+              exercicios: ["Agachamento", "Flexão", "Prancha", "Burpee"],
+              totalExercicios: 4,
+            },
+            {
+              id: 2,
+              data: "2025-10-18 07:30",
+              treino: "Cardio e Core",
+              exercicios: ["Corrida", "Abdominais", "Mountain Climbers"],
+              totalExercicios: 3,
+            },
+          ];
+
+          setProximasAulas(mockedProximas);
+
         console.log("Dados carregados com sucesso:", {
           progresso: progressoResponse.data,
           treinos: treinosResponse.data,
           evolucao: evolucaoResponse.data,
+          proximas: mockedProximas,
         });
       } catch (error) {
         console.error("Erro ao buscar dados do aluno:", error);
@@ -436,14 +459,124 @@ const HomeAluno = () => {
               Próximas aulas
             </h2>
 
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center">
-              <div className="text-6xl mb-4">📅</div>
-              <h3 className="text-lg font-medium text-gray-800 mb-2">
-                Funcionalidade em desenvolvimento
-              </h3>
-              <p className="text-gray-600">
-                A visualização das próximas aulas será implementada em breve.
-              </p>
+            <div className="space-y-4">
+              {proximasAulas.length > 0 ? (
+                proximasAulas.map((aula) => (
+                  <div
+                    key={aula.id}
+                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+                  >
+                    {/* Cabeçalho da Aula */}
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                      <h3
+                        className="text-2xl font-bold lg:text-2xl truncate"
+                        style={{
+                          color: "#1D2D44",
+                          fontFamily: "Inter",
+                          fontSize: "24px",
+                          maxWidth: "60%",
+                        }}
+                      >
+                        Aula - {aula.data}
+                      </h3>
+                      <button
+                        className="text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center"
+                        style={{
+                          width: "144px",
+                          height: "32px",
+                          backgroundColor: "#9CABC2",
+                          fontSize: "14px",
+                          fontFamily: "Inter, sans-serif",
+                        }}
+                      >
+                        Acompanhar aula
+                      </button>
+                    </div>
+
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      {/* Treino */}
+                      <div className="flex items-center mb-4">
+                        <div
+                          className="w-[37px] h-[37px] rounded-full flex items-center justify-center mr-3"
+                          style={{ backgroundColor: "#748CAB" }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="w-5 h-5 text-white"
+                            style={{ color: "#FFFDF6" }}
+                          >
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                              d="M9 11.5a3.5 3.5 0 1 1 7 0v3h1v1H8v-1h1v-3z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
+                        <span className="font-medium text-gray-800">
+                          {aula.treino}
+                        </span>
+                      </div>
+
+                      {/* Exercícios */}
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          Exercícios
+                        </h4>
+                        <div className="flex flex-col space-y-2">
+                          {(aula.exercicios || [])
+                            .slice(0, 2)
+                            .map((exercicio, index) => (
+                              <div
+                                key={exercicio.id ?? index}
+                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 bg-gray-50"
+                                style={{
+                                  width: "100%",
+                                  maxWidth: "314px",
+                                  height: "36px",
+                                  fontFamily: "Inter, sans-serif",
+                                }}
+                              >
+                                {typeof exercicio === "string" ? exercicio : exercicio.nome}
+                              </div>
+                            ))}
+                          {(aula.totalExercicios || 0) > 2 && (
+                            <div className="relative group">
+                              <div className="text-sm text-gray-500 font-medium mt-2 cursor-pointer hover:text-gray-700 transition-colors">
+                                +{(aula.totalExercicios || 0) - 2} exercícios
+                              </div>
+                              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-10">
+                                <div className="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 shadow-lg min-w-max">
+                                  <div className="space-y-1">
+                                    {(aula.exercicios || [])
+                                      .slice(2)
+                                      .map((exercicio, idx) => (
+                                        <div
+                                          key={exercicio.id ?? idx}
+                                          className="whitespace-nowrap"
+                                        >
+                                          {typeof exercicio === "string" ? exercicio : exercicio.nome}
+                                        </div>
+                                      ))}
+                                  </div>
+                                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800" aria-hidden="true"></div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center">
+                  <div className="text-6xl mb-4">📅</div>
+                  <h3 className="text-lg font-medium text-gray-800 mb-2">Nenhuma aula encontrada</h3>
+                  <p className="text-gray-600">Você não tem próximas aulas agendadas.</p>
+                </div>
+              )}
             </div>
           </section>
         </main>
