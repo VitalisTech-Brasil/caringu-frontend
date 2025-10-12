@@ -30,7 +30,10 @@ import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
+import FeedbackAluno from './pages/Aluno/Feedback/Feedback.jsx';
+import FeedbackMensagem from './pages/Aluno/Feedback/FeedbackMensagem.jsx';
 import HomeAluno from "./pages/HomeAluno";
+
 
 const AppRoutes = () => {
 
@@ -170,6 +173,16 @@ const AppRoutes = () => {
         <Route path="/visualizar-treino/:idAluno" element={
           <ProtectedRoute>
             <VisualizarTreino />
+          </ProtectedRoute>
+        } />
+        <Route path="/feedback-aluno" element={
+          <ProtectedRoute>
+            <FeedbackAluno />
+          </ProtectedRoute>
+        } />
+         <Route path="/feedback-mensagem" element={
+          <ProtectedRoute>
+            <FeedbackMensagem />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
