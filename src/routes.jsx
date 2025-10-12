@@ -32,6 +32,8 @@ import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
 import FeedbackAluno from './pages/Aluno/Feedback/Feedback.jsx';
 import FeedbackMensagem from './pages/Aluno/Feedback/FeedbackMensagem.jsx';
+import HomeAluno from "./pages/HomeAluno";
+
 
 const AppRoutes = () => {
 
@@ -161,6 +163,11 @@ const AppRoutes = () => {
         <Route path="/feedback/:idAluno" element={
           <ProtectedRoute>
             <Feedback />
+          </ProtectedRoute>
+        } />
+        <Route path="/home-aluno" element={
+          <ProtectedRoute>
+            <HomeAluno />
           </ProtectedRoute>
         } />
         <Route path="/visualizar-treino/:idAluno" element={
