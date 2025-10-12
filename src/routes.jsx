@@ -30,7 +30,7 @@ import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
-import FeedbackAluno from './pages/Aluno/Feedback.jsx';
+import FeedbackAluno from './pages/Aluno/Feedback/Feedback.jsx';
 
 const AppRoutes = () => {
 
