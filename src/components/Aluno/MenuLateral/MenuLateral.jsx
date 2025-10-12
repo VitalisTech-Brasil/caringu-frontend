@@ -369,7 +369,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </svg>
       ),
       label: "Planos",
-      path: "/planos",
+      path: "/aluno-planos",
     },
     {
       icon: (
@@ -487,8 +487,8 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
                 <li key={index} className="flex flex-col">
                   <div
                     className={`flex items-center justify-between gap-4 p-2 rounded cursor-pointer ${location.pathname === item.path
-                        ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                        : "hover:bg-[#1D2D4417]"
+                      ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                      : "hover:bg-[#1D2D4417]"
                       }`}
                     onClick={() => {
                       if (item.label === "Treinos") {
@@ -524,8 +524,8 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
                         <li
                           key={childIndex}
                           className={`flex items-center p-2 rounded cursor-pointer ${location.pathname === child.path
-                              ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
-                              : "hover:bg-[#1D2D4417]"
+                            ? "bg-[var(--azul-escuro)] text-[var(--cor-secundaria)]"
+                            : "hover:bg-[#1D2D4417]"
                             }`}
                           onClick={() => {
                             navigate(child.path);
@@ -535,8 +535,8 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
                           <div className="flex items-center gap-2">
                             {React.cloneElement(child.icon, {
                               className: `${child.icon.props.className ?? ""} ${location.pathname === child.path
-                                  ? "filter invert"
-                                  : ""
+                                ? "filter invert"
+                                : ""
                                 }`,
                             })}
                             <span className="flex-grow whitespace-nowrap text-left">
