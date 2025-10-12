@@ -31,6 +31,7 @@ import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
 import HomeAluno from "./pages/HomeAluno";
+import ProgressoCorporal from './pages/Aluno/ProgressoCorporal.jsx';
 
 const AppRoutes = () => {
 
@@ -170,6 +171,11 @@ const AppRoutes = () => {
         <Route path="/visualizar-treino/:idAluno" element={
           <ProtectedRoute>
             <VisualizarTreino />
+          </ProtectedRoute>
+        } />
+        <Route path="/progresso-corporal-aluno" element={
+          <ProtectedRoute>
+            <ProgressoCorporal />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
