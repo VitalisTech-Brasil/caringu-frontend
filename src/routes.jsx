@@ -32,6 +32,7 @@ import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
 import HomeAluno from "./pages/HomeAluno";
 import ProgressoCorporal from './pages/Aluno/ProgressoCorporal.jsx';
+import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
 
 const AppRoutes = () => {
 
@@ -41,8 +42,8 @@ const AppRoutes = () => {
 
   useEffect(() => {
     const handler = () => {
-/*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
-      setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
+      /*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
+            setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
       setSessaoExpirada(true);
     };
 
@@ -55,8 +56,8 @@ const AppRoutes = () => {
       <SessaoExpiradaModal
         visible={sessaoExpirada}
         onClose={() => setSessaoExpirada(false)}
-        /* titulo={modalTitulo}
-        mensagem={modalMensagem} */
+      /* titulo={modalTitulo}
+      mensagem={modalMensagem} */
       />
       <Routes>
         {/* Rotas públicas */}
@@ -176,6 +177,11 @@ const AppRoutes = () => {
         <Route path="/progresso-corporal-aluno" element={
           <ProtectedRoute>
             <ProgressoCorporal />
+          </ProtectedRoute>
+        } />
+        <Route path="/aluno-planos" element={
+          <ProtectedRoute>
+            <AlunoPlanos />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
