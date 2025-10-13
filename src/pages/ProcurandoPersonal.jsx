@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
 import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
-import Header from "../components/Personal/Header/Header";
+import Header from "../components/Aluno/Header/Header";
 import Button from "../components/Utils/Button";
 import { useNavigate } from "react-router-dom";
 import Label from "../components/Utils/Label";
@@ -533,11 +533,25 @@ const ProcurandoPersonal = () => {
     }));
   };
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const menuRef = useRef(null);
+
   return (
     <div className="flex min-h-screen bg-[#fffdf6]">
-      <MenuLateralAluno isOpen={menuOpen} toggleMenu={() => setMenuOpen(!menuOpen)} />
+      <MenuLateralAluno ref={menuRef} />
       <div className="flex-1 overflow-y-auto">
-        <Header />
+        <Header
+          title="Procurando Personal"
+          menuRef={menuRef}
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+              <path d="M15 15C18.4518 15 21.25 12.2018 21.25 8.75C21.25 5.29822 18.4518 2.5 15 2.5C11.5482 2.5 8.75 5.29822 8.75 8.75C8.75 12.2018 11.5482 15 15 15Z" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M4.26245 27.5C4.26245 22.6625 9.07499 18.75 15 18.75" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M22.75 26.75C24.9592 26.75 26.75 24.9592 26.75 22.75C26.75 20.5409 24.9592 18.75 22.75 18.75C20.5409 18.75 18.75 20.5409 18.75 22.75C18.75 24.9592 20.5409 26.75 22.75 26.75Z" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M27.5 27.5L26.25 26.25" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          }
+        />
         <main className="w-full h-auto">
           <div className="pl-[1rem] sm:pl-[3.5rem] w-[90%] h-auto flex mt-6 flex-col gap-6">
             <div>
