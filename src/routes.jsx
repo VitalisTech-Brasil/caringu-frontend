@@ -35,7 +35,7 @@ import FeedbackMensagem from './pages/Aluno/Feedback/FeedbackMensagem.jsx';
 import HomeAluno from "./pages/HomeAluno";
 import ProgressoCorporal from './pages/Aluno/ProgressoCorporal.jsx';
 import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
-
+import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
 
 const AppRoutes = () => {
 
@@ -193,6 +193,11 @@ const AppRoutes = () => {
         <Route path="/feedback-mensagem" element={
           <ProtectedRoute>
             <FeedbackMensagem />
+          </ProtectedRoute>
+        } />
+        <Route path="/acompanhar-aula/:idAluno" element={
+          <ProtectedRoute>
+            <AcompanharAula />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}

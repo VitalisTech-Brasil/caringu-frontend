@@ -216,8 +216,18 @@ const Header = () => {
         <path d="M22.5 18.1375C24.8914 18.1375 26.8622 20.1084 26.8623 22.4998C26.8623 24.8867 24.896 26.8436 22.5 26.8436C20.1085 26.8436 18.1562 24.8913 18.1562 22.4998C18.1564 20.0874 20.1109 18.1375 22.5 18.1375Z" stroke="#1D2D44" strokeWidth="2" />
       </svg>,
       label: "Visualizar Aulas",
-
-    }
+    },
+    "/acompanhar-aula/*": {
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 45 45" fill="none">
+        <path d="M41.1186 12.6749L34.7999 38.0437C34.3499 39.9375 32.6624 41.2499 30.7124 41.2499H6.07488C3.24363 41.2499 1.21866 38.4748 2.06241 35.756L9.95614 10.4062C10.4999 8.64372 12.1312 7.4248 13.9687 7.4248H37.0311C38.8124 7.4248 40.2937 8.51231 40.9124 10.0123C41.2687 10.8186 41.3436 11.7374 41.1186 12.6749Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" />
+        <path d="M30 41.25H38.9625C41.3812 41.25 43.275 39.2062 43.1062 36.7875L41.25 11.25" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18.1499 11.9624L20.0999 3.86255" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M30.7124 11.9812L32.4749 3.84375" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14.4375 22.5H29.4375" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12.5625 30H27.5625" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>,
+      label: "Visualizar Aulas",
+    },
 
   };
 
