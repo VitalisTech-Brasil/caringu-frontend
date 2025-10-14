@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaEllipsisV, FaUserCircle } from "react-icons/fa";
 import { HiOutlineClock } from "react-icons/hi";
 import MascaraTelefone from "../Functions/MascaraTelefone";
 import Button from "../Button";
+import { caringuApi } from '../../../provider/caringuApi';
 
 const CardAluno = ({
     aluno,
@@ -30,6 +31,7 @@ const CardAluno = ({
 
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
+    const [aulasDisponiveis, setAulasDisponiveis] = useState([]);
 
     const formatarNivelAtividade = (nivel) => {
         if (!nivel) return "Não informado";
@@ -50,6 +52,15 @@ const CardAluno = ({
         }
     };
 
+    const getBuscarAulasDisponiveis = async () => {
+        try {
+            const response = await caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`);
+            setAulasDisponiveis(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar aulas disponíveis:", error);
+        }
+    };
+
     const AlunoActionsMenu = ({ aluno }) => (
         <div className="flex flex-col text-xs sm:text-sm font-medium w-full">
             <button
@@ -65,6 +76,7 @@ const CardAluno = ({
                     <path d="M15.6098 11.5298C15.3198 11.3898 15.0398 11.2498 14.7698 11.0898C14.5498 10.9598 14.3398 10.8198 14.1298 10.6698C13.9598 10.5598 13.7598 10.3998 13.5698 10.2398C13.5498 10.2298 13.4798 10.1698 13.3998 10.0898C13.0698 9.8098 12.6998 9.4498 12.3698 9.0498C12.3398 9.0298 12.2898 8.9598 12.2198 8.8698C12.1198 8.7498 11.9498 8.5498 11.7998 8.3198C11.6798 8.1698 11.5398 7.9498 11.4098 7.7298C11.2498 7.4598 11.1098 7.1898 10.9698 6.9098C10.9486 6.86441 10.9281 6.81924 10.9083 6.77434C10.7607 6.44102 10.3261 6.34358 10.0683 6.60133L4.33983 12.3298C4.20983 12.4598 4.08983 12.7098 4.05983 12.8798L3.51983 16.7098C3.41983 17.3898 3.60983 18.0298 4.02983 18.4598C4.38983 18.8098 4.88983 18.9998 5.42983 18.9998C5.54983 18.9998 5.66983 18.9898 5.78983 18.9698L9.62983 18.4298C9.80983 18.3998 10.0598 18.2798 10.1798 18.1498L15.9011 12.4285C16.1607 12.1689 16.0628 11.7235 15.7252 11.5794C15.6872 11.5632 15.6488 11.5467 15.6098 11.5298Z" fill="#738CAB" />
                 </svg>
             </button>
+            {aulasDisponiveis.aulasRestantes > 0 && (
             <button
                 className="flex items-center justify-between gap-2 p-1 sm:p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
                 onClick={() => onMenuAction('agendarAula', aluno)}
@@ -78,7 +90,7 @@ const CardAluno = ({
                     <path d="M12 16V8" stroke="#15171B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
             </button>
-
+            )}
             {aluno.idAnamnese && (
                 <button
                     className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
@@ -123,6 +135,26 @@ const CardAluno = ({
         </div>
     );
 
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (
+                menuRef.current &&
+                !menuRef.current.contains(event.target) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target)
+            ) {
+                setOpenMenuId(null);
+            }
+        }
+        if (openMenuId === aluno.idAluno) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [openMenuId, aluno.idAluno]);
 
 
     return (
@@ -162,6 +194,7 @@ const CardAluno = ({
                         <div onClick={(e) => {
                             e.stopPropagation(); // Prevent card click event
                             setOpenMenuId(openMenuId === aluno.idAluno ? null : aluno.idAluno);
+                            getBuscarAulasDisponiveis();
                         }}
                             className="w-8 h-8 pt-2 sm:pt-0 flex justify-center items-center rounded-[5px] cursor-pointer sm:hover:bg-gray-300 transition duration-200">
                             <div className="relative" ref={buttonRef}>
