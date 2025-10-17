@@ -226,7 +226,7 @@ const Header = () => {
         <path d="M14.4375 22.5H29.4375" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M12.5625 30H27.5625" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
       </svg>,
-      label: "Visualizar Aulas",
+      label: "Acompanhar Aulas",
     },
 
   };
