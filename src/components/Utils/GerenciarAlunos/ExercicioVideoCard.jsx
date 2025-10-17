@@ -56,7 +56,7 @@ const ExercicioVideoCard = ({
 
 
     return (
-        <div className={`flex flex-row w-full h-auto gap-6 ${aberto ? 'items-start' : 'items-center'}`}>
+        <div className={`flex flex-row w-full h-auto gap-3 md:gap-6 ${aberto ? 'items-start' : 'items-center'}`}>
             {origemUso === "visualizarAulas" && (
                 <div className={`w-auto flex flex-row ${aberto ? 'mt-[4.3vh]' : 'items-center'}`}>
                     <input type="checkbox" name="" id="" checked={exerciciosFinalizados} />
@@ -96,7 +96,7 @@ const ExercicioVideoCard = ({
                                 </div>
                             </div>
                             <div className="flex flex-col sm:flex-row items-center h-auto sm:w-auto w-full gap-1 flex-shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="15" fill="none" viewBox="0 0 20 15">
+                                <svg className="shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="15" fill="none" viewBox="0 0 20 15">
                                     <path d="M7.64678 13.75H12.3044C16.1857 13.75 17.7383 12.5 17.7383 9.375V5.625C17.7383 2.5 16.1857 1.25 12.3044 1.25H7.64678C3.76543 1.25 2.21289 2.5 2.21289 5.625V9.375C2.21289 12.5 3.76543 13.75 7.64678 13.75Z" stroke={getIconIndicadorStyle(exerciciosFinalizados)} strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M14.244 7.5C14.244 9.4 12.3344 10.9375 9.97456 10.9375C7.6147 10.9375 6.17859 9.025 6.17859 9.025M6.17859 9.025H8.10375M6.17859 9.025V10.7438M5.70508 7.5C5.70508 5.6 7.59918 4.0625 9.97456 4.0625C12.8235 4.0625 14.244 5.975 14.244 5.975M14.244 5.975V4.25625M14.244 5.975H12.3499" stroke={getIconIndicadorStyle(exerciciosFinalizados)} strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
@@ -127,7 +127,7 @@ const ExercicioVideoCard = ({
                                     </svg>
                                     <div className="flex sm:flex-row flex-col items-center gap-1"
                                         style={getIndicadorStyle(exerciciosFinalizados)}>
-                                        <span className="font-bold">Tempo de descanso:</span>
+                                        <span className="font-bold text-center sm:text-start">Tempo de descanso:</span>
                                         <span>{tempoDescanso}</span>
                                     </div>
                                 </div>

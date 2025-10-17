@@ -23,7 +23,7 @@ const AcompanharAula = () => {
         {
             id: 1,
             nome: 'Treino superior',
-            treinoFinalizado: true,
+            treinoFinalizado: false,
             exercicios: [
                 {
                     id: 1,
@@ -61,7 +61,7 @@ const AcompanharAula = () => {
                 }
             ]
         },
-        
+
     ];
 
     const treinoFinalizado = treinos.every(t => t.treinoFinalizado);
@@ -94,12 +94,31 @@ const AcompanharAula = () => {
 
         fetchInfosAlunoFeedback();
     }, [idAluno]);
+
+
+    // ENDPOINT ANTIGO DE MARCAR COMO CONCLUIDO
+    // const marcarComoConcluido = async (idTreinoFinalizado) => {
+    //         try {
+    //             await caringuApi.patch(
+    //                 `treinos-finalizados/${idTreinoFinalizado}/finalizar`,
+    //                 {
+    //                     dataHorarioFim: treinoFim,
+    //                 }
+    //             );
+
+    //             if (atualizarTreinos) atualizarTreinos();
+    //         } catch (error) {
+    //             console.error("Erro ao marcar compromisso como concluído:", error);
+    //         }
+    //     };
+
+
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
             <div className="flex-1 overflow-y-auto">
                 <Header />
-                <div className="w-full h-auto p-2 md:p-4 2xl:">
+                <div className="w-full h-auto p-2 md:p-4 flex flex-col items-start gap-3 sm:gap-0">
                     <div className="w-full h-auto flex flex-row ">
                         <div className=" h-auto">
                             <Link to={`/agenda`}>
@@ -112,40 +131,40 @@ const AcompanharAula = () => {
                     </div>
                     <div className="h-auto w-full flex flex-row items-center justify-center">
                         <div className="max-h-[80vh] h-auto w-[95%] bg-[rgba(29,45,68,0.11)] border-2 border-gray-300 rounded-md flex flex-col justify-start items-center py-5 gap-4 overflow-y-auto">
-                            <div className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex flex-row items-center h-auto w-[95%] 2xl:w-[85%] py-5 px-4 xl:px-12 gap-8">
+                            <div className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex lg:flex-row flex-col items-center h-auto w-[95%] 2xl:w-[85%] py-5 px-2 sm:px-4 xl:px-12 gap-8">
                                 {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
                                     <img
                                         src={aluno.alunoId.urlFotoPerfil}
                                         alt="Imagem do aluno"
-                                        className='w-10 h-10 sm:w-12 sm:h-12 lg:w-25 lg:h-25 rounded-full'
+                                        className='w-20 h-20 lg:w-12 lg:h-12 xl:w-20 xl:h-20 2xl:w-25 2xl:h-25 rounded-full'
                                         onError={() => setImgErro(true)}
                                     />
 
                                 ) : (
-                                    <FaUserCircle className="flex-shrink-0 w-12 h-12 xl:w-20 xl:h-20 2xl:w-25 2xl:h-25 text-[#4B5563]" />
+                                    <FaUserCircle className="flex-shrink-0 w-20 h-20 lg:w-12 lg:h-12 xl:w-20 xl:h-20 2xl:w-25 2xl:h-25 text-[#4B5563]" />
                                 )}
-                                <div className="flex flex-col h-auto w-full items-start justify-center ">
-                                    <span className="text-base 2xl:text-[24px] font-medium "> Maria Gladys</span>
-                                    <div className="flex flex-row w-full h-auto items-start gap-3 xl:justify-between">
+                                <div className="flex flex-col h-auto w-full items-start justify-center gap-3 lg:gap-0">
+                                    <span className="text-base sm:text-xl lg:text-base 2xl:text-[24px] font-medium"> Maria Gladys</span>
+                                    <div className="flex lg:flex-row flex-col w-full h-auto items-start gap-3 xl:justify-between">
                                         <div className="flex flex-col w-auto h-auto">
-                                            <span className="text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Data de Nascimento</span>
-                                            <span className="text-sm xl:text-base font-normal">22/11/2005</span>
+                                            <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Data de Nascimento</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">22/11/2005</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
-                                            <span className="text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Gênero</span>
-                                            <span className="text-sm xl:text-base font-normal">Feminino</span>
+                                            <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Gênero</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">Feminino</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
-                                            <span className="text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Nível de Experiência</span>
-                                            <span className="text-sm xl:text-base font-normal">Levemente ativo</span>
+                                            <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Nível de Experiência</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">Levemente ativo</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
-                                            <span className="text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Telefone</span>
-                                            <span className="text-sm xl:text-base font-normal">+55 (11) 91234-5678</span>
+                                            <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Telefone</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">+55 (11) 91234-5678</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
-                                            <span className="text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Email</span>
-                                            <span className="text-sm xl:text-base font-normal">mariagladys@gmail.com</span>
+                                            <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Email</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">mariagladys@gmail.com</span>
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +172,7 @@ const AcompanharAula = () => {
                             {treinos.every(t => t.treinoFinalizado) && (
                                 <>
                                     <div
-                                        className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md py-4 px-4 xl:px-12 flex flex-row w-[95%] 2xl:w-[85%] h-auto justify-between font-semibold text-base xl:text-xl text-[var(--azul-escuro)] items-center cursor-pointer"
+                                        className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md py-4 px-2 sm:px-4 xl:px-12 flex flex-row w-[95%] 2xl:w-[85%] h-auto justify-between font-semibold text-base sm:text-xl lg:text-base xl:text-xl text-[var(--azul-escuro)] items-center cursor-pointer"
                                         onClick={() => setAberto(v => !v)}
                                     >
                                         <span>
@@ -169,7 +188,7 @@ const AcompanharAula = () => {
                                     </div>
                                     {aberto && (
                                         treinos.map((treino, idx) => (
-                                            <div key={treino.id} className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex flex-col items-start justify-center h-auto w-[95%] 2xl:w-[85%] py-5 px-4 xl:px-12 gap-8  mb-2">
+                                            <div key={treino.id} className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex flex-col items-start justify-center h-auto w-[95%] 2xl:w-[85%] py-5  px-2 sm:px-4 xl:px-12 gap-8  mb-2">
                                                 <div className="flex flex-row items-center justify-start font-semibold  text-xl xl:text-2xl text-[var(--azul-escuro)] h-auto gap-2 w-auto ">
                                                     <svg className="shrink-0" xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
                                                         <ellipse cx="20.6176" cy="20.6177" rx="20.6176" ry="20.6176" fill="#748CAB" />
@@ -203,8 +222,8 @@ const AcompanharAula = () => {
                             )}
                             {!treinos.every(t => t.treinoFinalizado) && (
                                 treinos.map((treino, idx) => (
-                                    <div key={treino.id} className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex flex-col h-auto w-[95%] 2xl:w-[85%] py-5 px-4 xl:px-12 gap-8 mb-2">
-                                        <div className="flex flex-row items-center justify-start font-semibold text-2xl text-[var(--azul-escuro)] h-auto gap-2">
+                                    <div key={treino.id} className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex flex-col items-start justify-center h-auto w-[95%] 2xl:w-[85%] py-5  px-2 sm:px-4 xl:px-12 gap-8  mb-2">
+                                        <div className="flex flex-row items-center justify-start font-semibold  text-xl xl:text-2xl text-[var(--azul-escuro)] h-auto gap-2 w-auto ">
                                             <svg className="shrink-0" xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
                                                 <ellipse cx="20.6176" cy="20.6177" rx="20.6176" ry="20.6176" fill="#748CAB" />
                                                 <path d="M29.3258 15.2845H31.0671C31.5477 15.2845 31.9378 15.7482 31.9378 16.3195V26.6689C31.9378 27.2402 31.5477 27.7038 31.0671 27.7038H29.3258C28.8451 27.7038 28.4551 27.2402 28.4551 26.6689V16.3195C28.4551 15.7482 28.8451 15.2845 29.3258 15.2845Z" stroke="#FFFDF6" strokeWidth="2" />
@@ -221,7 +240,7 @@ const AcompanharAula = () => {
                                             {treino.exercicios.map(ex => (
                                                 <ExercicioVideoCard
                                                     origemUso={"visualizarAulas"}
-                                                    espacamentoEntreIcons="justify-start gap-10"
+                                                    espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
                                                     key={ex.id}
                                                     {...ex}
                                                     tempoDescanso={segundosParaMinutos(Number(ex.tempoDescanso))}
