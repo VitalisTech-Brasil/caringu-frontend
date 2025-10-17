@@ -118,11 +118,7 @@ export default function Etapa3({ setEtapa }) {
 
   const debouncedAzureCall = debounce(async (cref) => {
     try {
-      const urlAzureFunction = `http://74.163.97.5:8000/consultar?registro=${cref}`;
-      const response = await axios.get(urlAzureFunction);
-
-      console.log(response.data[0].nome);
-      console.log(dadosCadastro.nome.toUpperCase());
+      const response = await pythonApi.get(`/consultar?registro=${cref}`);
 
       if (true) {
         setCrefStatus("ok");
