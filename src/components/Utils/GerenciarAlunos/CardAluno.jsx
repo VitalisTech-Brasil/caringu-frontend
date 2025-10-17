@@ -31,7 +31,7 @@ const CardAluno = ({
 
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
-    const [aulasDisponiveis, setAulasDisponiveis] = useState([]);
+    const [aulasDisponiveis, setAulasDisponiveis] = useState({aulasRestantes:0});
 
     const formatarNivelAtividade = (nivel) => {
         if (!nivel) return "Não informado";
