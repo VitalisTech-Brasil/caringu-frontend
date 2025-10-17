@@ -52,7 +52,7 @@ const VisualizarTreino = () => {
     }, [exercicioAberto]);
 
     useEffect(() => {
-        document.title = "Visualizar Aula | Caringu"
+        document.title = "Visualizar Treino | Caringu"
         const fetchInfosAlunoFeedback = async () => {
             try {
                 const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, deve ser sempre estar aberto o ultimo card do treino)

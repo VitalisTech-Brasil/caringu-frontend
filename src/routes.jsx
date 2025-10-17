@@ -30,6 +30,13 @@ import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
 import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
+import FeedbackAluno from './pages/Aluno/Feedback/Feedback.jsx';
+import FeedbackMensagem from './pages/Aluno/Feedback/FeedbackMensagem.jsx';
+import HomeAluno from "./pages/HomeAluno";
+import ProgressoCorporal from './pages/Aluno/ProgressoCorporal.jsx';
+import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
+import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
+
 
 const AppRoutes = () => {
 
@@ -39,8 +46,8 @@ const AppRoutes = () => {
 
   useEffect(() => {
     const handler = () => {
-/*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
-      setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
+      /*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
+            setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
       setSessaoExpirada(true);
     };
 
@@ -53,8 +60,6 @@ const AppRoutes = () => {
       <SessaoExpiradaModal
         visible={sessaoExpirada}
         onClose={() => setSessaoExpirada(false)}
-        /* titulo={modalTitulo}
-        mensagem={modalMensagem} */
       />
       <Routes>
         {/* Rotas públicas */}
@@ -161,9 +166,39 @@ const AppRoutes = () => {
             <Feedback />
           </ProtectedRoute>
         } />
+        <Route path="/home-aluno" element={
+          <ProtectedRoute>
+            <HomeAluno />
+          </ProtectedRoute>
+        } />
         <Route path="/visualizar-treino/:idAluno" element={
           <ProtectedRoute>
             <VisualizarTreino />
+          </ProtectedRoute>
+        } />
+        <Route path="/progresso-corporal-aluno" element={
+          <ProtectedRoute>
+            <ProgressoCorporal />
+          </ProtectedRoute>
+        } />
+        <Route path="/aluno-planos" element={
+          <ProtectedRoute>
+            <AlunoPlanos />
+          </ProtectedRoute>
+        } />
+        <Route path="/feedback-aluno" element={
+          <ProtectedRoute>
+            <FeedbackAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/feedback-mensagem" element={
+          <ProtectedRoute>
+            <FeedbackMensagem />
+          </ProtectedRoute>
+        } />
+        <Route path="/acompanhar-aula/:idAluno" element={
+          <ProtectedRoute>
+            <AcompanharAula />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
