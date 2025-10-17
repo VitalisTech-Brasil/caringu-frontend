@@ -86,7 +86,7 @@ const AcompanharAula = () => {
             try {
                 const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, deve ser sempre estar aberto o ultimo card do treino)
                 setAluno(response.data);
-                console.log("Informações do aluno:", response.data);
+                // console.log("Informações do aluno:", response.data);
             } catch (error) {
                 console.error("Erro ao buscar informações do aluno:", error);
             }
@@ -211,7 +211,7 @@ const AcompanharAula = () => {
                                                             {...ex}
                                                             tempoDescanso={segundosParaMinutos(Number(ex.tempoDescanso))}
                                                             desabilitarObservacoes={false}
-                                                            larguraVideo="w-[40%]"
+                                                            larguraVideo="xl:w-[40%] md:w-[80%] w-full"
                                                         />
                                                     ))}
                                                 </div>
@@ -245,7 +245,7 @@ const AcompanharAula = () => {
                                                     {...ex}
                                                     tempoDescanso={segundosParaMinutos(Number(ex.tempoDescanso))}
                                                     desabilitarObservacoes={false}
-                                                    larguraVideo="w-[40%]"
+                                                    larguraVideo="xl:w-[40%] md:w-[80%] w-full"
                                                 />
                                             ))}
                                         </div>
