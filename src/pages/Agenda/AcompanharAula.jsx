@@ -15,11 +15,10 @@ const AcompanharAula = () => {
     const { idAluno } = useParams();
     const [aluno, setAluno] = useState();
     const [imgErro, setImgErro] = useState(false);
-    const [treinoAberto, setTreinoAberto] = useState(false);
     const [aberto, setAberto] = useState(false);
 
 
-    const treinos = [
+    const [treinos, setTreinos] = useState([
         {
             id: 1,
             nome: 'Treino superior',
@@ -62,11 +61,24 @@ const AcompanharAula = () => {
             ]
         },
 
-    ];
+    ]);
 
-    const treinoFinalizado = treinos.every(t => t.treinoFinalizado);
-    const [treinoAbertoIdx, setTreinoAbertoIdx] = useState(treinos.length - 1);
-
+    const handleToggleFinalizado = (treinoIdx, exIdx, checked) => {
+        setTreinos(prev =>
+            prev.map((treino, tIdx) =>
+                tIdx === treinoIdx
+                    ? {
+                        ...treino,
+                        exercicios: treino.exercicios.map((ex, eIdx) =>
+                            eIdx === exIdx
+                                ? { ...ex, exerciciosFinalizados: checked }
+                                : ex
+                        )
+                    }
+                    : treino
+            )
+        );
+    };
 
 
     function segundosParaMinutos(segundos) {
@@ -86,7 +98,6 @@ const AcompanharAula = () => {
             try {
                 const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, deve ser sempre estar aberto o ultimo card do treino)
                 setAluno(response.data);
-                // console.log("Informações do aluno:", response.data);
             } catch (error) {
                 console.error("Erro ao buscar informações do aluno:", error);
             }
@@ -203,7 +214,7 @@ const AcompanharAula = () => {
                                                     <span>{treino.nome}</span>
                                                 </div>
                                                 <div className="flex flex-col h-auto w-full gap-2">
-                                                    {treino.exercicios.map(ex => (
+                                                    {treino.exercicios.map((ex, exIdx) => (
                                                         <ExercicioVideoCard
                                                             origemUso={"visualizarAulas"}
                                                             espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
@@ -212,6 +223,7 @@ const AcompanharAula = () => {
                                                             tempoDescanso={segundosParaMinutos(Number(ex.tempoDescanso))}
                                                             desabilitarObservacoes={false}
                                                             larguraVideo="xl:w-[40%] md:w-[80%] w-full"
+                                                            onToggleFinalizado={checked => handleToggleFinalizado(idx, exIdx, checked)}
                                                         />
                                                     ))}
                                                 </div>
@@ -237,7 +249,7 @@ const AcompanharAula = () => {
                                             <span>{treino.nome}</span>
                                         </div>
                                         <div className="flex flex-col h-auto w-full gap-2">
-                                            {treino.exercicios.map(ex => (
+                                            {treino.exercicios.map((ex, exIdx) => (
                                                 <ExercicioVideoCard
                                                     origemUso={"visualizarAulas"}
                                                     espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
@@ -246,6 +258,7 @@ const AcompanharAula = () => {
                                                     tempoDescanso={segundosParaMinutos(Number(ex.tempoDescanso))}
                                                     desabilitarObservacoes={false}
                                                     larguraVideo="xl:w-[40%] md:w-[80%] w-full"
+                                                    onToggleFinalizado={checked => handleToggleFinalizado(idx, exIdx, checked)}
                                                 />
                                             ))}
                                         </div>

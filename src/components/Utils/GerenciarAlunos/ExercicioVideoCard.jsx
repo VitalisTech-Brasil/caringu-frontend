@@ -20,6 +20,7 @@ const ExercicioVideoCard = ({
     inicialmenteAberto = false,
     desabilitarObservacoes = true,
     origemUso,
+    onToggleFinalizado
 }) => {
     const [aberto, setAberto] = useState(inicialmenteAberto);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -59,7 +60,12 @@ const ExercicioVideoCard = ({
         <div className={`flex flex-row w-full h-auto gap-3 md:gap-6 ${aberto ? 'items-start' : 'items-center'}`}>
             {origemUso === "visualizarAulas" && (
                 <div className={`w-auto flex flex-row ${aberto ? 'mt-[4.3vh]' : 'items-center'}`}>
-                    <input type="checkbox" name="" id="" checked={exerciciosFinalizados} />
+                    <input type="checkbox" name="" id="" checked={exerciciosFinalizados}
+                        aria-label="Marcar exercício como concluído"
+                        onChange={e => {
+                            onToggleFinalizado && onToggleFinalizado(e.target.checked);
+                        }}
+                    />
                 </div>
             )}
             <div className="border-2 border-gray-300 rounded p-4 flex flex-col w-full h-auto gap-6">
