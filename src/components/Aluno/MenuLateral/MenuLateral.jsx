@@ -34,7 +34,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
 
         setUrlFotoPerfil(response.data.urlFotoPerfil);
       } catch (error) {
-        console.error("Erro ao buscar personal trainer:", error);
+        console.error("Erro ao buscar Aluno:", error);
       }
     };
 
@@ -335,7 +335,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </div>
       ),
       label: "Agenda",
-      path: "/agenda",
+      path: "/agenda-aluno",
     },
     {
       icon: (
