@@ -10,12 +10,10 @@ RUN npm run build
 # Etapa 2: Nginx vai servir os arquivos estáticos
 FROM nginx:stable-alpine
 
-# Copia o build do React (Vite) para o Nginx
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Copia os arquivos estáticos gerados no estágio anterior para a pasta padrão do Nginx
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copia a configuração personalizada do Nginx (SEM HTTPS)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# A porta que o Nginx vai escutar DENTRO do container
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# O comando padrão do Nginx já inicia o servidor, então não precisamos de um CMD
