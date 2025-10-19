@@ -19,7 +19,7 @@ const Home = () => {
   const [selectedDay, setSelectedDay] = useState(null);
 
   const [alunosAtivos, setAlunosAtivos] = useState(0);
-  const [treinosVencimento, setTreinosVencimento] = useState(0);
+  const [planosVencimento, setPlanosVencimento] = useState(0);
   const [treinosCriados, setTreinosCriados] = useState(0);
   const [anamnesesPendentes, setAnamnesesPendentes] = useState(0);
   const [treinosFinalizados, setTreinosFinalizados] = useState([]);
@@ -36,8 +36,8 @@ const Home = () => {
         const totalAlunosAtivos = await caringuApi.get(`/planos-contratados/kpis/alunos-ativos/${personalId}`);
         setAlunosAtivos(totalAlunosAtivos.data);
 
-        const totalTreinosVencimento = await caringuApi.get(`/alunos-treinos/kpis/proximos-vencimento/${personalId}`);
-        setTreinosVencimento(totalTreinosVencimento.data);
+        const totalPlanosVencimento = await caringuApi.get(`/planos-contratados/kpis/qtd-planos-vencendo/${personalId}`);
+        setPlanosVencimento(totalPlanosVencimento.data);
 
         const totalTreinosCriados = await caringuApi.get(`/treino/treinos-criados/${personalId}`);
         setTreinosCriados(totalTreinosCriados.data);
@@ -190,13 +190,13 @@ const Home = () => {
       rota: "/gerenciar-treinos"
     },
     {
-      title: "Treinos Próximos do Vencimento",
-      value: treinosVencimento,
-      description: "Treinos que expiram em 2 semanas.",
+      title: "Planos Próximos do Vencimento",
+      value: planosVencimento,
+      description: "Planos que expiram em 2 semanas.",
       icon: <FaClock className="w-5 h-5 sm:w-7 sm:h-7" />,
       bgColor: "bg-[#E96E354F]",
       iconColor: "text-[#E96E35]",
-      rota: "/gerenciar-treinos"
+      rota: "/planos"
     },
     {
       title: "Anamneses Pendentes",

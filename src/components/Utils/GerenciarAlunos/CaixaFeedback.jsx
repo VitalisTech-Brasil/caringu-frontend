@@ -1,7 +1,7 @@
 import React from 'react';
 import MensagemFeedback from './MensagemFeedback';
 
-const CaixaFeedback = ({ aula, mensagens }) => {
+const CaixaFeedback = ({ aula, mensagens, aluno }) => {
   if (!aula) return null;
 
   return (
@@ -28,6 +28,7 @@ const CaixaFeedback = ({ aula, mensagens }) => {
             key={m.id}
             label={m.label}
             texto={m.texto}
+            paddingLeftMensagem={aluno === "aluno" ? "5%" : "10%"}
           />
         ))
       )}

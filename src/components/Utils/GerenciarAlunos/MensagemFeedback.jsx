@@ -1,6 +1,10 @@
 import React from 'react';
 
-const MensagemFeedback = ({ label, texto }) => {
+const MensagemFeedback = ({
+    label,
+    texto,
+    paddingLeftMensagem = "10%"
+}) => {
     return (
         <div className="flex flex-col flex-wrap items-start w-auto h-auto gap-0.5 justify-start text-xs text-[#15171B]">
             <div className="flex flex-wrap flex-row items-center w-auto h-auto gap-1 justify-start">
@@ -14,7 +18,7 @@ const MensagemFeedback = ({ label, texto }) => {
                     {label}
                 </span>
             </div>
-            <div className="sm:pl-[4%] pl-[10%] w-full">
+            <div className={`sm:pl-[4%] pl-[${paddingLeftMensagem}] w-full`}>
                 <span className="w-full text-sm whitespace-normal break-words">
                     {texto}
                 </span>

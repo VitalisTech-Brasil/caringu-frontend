@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { LucideCheckCheck } from 'lucide-react';
+import { caringuApi } from '../../../provider/caringuApi';
 
 const Header = ({
   menuRef,
@@ -284,12 +285,7 @@ const Header = ({
               />
             </svg>
           </button>
-
           {icon}
-          <svg className="sm:w-[34px] sm:h-[30px] w-7 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 31" fill="none">
-            <path d="M17.3586 23.0883V19.0883" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M14.6245 2.84834L4.80703 10.2483C3.70203 11.075 2.99369 12.8217 3.23453 14.1283L5.11869 24.7417C5.45869 26.635 7.38536 28.1683 9.42536 28.1683H25.292C27.3179 28.1683 29.2587 26.6217 29.5987 24.7417L31.4829 14.1283C31.7095 12.8217 31.0012 11.075 29.9104 10.2483L20.0929 2.86167C18.577 1.71501 16.1262 1.71501 14.6245 2.84834Z" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
           <h1
             className="font-bold text-base sm:text-2xl"
             style={{
