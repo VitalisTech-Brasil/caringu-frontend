@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { LucideCheckCheck } from 'lucide-react';
+import { caringuApi } from '../../../provider/caringuApi';
 
 const Header = ({
   menuRef,
