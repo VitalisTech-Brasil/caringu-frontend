@@ -71,11 +71,12 @@ const ColunaInputs = () => {
           ));
 
           setTimeout(() => {
-            if (response.data.tipo === "PERSONAL") {
-              navigate('/home');
-            } else {
-              navigate('/procurando-personal');
-            }
+            const tipo = (response.data.tipo || "").toString().toUpperCase();
+              if (tipo === "PERSONAL") {
+                navigate('/home');
+              } else if (tipo === "ALUNO") {
+                navigate('/home-aluno');
+              }
           }, 1000);
         }
       } catch (error) {
@@ -117,11 +118,12 @@ const ColunaInputs = () => {
         ));
 
         setTimeout(() => {
-          if (response.data.tipo === "PERSONAL") {
-            navigate('/home');
-          } else {
-            navigate('/procurando-personal');
-          }
+          const tipo = (response.data.tipo || "").toString().toUpperCase();
+            if (tipo === "PERSONAL") {
+              navigate('/home');
+            } else if (tipo === "ALUNO") {
+              navigate('/home-aluno');
+            }
         }, 1000);
       } else {
         throw new Error('Ops! Ocorreu um erro interno.');
