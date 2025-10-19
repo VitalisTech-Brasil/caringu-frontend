@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import FotoPerfil from '../FotoPerfil/FotoPerfil';
-import { caringuApi } from '../../../provider/caringuApi';
-import MascaraTelefone from '../../Utils/Functions/MascaraTelefone';
+import FotoPerfil from '../PerfilPersonal/FotoPerfil/FotoPerfil';
+import { caringuApi } from '../../provider/caringuApi';
+import MascaraTelefone from '../Utils/Functions/MascaraTelefone';
 import { HiOutlineTrash } from 'react-icons/hi';
-import ModalRemoverEspecialidade from '../../Utils/ModalRemoverEspecialidade';
+import ModalRemoverEspecialidade from '../Utils/ModalRemoverEspecialidade';
 import { toast, Toaster } from 'react-hot-toast';
-import CustomToast from '../../Utils/CustomToast';
-import CidadeInput from '../../Utils/InputCidade/CidadeInput';
+import CustomToast from '../Utils/CustomToast';
+import CidadeInput from '../Utils/InputCidade/CidadeInput';
 
 export default function InformacoesPessoais() {
 
@@ -43,7 +43,7 @@ export default function InformacoesPessoais() {
                     celular: celularComMascara,
                 });
 
-                
+
 
                 console.log(response.data);
             } catch (error) {
@@ -234,14 +234,13 @@ export default function InformacoesPessoais() {
         <>
             {/* Conteúdo da aba Informações Pessoais */}
             <div className="space-y-8">
-                {/* Foto de Perfil */}
                 <FotoPerfil urlFoto={urlFotoPerfil} nomePersonal={formData.nome || ""} />
 
                 {/* Informações Profissionais */}
                 <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center h-124.5">
                     <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center w-full p-2">
                         <h2 className="text-[24px] font-bold text-gray-800 flex justify-between items-center ">
-                            Informações Profissionais
+                            Informações Pessoais
                         </h2>
                         {/* Botões Salvar e Cancelar */}
                         <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-4 mt-4 sm:mt-0">
@@ -282,125 +281,7 @@ export default function InformacoesPessoais() {
                                     disabled={true}
                                 />
                             </div>
-                            <div>
-                                <label className="block text-[16px] font-medium text-gray-700">
-                                    Especialidade
-                                </label>
-                                <div className="flex flex-wrap gap-2 overflow-x-auto">
-                                    {formData.especialidades?.map((especialidade) => (
 
-                                        <div key={especialidade.id} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
-                                            {especialidade.nome}
-                                            <button
-                                                onClick={() => { setModalVisible(true), setIdEspecialidade(especialidade.id) }}
-                                                className="text-red-600"
-                                            >
-                                                <HiOutlineTrash className="w-5 h-5 cursor-pointer" />
-                                            </button>
-                                        </div>
-                                    ))}
-
-                                    {modalVisible && (
-                                        <ModalRemoverEspecialidade
-                                            especialidadeId={idEspecialidade}
-                                            onConfirm={handleRemoveEspecialidade}
-                                            onCancel={handleCancelRemove}
-                                        />
-                                    )}
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <button className='cursor-pointer' onClick={() => setShowModal(true)}>+ Adicionar</button>
-                                    </div>
-
-                                    {showModal && (
-                                        <div className="fixed inset-0 bg-[#0000007b] bg-opacity-50 flex items-center justify-center z-50">
-                                            <div className="bg-white rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
-                                                <h3 className="text-lg font-semibold mb-4">Nova Especialidade</h3>
-
-                                                <input
-                                                    type="text"
-                                                    value={novaEspecialidade}
-                                                    onChange={(e) => {
-                                                        const valor = e.target.value;
-                                                        setNovaEspecialidade(valor);
-
-                                                        if (valor.length > 0) {
-                                                            const filtradas = especialidadesDisponiveis.filter(op =>
-                                                                op.nome.toLowerCase().includes(valor.toLowerCase()) &&
-                                                                !formData.especialidades?.some(esp => esp.id === op.id) &&
-                                                                !especialidadesSelecionadas.some(esp => esp.id === op.id)
-                                                            );
-                                                            setSugestoesEspecialidade(filtradas);
-                                                        } else {
-                                                            setSugestoesEspecialidade([]);
-                                                        }
-                                                    }}
-                                                    className="w-full border border-gray-300 rounded-md p-2 mb-4"
-                                                    placeholder="Digite a nova especialidade"
-                                                />
-
-                                                {sugestoesEspecialidade.length > 0 && (
-                                                    <ul className="border border-gray-300 rounded-md max-h-40 overflow-y-auto mb-4">
-                                                        {sugestoesEspecialidade.map((opcao) => (
-                                                            <li
-                                                                key={opcao.id}
-                                                                onClick={() => {
-                                                                    setEspecialidadesSelecionadas((prev) => {
-                                                                        if (!prev.some(e => e.id === opcao.id)) {
-                                                                            return [...prev, opcao];
-                                                                        }
-                                                                        return prev;
-                                                                    });
-                                                                    setNovaEspecialidade('');
-                                                                    setSugestoesEspecialidade([]);
-                                                                }}
-                                                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                            >
-                                                                {opcao.nome}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-
-                                                {especialidadesSelecionadas.length > 0 && (
-                                                    <div className="flex flex-wrap gap-2 mb-4 max-h-40 overflow-y-auto border border-gray-200 p-2 rounded">
-                                                        {especialidadesSelecionadas.map((esp, index) => (
-                                                            <div key={index} className="bg-gray-200 px-3 py-1 rounded-full flex items-center gap-2">
-                                                                {esp.nome}
-                                                                <button
-                                                                    onClick={() =>
-                                                                        setEspecialidadesSelecionadas(prev =>
-                                                                            prev.filter((_, i) => i !== index)
-                                                                        )
-                                                                    }
-                                                                    className="text-red-600 font-bold cursor-pointer h-3.5 flex justify-center items-center"
-                                                                >
-                                                                    &times;
-                                                                </button>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-
-                                                <div className="flex justify-end gap-4 mt-4">
-                                                    <button
-                                                        onClick={() => { setShowModal(false), setNovaEspecialidade("") }}
-                                                        className="text-gray-600 hover:text-gray-800 cursor-pointer"
-                                                    >
-                                                        Cancelar
-                                                    </button>
-                                                    <button
-                                                        onClick={handleAdicionarEspecialidades}
-                                                        className="px-4 py-2 bg-[#E96E35] hover:bg-orange-500 text-white rounded-md cursor-pointer"
-                                                    >
-                                                        Adicionar
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
                             <div>
                                 <label className="block text-[16px] font-medium text-gray-700">
                                     Data de nascimento
@@ -439,47 +320,7 @@ export default function InformacoesPessoais() {
                                     onChange={handleTelefoneChange}
                                 />
                             </div>
-                            <div>
-                                <label className="block text-[16px] font-medium text-gray-700">
-                                    CREF
-                                </label>
-                                <input
-                                    name="cref"
-                                    type="text"
-                                    className="form-input border border-gray-300 text-gray-400 bg-gray-200 rounded-md p-3 w-full text-[16px] cursor-not-allowed"
-                                    placeholder="Digite seu CREF"
-                                    value={formData.cref || ""}
-                                    disabled={true}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-[16px] font-medium text-gray-700">
-                                    Anos de experiência
-                                </label>
-                                <input
-                                    name="experiencia"
-                                    type="text"
-                                    maxLength={2}
-                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                    placeholder="Digite os anos de experiência"
-                                    value={formData.experiencia || ""}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <CidadeInput formData={formData} setFormData={setFormData} />
-                            <div>
-                                <label className="block text-[16px] font-medium text-gray-700">
-                                    Bairro
-                                </label>
-                                <input
-                                    type="text"
-                                    name="bairro"
-                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
-                                    placeholder="Digite seu bairro"
-                                    value={formData.bairro || ""}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+
                         </div>
                     </div>
                 </div>

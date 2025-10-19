@@ -10,7 +10,7 @@ import Button from "../../utils/../components/Utils/Button";
 const AlunoPlanos = () => {
     const menuRef = useRef(null);
     const [showModalAvaliar, setModalAvaliar] = useState(false);
-    const [showModalEnviado, setModalEnviado] = useState(true);
+    const [showModalEnviado, setModalEnviado] = useState(false);
     const [rating, setRating] = React.useState(0.0);
 
     const openModalAvaliar = () => setModalAvaliar(true);
