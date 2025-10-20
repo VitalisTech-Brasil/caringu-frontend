@@ -37,6 +37,7 @@ import ProgressoCorporal from './pages/Aluno/ProgressoCorporal.jsx';
 import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
 import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
 import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
+import AgendaAluno from './pages/Aluno/Agenda.jsx';
 
 
 const AppRoutes = () => {
@@ -200,6 +201,11 @@ const AppRoutes = () => {
         <Route path="/acompanhar-aula/:idAluno" element={
           <ProtectedRoute>
             <AcompanharAula />
+          </ProtectedRoute>
+        } />
+        <Route path="/agenda-aluno" element={
+          <ProtectedRoute>
+            <AgendaAluno />
           </ProtectedRoute>
         } />
         <Route path="/perfil-aluno" element={
