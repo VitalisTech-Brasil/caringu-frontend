@@ -16,8 +16,9 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
   const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
   const [imgErro, setImgErro] = useState(false);
 
-  const alunoId = sessionStorage.getItem("pessoaId");
+  const personalId = sessionStorage.getItem("pessoaId");
 
+  // Expor a função toggle através da ref
   React.useImperativeHandle(ref, () => ({
     toggleMenu: () => {
       setIsOpen((prev) => !prev);
@@ -27,18 +28,20 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await caringuApi.get(`/alunos/${alunoId}`);
+        const response = await caringuApi.get(
+          `/personal-trainers/${personalId}`
+        );
 
-        setUrlFotoPerfil(response?.data?.urlFotoPerfil || "");
+        setUrlFotoPerfil(response.data.urlFotoPerfil);
       } catch (error) {
-        console.error("Erro ao buscar Aluno:", error);
+        console.error("Erro ao buscar personal trainer:", error);
       }
     };
 
-    if (alunoId) {
+    if (personalId) {
       fetchData();
     }
-  }, [alunoId]);
+  }, [personalId]);
 
   useEffect(() => {
     const usuario = sessionStorage.getItem("usuario");
@@ -332,7 +335,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </div>
       ),
       label: "Agenda",
-      path: "/agenda-aluno",
+      path: "/agenda",
     },
     {
       icon: (
