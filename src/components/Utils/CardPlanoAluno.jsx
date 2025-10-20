@@ -85,7 +85,7 @@ const CardPlano = ({
 
     return (
         <>
-            <div>
+            <div className="w-full flex flex-col justify-start items-center">
                 <div className="w-full sm:w-[450px] 2xl:w-[560px] h-auto rounded-t-md border-t-[2px] border-r-[2px] border-l-[2px] border-[#1D2D441C] sm:p-4 sm:pl-10 p-6 relative flex flex-col justify-center ">
                     <div className="h-auto  flex flex-row items-end justify-between">
                         <h5 className="break-all text-3xl sm:text-[32px] font-medium text-[var(--cor-primaria)] 2xl:w-[56%] ">{nome}</h5>
@@ -193,7 +193,7 @@ const CardPlano = ({
                         </ul>
                     </div>
                 </div>
-                <div className="border-[2px] border-[#1D2D441C] sm:h-[4rem] flex flex-col w-full sm:w-[450px] 2xl:w-[560px] p-6 gap-3">
+                <div className="border-[2px] border-[#1D2D441C] h-auto flex flex-col w-full sm:w-[450px] 2xl:w-[560px] p-6 gap-3">
                     <span className="text-sm sm:text-lg 2xl:text-xl font-light text-[var(--cor-primaria)] leading-tight flex items-center gap-2">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clip-path="url(#clip0_7159_6834)">
