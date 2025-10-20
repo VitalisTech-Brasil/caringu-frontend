@@ -45,12 +45,12 @@ const HomeAluno = () => {
         setLoading(true);
         setError(null);
 
-        const [progressoResponse, treinosResponse, evolucaoResponse, proximasResponse] =
+        const [progressoResponse, treinosResponse, evolucaoResponse /*, proximasResponse */] =
           await Promise.all([
             caringuApi.get(`/alunos/${alunoId}/progresso-aulas`),
             caringuApi.get(`/alunos/${alunoId}/top-treinos`),
             caringuApi.get(`/alunos/${alunoId}/maior-evolucao-exercicio`),
-            caringuApi.get(`/aulas-treinos-exercicios/buscar-aulas/${alunoId}`),
+            // caringuApi.get(`/alunos/${alunoId}/proximas-aulas`), 
           ]);
 
           const progressoData = progressoResponse?.data || {};
@@ -72,9 +72,7 @@ const HomeAluno = () => {
 
           setProgressoAulas(mappedProgresso);
           setTopTreinos(mappedTreinos);
-          
           const evolucaoData = evolucaoResponse?.data || null;
-          
           const mappedEvolucao = evolucaoData
             ? {
                 exercicioId: evolucaoData.exercicioId ?? null,
@@ -91,29 +89,31 @@ const HomeAluno = () => {
 
           setExercicioEvolucao(mappedEvolucao);
 
-          const proximasData = Array.isArray(proximasResponse?.data)
-            ? proximasResponse.data
-            : [];
-          
-          const mappedProximas = proximasData.map((aula) => {
-            return {
-              id: aula.aulaId,
-              aulaTreinoExercicioId: aula.aulaTreinoExercicioId,
-              dataHorarioInicio: aula.dataHorarioInicio,
-              dataHorarioFim: aula.dataHorarioFim,
-              nomeTreino: aula.nomeTreino,
-              nomeExercicio: aula.nomeExercicio,
-              nomePersonal: aula.nomePersonal,
-              urlFotoPerfil: aula.urlFotoPerfil,
-              treinoId: aula.treinoId,
-              exercicioId: aula.exercicioId,
-              personalId: aula.personalId,
-              status: "AGENDADA", 
-            };
-          });
+          const mockedProximas = [
+            {
+              id: 1,
+              data: "2025-10-15 18:00",
+              treino: "Treino Funcional",
+              exercicios: ["Agachamento", "Flexão", "Prancha", "Burpee"],
+              totalExercicios: 4,
+            },
+            {
+              id: 2,
+              data: "2025-10-18 07:30",
+              treino: "Cardio e Core",
+              exercicios: ["Corrida", "Abdominais", "Mountain Climbers"],
+              totalExercicios: 3,
+            },
+          ];
 
-          setProximasAulas(mappedProximas);
+          setProximasAulas(mockedProximas);
 
+        console.log("Dados carregados com sucesso:", {
+          progresso: progressoResponse.data,
+          treinos: treinosResponse.data,
+          evolucao: evolucaoResponse.data,
+          proximas: mockedProximas,
+        });
       } catch (error) {
         console.error("Erro ao buscar dados do aluno:", error);
         setError("Erro ao carregar dados. Tente novamente.");
@@ -139,6 +139,7 @@ const HomeAluno = () => {
     if (alunoId) {
       fetchDadosAluno();
     } else {
+      console.warn("ID do aluno não encontrado no sessionStorage");
       setError("Sessão expirada. Faça login novamente.");
       setLoading(false);
     }
@@ -155,6 +156,7 @@ const HomeAluno = () => {
     );
   }
 
+  // Exibir erro se houver
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -199,6 +201,8 @@ const HomeAluno = () => {
                 <div
                   className="lg:hidden p-4"
                   style={{
+                    width: "382px",
+                    height: "88px",
                     fontFamily: "Inter, sans-serif",
                   }}
                 >
@@ -317,9 +321,9 @@ const HomeAluno = () => {
               </div>
 
               {/* Cards em linha para mobile e grid para desktop */}
-              <div className="lg:col-span-2 lg:grid lg:grid-cols-2 lg:gap-4 flex flex-row gap-3 overflow-x-auto lg:overflow-visible snap-x snap-mandatory scrollbar-hide">
+              <div className="lg:col-span-2 lg:grid lg:grid-cols-2 lg:gap-4 flex flex-row space-x-4 lg:space-x-0">
                 {/* Seu top de treinos */}
-                <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 flex-shrink-0 w-[280px] lg:w-auto lg:flex-1 snap-start">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex-1">
                   <h3 className="text-sm font-medium text-gray-600 mb-4">
                     Seu top de treinos
                   </h3>
@@ -370,66 +374,76 @@ const HomeAluno = () => {
                 </div>
 
                 {/* Exercício com maior evolução */}
-                <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100 flex-shrink-0 w-[280px] lg:w-auto lg:flex-1 snap-start">
-                  {/* Cabeçalho */}
-                  <div className="mb-3 lg:mb-4">
-                    <h4 className="text-sm font-medium text-gray-600" style={{ fontFamily: "Inter, sans-serif" }}>
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex-1">
+                  <div
+                    className="flex items-baseline mb-4"
+                    style={{
+                      width: "144px",
+                      height: "34px",
+                      fontFamily: "Inter, sans-serif",
+                    }}
+                  >
+                    <h4 className="text-sm font-medium text-gray-600">
                       Exercício com maior evolução
                     </h4>
-                    <span className="text-xs text-gray-500" style={{ fontFamily: "Inter, sans-serif" }}>
+                      <span
+                      className="ml-1 text-gray-500"
+                      style={{
+                        fontSize: "15px",
+                        fontFamily: "Inter, sans-serif",
+                      }}
+                    >
                       De {getMesAtual()}
                     </span>
                   </div>
-
-                  {/* Conteúdo */}
-                  <div className="flex flex-col items-center">
+                  <div className="text-center">
                     {exercicioEvolucao.nome && exercicioEvolucao.exercicioId ? (
                       <>
-                        {/* Nome do exercício com ícone */}
-                        <div className="flex items-center justify-center mb-4 lg:mb-6 w-full">
-                          <span className="text-xl lg:text-2xl mr-2">📈</span>
+                        <div className="flex items-center justify-center mb-4">
+                          <span className="text-xl mr-2">📈</span>
                           <span
-                            className="font-semibold text-center text-sm lg:text-base"
-                            style={{ color: "#E96E35", fontFamily: "Inter, sans-serif" }}
+                            className="font-medium"
+                            style={{ color: "#E96E35" }}
                           >
                             {exercicioEvolucao.nome}
                           </span>
                         </div>
 
                         {/* Layout horizontal para os valores */}
-                        <div className="flex justify-center items-center gap-2 lg:gap-8 w-full">
+                        <div className="flex justify-center space-x-8">
                           {/* Carga anterior */}
-                          <div className="flex flex-col items-end flex-1">
-                            <div className="text-[8px] lg:text-xs text-gray-400 mb-1 whitespace-nowrap" style={{ fontFamily: "Inter, sans-serif" }}>
+                          <div className="text-center">
+                            <div className="text-xs text-gray-500 mb-1">
                               Carga anterior
                             </div>
-                            <div className="text-base lg:text-2xl font-semibold text-gray-400" style={{ fontFamily: "Inter, sans-serif" }}>
+                            <div className="text-lg font-bold text-gray-600">
                               {exercicioEvolucao.cargaAntiga}kg
                             </div>
                           </div>
 
-                          <div className="self-center flex-shrink-0" style={{ color: "#E96E35" }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 lg:h-8 lg:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                          </div>
-
                           {/* Carga atual */}
-                          <div className="flex flex-col items-start flex-1">
-                            <div className="text-[10px] lg:text-sm mb-1 whitespace-nowrap font-medium" style={{ color: "#E96E35", fontFamily: "Inter, sans-serif" }}>
+                          <div className="text-center">
+                            <div
+                              className="text-xs"
+                              style={{ color: "#1D2D44" }}
+                            >
                               Carga atual
                             </div>
-                            <div className="text-xl lg:text-3xl font-bold" style={{ color: "#E96E35", fontFamily: "Inter, sans-serif" }}>
+                            <div
+                              className="text-lg font-bold"
+                              style={{ color: "#1D2D44" }}
+                            >
                               {exercicioEvolucao.cargaAtual}kg
                             </div>
                           </div>
                         </div>
                       </>
                     ) : (
-                      <div className="text-center text-gray-500 py-8">
-                        <span className="text-4xl mb-3 block">📊</span>
-                        <p className="text-sm" style={{ fontFamily: "Inter, sans-serif" }}>
-                          {exercicioEvolucao.nome || "Nenhuma evolução encontrada"}
+                      <div className="text-center text-gray-500 py-4">
+                        <span className="text-xl mb-2 block">📊</span>
+                        <p className="text-sm">
+                          {exercicioEvolucao.nome ||
+                            "Nenhuma evolução encontrada"}
                         </p>
                       </div>
                     )}
@@ -450,124 +464,114 @@ const HomeAluno = () => {
                 proximasAulas.map((aula) => (
                   <div
                     key={aula.id}
-                    className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100"
+                    className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
                   >
                     {/* Cabeçalho da Aula */}
-                    <div className="flex items-center justify-between mb-3 lg:mb-4 pb-3 lg:pb-4 border-b border-gray-200">
-                      <div className="flex-1 min-w-0">
-                        <h3
-                          className="text-base lg:text-xl font-bold mb-1 truncate"
-                          style={{
-                            color: "#1D2D44",
-                            fontFamily: "Inter",
-                          }}
-                        >
-                          {aula.nomeTreino}
-                        </h3>
-                        <p className="text-xs lg:text-sm text-gray-600 break-words">
-                          {new Date(aula.dataHorarioInicio).toLocaleDateString('pt-BR', {
-                            weekday: 'short',
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </p>
-                      </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        aula.status === 'AGENDADA' ? 'bg-blue-100 text-blue-800' :
-                        aula.status === 'CONCLUIDA' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {aula.status}
-                      </div>
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                      <h3
+                        className="text-2xl font-bold lg:text-2xl truncate"
+                        style={{
+                          color: "#1D2D44",
+                          fontFamily: "Inter",
+                          fontSize: "24px",
+                          maxWidth: "60%",
+                        }}
+                      >
+                        Aula - {aula.data}
+                      </h3>
+                      <button
+                        className="text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center"
+                        style={{
+                          width: "144px",
+                          height: "32px",
+                          backgroundColor: "#9CABC2",
+                          fontSize: "14px",
+                          fontFamily: "Inter, sans-serif",
+                        }}
+                      >
+                        Acompanhar aula
+                      </button>
                     </div>
 
-                    <div className="space-y-3">
-                      {/* Personal */}
-                      <div className="flex items-center mb-2 lg:mb-3">
-                        {aula.urlFotoPerfil ? (
-                          <img
-                            src={aula.urlFotoPerfil}
-                            alt={aula.nomePersonal}
-                            className="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover mr-2 lg:mr-3 flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gray-300 mr-2 lg:mr-3 flex items-center justify-center flex-shrink-0">
-                            <span className="text-gray-600 text-sm">👤</span>
-                          </div>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] lg:text-xs text-gray-500">Personal Trainer</p>
-                          <p className="font-medium text-sm lg:text-base text-gray-800 truncate">{aula.nomePersonal}</p>
-                        </div>
-                      </div>
-
-                      {/* Exercício */}
-                      <div className="flex items-center mb-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-600 flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      {/* Treino */}
+                      <div className="flex items-center mb-4">
+                        <div
+                          className="w-[37px] h-[37px] rounded-full flex items-center justify-center mr-3"
+                          style={{ backgroundColor: "#748CAB" }}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                          />
-                        </svg>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] lg:text-xs text-gray-500">Exercício</p>
-                          <p className="font-medium text-sm lg:text-base text-gray-800 truncate">{aula.nomeExercicio}</p>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            className="w-5 h-5 text-white"
+                            style={{ color: "#FFFDF6" }}
+                          >
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                              d="M9 11.5a3.5 3.5 0 1 1 7 0v3h1v1H8v-1h1v-3z"
+                              fill="currentColor"
+                            />
+                          </svg>
                         </div>
-                      </div>
-
-                      {/* Horário */}
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-600 flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span className="font-medium text-sm lg:text-base text-gray-800">
-                          {new Date(aula.dataHorarioInicio).toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })} - {new Date(aula.dataHorarioFim).toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                        <span className="font-medium text-gray-800">
+                          {aula.treino}
                         </span>
                       </div>
 
-                      {/* Botão de ação */}
-                      {aula.status === 'AGENDADA' && (
-                        <button
-                          className="w-full mt-3 lg:mt-4 text-white rounded-lg text-xs lg:text-sm font-medium hover:opacity-90 transition-opacity py-2"
-                          style={{
-                            backgroundColor: "#748CAB",
-                            fontFamily: "Inter, sans-serif",
-                          }}
-                        >
-                          Ver detalhes da aula
-                        </button>
-                      )}
+                      {/* Exercícios */}
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium text-gray-600 mb-2">
+                          Exercícios
+                        </h4>
+                        <div className="flex flex-col space-y-2">
+                          {(aula.exercicios || [])
+                            .slice(0, 2)
+                            .map((exercicio, index) => (
+                              <div
+                                key={exercicio.id ?? index}
+                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 bg-gray-50"
+                                style={{
+                                  width: "100%",
+                                  maxWidth: "314px",
+                                  height: "36px",
+                                  fontFamily: "Inter, sans-serif",
+                                }}
+                              >
+                                {typeof exercicio === "string" ? exercicio : exercicio.nome}
+                              </div>
+                            ))}
+                          {(aula.totalExercicios || 0) > 2 && (
+                            <div className="relative group">
+                              <div className="text-sm text-gray-500 font-medium mt-2 cursor-pointer hover:text-gray-700 transition-colors">
+                                +{(aula.totalExercicios || 0) - 2} exercícios
+                              </div>
+                              <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-10">
+                                <div className="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 shadow-lg min-w-max">
+                                  <div className="space-y-1">
+                                    {(aula.exercicios || [])
+                                      .slice(2)
+                                      .map((exercicio, idx) => (
+                                        <div
+                                          key={exercicio.id ?? idx}
+                                          className="whitespace-nowrap"
+                                        >
+                                          {typeof exercicio === "string" ? exercicio : exercicio.nome}
+                                        </div>
+                                      ))}
+                                  </div>
+                                  <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800" aria-hidden="true"></div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-gray-100 text-center">
+                <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center">
                   <div className="text-6xl mb-4">📅</div>
                   <h3 className="text-lg font-medium text-gray-800 mb-2">Nenhuma aula encontrada</h3>
                   <p className="text-gray-600">Você não tem próximas aulas agendadas.</p>

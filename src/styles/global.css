@@ -40,16 +40,6 @@
   background-color: #162435;
 }
 
-/* Esconder scrollbar mas manter funcionalidade */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}
-
 .root {
   width: 100vw;
   height: 100vh;
