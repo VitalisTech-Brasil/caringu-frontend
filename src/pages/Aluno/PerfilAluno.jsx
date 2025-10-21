@@ -1,19 +1,16 @@
-import { Tabs } from "flowbite-react";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Aluno/Header/Header";
 import ModalRemoverEspecialidade from "../../components/Utils/ModalRemoverEspecialidade";
 import { caringuApi } from '../../provider/caringuApi';
 import Secoes from "../../components/PerfilPersonal/Secoes/Secoes";
-import { Toaster, toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 import CustomToast from "../../components/Utils/CustomToast.jsx";
 import MenuLateralAluno from "../../components/Aluno/MenuLateral/MenuLateral";
-import InformacoesPessoais from "../../components/PerfilPersonal/Secoes/InformacoesPessoais.jsx";
 
 const PerfilAluno = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [especialidadeSelecionada, setEspecialidadeSelecionada] = useState(null);
-    const [deletarContaModal, setDeletarContaModal] = useState(false);
     const navigate = useNavigate();
     const menuRef = useRef(null);
 

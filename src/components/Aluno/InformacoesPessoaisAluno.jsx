@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import FotoPerfil from '../PerfilPersonal/FotoPerfil/FotoPerfil';
 import { caringuApi } from '../../provider/caringuApi';
 import MascaraTelefone from '../Utils/Functions/MascaraTelefone';
-import { HiOutlineTrash } from 'react-icons/hi';
-import ModalRemoverEspecialidade from '../Utils/ModalRemoverEspecialidade';
 import { toast, Toaster } from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
-import CidadeInput from '../Utils/InputCidade/CidadeInput';
 
 export default function InformacoesPessoais() {
 
@@ -42,10 +39,6 @@ export default function InformacoesPessoais() {
                     ...response.data,
                     celular: celularComMascara,
                 });
-
-
-
-                console.log(response.data);
             } catch (error) {
                 console.error("Erro ao buscar personal trainer:", error);
             }

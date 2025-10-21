@@ -3,7 +3,7 @@ import InformacoesPessoaisPersonal from "./InformacoesPessoais";
 import { useNavigate } from "react-router-dom";
 import PreferenciasNotificacao from "./PreferenciasNotificacao";
 import { HiOutlineExternalLink } from "react-icons/hi";
-import InformacoesPessoaisAluno from "../../Aluno/InformaçõesPessoaisAluno";
+import InformacoesPessoaisAluno from "../../Aluno/InformacoesPessoaisAluno";
 
 export default function Secoes() {
     const [selectedTab, setSelectedTab] = useState("informacoes");
@@ -13,10 +13,10 @@ export default function Secoes() {
     return (
         <div className="w-full h-full">
             {/* Cabeçalho das abas */}
-            <div className="flex flex-col sm:flex-row justify-center w-full gap-2 sm:gap-0 mb-6 items-center">
+            <div className="flex flex-col sm:flex-row justify-center w-full mb-6 items-center">
                 <button
                     onClick={() => setSelectedTab("informacoes")}
-                    className={`w-[50%] px-6 py-2 text-md font-medium border-2 cursor-pointer transition-colors duration-200 rounded-md ${selectedTab === "informacoes"
+                    className={`w-[60%] lg:w-[20%]  px-6 py-2 text-md font-medium border-2 cursor-pointer transition-colors duration-200 rounded-md ${selectedTab === "informacoes"
                         ? "bg-[#E96E35] text-white border-[#E96E35]"
                         : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
                         }`}
@@ -26,7 +26,7 @@ export default function Secoes() {
                 {tipo === "PERSONAL" ? (
                     <button
                         onClick={() => setSelectedTab("notificacao")}
-                        className={`w-[50%] px-6 py-2 text-md font-medium border-2 rounded-md cursor-pointer transition-colors duration-200 ${selectedTab === "notificacao"
+                        className={`w-[60%] lg:w-[20%]  px-6 py-2 text-md font-medium border-2 rounded-md cursor-pointer transition-colors duration-200 ${selectedTab === "notificacao"
                             ? "bg-[#E96E35] text-white border-[#E96E35]"
                             : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
                             }`}
@@ -36,7 +36,7 @@ export default function Secoes() {
                 ) : null}
                 <button
                     onClick={() => setSelectedTab("senha")}
-                    className={`w-[50%] px-6 py-2 text-md font-medium border-2 flex items-center cursor-pointer justify-center gap-2 transition-colors duration-200 rounded-md sm:rounded-r-md sm:rounded-bl-none sm:border-l-0 ${selectedTab === "senha"
+                    className={`w-[60%] lg:w-[20%]  px-6 py-2 text-md font-medium border-2 flex items-center cursor-pointer justify-center gap-2 transition-colors duration-200 rounded-md ${selectedTab === "senha"
                         ? "bg-[#E96E35] text-white border-[#E96E35]"
                         : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
                         }`}
