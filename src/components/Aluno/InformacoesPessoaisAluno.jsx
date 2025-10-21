@@ -11,13 +11,6 @@ export default function InformacoesPessoais() {
     const [showModal, setShowModal] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const [idEspecialidade, setIdEspecialidade] = useState(false);
-    const [novaEspecialidade, setNovaEspecialidade] = useState('');
-    const [buscaEspecialidade, setBuscaEspecialidade] = useState("");
-
-    const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState([]);
-    const [sugestoesEspecialidade, setSugestoesEspecialidade] = useState([]);
-    const [especialidadesDisponiveis, setEspecialidadesDisponiveis] = useState([]);
     const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
 
     const [nomeBairroAntigo, setNomeBairroAntigo] = useState("");
@@ -47,86 +40,11 @@ export default function InformacoesPessoais() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        caringuApi.get('/especialidades')
-            .then(response => {
-                setEspecialidadesDisponiveis(response.data);
-            })
-            .catch(error => {
-                console.error("Erro ao buscar especialidades:", error);
-            });
-    }, []);
-
-    const handleAdicionarEspecialidades = async () => {
-        try {
-            await caringuApi.post(`/personal-trainers-especialidades/${personalId}`, {
-                especialidades: especialidadesSelecionadas.map(e => ({
-                    id: e.id,
-                    nome: e.nome
-                }))
-            });
-
-            setNovaEspecialidade('');
-            setSugestoesEspecialidade([]);
-            setEspecialidadesSelecionadas([]);
-            setShowModal(false);
-
-            window.location.reload(true);
-
-        } catch (error) {
-            console.error('Erro ao adicionar especialidades:', error);
-        }
-    };
-
-    const handleBuscaEspecialidade = (e) => {
-        const valor = e.target.value;
-        setBuscaEspecialidade(valor);
-
-        if (valor.length > 0) {
-            const filtradas = especialidadesDisponiveis.filter(op =>
-                op.nome.toLowerCase().includes(valor.toLowerCase()) &&
-                !formData.especialidades?.some(esp => esp.id === op.id)
-            );
-            setSugestoesEspecialidade(filtradas);
-        } else {
-            setSugestoesEspecialidade([]);
-        }
-    };
-
-    const selecionarEspecialidade = (especialidade) => {
-        setFormData((prev) => ({
-            ...prev,
-            especialidades: [...(prev.especialidades || []), especialidade],
-        }));
-        setBuscaEspecialidade("");
-        setSugestoesEspecialidade([]);
-    };
 
     const removerMascara = (celular) => {
         return celular.replace(/\D/g, "");
     };
 
-    const handleRemoveEspecialidade = async (idEspecialidade) => {
-
-        try {
-            await caringuApi.delete(`/personal-trainers/${personalId}/especialidades/${idEspecialidade}`);
-
-            setFormData((prev) => ({
-                ...prev,
-                especialidades: prev.especialidades.filter(e => e.id !== idEspecialidade)
-            }));
-        } catch (error) {
-            console.error("Erro ao remover especialidade:", error);
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Não foi possível remover a especialidade. Tente novamente." />
-            ));
-        }
-    };
-
-    const handleCancelRemove = () => {
-        setModalVisible(false);
-        /* setEspecialidadeSelecionada(null); */
-    };
 
     const handleTelefoneChange = (e) => {
         let input = e.target.value;
@@ -170,12 +88,10 @@ export default function InformacoesPessoais() {
     const handleSave = async () => {
 
         const celularSemMascara = removerMascara(formData.celular);
-        const especialidadesIds = formData.especialidades?.map(e => e.id) ?? [];
 
         const dataParaSalvar = {
             ...formData,
             celular: celularSemMascara,
-            especialidadesIds: especialidadesIds
         };
 
         try {
