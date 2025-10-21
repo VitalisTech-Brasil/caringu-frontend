@@ -170,7 +170,7 @@ const GerenciarAlunos = () => {
         handleAbrirModalAgendarAula(aluno);
         break;
       case 'visualizarTreino':
-        navigate(`/visualizar-treino/${aluno.idAluno}`);
+        navigate(`/visualizar-treino/${aluno.idAluno}`, { state: { aluno } });
         break;
       default:
         break;
@@ -571,7 +571,7 @@ const GerenciarAlunos = () => {
             fecharModal={() => {
               setShowAgendarAulaModal(false)
               sessionStorage.setItem("RASCUNHO_RESPONDIDO", "false");
-              }
+            }
             }
             ariaLabel="Modal para agendar aula com o aluno"
             aluno={alunoParaAgendar}
