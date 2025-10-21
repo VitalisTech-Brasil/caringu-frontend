@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Input from '../../Utils/InputPosLogin';
+import Button from '../../Utils/Button';
 
 const extrairYoutubeId = (url) => {
     const m = url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
@@ -9,23 +10,25 @@ const extrairYoutubeId = (url) => {
 const ExercicioVideoCard = ({
     titulo,
     carga,
-    repeticoes,
+    repeticoesSeries,
     grupoMuscular,
     observacoes = '',
-    videoUrl,
+    urlVideoExecucao,
     tempoDescanso,
     exerciciosFinalizados,
     espacamentoEntreIcons = "justify-start sm:gap-2 gap-4 xl:gap-4",
     larguraVideo = "lg:w-[80%] xl:w-[65%] md:w-[60%] w-full",
     inicialmenteAberto = false,
-    desabilitarObservacoes = true,
+    aulaRealizada = true,
     origemUso,
     onToggleFinalizado
 }) => {
     const [aberto, setAberto] = useState(inicialmenteAberto);
     const [isPlaying, setIsPlaying] = useState(false);
     const [observacoesLocal, setObservacoesLocal] = useState(observacoes);
-    const videoId = useMemo(() => extrairYoutubeId(videoUrl), [videoUrl]);
+    const videoId = useMemo(() => extrairYoutubeId(urlVideoExecucao), [urlVideoExecucao]);
+    const isYoutube = urlVideoExecucao?.includes('youtube.com') || urlVideoExecucao?.includes('youtu.be');
+    const isGif = urlVideoExecucao?.endsWith('.gif');
 
     const toggle = () => setAberto(v => !v);
     const handlePlay = () => setIsPlaying(true);
@@ -110,7 +113,7 @@ const ExercicioVideoCard = ({
                                     style={getIndicadorStyle(exerciciosFinalizados)}
                                 >
                                     <span className="font-bold">Repetições:</span>
-                                    <span>{repeticoes}</span>
+                                    <span>{repeticoesSeries}</span>
                                 </div>
                             </div>
                             <div className="flex flex-col sm:flex-row flex-wrap items-center gap-1 flex-shrink min-w-0">
@@ -165,7 +168,18 @@ const ExercicioVideoCard = ({
                                 fontSize="16px"
                                 fontWeight="500"
                                 width="100%"
-                                disabled={desabilitarObservacoes}
+                                disabled={aulaRealizada}
+                            />
+                        </div>
+                        <div className="w-full h-auto flex flex-row items-center justify-center py-2">
+                            <Button
+                                id="btnSalvarObservacoes"
+                                texto="Salvar"
+                                corTexto="#fff"
+                                cor="#46982B"
+                                classNameExtra="w-[60%] h-10 text-base"
+                                ariaLabel={"Botão Salvar Observações"}
+                                fontWeight="600"
                             />
                         </div>
                         <div className="flex flex-col h-auto w-full gap-2.5 mt-2">
@@ -180,37 +194,48 @@ const ExercicioVideoCard = ({
                                 <span>Exemplo de execução:</span>
                             </div>
                             <div className={`relative ${larguraVideo} aspect-video overflow-hidden border-2 border-gray-300 rounded`}>
-                                {!isPlaying && (
-                                    <button
-                                        type="button"
-                                        onClick={handlePlay}
-                                        className="group w-full h-full relative"
-                                        aria-label="Reproduzir vídeo"
-                                    >
-                                        <img
-                                            src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-                                            alt="Thumbnail do vídeo"
-                                            className="w-full h-full object-cover"
-                                            loading="lazy"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51 51" fill="none"
-                                                className="drop-shadow-md transition-transform group-active:scale-95 w-8 h-8 sm:w-15 sm:h-15 lg:w-8 lg:h-8 xl:w-19 xl:h-19 shrink-0">
-                                                <path d="M1.73242 25.5V15.8709C1.73242 3.51362 11.0512 -1.54165 22.4218 4.63701L31.3131 9.45154L40.2045 14.2661C51.5751 20.4447 51.5751 30.5553 40.2045 36.7339L31.3131 41.5485L22.4218 46.363C11.0512 52.5416 1.73242 47.4864 1.73242 35.1291V25.5Z"
-                                                    stroke="#FFF" strokeOpacity="0.9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </div>
-                                    </button>
-                                )}
-                                {isPlaying && (
-                                    <iframe
-                                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
-                                        title="Vídeo do exercício"
-                                        className="absolute inset-0 w-full h-full"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowFullScreen
+                                {!isYoutube ? (
+                                    <img
+                                        src={urlVideoExecucao}
+                                        alt="Exemplo de execução"
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
                                     />
+                                ) : (
+                                    <>
+                                        {!isPlaying && (
+                                            <button
+                                                type="button"
+                                                onClick={handlePlay}
+                                                className="group w-full h-full relative"
+                                                aria-label="Reproduzir vídeo"
+                                            >
+                                                <img
+                                                    src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                                                    alt="Thumbnail do vídeo"
+                                                    className="w-full h-full object-cover"
+                                                    loading="lazy"
+                                                />
+                                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51 51" fill="none"
+                                                        className="drop-shadow-md transition-transform group-active:scale-95 w-8 h-8 sm:w-15 sm:h-15 lg:w-8 lg:h-8 xl:w-19 xl:h-19 shrink-0">
+                                                        <path d="M1.73242 25.5V15.8709C1.73242 3.51362 11.0512 -1.54165 22.4218 4.63701L31.3131 9.45154L40.2045 14.2661C51.5751 20.4447 51.5751 30.5553 40.2045 36.7339L31.3131 41.5485L22.4218 46.363C11.0512 52.5416 1.73242 47.4864 1.73242 35.1291V25.5Z"
+                                                            stroke="#FFF" strokeOpacity="0.9" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </div>
+                                            </button>
+                                        )}
+                                        {isPlaying && (
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
+                                                title="Vídeo do exercício"
+                                                className="absolute inset-0 w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                allowFullScreen
+                                            />
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>
