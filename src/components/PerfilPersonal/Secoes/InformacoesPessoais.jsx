@@ -238,7 +238,7 @@ export default function InformacoesPessoais() {
                 <FotoPerfil urlFoto={urlFotoPerfil} nomePersonal={formData.nome || ""} />
 
                 {/* Informações Profissionais */}
-                <div className="bg-white shadow-md border-[#1d2d44] rounded-lg p-6 flex flex-col justify-center h-124.5">
+                <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center h-124.5">
                     <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center w-full p-2">
                         <h2 className="text-[24px] font-bold text-gray-800 flex justify-between items-center ">
                             Informações Profissionais

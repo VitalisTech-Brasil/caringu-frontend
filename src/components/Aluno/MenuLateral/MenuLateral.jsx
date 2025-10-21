@@ -393,7 +393,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </svg>
       ),
       label: "Perfil",
-      path: "/perfil",
+      path: "/perfil-aluno",
     },
   ];
 
