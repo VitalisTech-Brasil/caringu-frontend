@@ -60,12 +60,16 @@ const ModalCriarExercicio = ({ onClose, onSubmit, isVisible, setModalConfirmarCa
                                 id="urlVideo"
                                 inputType="text"
                                 placeholder="Insira o URL do vídeo do exercício"
-                                {...register("urlVideo", {
-                                    required: false,
-                                    pattern: {
-                                        value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/,
-                                        message: "Insira uma URL válida",
-                                    },
+                                {...register('urlVideo', {
+                                    required: 'A URL é obrigatória',
+                                    validate: value => {
+                                        const isYoutube = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(value);
+                                        const isGif = /\.gif(\?|$)/i.test(value);
+                                        if (!isYoutube && !isGif) {
+                                            return 'Insira um link válido do YouTube ou um link de gif';
+                                        }
+                                        return true;
+                                    }
                                 })}
                                 isError={!!errors.urlVideo}
                                 errorMessage={errors.urlVideo?.message}

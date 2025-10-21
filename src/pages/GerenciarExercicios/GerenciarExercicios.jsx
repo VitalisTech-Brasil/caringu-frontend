@@ -628,10 +628,14 @@ const GerenciarExercicios = () => {
                                                     inputMode="text"
                                                     {...register('urlVideo', {
                                                         required: 'A URL é obrigatória',
-                                                        pattern: {
-                                                            value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/,
-                                                            message: 'Insira uma URL válida',
-                                                        },
+                                                        validate: value => {
+                                                            const isYoutube = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(value);
+                                                            const isGif = /\.gif(\?|$)/i.test(value);
+                                                            if (!isYoutube && !isGif) {
+                                                                return 'Insira um link válido do YouTube ou um link de gif';
+                                                            }
+                                                            return true;
+                                                        }
                                                     })}
                                                     isError={!!errors.urlVideo}
                                                     errorMessage={errors.urlVideo?.message}
