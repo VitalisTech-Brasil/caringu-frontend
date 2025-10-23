@@ -9,6 +9,9 @@ import Input from "../../components/Utils/InputPosLogin"
 import ExercicioVideoCard from "../../components/Utils/GerenciarAlunos/ExercicioVideoCard"
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone"
 import MascaraData from "../../components/Utils/Functions/MascaraData"
+import MascaraNivelExperiencia from "../../components/Utils/Functions/MascaraNivelExperiencia";
+import MascaraGenero from '../../components/Utils/Functions/MascaraGenero';
+
 
 const VisualizarTreino = () => {
 
@@ -70,49 +73,45 @@ const VisualizarTreino = () => {
         { idAula: 6, data_horario_inicio: "2025-08-10 08:00:00", data_horario_fim: "2025-08-10 09:00:00" },
         { idAula: 7, data_horario_inicio: "2025-09-08 09:00:00", data_horario_fim: "2025-09-08 10:30:00" },
         { idAula: 8, data_horario_inicio: "2025-09-10 08:00:00", data_horario_fim: "2025-09-10 09:00:00" },
-        { idAula: 9, data_horario_inicio: "2025-10-15 20:00:00", data_horario_fim: "2025-10-15 22:00:00" },
-        { idAula: 10, data_horario_inicio: "2025-10-17 20:00:00", data_horario_fim: "2025-10-17 22:00:00" },
-        { idAula: 11, data_horario_inicio: "2025-10-20 20:00:00", data_horario_fim: "2025-10-20 22:00:00" },
-        { idAula: 12, data_horario_inicio: "2025-10-22 20:00:00", data_horario_fim: "2025-10-22 22:00:00" },
-        { idAula: 13, data_horario_inicio: "2025-10-24 20:00:00", data_horario_fim: "2025-10-24 22:00:00" },
-        { idAula: 14, data_horario_inicio: "2025-10-27 20:00:00", data_horario_fim: "2025-10-27 22:00:00" },
-        { idAula: 15, data_horario_inicio: "2025-10-29 20:00:00", data_horario_fim: "2025-10-29 22:00:00" },
-        { idAula: 16, data_horario_inicio: "2025-10-31 20:00:00", data_horario_fim: "2025-10-31 22:00:00" },
-        { idAula: 17, data_horario_inicio: "2025-11-03 20:00:00", data_horario_fim: "2025-11-03 22:00:00" },
-        { idAula: 18, data_horario_inicio: "2025-11-05 20:00:00", data_horario_fim: "2025-11-05 22:00:00" },
-        { idAula: 19, data_horario_inicio: "2025-11-07 20:00:00", data_horario_fim: "2025-11-07 22:00:00" },
-        { idAula: 20, data_horario_inicio: "2025-11-10 20:00:00", data_horario_fim: "2025-11-10 22:00:00" },
-        { idAula: 21, data_horario_inicio: "2025-11-12 20:00:00", data_horario_fim: "2025-11-12 22:00:00" },
-        { idAula: 22, data_horario_inicio: "2025-11-14 20:00:00", data_horario_fim: "2025-11-14 22:00:00" },
-        { idAula: 23, data_horario_inicio: "2025-11-17 20:00:00", data_horario_fim: "2025-11-17 22:00:00" },
-        { idAula: 24, data_horario_inicio: "2025-11-19 20:00:00", data_horario_fim: "2025-11-19 22:00:00" },
-        { idAula: 25, data_horario_inicio: "2025-11-21 20:00:00", data_horario_fim: "2025-11-21 22:00:00" },
-        { idAula: 26, data_horario_inicio: "2025-11-24 20:00:00", data_horario_fim: "2025-11-24 22:00:00" },
-        { idAula: 27, data_horario_inicio: "2025-11-26 20:00:00", data_horario_fim: "2025-11-26 22:00:00" },
-        { idAula: 28, data_horario_inicio: "2025-11-28 20:00:00", data_horario_fim: "2025-11-28 22:00:00" },
-        { idAula: 29, data_horario_inicio: "2025-12-01 20:00:00", data_horario_fim: "2025-12-01 22:00:00" },
-        { idAula: 30, data_horario_inicio: "2025-12-03 20:00:00", data_horario_fim: "2025-12-03 22:00:00" },
-        { idAula: 31, data_horario_inicio: "2025-12-05 20:00:00", data_horario_fim: "2025-12-05 22:00:00" },
-        { idAula: 32, data_horario_inicio: "2025-12-08 20:00:00", data_horario_fim: "2025-12-08 22:00:00" },
-        { idAula: 33, data_horario_inicio: "2025-12-10 20:00:00", data_horario_fim: "2025-12-10 22:00:00" },
-        { idAula: 34, data_horario_inicio: "2025-12-12 20:00:00", data_horario_fim: "2025-12-12 22:00:00" },
-        { idAula: 35, data_horario_inicio: "2025-12-15 20:00:00", data_horario_fim: "2025-12-15 22:00:00" },
-        { idAula: 36, data_horario_inicio: "2025-12-17 20:00:00", data_horario_fim: "2025-12-17 22:00:00" },
-        { idAula: 37, data_horario_inicio: "2025-12-19 20:00:00", data_horario_fim: "2025-12-19 22:00:00" },
-        { idAula: 38, data_horario_inicio: "2025-12-22 20:00:00", data_horario_fim: "2025-12-22 22:00:00" },
-        { idAula: 39, data_horario_inicio: "2025-12-24 20:00:00", data_horario_fim: "2025-12-24 22:00:00" },
-        { idAula: 40, data_horario_inicio: "2025-12-26 20:00:00", data_horario_fim: "2025-12-26 22:00:00" },
-        { idAula: 41, data_horario_inicio: "2025-12-29 20:00:00", data_horario_fim: "2025-12-29 22:00:00" },
-        { idAula: 42, data_horario_inicio: "2025-12-31 20:00:00", data_horario_fim: "2025-12-31 22:00:00" },
-        { idAula: 43, data_horario_inicio: "2026-01-02 20:00:00", data_horario_fim: "2026-01-02 22:00:00" },
-        { idAula: 44, data_horario_inicio: "2026-01-05 20:00:00", data_horario_fim: "2026-01-05 22:00:00" },
-        { idAula: 45, data_horario_inicio: "2026-01-07 20:00:00", data_horario_fim: "2026-01-07 22:00:00" },
-        { idAula: 46, data_horario_inicio: "2026-01-09 20:00:00", data_horario_fim: "2026-01-09 22:00:00" },
-        { idAula: 47, data_horario_inicio: "2026-01-12 20:00:00", data_horario_fim: "2026-01-12 22:00:00" },
-        { idAula: 48, data_horario_inicio: "2026-01-14 20:00:00", data_horario_fim: "2026-01-14 22:00:00" },
-        { idAula: 49, data_horario_inicio: "2026-01-16 20:00:00", data_horario_fim: "2026-01-16 22:00:00" },
-        { idAula: 50, data_horario_inicio: "2026-01-19 20:00:00", data_horario_fim: "2026-01-19 22:00:00" },
-        { idAula: 51, data_horario_inicio: "2026-01-26 20:00:00", data_horario_fim: "2026-01-26 22:00:00" },
+        { idAula: 9, data_horario_inicio: "2025-10-24 20:00:00", data_horario_fim: "2025-10-24 22:00:00" },
+        { idAula: 10, data_horario_inicio: "2025-10-27 20:00:00", data_horario_fim: "2025-10-27 22:00:00" },
+        { idAula: 11, data_horario_inicio: "2025-10-29 20:00:00", data_horario_fim: "2025-10-29 22:00:00" },
+        { idAula: 12, data_horario_inicio: "2025-10-31 20:00:00", data_horario_fim: "2025-10-31 22:00:00" },
+        { idAula: 13, data_horario_inicio: "2025-11-03 20:00:00", data_horario_fim: "2025-11-03 22:00:00" },
+        { idAula: 14, data_horario_inicio: "2025-11-05 20:00:00", data_horario_fim: "2025-11-05 22:00:00" },
+        { idAula: 15, data_horario_inicio: "2025-11-07 20:00:00", data_horario_fim: "2025-11-07 22:00:00" },
+        { idAula: 16, data_horario_inicio: "2025-11-10 20:00:00", data_horario_fim: "2025-11-10 22:00:00" },
+        { idAula: 17, data_horario_inicio: "2025-11-12 20:00:00", data_horario_fim: "2025-11-12 22:00:00" },
+        { idAula: 18, data_horario_inicio: "2025-11-14 20:00:00", data_horario_fim: "2025-11-14 22:00:00" },
+        { idAula: 19, data_horario_inicio: "2025-11-17 20:00:00", data_horario_fim: "2025-11-17 22:00:00" },
+        { idAula: 20, data_horario_inicio: "2025-11-19 20:00:00", data_horario_fim: "2025-11-19 22:00:00" },
+        { idAula: 21, data_horario_inicio: "2025-11-21 20:00:00", data_horario_fim: "2025-11-21 22:00:00" },
+        { idAula: 22, data_horario_inicio: "2025-11-24 20:00:00", data_horario_fim: "2025-11-24 22:00:00" },
+        { idAula: 23, data_horario_inicio: "2025-11-26 20:00:00", data_horario_fim: "2025-11-26 22:00:00" },
+        { idAula: 24, data_horario_inicio: "2025-11-28 20:00:00", data_horario_fim: "2025-11-28 22:00:00" },
+        { idAula: 25, data_horario_inicio: "2025-12-01 20:00:00", data_horario_fim: "2025-12-01 22:00:00" },
+        { idAula: 26, data_horario_inicio: "2025-12-03 20:00:00", data_horario_fim: "2025-12-03 22:00:00" },
+        { idAula: 27, data_horario_inicio: "2025-12-05 20:00:00", data_horario_fim: "2025-12-05 22:00:00" },
+        { idAula: 28, data_horario_inicio: "2025-12-08 20:00:00", data_horario_fim: "2025-12-08 22:00:00" },
+        { idAula: 29, data_horario_inicio: "2025-12-10 20:00:00", data_horario_fim: "2025-12-10 22:00:00" },
+        { idAula: 30, data_horario_inicio: "2025-12-12 20:00:00", data_horario_fim: "2025-12-12 22:00:00" },
+        { idAula: 31, data_horario_inicio: "2025-12-15 20:00:00", data_horario_fim: "2025-12-15 22:00:00" },
+        { idAula: 32, data_horario_inicio: "2025-12-17 20:00:00", data_horario_fim: "2025-12-17 22:00:00" },
+        { idAula: 33, data_horario_inicio: "2025-12-19 20:00:00", data_horario_fim: "2025-12-19 22:00:00" },
+        { idAula: 34, data_horario_inicio: "2025-12-22 20:00:00", data_horario_fim: "2025-12-22 22:00:00" },
+        { idAula: 35, data_horario_inicio: "2025-12-24 20:00:00", data_horario_fim: "2025-12-24 22:00:00" },
+        { idAula: 36, data_horario_inicio: "2025-12-26 20:00:00", data_horario_fim: "2025-12-26 22:00:00" },
+        { idAula: 37, data_horario_inicio: "2025-12-29 20:00:00", data_horario_fim: "2025-12-29 22:00:00" },
+        { idAula: 38, data_horario_inicio: "2025-12-31 20:00:00", data_horario_fim: "2025-12-31 22:00:00" },
+        { idAula: 39, data_horario_inicio: "2026-01-02 20:00:00", data_horario_fim: "2026-01-02 22:00:00" },
+        { idAula: 40, data_horario_inicio: "2026-01-05 20:00:00", data_horario_fim: "2026-01-05 22:00:00" },
+        { idAula: 41, data_horario_inicio: "2026-01-07 20:00:00", data_horario_fim: "2026-01-07 22:00:00" },
+        { idAula: 42, data_horario_inicio: "2026-01-09 20:00:00", data_horario_fim: "2026-01-09 22:00:00" },
+        { idAula: 43, data_horario_inicio: "2026-01-12 20:00:00", data_horario_fim: "2026-01-12 22:00:00" },
+        { idAula: 44, data_horario_inicio: "2026-01-14 20:00:00", data_horario_fim: "2026-01-14 22:00:00" },
+        { idAula: 45, data_horario_inicio: "2026-01-16 20:00:00", data_horario_fim: "2026-01-16 22:00:00" },
+        { idAula: 46, data_horario_inicio: "2026-01-19 20:00:00", data_horario_fim: "2026-01-19 22:00:00" },
+        { idAula: 47, data_horario_inicio: "2026-01-26 20:00:00", data_horario_fim: "2026-01-26 22:00:00" },
     ];
 
     function getDiaSemana(dataString) {
@@ -191,7 +190,7 @@ const VisualizarTreino = () => {
                                     </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Gênero</span>
-                                        <span className="block w-full break-words">{alunoFromState?.genero || 'Gênero'}</span>
+                                        <span className="block w-full break-words">{MascaraGenero(alunoFromState.genero) || 'Gênero'}</span>
                                     </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Email</span>
@@ -204,7 +203,7 @@ const VisualizarTreino = () => {
                                         <span className="block w-full break-words">{MascaraTelefone(alunoFromState.celular)}</span>                                    </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Nível de experiência</span>
-                                        <span className="block w-full break-words">{alunoFromState.nivelExperiencia}</span>
+                                        <span className="block w-full break-words">{MascaraNivelExperiencia(alunoFromState.nivelExperiencia)}</span>
                                     </div>
                                 </div>
                             </div>
