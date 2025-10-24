@@ -1,14 +1,20 @@
 import { complex } from "framer-motion";
 import React from "react";
 import Rating from "react-rating";
+import { FaUserCircle } from 'react-icons/fa'
+import { useState } from "react";
+
+
 
 const CardOpiniao = ({
-    pontuacao,
+    nota,
     nome,
     comentario,
-    dataPublicacao,
-    urlFoto
+    dataAvaliacao,
+    urlFotoAluno
 }) => {
+
+    const [imgErro, setImgErro] = useState(false);
 
     const StarFull = () => (
         <svg className="mx-0.5 w-6 h-6 sm:w-8 sm:h-8 lg:w-9 lg:h-9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
@@ -27,15 +33,25 @@ const CardOpiniao = ({
             <div className="w-[95%] xl:w-[89%] h-[42rem] sm:h-[22rem] md:h-[18rem] lg:h-[15rem] xl:h-[20rem] 2xl:h-[21rem] rounded-md border-[2px] border-[#1D2D441C] border-solid flex flex-col items-start p-4 pr-[2rem]">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full h-auto">
                     <div className="flex flex-row items-center gap-6">
-                        <img src={urlFoto} alt="Foto do Aluno" className="rounded-full h-[70px] w-[70px] md:h-[92px] md:w-[92px]" />
+                        {urlFotoAluno && !imgErro ? (
+                            <img
+                                src={urlFotoAluno}
+                                alt="Foto do aluno"
+                                className='h-[70px] w-[70px] md:h-[92px] md:w-[92px] rounded-full'
+                                onError={() => setImgErro(true)}
+                            />
+
+                        ) : (
+                            <FaUserCircle className="flex-shrink-0 h-[70px] w-[70px] md:h-[92px] md:w-[92px]text-[#4B5563]" />
+                        )}
                         <div className="flex flex-col items-start justify-start gap-1.5">
                             <span className="text-[var(--cor-primaria)] font-semibold text-base sm:text-xl xl:text-base 2xl:text-xl">{nome}</span>
-                            <span className="text-[var(--cor-primaria)] font-normal text-sm">{dataPublicacao}</span>
+                            <span className="text-[var(--cor-primaria)] font-normal text-sm">{dataAvaliacao}</span>
                         </div>
                     </div>
                     <div className="h-auto w-auto md:pt-0 pt-3 flex flex-row items-center justify-center">
                         <Rating
-                            initialRating={pontuacao}
+                            initialRating={nota}
                             readonly
                             fractions={2}
                             stop={5}
