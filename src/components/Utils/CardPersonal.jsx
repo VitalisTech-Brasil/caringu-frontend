@@ -42,7 +42,7 @@ const CardPersonal = ({
     };
 
     function formatarQuantidadeAvaliacao(quantidadeAvaliacao) {
-        return quantidadeAvaliacao > 100 ? "+ 100" : `+ ${quantidadeAvaliacao}`;
+        return quantidadeAvaliacao > 100 ? "+ 100" : ` ${quantidadeAvaliacao}`;
     }
 
     return (
