@@ -185,6 +185,8 @@ const PerfilPersonal = () => {
                                 urlFoto={
                                     infoPersonal.urlFotoPerfil
                                 }
+                                mediaEstrela={infoPersonal.mediaEstrela}
+                                quantidadeAvaliacao={infoPersonal.quantidadeAvaliacao}
                             />
                         </div>
                         <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
@@ -235,7 +237,7 @@ const PerfilPersonal = () => {
                                     </span>
                                     <div className="gap-5 pl-4 pr-4 pt-4 md:pt-0 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
                                         <span>
-                                            Ordernar por avaliação
+                                            Exibir por avaliação
                                         </span>
                                         <div className="pt-2 pb-2">
                                             <Rating

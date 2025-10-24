@@ -588,7 +588,7 @@ const ProcurandoPersonal = () => {
                   </svg>
                 </button>
                 <div className="pt-2 pb-2 border-2 border-[#1D2D441C] rounded-md hidden items-center justify-center p-2 md:flex">
-                  <span>Ordenar por avaliação</span>
+                  <span>Exibir por avaliação</span>
                   <Rating
                     initialRating={rating}
                     fractions={2}
