@@ -41,8 +41,8 @@ const CardPersonal = ({
         }));
     };
 
-    function formatarQuantidadeAvaliacao(qtd) {
-        return qtd > 100 ? "+ 100" : `+ ${qtd}`;
+    function formatarQuantidadeAvaliacao(quantidadeAvaliacao) {
+        return quantidadeAvaliacao > 100 ? "+ 100" : `+ ${quantidadeAvaliacao}`;
     }
 
     return (
