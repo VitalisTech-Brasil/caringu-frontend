@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Header from "../components/Personal/Header/Header";
+import React, { useState, useEffect, useRef } from "react";
+import Header from "../components/Aluno/Header/Header"
 import CardPersonal from "../components/Utils/CardPersonal";
 import CardPlano from "../components/Utils/CardPlano";
 import CardOpiniao from "../components/Utils/CardOpiniao";
@@ -20,149 +20,8 @@ import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
 
 const PerfilPersonal = () => {
 
+    const menuRef = useRef(null);
 
-    const opinioes = [
-        {
-            pontuacao: 5,
-            nome: "Lucas Andrade",
-            comentario: "Excelente profissional, sempre atento às necessidades dos alunos e com dicas valiosas para melhorar o desempenho nos treinos. Recomendo muito o trabalho dele!",
-            dataPublicacao: "2025-05-27",
-            urlFoto: "https://randomuser.me/api/portraits/men/1.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Mariana Silva",
-            comentario: "Gostei bastante das aulas, o acompanhamento é próximo e as explicações são claras. Poderia ter mais horários disponíveis, mas recomendo o personal.",
-            dataPublicacao: "2025-05-20",
-            urlFoto: "https://randomuser.me/api/portraits/women/2.jpg"
-        },
-        {
-            pontuacao: 3,
-            nome: "João Pereira",
-            comentario: "Bom personal, atencioso e dedicado, mas senti falta de mais flexibilidade nos horários para encaixar melhor na minha rotina de trabalho.",
-            dataPublicacao: "2025-05-15",
-            urlFoto: "https://randomuser.me/api/portraits/men/3.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Ana Costa",
-            comentario: "Amei o acompanhamento, sempre motivando e trazendo novos exercícios. Senti evolução rápida e me senti muito acolhida durante todo o processo.",
-            dataPublicacao: "2025-05-10",
-            urlFoto: "https://randomuser.me/api/portraits/women/4.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Pedro Santos",
-            comentario: "Ótimo personal, recomendo! Sempre disposto a ajudar e tirar dúvidas, além de ser muito pontual e organizado com os treinos.",
-            dataPublicacao: "2025-05-09",
-            urlFoto: "https://randomuser.me/api/portraits/men/5.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Juliana Rocha",
-            comentario: "Muito dedicada e atenciosa, sempre preocupada com o bem-estar dos alunos. As aulas são dinâmicas e motivadoras, adorei a experiência.",
-            dataPublicacao: "2025-05-08",
-            urlFoto: "https://randomuser.me/api/portraits/women/6.jpg"
-        },
-        {
-            pontuacao: 3,
-            nome: "Carlos Eduardo",
-            comentario: "Bom profissional, mas poderia melhorar os horários e oferecer mais opções de treinos para quem tem rotina corrida.",
-            dataPublicacao: "2025-05-07",
-            urlFoto: "https://randomuser.me/api/portraits/men/7.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Fernanda Lima",
-            comentario: "Gostei bastante do método de ensino, sempre trazendo novidades e adaptando os exercícios conforme minha evolução.",
-            dataPublicacao: "2025-05-06",
-            urlFoto: "https://randomuser.me/api/portraits/women/8.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Ricardo Gomes",
-            comentario: "Excelente profissional, super recomendo! Sempre motivando e acompanhando de perto cada etapa do meu progresso.",
-            dataPublicacao: "2025-05-05",
-            urlFoto: "https://randomuser.me/api/portraits/men/9.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Patrícia Souza",
-            comentario: "Muito simpática e competente, sempre pronta para ajudar e esclarecer dúvidas. As aulas são leves e produtivas.",
-            dataPublicacao: "2025-05-04",
-            urlFoto: "https://randomuser.me/api/portraits/women/10.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Bruno Oliveira",
-            comentario: "Resultados rápidos e eficientes, com treinos personalizados e acompanhamento constante. Recomendo para quem busca evolução.",
-            dataPublicacao: "2025-05-03",
-            urlFoto: "https://randomuser.me/api/portraits/men/11.jpg"
-        },
-        {
-            pontuacao: 3,
-            nome: "Gabriela Martins",
-            comentario: "Boa profissional, mas senti falta de mais flexibilidade nos horários e de um acompanhamento mais próximo nos treinos.",
-            dataPublicacao: "2025-05-02",
-            urlFoto: "https://randomuser.me/api/portraits/women/12.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Felipe Ramos",
-            comentario: "Gostei do acompanhamento, sempre atento às minhas necessidades e com dicas para melhorar o desempenho.",
-            dataPublicacao: "2025-05-01",
-            urlFoto: "https://randomuser.me/api/portraits/men/13.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Larissa Alves",
-            comentario: "Super recomendo, muito dedicada! Sempre traz novidades para os treinos e me ajudou a alcançar meus objetivos.",
-            dataPublicacao: "2025-04-30",
-            urlFoto: "https://randomuser.me/api/portraits/women/14.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Thiago Fernandes",
-            comentario: "Ótimo profissional, sempre disposto a ajudar e esclarecer dúvidas. Os treinos são bem planejados e eficientes.",
-            dataPublicacao: "2025-04-29",
-            urlFoto: "https://randomuser.me/api/portraits/men/15.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Amanda Dias",
-            comentario: "Muito atenciosa e competente, sempre preocupada com o bem-estar dos alunos. Recomendo para todos que buscam resultados.",
-            dataPublicacao: "2025-04-28",
-            urlFoto: "https://randomuser.me/api/portraits/women/16.jpg"
-        },
-        {
-            pontuacao: 3,
-            nome: "Rafael Costa",
-            comentario: "Bom, mas poderia ser mais pontual nos horários e oferecer mais opções de treinos para diferentes objetivos.",
-            dataPublicacao: "2025-04-27",
-            urlFoto: "https://randomuser.me/api/portraits/men/17.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Beatriz Figueiredo",
-            comentario: "Gostei do atendimento, sempre cordial e disposto a ajudar. Os treinos são bem explicados e adaptados ao meu ritmo.",
-            dataPublicacao: "2025-04-26",
-            urlFoto: "https://randomuser.me/api/portraits/women/18.jpg"
-        },
-        {
-            pontuacao: 5,
-            nome: "Gustavo Lima",
-            comentario: "Excelente, muito profissional e dedicado. Os resultados apareceram rápido e o acompanhamento foi fundamental.",
-            dataPublicacao: "2025-04-25",
-            urlFoto: "https://randomuser.me/api/portraits/men/19.jpg"
-        },
-        {
-            pontuacao: 4,
-            nome: "Camila Torres",
-            comentario: "Muito dedicada e simpática, sempre motivando durante os treinos. Gostei bastante da experiência e recomendo.",
-            dataPublicacao: "2025-04-24",
-            urlFoto: "https://randomuser.me/api/portraits/women/20.jpg"
-        }
-    ];
     const navigate = useNavigate();
 
 
@@ -171,11 +30,24 @@ const PerfilPersonal = () => {
     const [infoPersonal, setInfoPersonal] = useState({ planos: [] });
     const [verfificaStatus, setVerificaStatus] = useState(null);
     const [statusEtapa, setStatusEtapa] = useState("");
-
+    const [opinioes, setOpinioes] = useState([]);
 
 
     const { id } = useParams();
     const idAluno = sessionStorage.getItem('pessoaId');
+
+    const exibirAvaliacoes = async (filtroNota = 0) => {
+        try {
+            let url = `/avaliacoes/personal/filtrar-por-nota/${id}`;
+            if (filtroNota > 0) {
+                url += `?filtroNota=${filtroNota}`;
+            }
+            const response = await caringuApi.get(url);
+            setOpinioes(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar Avaliações:", error);
+        }
+    };
 
 
     const fetchPlanos = async () => {
@@ -200,6 +72,7 @@ const PerfilPersonal = () => {
 
     useEffect(() => {
         fetchPlanos();
+        exibirAvaliacoes();
     }, []);
 
     const openModalContratar = (id) => {
@@ -256,8 +129,8 @@ const PerfilPersonal = () => {
 
     const ratingChanged = (newRating) => {
         setRating(newRating);
-        console.log(newRating)
-    }
+        exibirAvaliacoes(newRating);
+    };
 
     const StarFull = () => (
         <svg className="mx-0.5 w-6 h-6 sm:w-8 sm:h-8 lg:w-9 lg:h-9 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
@@ -271,15 +144,27 @@ const PerfilPersonal = () => {
         </svg>
     )
 
-
     return (
         <>
             <div className="flex min-h-screen bg-[#fdfbf7]">
-                <MenuLateralAluno/>
+                <MenuLateralAluno
+                    ref={menuRef}
+                />
                 <div className="flex-1 overflow-y-auto">
-                    <Header />
-                    {/* <div className="w-full h-auto">
-                        <div className="pl-[2.5rem] pt-2 pb-2 w-full h-auto">
+                    <Header
+                        title="Procurando Personal"
+                        menuRef={menuRef}
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                <path d="M15 15C18.4518 15 21.25 12.2018 21.25 8.75C21.25 5.29822 18.4518 2.5 15 2.5C11.5482 2.5 8.75 5.29822 8.75 8.75C8.75 12.2018 11.5482 15 15 15Z" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M4.26245 27.5C4.26245 22.6625 9.07499 18.75 15 18.75" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M22.75 26.75C24.9592 26.75 26.75 24.9592 26.75 22.75C26.75 20.5409 24.9592 18.75 22.75 18.75C20.5409 18.75 18.75 20.5409 18.75 22.75C18.75 24.9592 20.5409 26.75 22.75 26.75Z" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M27.5 27.5L26.25 26.25" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        }
+                    />
+                    <div className="w-full h-auto">
+                        <div className="pl-[2.5rem] pt-2 w-full h-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53" fill="none"
                                 className="cursor-pointer"
                                 onClick={() => navigate("/procurando-personal")}>
@@ -287,8 +172,8 @@ const PerfilPersonal = () => {
                                 <path d="M45.2717 26.5H8.10547" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </div>
-                    </div> */}
-                    <div className="w-full h-auto pt-10">
+                    </div>
+                    <div className="w-full h-auto pt-2">
                         <div>
                             <CardPersonal
                                 nomePersonal={infoPersonal.nomePersonal}
@@ -363,24 +248,22 @@ const PerfilPersonal = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full">
-                                    {(opinioes.filter(opiniao => rating === 0 || opiniao.pontuacao === rating).length === 0) ? (
+                                <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full pb-4">
+                                    {opinioes.length === 0 ? (
                                         <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
-                                            Ainda não existe nenhuma opinião ou comentário de usuários para este personal.
+                                            Ainda não existe nenhuma opinião para este personal.
                                         </div>
                                     ) : (
-                                        opinioes
-                                            .filter(opiniao => rating === 0 || opiniao.pontuacao === rating)
-                                            .map((opiniao, index) => (
-                                                <CardOpiniao
-                                                    key={index}
-                                                    pontuacao={opiniao.pontuacao}
-                                                    nome={opiniao.nome}
-                                                    comentario={opiniao.comentario}
-                                                    dataPublicacao={opiniao.dataPublicacao}
-                                                    urlFoto={opiniao.urlFoto}
-                                                />
-                                            ))
+                                        opinioes.map((opiniao, index) => (
+                                            <CardOpiniao
+                                                key={index}
+                                                nota={opiniao.nota}
+                                                nome={opiniao.nomeAluno}
+                                                comentario={opiniao.comentario}
+                                                dataAvaliacao={opiniao.dataAvaliacao}
+                                                urlFotoAluno={opiniao.urlFotoAluno}
+                                            />
+                                        ))
                                     )}
                                 </div>
                             </div>
