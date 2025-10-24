@@ -12,7 +12,9 @@ const CardPersonal = ({
     celular,
     email,
     urlFoto,
-    especialidades = []
+    especialidades = [],
+    mediaEstrela,
+    quantidadeAvaliacao
 
 }) => {
 
@@ -39,6 +41,9 @@ const CardPersonal = ({
         }));
     };
 
+    function formatarQuantidadeAvaliacao(qtd) {
+        return qtd > 100 ? "+ 100" : `+ ${qtd}`;
+    }
 
     return (
         <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-2 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
@@ -114,7 +119,7 @@ const CardPersonal = ({
                 </div>
                 <div className="lg:mt-0 lg:mb-0 mt-2 mb-2">
                     <Rating
-                        initialRating={4.5}
+                        initialRating={mediaEstrela}
                         readonly
                         fractions={2}
                         stop={5}
@@ -124,7 +129,7 @@ const CardPersonal = ({
                 </div>
                 <div>
                     <span className=" ml-1 text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl font-normal">
-                        + 100 avaliações
+                        {formatarQuantidadeAvaliacao(quantidadeAvaliacao)} avaliações
                     </span>
                 </div>
             </div>
