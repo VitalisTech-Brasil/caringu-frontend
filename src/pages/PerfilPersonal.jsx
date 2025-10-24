@@ -32,8 +32,9 @@ const PerfilPersonal = () => {
     const [statusEtapa, setStatusEtapa] = useState("");
     const [opinioes, setOpinioes] = useState([]);
     const [loadingOpinioes, setLoadingOpinioes] = useState(false);
-    
+
     const [limparFiltro, setLimparFiltro] = useState(false);
+    const [lastFiltroNota, setLastFiltroNota] = useState(null);
 
     const { id } = useParams();
     const idAluno = sessionStorage.getItem('pessoaId');
@@ -49,6 +50,7 @@ const PerfilPersonal = () => {
             const response = await caringuApi.get(url);
             setOpinioes(response.data);
             setLimparFiltro(false);
+            setLastFiltroNota(filtroNota);
         } catch (error) {
             console.error("Erro ao buscar Avaliações:", error);
         } finally {
@@ -140,8 +142,12 @@ const PerfilPersonal = () => {
     };
 
     const handleLimparFiltro = () => {
+
+        if (lastFiltroNota === 0) {
+            setRating(0);
+            return;
+        }
         setRating(0);
-        setLimparFiltro(true);
         exibirAvaliacoes(0, true);
     };
 
@@ -261,14 +267,13 @@ const PerfilPersonal = () => {
                                                 onChange={ratingChanged}
                                             />
                                         </div>
-                                        <button
+                                        <Button
                                             type="button"
                                             onClick={handleLimparFiltro}
-                                            className="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
+                                            classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
                                             aria-label="Limpar filtro de avaliações"
-                                        >
-                                            Limpar filtro
-                                        </button>
+                                            texto="Limpar filtro"
+                                        ></Button>
                                     </div>
                                 </div>
                                 <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full pb-4">
