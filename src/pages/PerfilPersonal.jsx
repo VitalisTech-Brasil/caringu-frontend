@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 import CustomToast from '../components/Utils/CustomToast';
 import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
-
+import MascaraData from "../components/Utils/Functions/MascaraData";
 
 const PerfilPersonal = () => {
 
@@ -260,7 +260,7 @@ const PerfilPersonal = () => {
                                                 nota={opiniao.nota}
                                                 nome={opiniao.nomeAluno}
                                                 comentario={opiniao.comentario}
-                                                dataAvaliacao={opiniao.dataAvaliacao}
+                                                dataAvaliacao={MascaraData(opiniao.dataAvaliacao?.split('T')[0])}
                                                 urlFotoAluno={opiniao.urlFotoAluno}
                                             />
                                         ))

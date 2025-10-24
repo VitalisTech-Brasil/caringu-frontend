@@ -4,8 +4,6 @@ import Rating from "react-rating";
 import { FaUserCircle } from 'react-icons/fa'
 import { useState } from "react";
 
-
-
 const CardOpiniao = ({
     nota,
     nome,
