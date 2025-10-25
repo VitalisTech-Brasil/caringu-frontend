@@ -38,6 +38,7 @@ import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
 import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
 import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
 import AgendaAluno from './pages/Aluno/Agenda.jsx';
+import AcompanharAulaAuluno from './pages/Aluno/AcompanharAula.jsx';
 
 
 const AppRoutes = () => {
@@ -211,6 +212,11 @@ const AppRoutes = () => {
         <Route path="/perfil-aluno" element={
           <ProtectedRoute>
             <PerfilAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/acompanhar-aula-aluno" element={
+          <ProtectedRoute>
+            <AcompanharAulaAuluno />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
