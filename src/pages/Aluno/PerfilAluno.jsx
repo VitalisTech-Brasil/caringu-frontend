@@ -25,6 +25,7 @@ const PerfilAluno = () => {
         try {
             await caringuApi.delete(`/personal-trainers/${pessoaId}`);
             navigate("/", { replace: true });
+            
         } catch (error) {
             console.error("Erro ao deletar conta:", error);
             toast.custom((t) => (

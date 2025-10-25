@@ -9,42 +9,56 @@ export default function Secoes() {
     const [selectedTab, setSelectedTab] = useState("informacoes");
     const navigate = useNavigate();
     const tipo = sessionStorage.getItem("tipo");
+    const colunas = tipo === "PERSONAL" ? "lg:grid-cols-3" : "lg:grid-cols-2";
 
     return (
         <div className="w-full h-full">
             {/* Cabeçalho das abas */}
-            <div className="flex flex-col sm:flex-row justify-center w-full mb-6 items-center">
-                <button
-                    onClick={() => setSelectedTab("informacoes")}
-                    className={`w-[60%] lg:w-[20%]  px-6 py-2 text-md font-medium border-2 cursor-pointer transition-colors duration-200 rounded-md ${selectedTab === "informacoes"
-                        ? "bg-[#E96E35] text-white border-[#E96E35]"
-                        : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
-                        }`}
+            <div className="flex justify-center w-full mb-6 items-center">
+                <div
+                    className={`grid grid-cols-1 ${colunas} w-full max-w-[900px] justify-items-center`}
                 >
-                    Informações pessoais
-                </button>
-                {tipo === "PERSONAL" ? (
+                    {/* Informações pessoais */}
                     <button
-                        onClick={() => setSelectedTab("notificacao")}
-                        className={`w-[60%] lg:w-[20%]  px-6 py-2 text-md font-medium border-2 rounded-md cursor-pointer transition-colors duration-200 ${selectedTab === "notificacao"
-                            ? "bg-[#E96E35] text-white border-[#E96E35]"
-                            : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
+                        onClick={() => setSelectedTab("informacoes")}
+                        className={`w-full max-w-[300px] px-6 py-2 text-md font-medium border-2 cursor-pointer transition-all duration-200 rounded-md 
+                            ${selectedTab === "informacoes"
+                                ? "bg-[#E96E35] text-white border-[#E96E35]"
+                                : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
                             }`}
                     >
-                        Notificações
+                        Informações pessoais
                     </button>
-                ) : null}
-                <button
-                    onClick={() => setSelectedTab("senha")}
-                    className={`w-[60%] lg:w-[20%]  px-6 py-2 text-md font-medium border-2 flex items-center cursor-pointer justify-center gap-2 transition-colors duration-200 rounded-md ${selectedTab === "senha"
-                        ? "bg-[#E96E35] text-white border-[#E96E35]"
-                        : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
-                        }`}
-                >
-                    Redefinir Senha
-                    <HiOutlineExternalLink />
-                </button>
+
+                    {/* Notificações (apenas para personal) */}
+                    {tipo === "PERSONAL" && (
+                        <button
+                            onClick={() => setSelectedTab("notificacao")}
+                            className={`w-full max-w-[300px] px-6 py-2 text-md font-medium border-2 cursor-pointer transition-all duration-200 rounded-md 
+                                ${selectedTab === "notificacao"
+                                    ? "bg-[#E96E35] text-white border-[#E96E35]"
+                                    : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
+                                }`}
+                        >
+                            Notificações
+                        </button>
+                    )}
+
+                    {/* Redefinir Senha */}
+                    <button
+                        onClick={() => setSelectedTab("senha")}
+                        className={`w-full max-w-[300px] px-6 py-2 text-md font-medium border-2 flex items-center justify-center gap-2 transition-all duration-200 rounded-md
+                            ${selectedTab === "senha"
+                                ? "bg-[#E96E35] text-white border-[#E96E35]"
+                                : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
+                            }`}
+                    >
+                        Redefinir Senha
+                        <HiOutlineExternalLink />
+                    </button>
+                </div>
             </div>
+
 
             {/* Conteúdo das abas */}
             {selectedTab === "informacoes" && (
