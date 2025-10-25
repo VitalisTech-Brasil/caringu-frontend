@@ -31,21 +31,30 @@ const PerfilPersonal = () => {
     const [verfificaStatus, setVerificaStatus] = useState(null);
     const [statusEtapa, setStatusEtapa] = useState("");
     const [opinioes, setOpinioes] = useState([]);
+    const [loadingOpinioes, setLoadingOpinioes] = useState(false);
 
+    const [limparFiltro, setLimparFiltro] = useState(false);
+    const [lastFiltroNota, setLastFiltroNota] = useState(null);
 
     const { id } = useParams();
     const idAluno = sessionStorage.getItem('pessoaId');
 
-    const exibirAvaliacoes = async (filtroNota = 0) => {
+    const exibirAvaliacoes = async (filtroNota = 0, forceAll = false) => {
+        setLoadingOpinioes(true);
         try {
             let url = `/avaliacoes/personal/filtrar-por-nota/${id}`;
-            if (filtroNota > 0) {
+
+            if (!forceAll && filtroNota > 0) {
                 url += `?filtroNota=${filtroNota}`;
             }
             const response = await caringuApi.get(url);
             setOpinioes(response.data);
+            setLimparFiltro(false);
+            setLastFiltroNota(filtroNota);
         } catch (error) {
             console.error("Erro ao buscar Avaliações:", error);
+        } finally {
+            setLoadingOpinioes(false);
         }
     };
 
@@ -130,6 +139,16 @@ const PerfilPersonal = () => {
     const ratingChanged = (newRating) => {
         setRating(newRating);
         exibirAvaliacoes(newRating);
+    };
+
+    const handleLimparFiltro = () => {
+
+        if (lastFiltroNota === 0) {
+            setRating(0);
+            return;
+        }
+        setRating(0);
+        exibirAvaliacoes(0, true);
     };
 
     const StarFull = () => (
@@ -235,7 +254,7 @@ const PerfilPersonal = () => {
                                     <span className="text-[var(--cor-primaria)] text-base xl:text-[28px] 2xl:text-[32px] font-medium">
                                         Opiniões sobre o personal:
                                     </span>
-                                    <div className="gap-5 pl-4 pr-4 pt-4 md:pt-0 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
+                                    <div className="gap-5 p-4 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
                                         <span>
                                             Exibir por avaliação
                                         </span>
@@ -248,10 +267,27 @@ const PerfilPersonal = () => {
                                                 onChange={ratingChanged}
                                             />
                                         </div>
+                                        <Button
+                                            type="button"
+                                            onClick={handleLimparFiltro}
+                                            classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
+                                            aria-label="Limpar filtro de avaliações"
+                                            texto="Limpar filtro"
+                                        ></Button>
                                     </div>
                                 </div>
                                 <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full pb-4">
-                                    {opinioes.length === 0 ? (
+                                    {loadingOpinioes ? (
+                                        <div className="col-span-1 xl:col-span-2 flex justify-center items-center py-8">
+                                            <div className="flex items-center gap-3 text-[var(--cor-primaria)]">
+                                                <svg className="animate-spin h-6 w-6 text-[#E96E35]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                                </svg>
+                                                <span>Carregando opiniões...</span>
+                                            </div>
+                                        </div>
+                                    ) : opinioes.length === 0 ? (
                                         <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
                                             Ainda não existe nenhuma opinião para este personal.
                                         </div>
