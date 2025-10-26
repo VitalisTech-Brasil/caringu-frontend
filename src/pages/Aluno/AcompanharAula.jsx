@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import Header from '../../components/Aluno/Header/Header';
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Button from "../../components/Utils/Button";
-import CardExercicio from '../../components/Aluno/CardExercicio';
+import CardExercicio from '../../components/Aluno/ExecicioCard';
 
 const AcompanharAula = () => {
     const video = false
