@@ -12,7 +12,8 @@ import { caringuApi } from "../../provider/caringuApi";
 const ModalAgendarAula = ({
     fecharModal,
     ariaLabel,
-    aluno
+    aluno,
+    atualizarAlunos
 }) => {
     const getToday = () => {
         const now = new Date();
@@ -368,6 +369,7 @@ const ModalAgendarAula = ({
                                     rascunhosPersistidos={rascunhosPersistidos}
                                     setRascunhosPersistidos={setRascunhosPersistidos}
                                     onProsseguir={() => setEtapa(2)}
+                                    atualizarAlunos={atualizarAlunos}
                                 />
                             )}
                             {etapa === 2 && (

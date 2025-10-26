@@ -1,25 +1,80 @@
 import React from 'react'
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
-import Header from '../../components/Personal/Header/Header';
+import Header from '../../components/Aluno/Header/Header';
 import Pagination from '../../components/Utils/Pagination';
 import Button from "../../components/Utils/Button";
+import { useRef } from 'react';
 
 
 
 const MinhaEvolucao = () => {
+    const menuRef = useRef();
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
-            <MenuLateralAluno />
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
+            <MenuLateralAluno ref={menuRef} />
             <div className="flex-1 overflow-y-auto">
-                <Header />
+                <Header
+                    menuRef={menuRef}
+                    title='Minha Evolução'
+                    icon={
+                        <svg
+                            width="30"
+                            height="30"
+                            viewBox="0 0 30 30"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M7.37505 21.25H22.6126C24.9876 21.25 26.2375 20 26.2375 17.625V2.5H3.73755V17.625C3.75005 20 5.00005 21.25 7.37505 21.25Z"
+                                stroke="#1D2D44"
+                                strokeWidth="2"
+                                strokeMiterlimit="10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M2.5 2.5H27.5"
+                                stroke="#1D2D44"
+                                strokeWidth="2"
+                                strokeMiterlimit="10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M10 27.5L15 25V21.25"
+                                stroke="#1D2D44"
+                                strokeWidth="2"
+                                strokeMiterlimit="10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M20 27.5L15 25"
+                                stroke="#1D2D44"
+                                strokeWidth="2"
+                                strokeMiterlimit="10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M9.375 13.75L13.3125 10.4625C13.625 10.2 14.0375 10.275 14.25 10.625L15.75 13.125C15.9625 13.475 16.375 13.5375 16.6875 13.2875L20.625 10"
+                                stroke="#1D2D44"
+                                strokeWidth="2"
+                                strokeMiterlimit="10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    }
+                />
                 <div className="pl-[1rem] sm:pl-[3.5rem] w-[90%] h-auto flex mt-6 flex-col gap-6">
                     <div>
                         <h1 className="text-xl sm:text-[32px] font-bold text-[#1E293B]">
                             Visualize sua evolução em cada treino
                         </h1>
                     </div>
-                    <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[#fffdf6] py-4">
+                    <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
                         <input
                             type="text"
                             placeholder="Pesquisar Treino"
@@ -74,7 +129,7 @@ const MinhaEvolucao = () => {
                             </span>
                         </div>
                     </div>
-                                       <div className="w-[90%] md:w-[45%] lg:w-[30%] mx-auto my-6 p-4 border border-gray-300 rounded-lg flex flex-col gap-4">
+                    <div className="w-[90%] md:w-[45%] lg:w-[30%] mx-auto my-6 p-4 border border-gray-300 rounded-lg flex flex-col gap-4">
                         <span className="text-[20px] sm:text-[24px] font-bold text-[#1E293B]">
                             Treino X
                         </span>
@@ -113,7 +168,7 @@ const MinhaEvolucao = () => {
                             </span>
                         </div>
                     </div>
-                                       <div className="w-[90%] md:w-[45%] lg:w-[30%] mx-auto my-6 p-4 border border-gray-300 rounded-lg flex flex-col gap-4">
+                    <div className="w-[90%] md:w-[45%] lg:w-[30%] mx-auto my-6 p-4 border border-gray-300 rounded-lg flex flex-col gap-4">
                         <span className="text-[20px] sm:text-[24px] font-bold text-[#1E293B]">
                             Treino X
                         </span>
@@ -152,7 +207,7 @@ const MinhaEvolucao = () => {
                             </span>
                         </div>
                     </div>
-                                       <div className="w-[90%] md:w-[45%] lg:w-[30%] mx-auto my-6 p-4 border border-gray-300 rounded-lg flex flex-col gap-4">
+                    <div className="w-[90%] md:w-[45%] lg:w-[30%] mx-auto my-6 p-4 border border-gray-300 rounded-lg flex flex-col gap-4">
                         <span className="text-[20px] sm:text-[24px] font-bold text-[#1E293B]">
                             Treino X
                         </span>
@@ -191,7 +246,7 @@ const MinhaEvolucao = () => {
                             </span>
                         </div>
                     </div>
-                    
+
 
                 </div>
                 {/* Arrumar aqui Depois */}

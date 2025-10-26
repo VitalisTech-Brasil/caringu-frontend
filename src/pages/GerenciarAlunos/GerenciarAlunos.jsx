@@ -111,44 +111,45 @@ const GerenciarAlunos = () => {
     sessionStorage.removeItem("KPI_ALUNO_SELECIONADA");
   }, [])
 
-  useEffect(() => {
+
+  const fetchData = async () => {
     const personalId = sessionStorage.getItem('pessoaId');
 
-    const fetchData = async () => {
-      try {
-        const responseCompletos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
-        setAlunosCompletos(responseCompletos.data);
+    try {
+      const responseCompletos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
+      setAlunosCompletos(responseCompletos.data);
 
-        if (searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder) {
+      if (searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder) {
 
-          setAlunosCards(responseCompletos.data);
-          setTotalElements(responseCompletos.data.length);
-          setTotalPagesAPI(0); // Reset para usar paginação local
+        setAlunosCards(responseCompletos.data);
+        setTotalElements(responseCompletos.data.length);
+        setTotalPagesAPI(0); // Reset para usar paginação local
 
-        } else {
+      } else {
 
-          const responsePaginado = await caringuApi.get(`/alunos/detalhes/personal/paginado/${personalId}`, {
-            params: {
-              page: currentPage - 1,
-              size: itemsPerPage
-            }
-          });
+        const responsePaginado = await caringuApi.get(`/alunos/detalhes/personal/paginado/${personalId}`, {
+          params: {
+            page: currentPage - 1,
+            size: itemsPerPage
+          }
+        });
 
-          const data = responsePaginado.data;
-          setAlunosCards(data.content);
-          setTotalElements(data.totalElements);
-          setTotalPagesAPI(data.totalPages);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar alunos ativos:", error);
+        const data = responsePaginado.data;
+        setAlunosCards(data.content);
+        setTotalElements(data.totalElements);
+        setTotalPagesAPI(data.totalPages);
       }
-    };
+    } catch (error) {
+      console.error("Erro ao buscar alunos ativos:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [currentPage, itemsPerPage, searchTerm, sortOrder, anamnesesPendentes, aguardandoTreino]);
 
   const handleCardClick = (alunoId) => {
-    navigate(`/perfil-aluno/${alunoId}`);
+    navigate(`/ficha-aluno/${alunoId}`);
   };
 
   const handleCardFeedbacksClick = (alunoId) => {
@@ -169,8 +170,8 @@ const GerenciarAlunos = () => {
       case 'agendarAula':
         handleAbrirModalAgendarAula(aluno);
         break;
-      case 'visualizarTreino':
-        navigate(`/visualizar-treino/${aluno.idAluno}`);
+      case 'visualizarAula':
+        navigate(`/visualizar-aula/${aluno.idAluno}`, { state: { aluno } });
         break;
       default:
         break;
@@ -243,7 +244,7 @@ const GerenciarAlunos = () => {
   };
 
   const handlePresencaAlunoClick = (aluno) => {
-    navigate(`/perfil-aluno/${aluno.idAluno}`);
+    navigate(`/ficha-aluno/${aluno.idAluno}`);
   };
 
   const handleFilterChange = (filterType, valorLabel) => {
@@ -402,7 +403,7 @@ const GerenciarAlunos = () => {
                           setImgErro={setImgErro}
                           totalCards={currentAlunos.length}
                           idButton="btn-ver-feedbacks"
-                          textoButton="Ver feedbacks"
+                          textoButton="Ver Feedbacks"
                           corButton="var(--laranja)"
                           ariaLabelButton="Ver feedbacks"
                           classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
@@ -522,18 +523,14 @@ const GerenciarAlunos = () => {
                                 <CustomToast t={t} type="success" message="Anamnese atualizada com sucesso!" />
                               ));
 
-                              setTimeout(() => {
-                                window.location.reload(true);
-                              }, 1000);
-
                             } else {
                               // Criação
                               await caringuApi.post(`/anamnese`, { alunoId, ...dadosAnamnese });
                               toast.success("Anamnese criada com sucesso!");
-                              window.location.reload(true);
                             }
 
                             setShowCreateModal(false);
+                            fetchData();
 
                           } catch (error) {
                             console.error("Erro ao salvar anamnese:", error);
@@ -571,10 +568,11 @@ const GerenciarAlunos = () => {
             fecharModal={() => {
               setShowAgendarAulaModal(false)
               sessionStorage.setItem("RASCUNHO_RESPONDIDO", "false");
-              }
+            }
             }
             ariaLabel="Modal para agendar aula com o aluno"
             aluno={alunoParaAgendar}
+            atualizarAlunos={fetchData}
           />
         )}
       </div>

@@ -290,7 +290,7 @@ const Dashboard = () => {
                             <div className="flex flex-col justify-center items-center gap-5 mt-8">
                                 <div className='flex justify-between items-center w-full gap-4'>
                                     <Button
-                                        texto={"Visualizar gráficos em PDF"}
+                                        texto={"Visualizar Gráficos em PDF"}
                                         logo={exportarPDF}
                                         borderColor={"#E6E6E2"}
                                         borderWidth={"2px"}
@@ -298,7 +298,7 @@ const Dashboard = () => {
                                         classNameExtra="xl:w-[50%] w-full"
                                         height={"50px"}
                                         fontSize={fontSize}
-                                        cor={"#FFFDF6"}
+                                        cor={"var(--cor-secundaria)"}
                                         onClick={() =>
                                             navigate(`/visualizar-pdf/${idAluno}/${idTreino}`, {
                                                 state: {

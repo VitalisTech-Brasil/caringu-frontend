@@ -365,7 +365,7 @@ const VisualizarPdf = () => {
             </div>
             <div className='flex flex-col items-center justify-center w-screen pb-5'>
                 <Button
-                    texto={"Exportar gráficos em PDF"}
+                    texto={"Exportar Gráficos em PDF"}
                     logo={exportarPDF}
                     borderColor={"#E6E6E2"}
                     borderWidth={"2px"}
@@ -373,7 +373,7 @@ const VisualizarPdf = () => {
                     width={"300px"}
                     height={"50px"}
                     fontSize={fontSize}
-                    cor={"#FFFDF6"}
+                    cor={"var(--cor-secundaria)"}
                     onClick={exportarParaPDF}
 
                 />

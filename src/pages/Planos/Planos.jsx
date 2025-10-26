@@ -308,7 +308,7 @@ const Planos = () => {
                             <CardAluno
                                 key={aluno.idAluno}
                                 aluno={aluno}
-                                onCardClick={(idAluno) => navigate(`/perfil-aluno/${idAluno}`)}
+                                onCardClick={(idAluno) => navigate(`/ficha-aluno/${idAluno}`)}
                                 imgErro={imgErro}
                                 setImgErro={setImgErro}
                                 totalCards={alunosAtivos.length}

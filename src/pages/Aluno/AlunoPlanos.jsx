@@ -10,7 +10,7 @@ import Button from "../../utils/../components/Utils/Button";
 const AlunoPlanos = () => {
     const menuRef = useRef(null);
     const [showModalAvaliar, setModalAvaliar] = useState(false);
-    const [showModalEnviado, setModalEnviado] = useState(true);
+    const [showModalEnviado, setModalEnviado] = useState(false);
     const [rating, setRating] = React.useState(0.0);
 
     const openModalAvaliar = () => setModalAvaliar(true);
@@ -39,7 +39,7 @@ const AlunoPlanos = () => {
     }
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateralAluno ref={menuRef} />
             <div className="flex-1 overflow-y-auto">
                 <Header
@@ -54,17 +54,29 @@ const AlunoPlanos = () => {
 
                     }
                 />
-                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <CardPlanoAluno
-                        key={1}
-                        id={1}
-                        nome="Plano Mensal"
-                        periodo="MENSAL"
-                        quantidadeAulas={2}
-                        valorAulas={20}
-                        valorPlano={40}
-                        onAvaliarPersonal={openModalAvaliar}
-                    />
+                <div className="flex w-full flex-row justify-center items-start">
+                    <div className=" p-6 grid grid-cols-1 gap-6 w-full sm:w-[80%] lg:w-[60%]">
+                        <CardPlanoAluno
+                            key={1}
+                            id={1}
+                            nome="Plano Mensal"
+                            periodo="MENSAL"
+                            quantidadeAulas={2}
+                            valorAulas={20}
+                            valorPlano={40}
+                            onAvaliarPersonal={openModalAvaliar}
+                        />
+                        <CardPlanoAluno
+                            key={1}
+                            id={1}
+                            nome="Plano Mensal"
+                            periodo="MENSAL"
+                            quantidadeAulas={2}
+                            valorAulas={20}
+                            valorPlano={40}
+                            onAvaliarPersonal={openModalAvaliar}
+                        />
+                    </div>
                 </div>
             </div>
             {showModalAvaliar && (
@@ -106,8 +118,8 @@ const AlunoPlanos = () => {
                             </div>
                             <div>
                                 <span>Deixe um comentário:</span>
-                                <div className='flex p-6'>
-                                    <span className='text-gray-400'>Compartilhe o que achou do serviço do personal</span>
+                                <div className='flex p-4'>
+                                    <textarea placeholder='Compartilhe o que achou do serviço do personal' className='h-30 bg-[#D9D9D945] w-full p-2'></textarea>
                                 </div>
                             </div>
                             <div className='flex justify-center'>
