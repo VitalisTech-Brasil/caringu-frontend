@@ -1,31 +1,24 @@
-import { useEffect, useState } from 'react'
-import FotoPerfil from '../PerfilPersonal/FotoPerfil/FotoPerfil';
-import { caringuApi } from '../../provider/caringuApi';
-import MascaraTelefone from '../Utils/Functions/MascaraTelefone';
-import { toast, Toaster } from 'react-hot-toast';
-import CustomToast from '../Utils/CustomToast';
+import React, { useEffect, useState } from "react";
+import { caringuApi } from "../../provider/caringuApi";
+import { toast } from "react-hot-toast";
+import CustomToast from "../Utils/CustomToast";
+import FotoPerfil from "../../components/PerfilPersonal/FotoPerfil/FotoPerfil";
+import MascaraTelefone from "..//Utils/Functions/MascaraTelefone";
 
-export default function InformacoesPessoais() {
-
+export default function InformacoesPessoaisAluno() {
     const [formData, setFormData] = useState({});
-    const [showModal, setShowModal] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
-
     const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
 
-    const [nomeBairroAntigo, setNomeBairroAntigo] = useState("");
-
-    const personalId = sessionStorage.getItem('pessoaId');
+    const alunoId = sessionStorage.getItem("pessoaId");
 
     useEffect(() => {
-        document.title = "Perfil | CaringU"
-
+        document.title = "Perfil | CaringU";
+        console.log("Aluno ID:", alunoId);
         const fetchData = async () => {
             try {
-                const response = await caringuApi.get(`/personal-trainers/${personalId}`);
+                const response = await caringuApi.get(`/alunos/${alunoId}`);
                 const celularComMascara = MascaraTelefone(response.data.celular);
 
-                setNomeBairroAntigo(response.data.nomeBairro);
                 setUrlFotoPerfil(response.data.urlFotoPerfil);
 
                 setFormData({
@@ -33,27 +26,21 @@ export default function InformacoesPessoais() {
                     celular: celularComMascara,
                 });
             } catch (error) {
-                console.error("Erro ao buscar personal trainer:", error);
+                console.error("Erro ao buscar aluno:", error);
             }
         };
 
         fetchData();
-    }, []);
+    }, [alunoId]);
 
-
-    const removerMascara = (celular) => {
-        return celular.replace(/\D/g, "");
-    };
-
+    const removerMascara = (celular) => celular.replace(/\D/g, "");
 
     const handleTelefoneChange = (e) => {
         let input = e.target.value;
         let digitos = input.replace(/\D/g, "");
-
         if (digitos.length > 11) digitos = digitos.slice(0, 11);
 
         let formatted = "";
-
         if (digitos.length > 7) {
             formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
         } else if (digitos.length > 2) {
@@ -62,17 +49,13 @@ export default function InformacoesPessoais() {
             formatted = `(${digitos}`;
         }
 
-        setFormData((prev) => ({
-            ...prev,
-            celular: formatted,
-        }));
+        setFormData((prev) => ({ ...prev, celular: formatted }));
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "celular") {
-
             setFormData((prev) => ({
                 ...prev,
                 celular: MascaraTelefone(value),
@@ -86,50 +69,33 @@ export default function InformacoesPessoais() {
     };
 
     const handleSave = async () => {
+        if (!alunoId) {
+            console.error("ID do aluno não definido!");
+            return;
+        }
 
-        const celularSemMascara = removerMascara(formData.celular);
+        const dataParaSalvar = {};
 
-        const dataParaSalvar = {
-            ...formData,
-            celular: celularSemMascara,
-        };
+        if (formData.nome) dataParaSalvar.nome = formData.nome;
+        if (formData.email) dataParaSalvar.email = formData.email;
+        if (formData.celular) dataParaSalvar.celular = removerMascara(formData.celular);
+        if (formData.urlFotoPerfil) dataParaSalvar.urlFotoPerfil = formData.urlFotoPerfil;
+        if (formData.dataNascimento) dataParaSalvar.dataNascimento = formData.dataNascimento;
+        if (formData.genero) dataParaSalvar.genero = formData.genero;
+        if (formData.peso != null) dataParaSalvar.peso = Number(formData.peso);
+        if (formData.altura != null) dataParaSalvar.altura = Number(formData.altura);
+        if (formData.nivelAtividade) dataParaSalvar.nivelAtividade = formData.nivelAtividade;
+        if (formData.nivelExperiencia) dataParaSalvar.nivelExperiencia = formData.nivelExperiencia;
 
         try {
-            await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvar);
+            await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
 
-            if (formData.idBairro) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
+            ));
 
-                await caringuApi.patch(`/personal-trainers/${personalId}/bairro`, {
-                    bairroId: formData.idBairro,
-                    novoNomeBairro: formData.bairro,
-                    cidadeId: formData.idCidade,
-                    novoNomeCidade: formData.cidade,
-                });
-
-                toast.custom((t) => (
-                    <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
-                ));
-            } else {
-
-                if (!formData.bairro || !formData.cidade) {
-                    toast.custom((t) => (
-                        <CustomToast t={t} type="error" message="Preencha o bairro e a cidade para continuar." />
-                    ));
-                    return;
-                }
-
-                await caringuApi.post(`/personal-trainers/${personalId}/bairros`, {
-                    nomeBairro: formData.bairro,
-                    cidadeId: formData.idCidade,
-                    nomeCidade: formData.cidade,
-                });
-
-                toast.custom((t) => (
-                    <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
-                ));
-            }
-
-            window.location.reload(true);
+            // Atualiza o estado local para refletir as mudanças sem reload
+            setFormData(prev => ({ ...prev, ...dataParaSalvar }));
 
         } catch (error) {
             toast.custom((t) => (
@@ -139,19 +105,18 @@ export default function InformacoesPessoais() {
         }
     };
 
+
     return (
         <>
-            {/* Conteúdo da aba Informações Pessoais */}
             <div className="space-y-8">
                 <FotoPerfil urlFoto={urlFotoPerfil} nomePersonal={formData.nome || ""} />
 
-                {/* Informações Profissionais */}
-                <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center h-124.5">
+                <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">
                     <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center w-full p-2">
                         <h2 className="text-[24px] font-bold text-gray-800 flex justify-between items-center ">
                             Informações Pessoais
                         </h2>
-                        {/* Botões Salvar e Cancelar */}
+
                         <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-4 mt-4 sm:mt-0">
                             <button
                                 className="w-full cursor-pointer sm:w-auto flex items-center justify-center px-6 py-2 text-base text-white bg-[#46982B] rounded-md hover:bg-[#4d7b3e]"
@@ -161,6 +126,7 @@ export default function InformacoesPessoais() {
                             </button>
                         </div>
                     </div>
+
                     <div className="bg-white border-[#1d2d44] rounded-lg p-6 overflow-auto">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
                             <div>
@@ -176,6 +142,7 @@ export default function InformacoesPessoais() {
                                     onChange={handleInputChange}
                                 />
                             </div>
+
                             <div>
                                 <label className="block text-[16px] font-medium text-gray-700">
                                     Email
@@ -184,10 +151,8 @@ export default function InformacoesPessoais() {
                                     name="email"
                                     type="email"
                                     className="form-input border border-gray-300 text-gray-400 bg-gray-200 rounded-md p-3 w-full text-[16px] cursor-not-allowed"
-                                    placeholder="Digite seu email"
                                     value={formData.email || ""}
-                                    onChange={handleInputChange}
-                                    disabled={true}
+                                    disabled
                                 />
                             </div>
 
@@ -203,11 +168,17 @@ export default function InformacoesPessoais() {
                                     onChange={handleInputChange}
                                 />
                             </div>
+
                             <div>
                                 <label className="block text-[16px] font-medium text-gray-700">
                                     Gênero
                                 </label>
-                                <select name="genero" className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]" value={formData.genero || ""} onChange={handleInputChange}>
+                                <select
+                                    name="genero"
+                                    className="form-input border border-gray-300 rounded-md p-3 w-full text-[16px]"
+                                    value={formData.genero || ""}
+                                    onChange={handleInputChange}
+                                >
                                     <option value="" disabled>Selecione</option>
                                     <option value="HOMEM_CISGENERO">Homem cisgênero</option>
                                     <option value="HOMEM_TRANSGENERO">Homem transgênero</option>
@@ -216,6 +187,7 @@ export default function InformacoesPessoais() {
                                     <option value="NAO_BINARIO">Não binário</option>
                                 </select>
                             </div>
+
                             <div>
                                 <label className="block text-[16px] font-medium text-gray-700">
                                     Telefone
@@ -229,12 +201,10 @@ export default function InformacoesPessoais() {
                                     onChange={handleTelefoneChange}
                                 />
                             </div>
-
                         </div>
                     </div>
                 </div>
-                <Toaster position='top-right' reverseOrder={false} />
             </div>
         </>
-    )
+    );
 }
