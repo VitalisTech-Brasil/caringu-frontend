@@ -387,7 +387,6 @@ const HomeAluno = () => {
                       <>
                         {/* Nome do exercício com ícone */}
                         <div className="flex items-center justify-center mb-4 lg:mb-6 w-full">
-                          <span className="text-xl lg:text-2xl mr-2">📈</span>
                           <span
                             className="font-semibold text-center text-sm lg:text-base"
                             style={{ color: "#E96E35", fontFamily: "Inter, sans-serif" }}

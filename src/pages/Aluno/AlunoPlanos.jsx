@@ -39,7 +39,7 @@ const AlunoPlanos = () => {
     }
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateralAluno ref={menuRef} />
             <div className="flex-1 overflow-y-auto">
                 <Header

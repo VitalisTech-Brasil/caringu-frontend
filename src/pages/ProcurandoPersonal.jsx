@@ -537,7 +537,7 @@ const ProcurandoPersonal = () => {
   const menuRef = useRef(null);
 
   return (
-    <div className="flex min-h-screen bg-[#fffdf6]">
+    <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
       <MenuLateralAluno ref={menuRef} />
       <div className="flex-1 overflow-y-auto">
         <Header
@@ -563,9 +563,9 @@ const ProcurandoPersonal = () => {
           </div>
 
           {/* Lista de Personal Trainers */}
-          <div className="xl:w-[96%] m-6 p-4 h-auto flex flex-col mt-6 rounded-lg items-center bg-[#fffdf6]">
+          <div className="xl:w-[96%] m-6 p-4 h-auto flex flex-col mt-6 rounded-lg items-center bg-[var(--cor-secundaria)]">
             <div className="md:mt-6 w-full h-auto rounded-md ">
-              <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[#fffdf6] py-4">
+              <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
                 <input
                   type="text"
                   placeholder="Pesquisar Personal"
@@ -629,9 +629,9 @@ const ProcurandoPersonal = () => {
                         <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded flex items-center gap-1">
                           <span className="text-sm font-semibold text-yellow-500 flex gap-2 items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 21 19" fill="none">
-                              <path d="M11.9396 2.77875L13.361 5.56541C13.5549 5.95333 14.0717 6.32541 14.5079 6.39666L17.0842 6.81625C18.7317 7.08541 19.1194 8.25708 17.9322 9.41291L15.9293 11.3762C15.5901 11.7087 15.4043 12.35 15.5093 12.8092L16.0827 15.2396C16.535 17.1633 15.4932 17.9075 13.7568 16.9021L11.342 15.5008C10.9058 15.2475 10.1871 15.2475 9.74286 15.5008L7.32806 16.9021C5.59974 17.9075 4.54982 17.1554 5.0021 15.2396L5.57551 12.8092C5.6805 12.35 5.49475 11.7087 5.15554 11.3762L3.15263 9.41291C1.9735 8.25708 2.35308 7.08541 4.00064 6.81625L6.57697 6.39666C7.00501 6.32541 7.52189 5.95333 7.71572 5.56541L9.13714 2.77875C9.91246 1.26666 11.1724 1.26666 11.9396 2.77875Z" fill="#E96E35" stroke="#E96E35" stroke-linecap="round" stroke-linejoin="round" />
+                              <path d="M11.9396 2.77875L13.361 5.56541C13.5549 5.95333 14.0717 6.32541 14.5079 6.39666L17.0842 6.81625C18.7317 7.08541 19.1194 8.25708 17.9322 9.41291L15.9293 11.3762C15.5901 11.7087 15.4043 12.35 15.5093 12.8092L16.0827 15.2396C16.535 17.1633 15.4932 17.9075 13.7568 16.9021L11.342 15.5008C10.9058 15.2475 10.1871 15.2475 9.74286 15.5008L7.32806 16.9021C5.59974 17.9075 4.54982 17.1554 5.0021 15.2396L5.57551 12.8092C5.6805 12.35 5.49475 11.7087 5.15554 11.3762L3.15263 9.41291C1.9735 8.25708 2.35308 7.08541 4.00064 6.81625L6.57697 6.39666C7.00501 6.32541 7.52189 5.95333 7.71572 5.56541L9.13714 2.77875C9.91246 1.26666 11.1724 1.26666 11.9396 2.77875Z" fill="#E96E35" stroke="#E96E35" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            {trainer.avaliacao ? trainer.avaliacao.toFixed(1) : "0.0"}
+                            {trainer.mediaEstrela ? trainer.mediaEstrela.toFixed(1) : "0.0"}
                           </span>
                         </div>
                       </div>

@@ -152,7 +152,7 @@ const Header = () => {
       </svg>,
       label: "Relatórios",
     },
-    "/perfil-aluno/*": {
+    "/ficha-aluno/*": {
       icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-800" viewBox="0 0 31 30" fill="none">
         <path d="M15.678 15.0005C19.1882 15.0005 22.0339 12.2023 22.0339 8.75049C22.0339 5.29871 19.1882 2.50049 15.678 2.50049C12.1677 2.50049 9.32202 5.29871 9.32202 8.75049C9.32202 12.2023 12.1677 15.0005 15.678 15.0005Z" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M4.75854 27.5005C4.75854 22.663 9.65265 18.7505 15.6781 18.7505" stroke="#1D2D44" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

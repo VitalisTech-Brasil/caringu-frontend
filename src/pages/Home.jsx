@@ -147,7 +147,7 @@ const Home = () => {
       </svg>
       ),
       label: "Agendar Aula",
-      onClick: () => navigate("/gerenciar-treinos"),
+      onClick: () => navigate("/gerenciar-alunos"),
     },
     {
       icon: <svg
@@ -166,7 +166,7 @@ const Home = () => {
     {
       icon: <VscFeedback />,
       label: "Responder Feedbacks",
-      onClick: () => console.log("Responder Feedbacks clicado"),
+      onClick: () => navigate("/gerenciar-alunos"),
     },
   ];
 

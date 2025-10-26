@@ -36,7 +36,7 @@ function MinhasAulas() {
     }
 
     return (
-        <div className="flex min-h-screen bg-[#fdfbf7]">
+        <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateralAluno ref={menuRef} />
             <div className="flex-1 overflow-y-auto">
                 <Header
@@ -60,7 +60,7 @@ function MinhasAulas() {
                             Encontre Todas as Suas Aulas Aqui!
                         </h1>
                     </div>
-                    <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[#fffdf6] py-4">
+                    <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
                         <input
                             type="text"
                             placeholder="Pesquisar Treino"

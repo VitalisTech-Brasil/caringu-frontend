@@ -3,6 +3,7 @@ import Header from '../../components/Aluno/Header/Header';
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Button from "../../components/Utils/Button";
 import CardExercicio from '../../components/Aluno/ExecicioCard';
+import { Link } from 'react-router-dom';
 
 const AcompanharAula = () => {
     const video = false
@@ -57,12 +58,12 @@ const AcompanharAula = () => {
                     />
                     <div className='flex w-full items-center flex-col justify-center'>
                         <div className="pl-[1rem] sm:pl-[3.5rem] w-[100%] h-auto flex mt-4 gap-7 border-b-2 border-[#1D2D441A] lg:max-w-4xl lg:border-b-0">
-                            <div>
+                            <Link to={`/agenda-aluno`}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9.57 5.92993L3.5 11.9999L9.57 18.0699" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M20.5 12H3.66998" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
-                            </div>
+                            </Link>
                             <div className='mb-4 w-[40%]'>
                                 <h1 className=' text-[20px] sm:text-[28px] font-bold text-[#1E293B]'>Aula - 10/05/2025</h1>
                                 <div className='flex flex-col'>

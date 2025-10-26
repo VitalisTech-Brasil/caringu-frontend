@@ -236,7 +236,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
         </svg>
       ),
       label: "Minha Evolução",
-      path: "/gerenciar-treinos",
+      path: "/minhaEvolucao",
     },
     {
       icon: (

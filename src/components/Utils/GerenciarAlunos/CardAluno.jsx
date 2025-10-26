@@ -21,9 +21,9 @@ const CardAluno = ({
     heightCardInternoWeb = "50%",
     gapConteudo = "gap-0",
     idButton = "btn-ver-feedbacks",
-    textoButton = "Ver feedbacks",
+    textoButton = "Ver Feedbacks",
     corButton = "var(--laranja)",
-    ariaLabelButton = "Ver feedbacks",
+    ariaLabelButton = "Ver Feedbacks",
     classNameExtraButton = "sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1",
     onClickButton,
 

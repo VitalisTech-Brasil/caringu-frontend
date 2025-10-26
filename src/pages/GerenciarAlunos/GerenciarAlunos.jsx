@@ -149,7 +149,7 @@ const GerenciarAlunos = () => {
   }, [currentPage, itemsPerPage, searchTerm, sortOrder, anamnesesPendentes, aguardandoTreino]);
 
   const handleCardClick = (alunoId) => {
-    navigate(`/perfil-aluno/${alunoId}`);
+    navigate(`/ficha-aluno/${alunoId}`);
   };
 
   const handleCardFeedbacksClick = (alunoId) => {
@@ -244,7 +244,7 @@ const GerenciarAlunos = () => {
   };
 
   const handlePresencaAlunoClick = (aluno) => {
-    navigate(`/perfil-aluno/${aluno.idAluno}`);
+    navigate(`/ficha-aluno/${aluno.idAluno}`);
   };
 
   const handleFilterChange = (filterType, valorLabel) => {
@@ -403,7 +403,7 @@ const GerenciarAlunos = () => {
                           setImgErro={setImgErro}
                           totalCards={currentAlunos.length}
                           idButton="btn-ver-feedbacks"
-                          textoButton="Ver feedbacks"
+                          textoButton="Ver Feedbacks"
                           corButton="var(--laranja)"
                           ariaLabelButton="Ver feedbacks"
                           classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
@@ -523,18 +523,14 @@ const GerenciarAlunos = () => {
                                 <CustomToast t={t} type="success" message="Anamnese atualizada com sucesso!" />
                               ));
 
-                              setTimeout(() => {
-                                window.location.reload(true);
-                              }, 1000);
-
                             } else {
                               // Criação
                               await caringuApi.post(`/anamnese`, { alunoId, ...dadosAnamnese });
                               toast.success("Anamnese criada com sucesso!");
-                              window.location.reload(true);
                             }
 
                             setShowCreateModal(false);
+                            fetchData();
 
                           } catch (error) {
                             console.error("Erro ao salvar anamnese:", error);
