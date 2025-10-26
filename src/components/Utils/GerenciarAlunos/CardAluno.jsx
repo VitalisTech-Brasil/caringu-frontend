@@ -123,7 +123,7 @@ const CardAluno = ({
             {aluno.idAula && (
                 <button
                     className="flex items-center justify-between gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
-                    onClick={() => onMenuAction('visualizarTreino', aluno)}
+                    onClick={() => onMenuAction('visualizarAula', aluno)}
                 >
                     <span className="">Visualizar Aulas</span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

@@ -111,39 +111,40 @@ const GerenciarAlunos = () => {
     sessionStorage.removeItem("KPI_ALUNO_SELECIONADA");
   }, [])
 
-  useEffect(() => {
+
+  const fetchData = async () => {
     const personalId = sessionStorage.getItem('pessoaId');
 
-    const fetchData = async () => {
-      try {
-        const responseCompletos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
-        setAlunosCompletos(responseCompletos.data);
+    try {
+      const responseCompletos = await caringuApi.get(`/alunos/detalhes/personal/${personalId}`);
+      setAlunosCompletos(responseCompletos.data);
 
-        if (searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder) {
+      if (searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder) {
 
-          setAlunosCards(responseCompletos.data);
-          setTotalElements(responseCompletos.data.length);
-          setTotalPagesAPI(0); // Reset para usar paginação local
+        setAlunosCards(responseCompletos.data);
+        setTotalElements(responseCompletos.data.length);
+        setTotalPagesAPI(0); // Reset para usar paginação local
 
-        } else {
+      } else {
 
-          const responsePaginado = await caringuApi.get(`/alunos/detalhes/personal/paginado/${personalId}`, {
-            params: {
-              page: currentPage - 1,
-              size: itemsPerPage
-            }
-          });
+        const responsePaginado = await caringuApi.get(`/alunos/detalhes/personal/paginado/${personalId}`, {
+          params: {
+            page: currentPage - 1,
+            size: itemsPerPage
+          }
+        });
 
-          const data = responsePaginado.data;
-          setAlunosCards(data.content);
-          setTotalElements(data.totalElements);
-          setTotalPagesAPI(data.totalPages);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar alunos ativos:", error);
+        const data = responsePaginado.data;
+        setAlunosCards(data.content);
+        setTotalElements(data.totalElements);
+        setTotalPagesAPI(data.totalPages);
       }
-    };
+    } catch (error) {
+      console.error("Erro ao buscar alunos ativos:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [currentPage, itemsPerPage, searchTerm, sortOrder, anamnesesPendentes, aguardandoTreino]);
 
@@ -169,8 +170,8 @@ const GerenciarAlunos = () => {
       case 'agendarAula':
         handleAbrirModalAgendarAula(aluno);
         break;
-      case 'visualizarTreino':
-        navigate(`/visualizar-treino/${aluno.idAluno}`, { state: { aluno } });
+      case 'visualizarAula':
+        navigate(`/visualizar-aula/${aluno.idAluno}`, { state: { aluno } });
         break;
       default:
         break;
@@ -575,6 +576,7 @@ const GerenciarAlunos = () => {
             }
             ariaLabel="Modal para agendar aula com o aluno"
             aluno={alunoParaAgendar}
+            atualizarAlunos={fetchData}
           />
         )}
       </div>

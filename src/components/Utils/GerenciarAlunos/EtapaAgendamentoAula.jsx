@@ -42,7 +42,8 @@ const EtapaAgendamentoAula = ({
     setManualDates,
     rascunhosPersistidos,
     setRascunhosPersistidos,
-    onProsseguir
+    onProsseguir,
+    atualizarAlunos
 }) => {
     const { atualizarAgendamento } = useAgendamento();
 
@@ -242,6 +243,9 @@ const EtapaAgendamentoAula = ({
                 aulas: listaAulas
 
             });
+
+            if (typeof atualizarAlunos === "function") {
+                atualizarAlunos();             }
 
             onProsseguir();
         } catch (error) {
