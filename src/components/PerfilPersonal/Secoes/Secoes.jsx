@@ -27,7 +27,7 @@ export default function Secoes() {
                                 : "bg-white text-black border-gray-200 hover:bg-gray-100 hover:text-black"
                             }`}
                     >
-                        Informações pessoais
+                        Informações Pessoais
                     </button>
 
                     {/* Notificações (apenas para personal) */}
