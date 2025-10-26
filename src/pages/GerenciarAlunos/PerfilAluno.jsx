@@ -52,9 +52,9 @@ const PerfilAluno = () => {
                             {/* Dados Pessoais */}
                             <div className="lg:w-1/3 border-2 bg-[var(--cor-secundaria)] border-[#3d4b5d1f] rounded-md p-4 sm:p-5 flex flex-col gap-4">
                                 <div className="flex items-center gap-3">
-                                    {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
+                                    {aluno?.aluno?.urlFotoPerfil && !imgErro ? (
                                         <img
-                                            src={aluno.alunoId.urlFotoPerfil}
+                                            src={aluno.aluno.urlFotoPerfil}
                                             alt="Imagem do aluno"
                                             className='w-10 h-10 sm:w-12 sm:h-12 lg:w-15 lg:h-15 rounded-full'
                                             onError={() => setImgErro(true)}
@@ -68,39 +68,39 @@ const PerfilAluno = () => {
                                 <div className="flex flex-col gap-3 text-sm sm:text-base">
                                     <div>
                                         <div className="text-[var(--cinza-claro)]">Nome Completo</div>
-                                        <span>{aluno?.alunoId?.nome ? `${aluno.alunoId.nome}` : "N/A"}</span>
+                                        <span>{aluno?.aluno.nome ? `${aluno.aluno.nome}` : "N/A"}</span>
                                     </div>
                                     <div>
                                         <div className="text-[var(--cinza-claro)]">Data de Nascimento</div>
-                                        <span>{aluno?.alunoId?.dataNascimento ? `${MascaraData(aluno.alunoId.dataNascimento)}` : "Não infomada"}</span>
+                                        <span>{aluno?.aluno?.dataNascimento ? `${MascaraData(aluno.aluno.dataNascimento)}` : "Não infomada"}</span>
                                     </div>
                                     <div>
                                         <div className="text-[var(--cinza-claro)]">Gênero</div>
                                         <span>{
-                                            aluno?.alunoId?.genero === "HOMEM_CISGENERO" ? "Homem Cisgênero" :
-                                                aluno?.alunoId?.genero === "HOMEM_TRANSGENERO" ? "Homem Transgênero" :
-                                                    aluno?.alunoId?.genero === "MULHER_CISGENERO" ? "Mulher Cisgênero" :
-                                                        aluno?.alunoId?.genero === "MULHER_TRANSGENERO" ? "Mulher Transgênero" :
-                                                            aluno?.alunoId?.genero === "NAO_BINARIO" ? "Não Binário" :
-                                                                aluno?.alunoId?.genero || "N/A"
+                                            aluno?.aluno?.genero === "HOMEM_CISGENERO" ? "Homem Cisgênero" :
+                                                aluno?.aluno?.genero === "HOMEM_TRANSGENERO" ? "Homem Transgênero" :
+                                                    aluno?.aluno?.genero === "MULHER_CISGENERO" ? "Mulher Cisgênero" :
+                                                        aluno?.aluno?.genero === "MULHER_TRANSGENERO" ? "Mulher Transgênero" :
+                                                            aluno?.aluno?.genero === "NAO_BINARIO" ? "Não Binário" :
+                                                                aluno?.aluno?.genero || "N/A"
                                         }
                                         </span>
                                     </div>
                                     <div>
                                         <div className="text-[var(--cinza-claro)]">E-mail</div>
-                                        <span>{aluno?.alunoId?.email ? `${aluno.alunoId.email}` : "Não infomado"}</span>
+                                        <span>{aluno?.aluno?.email ? `${aluno.aluno.email}` : "Não infomado"}</span>
                                     </div>
                                     <div>
                                         <div className="text-[var(--cinza-claro)]">Telefone</div>
-                                        <span>{aluno?.alunoId?.celular ? `${MascaraTelefone(aluno.alunoId.celular)}` : "Não infomado"}</span>
+                                        <span>{aluno?.aluno?.celular ? `${MascaraTelefone(aluno.aluno.celular)}` : "Não infomado"}</span>
                                     </div>
                                     <div>
                                         <div className="text-[var(--cinza-claro)]">Nível de experiência</div>
                                         <span>{
-                                            aluno?.alunoId?.nivelExperiencia === "INICIANTE" ? "Iniciante" :
-                                                aluno?.alunoId?.nivelExperiencia === "INTERMEDIARIO" ? "Intermediário" :
-                                                    aluno?.alunoId?.nivelExperiencia === "AVANCADO" ? "Avançado" :
-                                                        aluno?.alunoId?.nivelExperiencia || "Não infomado"
+                                            aluno?.aluno?.nivelExperiencia === "INICIANTE" ? "Iniciante" :
+                                                aluno?.aluno?.nivelExperiencia === "INTERMEDIARIO" ? "Intermediário" :
+                                                    aluno?.aluno?.nivelExperiencia === "AVANCADO" ? "Avançado" :
+                                                        aluno?.aluno?.nivelExperiencia || "Não infomado"
                                         }
                                         </span>
                                     </div>
@@ -129,7 +129,7 @@ const PerfilAluno = () => {
                                             <path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#15171B" strokeOpacity="0.53" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
                                         <span className="text-xs text-[var(--cinza-claro)]">Idade</span>
-                                        <span className="font-bold text-lg sm:text-xl text-center">{aluno?.alunoId?.dataNascimento ? `${calcularIdade(aluno.alunoId.dataNascimento)}` : "Não informada"}</span>
+                                        <span className="font-bold text-lg sm:text-xl text-center">{aluno?.aluno?.dataNascimento ? `${calcularIdade(aluno.aluno.dataNascimento)}` : "Não informada"}</span>
                                     </div>
                                     <div className="flex-1 min-w-[100px] flex flex-col items-center border-2 border-[#3d4b5d1f] rounded-md p-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -137,7 +137,7 @@ const PerfilAluno = () => {
                                             <path d="M17.25 8.29004C14.26 5.63004 9.74 5.63004 6.75 8.29004L8.93 11.79C10.68 10.23 13.32 10.23 15.07 11.79L17.25 8.29004Z" stroke="#15171B" strokeOpacity="0.53" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
                                         <span className="text-xs text-[var(--cinza-claro)]">Peso</span>
-                                        <span className="font-bold text-lg sm:text-xl text-center">{aluno?.alunoId?.peso ? `${aluno.alunoId.peso} Kg` : "Não informado"}</span>
+                                        <span className="font-bold text-lg sm:text-xl text-center">{aluno?.aluno?.peso ? `${aluno.aluno.peso} Kg` : "Não informado"}</span>
                                     </div>
                                     <div className="flex-1 min-w-[100px] flex flex-col items-center border-2 border-[#3d4b5d1f] rounded-md p-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -148,7 +148,7 @@ const PerfilAluno = () => {
                                             <path d="M14 7V10" stroke="#15171B" strokeOpacity="0.53" strokeWidth="1.5" strokeLinecap="round" />
                                         </svg>
                                         <span className="text-xs text-[var(--cinza-claro)]">Altura</span>
-                                        <span className="font-bold text-lg sm:text-xl text-center">{aluno?.alunoId?.altura ? `${aluno.alunoId.altura} m` : "Não informado"}</span>
+                                        <span className="font-bold text-lg sm:text-xl text-center">{aluno?.aluno?.altura ? `${aluno.aluno.altura} m` : "Não informado"}</span>
                                     </div>
                                 </div>
 
@@ -217,12 +217,12 @@ const PerfilAluno = () => {
                                             <div className="text-[var(--cinza-claro)] text-sm sm:text-base">Nível de Atividade Atual</div>
                                             <span>
                                                 {
-                                                    aluno?.alunoId?.nivelAtividade === "SEDENTARIO" ? "Sedentário" :
-                                                        aluno?.alunoId?.nivelAtividade === "LEVEMENTE_ATIVO" ? "Levemente Ativo" :
-                                                            aluno?.alunoId?.nivelAtividade === "MODERADAMENTE_ATIVO" ? "Moderadamente Ativo" :
-                                                                aluno?.alunoId?.nivelAtividade === "MUITO_ATIVO" ? "Muito Ativo" :
-                                                                    aluno?.alunoId?.nivelAtividade === "EXTREMAMENTE_ATIVO" ? "Extremamente Ativo" :
-                                                                        aluno?.alunoId?.nivelAtividade || "Não informado"
+                                                    aluno?.aluno?.nivelAtividade === "SEDENTARIO" ? "Sedentário" :
+                                                        aluno?.aluno?.nivelAtividade === "LEVEMENTE_ATIVO" ? "Levemente Ativo" :
+                                                            aluno?.aluno?.nivelAtividade === "MODERADAMENTE_ATIVO" ? "Moderadamente Ativo" :
+                                                                aluno?.aluno?.nivelAtividade === "MUITO_ATIVO" ? "Muito Ativo" :
+                                                                    aluno?.aluno?.nivelAtividade === "EXTREMAMENTE_ATIVO" ? "Extremamente Ativo" :
+                                                                        aluno?.aluno?.nivelAtividade || "Não informado"
                                                 }
                                             </span>
                                         </div>
