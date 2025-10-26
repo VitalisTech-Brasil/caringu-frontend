@@ -29,7 +29,7 @@ import MinhaEvolucao from './pages/Aluno/MinhaEvolucao.jsx';
 import "./styles/global.css";
 import MinhasAulas from './pages/Aluno/MinhasAulas.jsx';
 import TreinoAulas from './pages/Aluno/TreinoAulas.jsx';
-import VisualizarTreino from './pages/GerenciarAlunos/VisualizarTreino.jsx';
+import VisualizarAula from './pages/GerenciarAlunos/VisualizarTreino.jsx';
 import FeedbackAluno from './pages/Aluno/Feedback/Feedback.jsx';
 import FeedbackMensagem from './pages/Aluno/Feedback/FeedbackMensagem.jsx';
 import HomeAluno from "./pages/HomeAluno";
@@ -38,6 +38,7 @@ import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
 import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
 import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
 import AgendaAluno from './pages/Aluno/Agenda.jsx';
+import AcompanharAulaAluno from './pages/Aluno/AcompanharAula.jsx';
 
 
 const AppRoutes = () => {
@@ -158,7 +159,7 @@ const AppRoutes = () => {
             <MinhasAulas />
           </ProtectedRoute>
         } />
-        <Route path="/treinosAula" element={
+        <Route path="/treinosAula/:idAula" element={
           <ProtectedRoute>
             <TreinoAulas />
           </ProtectedRoute>
@@ -173,9 +174,9 @@ const AppRoutes = () => {
             <HomeAluno />
           </ProtectedRoute>
         } />
-        <Route path="/visualizar-treino/:idAluno" element={
+        <Route path="/visualizar-aula/:idAluno" element={
           <ProtectedRoute>
-            <VisualizarTreino />
+            <VisualizarAula />
           </ProtectedRoute>
         } />
         <Route path="/progresso-corporal-aluno" element={
@@ -211,6 +212,11 @@ const AppRoutes = () => {
         <Route path="/perfil-aluno" element={
           <ProtectedRoute>
             <PerfilAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/acompanhar-aula-aluno" element={
+          <ProtectedRoute>
+            <AcompanharAulaAluno />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
