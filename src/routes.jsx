@@ -158,7 +158,7 @@ const AppRoutes = () => {
             <MinhasAulas />
           </ProtectedRoute>
         } />
-        <Route path="/treinosAula" element={
+        <Route path="/treinosAula/:idAula" element={
           <ProtectedRoute>
             <TreinoAulas />
           </ProtectedRoute>

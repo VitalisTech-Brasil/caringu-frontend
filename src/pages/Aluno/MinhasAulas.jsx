@@ -1,17 +1,16 @@
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Header from '../../components/Aluno/Header/Header';
 import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AulaResumoCard from "../../components/Utils/GerenciarAlunos/CardAulaTreino"
 
 function MinhasAulas() {
-
+    const navigate = useNavigate();
     const menuRef = useRef(null);
     const aulas = [
-        { idAula: 1, data_horario_inicio: "2025-12-01 08:00:00", data_horario_fim: "2025-12-01 09:00:00" },
-        { idAula: 2, data_horario_inicio: "2025-12-02 08:00:00", data_horario_fim: "2025-05-02 09:00:00" },
-        { idAula: 3, data_horario_inicio: "2025-12-03 08:00:00", data_horario_fim: "2025-12-03 09:00:00" },
-        { idAula: 4, data_horario_inicio: "2025-12-04 08:00:00", data_horario_fim: "2025-12-04 09:00:00" },
-        { idAula: 5, data_horario_inicio: "2025-12-05 08:00:00", data_horario_fim: "2025-12-05 09:00:00" },
+        { idAula: 9, data_horario_inicio: "2025-12-03 15:00:00", data_horario_fim: "2025-12-03 16:00:00", nomePersonal: "Monica" },
+        { idAula: 10, data_horario_inicio: "2025-12-04 15:00:00", data_horario_fim: "2025-12-04 16:00:00", nomePersonal: "Monica" },
+        { idAula: 11, data_horario_inicio: "2025-12-05 15:00:00", data_horario_fim: "2025-12-05 16:00:00", nomePersonal: "Monica" },
     ];
 
     function getDiaSemana(dataString) {
@@ -82,25 +81,22 @@ function MinhasAulas() {
                             Nenhum treino atribuído.
                         </div>
                     ) : (
-                        aulas.map(a => (
+                        aulas.map(aulaExercicio => (
                             <AulaResumoCard
-                                key={a.idAula}
-                                data={getDataFormatada(a.data_horario_inicio)}
-                                diaSemana={getDiaSemana(a.data_horario_inicio)}
-                                horarioInicio={a.data_horario_inicio.slice(11, 16)}
-                                horarioFim={a.data_horario_fim.slice(11, 16)}
+                                key={aulaExercicio.idAula}
+                                data={getDataFormatada(aulaExercicio.data_horario_inicio)}
+                                diaSemana={getDiaSemana(aulaExercicio.data_horario_inicio)}
+                                horarioInicio={aulaExercicio.data_horario_inicio.slice(11, 16)}
+                                horarioFim={aulaExercicio.data_horario_fim.slice(11, 16)}
                                 paddingCard="p-4"
                                 alignIcons="flex-row"
                                 alignText="justify-start"
                                 onVerTreinos={() => {
-                                    setAulaSelecionada(a);
-                                    fetchInfosAulasFeedback(a.idAula);
+                                    navigate(`/treinosAula/${aulaExercicio.idAula}`, {state: aulaExercicio});
                                 }}
                             />
                         ))
                     )}
-                    
-                   
                 </div>
                 {/* Arrumar aqui Depois */}
                 {/* <Pagination
