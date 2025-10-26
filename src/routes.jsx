@@ -17,7 +17,7 @@ import PerfilPersonal from "./pages/PerfilPersonal.jsx";
 import SolicitacoesPendentes from "./pages/SolicitacoesPendentes.jsx";
 import SessaoExpiradaModal from "./components/Utils/SessaoExpiradaModal.jsx";
 import RegistroCorporal from "./pages/Relatorios/RegistroCorporal.jsx";
-import PerfilAluno from "./pages/GerenciarAlunos/PerfilAluno.jsx";
+import FichaAluno from "./pages/GerenciarAlunos/PerfilAluno.jsx";
 import GerenciarTreinos from "./pages/GerenciarTreinos/GerenciarTreinos.jsx";
 import CriarTreino from "./pages/GerenciarTreinos/CriarTreino.jsx";
 import EditarTreino from "./pages/GerenciarTreinos/EditarTreino.jsx";
@@ -36,6 +36,8 @@ import HomeAluno from "./pages/HomeAluno";
 import ProgressoCorporal from './pages/Aluno/ProgressoCorporal.jsx';
 import AlunoPlanos from './pages/Aluno/AlunoPlanos.jsx';
 import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
+import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
+import AgendaAluno from './pages/Aluno/Agenda.jsx';
 
 
 const AppRoutes = () => {
@@ -121,9 +123,9 @@ const AppRoutes = () => {
             <RegistroCorporal />
           </ProtectedRoute>
         } />
-        <Route path="/perfil-aluno/:idAluno" element={
+        <Route path="/ficha-aluno/:idAluno" element={
           <ProtectedRoute>
-            <PerfilAluno />
+            <FichaAluno />
           </ProtectedRoute>
         } />
         <Route path="/perfil" element={
@@ -199,6 +201,16 @@ const AppRoutes = () => {
         <Route path="/acompanhar-aula/:idAluno" element={
           <ProtectedRoute>
             <AcompanharAula />
+          </ProtectedRoute>
+        } />
+        <Route path="/agenda-aluno" element={
+          <ProtectedRoute>
+            <AgendaAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/perfil-aluno" element={
+          <ProtectedRoute>
+            <PerfilAluno />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
