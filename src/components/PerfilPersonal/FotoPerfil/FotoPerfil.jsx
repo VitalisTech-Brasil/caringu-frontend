@@ -100,7 +100,7 @@ export default function FotoPerfil(props) {
 
     return (
         <>
-            <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:justify-between gap-6">
+            <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-4 sm:p-6 flex flex-col lg:flex-row items-center sm:justify-between gap-6">
                 {/* Imagem e Texto */}
                 <div className="flex items-center gap-4">
                     {imageUrl && !imgErro ? (
