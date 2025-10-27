@@ -1,6 +1,5 @@
 import { FaUserCircle } from "react-icons/fa";
-import { useState, useEffect } from "react";
-import { caringuApi } from "../../provider/caringuApi";
+import { useState } from "react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
@@ -111,7 +110,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                     <div className="flex flex-col items-center w-full h-auto gap-4 border-l border-[var(--cor-secundaria)]">
                                         <div className="flex flex-col justify-center items-start gap-2.5 w-full py-3">
                                             <div className="flex flex-row w-auto h-auto items-center gap-2 pl-3">
-                                                {compromisso.urlFotoPerfil && !errosImagem[compromisso.personal.id] ? (
+                                                {compromisso.personal.foto && !errosImagem[compromisso.personal.id] ? (
                                                     <img
                                                         src={compromisso.personal.foto}
                                                         alt={compromisso.personal.nome}
