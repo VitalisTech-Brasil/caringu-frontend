@@ -158,7 +158,7 @@ const CardAluno = ({
 
         console.log("Aluno no CardAluno: ");
         console.log(aluno);
-    }, []);
+    }, [aluno]);
 
     return (
         <div
