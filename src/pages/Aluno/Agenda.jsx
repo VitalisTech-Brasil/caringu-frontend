@@ -14,61 +14,20 @@ const Agenda = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
     const [value, setValue] = useState(new Date());
-    // const [treinosFinalizados, setTreinosFinalizados] = useState([]);
-    const [treinosFinalizados, setTreinosFinalizados] = useState([
-        {
-            idAula: 1,
-            idPersonal: 101,
-            status: "REALIZADO",
-            dataHorarioInicio: "2025-10-10T08:00:00",
-            dataHorarioFim: "2025-10-10T09:00:00",
-            nomePersonal: "João Silva",
-            urlFotoPerfil: "",
-            finalizado: true,
-        },
-        {
-            idAula: 2,
-            idPersonal: 102,
-            status: "AGENDADO",
-            dataHorarioInicio: "2025-11-17T15:00:00",
-            dataHorarioFim: "2025-11-17T16:00:00",
-            nomePersonal: "Maria Souza",
-            urlFotoPerfil: "",
-            finalizado: false,
-        },
-        {
-            idAula: 3,
-            idPersonal: 103,
-            status: "AGENDADO",
-            dataHorarioInicio: "2025-10-19T18:30:00",
-            dataHorarioFim: "2025-10-19T19:30:00",
-            nomePersonal: "Carlos Lima",
-            urlFotoPerfil: "",
-            finalizado: false,
-        },
-        {
-            idAula: 4,
-            idPersonal: 104,
-            status: "REALIZADO",
-            dataHorarioInicio: "2025-10-15T07:00:00",
-            dataHorarioFim: "2025-10-15T08:00:00",
-            nomePersonal: "Ana Paula",
-            urlFotoPerfil: "",
-            finalizado: true,
-        },
-        {
-            idAula: 5,
-            idPersonal: 105,
-            status: "AGENDADO",
-            dataHorarioInicio: "2025-11-17T10:00:00",
-            dataHorarioFim: "2025-11-17T11:00:00",
-            nomePersonal: "Pedro Henrique nascimento da silva",
-            urlFotoPerfil: "",
-            finalizado: false,
-        },
-    ]);
+    const [aulas, setAulas] = useState([]);
+
     const alunoId = sessionStorage.getItem("pessoaId");
     const menuRef = useRef(null);
+
+     const exibirAulas = async () => {
+            try {
+                const response = await caringuApi.get(`/aulas/alunos-aulas/${alunoId}`);
+                setAulas(response.data);
+                console.log("Aulas:", response.data);
+            } catch (error) {
+                console.error("Erro ao exibir aulas:", error);
+            }
+        }
 
 
     useEffect(() => {
@@ -87,6 +46,7 @@ const Agenda = () => {
             }),
             isToday: true,
         });
+        exibirAulas();
     }, []);
 
 
@@ -111,7 +71,7 @@ const Agenda = () => {
         return data.toLocaleDateString('pt-BR');
     }
 
-    const compromissos = treinosFinalizados.map(item => {
+    const compromissos = aulas.map(item => {
         const status = item.status?.toUpperCase().trim();
         return {
             id: item.idAula,
@@ -123,9 +83,8 @@ const Agenda = () => {
             personal: {
                 id: item.idPersonal,
                 nome: item.nomePersonal,
-                foto: item.urlFotoPerfil,
+                foto: item.urlFotoPerfilPersonal,
             },
-            finalizado: item.finalizado,
             dataHorarioFim: item.dataHorarioFim,
             dataHorarioInicio: item.dataHorarioInicio,
         }
