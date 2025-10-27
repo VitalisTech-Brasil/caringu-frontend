@@ -1,39 +1,42 @@
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Header from '../../components/Aluno/Header/Header';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AulaResumoCard from "../../components/Utils/GerenciarAlunos/CardAulaTreino"
+import { caringuApi } from '../../provider/caringuApi';
 
 function MinhasAulas() {
     const navigate = useNavigate();
     const menuRef = useRef(null);
-    const aulas = [
-        { idAula: 9, data_horario_inicio: "2025-12-03 15:00:00", data_horario_fim: "2025-12-03 16:00:00", nomePersonal: "Monica" },
-        { idAula: 10, data_horario_inicio: "2025-12-04 15:00:00", data_horario_fim: "2025-12-04 16:00:00", nomePersonal: "Monica" },
-        { idAula: 11, data_horario_inicio: "2025-12-05 15:00:00", data_horario_fim: "2025-12-05 16:00:00", nomePersonal: "Monica" },
-    ];
+    const idAluno = sessionStorage.getItem('pessoaId');
 
-    function getDiaSemana(dataString) {
-        const dias = [
-            "Domingo",
-            "Segunda-Feira",
-            "Terça-Feira",
-            "Quarta-Feira",
-            "Quinta-Feira",
-            "Sexta-Feira",
-            "Sábado"
-        ];
-        const data = new Date(dataString.replace(" ", "T"));
-        return dias[data.getDay()];
-    }
 
-    function getDataFormatada(dataString) {
-        const data = new Date(dataString.replace(" ", "T"));
-        const dia = String(data.getDate()).padStart(2, '0');
-        const mes = String(data.getMonth() + 1).padStart(2, '0');
-        const ano = data.getFullYear();
-        return `${dia}/${mes}/${ano}`;
-    }
+    const [aulas, setAulas] = useState([]);
+
+    useEffect(() => {
+        const fetchAulas = async () => {
+            let todasAulas = [];
+            let page = 0;
+            let last = false;
+
+            try {
+                while (!last) {
+                    const response = await caringuApi.get(`/aulas/aluno/${idAluno}/plano?page=${page}&size=20`);
+                    const { content, last: isLast } = response.data;
+                    todasAulas = todasAulas.concat(Array.isArray(content) ? content : []);
+                    last = isLast;
+                    page += 1;
+                }
+                setAulas(todasAulas);
+                console.log("Aulas do aluno:", todasAulas);
+            } catch (error) {
+                setAulas([]);
+                console.error("Erro ao buscar aulas:", error);
+            }
+        };
+
+        fetchAulas();
+    }, [idAluno]);
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -69,8 +72,8 @@ function MinhasAulas() {
                             className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
                         />
                         <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M22 22L20 20" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M22 22L20 20" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </div>
                 </div>
@@ -83,16 +86,16 @@ function MinhasAulas() {
                     ) : (
                         aulas.map(aulaExercicio => (
                             <AulaResumoCard
-                                key={aulaExercicio.idAula}
-                                data={getDataFormatada(aulaExercicio.data_horario_inicio)}
-                                diaSemana={getDiaSemana(aulaExercicio.data_horario_inicio)}
-                                horarioInicio={aulaExercicio.data_horario_inicio.slice(11, 16)}
-                                horarioFim={aulaExercicio.data_horario_fim.slice(11, 16)}
+                                key={aulaExercicio.aulaId}
+                                data={aulaExercicio.dataAula}
+                                diaSemana={aulaExercicio.diaSemana}
+                                horarioInicio={aulaExercicio.horarioAula}
+                                horarioFim={aulaExercicio.horarioFim}
                                 paddingCard="p-4"
                                 alignIcons="flex-row"
                                 alignText="justify-start"
                                 onVerTreinos={() => {
-                                    navigate(`/treinosAula/${aulaExercicio.idAula}`, {state: aulaExercicio});
+                                    navigate(`/treinosAula/${aulaExercicio.aulaId}`, { state: aulaExercicio });
                                 }}
                             />
                         ))
