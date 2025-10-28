@@ -29,6 +29,7 @@ function MinhasAulas() {
                 setAulas(Array.isArray(content) ? content : []);
                 setTotalPages(totalPages || 1);
                 setItemsLength(totalElements || 0);
+                console.log("Aulas:", content);
             } catch (error) {
                 setAulas([]);
                 setTotalPages(1);
@@ -41,12 +42,7 @@ function MinhasAulas() {
     }, [idAluno, currentPage]);
 
     const handleSearch = (e) => {
-        let value = e.target.value.replace(/\D/g, "");
-
-        if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
-        if (value.length > 5) value = value.slice(0, 5) + "/" + value.slice(5, 9);
-
-        setSearchTerm(value);
+        setSearchTerm(e.target.value); // Agora vem no formato 'dd-mm-yyyy'
     };
 
 
@@ -69,10 +65,9 @@ function MinhasAulas() {
     const filteredAulas = aulas.filter((aula) => {
         if (!searchTerm) return true;
 
-        const dataAula = aula.dataAula.replace(/[^0-9]/g, "");
-        const busca = searchTerm.replace(/[^0-9]/g, "");
-
-        return dataAula.includes(busca);
+        const [dia, mes, ano] = aula.dataAula.split('/');
+        const aulaDate = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+        return aulaDate === searchTerm;
     });
 
 
@@ -104,7 +99,7 @@ function MinhasAulas() {
                         </div>
                         <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
                             <input
-                                type="text"
+                                type="date"
                                 placeholder="Pesquisar Aula - Data"
                                 value={searchTerm}
                                 onChange={handleSearch}
@@ -116,40 +111,42 @@ function MinhasAulas() {
                             </svg>
                         </div>
                     </div>
-                    <div className="w-full sm:w-[75%] xl:w-[40%] h-auto grid grid-cols-1 gap-3 px-[1rem]">
-                        {filteredAulas.length === 0 ? (
-                            <div className="text-sm italic text-gray-500">
-                                {searchTerm
-                                    ? "Nenhuma aula encontrada para essa data."
-                                    : "Nenhum treino atribuído."}
-                            </div>
-                        ) : (
-                            filteredAulas.map(aulaExercicio => (
-                                <AulaResumoCard
-                                    key={aulaExercicio.aulaId}
-                                    data={aulaExercicio.dataAula}
-                                    diaSemana={aulaExercicio.diaSemana}
-                                    horarioInicio={aulaExercicio.horarioAula}
-                                    horarioFim={aulaExercicio.horarioFim}
-                                    paddingCard="p-4"
-                                    alignIcons="flex-row"
-                                    alignText="justify-start"
-                                    onVerTreinos={() => {
-                                        navigate(`/treinos-aula/${aulaExercicio.idAula}`, { state: aulaExercicio });
-                                    }}
-                                />
-                            ))
-                        )}
+                    <div className="flex flex-col w-full justify-between h-170 pb-2">
+                        <div className="w-full sm:w-[75%] xl:w-[40%] h-auto grid grid-cols-1 gap-3 px-[1rem]">
+                            {filteredAulas.length === 0 ? (
+                                <div className="text-sm italic text-gray-500">
+                                    {searchTerm
+                                        ? "Nenhuma aula encontrada para essa data."
+                                        : "Nenhum treino atribuído."}
+                                </div>
+                            ) : (
+                                filteredAulas.map(aulaExercicio => (
+                                    <AulaResumoCard
+                                        key={aulaExercicio.aulaId}
+                                        data={aulaExercicio.dataAula}
+                                        diaSemana={aulaExercicio.diaSemana}
+                                        horarioInicio={aulaExercicio.horarioAula}
+                                        horarioFim={aulaExercicio.horarioFim}
+                                        paddingCard="p-4"
+                                        alignIcons="flex-row"
+                                        alignText="justify-start"
+                                        onVerTreinos={() => {
+                                            navigate(`/treinosAula/${aulaExercicio.aulaId}`, { state: aulaExercicio });
+                                        }}
+                                    />
+                                ))
+                            )}
+                        </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            itemsLength={filteredAulas.length}
+                            onPageChange={goToPage}
+                            onPrevious={goToPrevious}
+                            onNext={goToNext}
+                            maxVisible={3}
+                        />
                     </div>
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        itemsLength={filteredAulas.length}
-                        onPageChange={goToPage}
-                        onPrevious={goToPrevious}
-                        onNext={goToNext}
-                        maxVisible={3}
-                    />
                 </div>
             </div>
         </div >
