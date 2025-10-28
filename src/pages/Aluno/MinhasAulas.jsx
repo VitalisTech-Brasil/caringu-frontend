@@ -92,7 +92,7 @@ function MinhasAulas() {
                                 alignIcons="flex-row"
                                 alignText="justify-start"
                                 onVerTreinos={() => {
-                                    navigate(`/treinosAula/${aulaExercicio.idAula}`, {state: aulaExercicio});
+                                    navigate(`/treinos-aula/${aulaExercicio.idAula}`, {state: aulaExercicio});
                                 }}
                             />
                         ))
