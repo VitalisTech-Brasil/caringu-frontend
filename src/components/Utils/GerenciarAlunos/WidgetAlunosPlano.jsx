@@ -2,10 +2,8 @@ import React from 'react';
 import AlunoCardPlanoFim from './AlunoCardPlanoFim';
 
 const WidgetAlunosPlano = ({ 
-    alunosAtivos, 
-    imgErro, 
-    setImgErro,
-     
+    alunosAtivos
+    /* imgErro removido — Card gerencia erro local */
 }) => {
     // Filtra e ordena os alunos com plano perto do fim
     const alunosComPlano = [...alunosAtivos]
@@ -31,8 +29,6 @@ const WidgetAlunosPlano = ({
                         <AlunoCardPlanoFim
                             key={aluno.idAluno}
                             aluno={aluno}
-                            imgErro={imgErro}
-                            setImgErro={setImgErro}
                         />
                     ))
                 )}

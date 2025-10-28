@@ -75,7 +75,7 @@ const Agenda = () => {
             dataHorarioFim: item.dataHorarioFim,
             dataHorarioInicio: item.dataHorarioInicio,
             nomeAluno: item.nomeAluno,
-            urlFotoPerfil: item.urlFotoPerfil,
+            urlFotoPerfil: item.urlFotoPerfilAluno,
             idAluno: item.idAluno
         }
     });
