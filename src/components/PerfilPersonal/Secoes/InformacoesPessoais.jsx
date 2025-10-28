@@ -10,7 +10,13 @@ import CidadeInput from '../../Utils/InputCidade/CidadeInput';
 
 export default function InformacoesPessoais() {
 
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({
+        nome: "",
+        email: "",
+        telefone: "",
+        cpf: "",
+    });
+    const [nomeSalvo, setNomeSalvo] = useState(""); // <- novo estado
     const [showModal, setShowModal] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -42,10 +48,7 @@ export default function InformacoesPessoais() {
                     ...response.data,
                     celular: celularComMascara,
                 });
-
-                
-
-                console.log(response.data);
+                setNomeSalvo(response.data.nome);
             } catch (error) {
                 console.error("Erro ao buscar personal trainer:", error);
             }
@@ -189,7 +192,6 @@ export default function InformacoesPessoais() {
             await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvar);
 
             if (formData.idBairro) {
-
                 await caringuApi.patch(`/personal-trainers/${personalId}/bairro`, {
                     bairroId: formData.idBairro,
                     novoNomeBairro: formData.bairro,
@@ -201,7 +203,6 @@ export default function InformacoesPessoais() {
                     <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
                 ));
             } else {
-
                 if (!formData.bairro || !formData.cidade) {
                     toast.custom((t) => (
                         <CustomToast t={t} type="error" message="Preencha o bairro e a cidade para continuar." />
@@ -220,7 +221,11 @@ export default function InformacoesPessoais() {
                 ));
             }
 
-            window.location.reload(true);
+            // ✅ Atualiza o nome exibido na div do FotoPerfil
+            setNomeSalvo(formData.nome);
+
+            // ❌ Removido o reload — agora não recarrega a página
+            // window.location.reload(true);
 
         } catch (error) {
             toast.custom((t) => (
@@ -228,6 +233,7 @@ export default function InformacoesPessoais() {
             ));
             console.error("Erro ao atualizar informações:", error);
         }
+
     };
 
     return (
@@ -235,7 +241,11 @@ export default function InformacoesPessoais() {
             {/* Conteúdo da aba Informações Pessoais */}
             <div className="space-y-8">
                 {/* Foto de Perfil */}
-                <FotoPerfil urlFoto={urlFotoPerfil} nomePersonal={formData.nome || ""} />
+                <FotoPerfil
+                    urlFoto={urlFotoPerfil}
+                    nomePersonal={nomeSalvo || ""}
+                    onFotoChange={(novaUrl) => setUrlFotoPerfil(novaUrl)}
+                />
 
                 {/* Informações Profissionais */}
                 <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center h-124.5">

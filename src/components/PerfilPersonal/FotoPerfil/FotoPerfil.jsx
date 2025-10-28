@@ -40,16 +40,14 @@ export default function FotoPerfil(props) {
 
             await caringuApi.delete(`/pessoas/${personalId}/remover-foto-perfil`);
 
-            // atualiza visualmente
             setFileName("");
             setImgErro(false);
+
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Foto de perfil removida com sucesso!" />
             ));
 
-            // avisa o pai
-            if (props.onFotoChange) props.onFotoChange("");
-
+            if (props.onFotoChange) props.onFotoChange(""); // avisa o pai
         } catch (error) {
             console.error("Erro ao remover foto:", error);
             toast.custom((t) => (
@@ -107,21 +105,14 @@ export default function FotoPerfil(props) {
 
             setShowModal(false);
 
-            // Atualiza visualmente com o novo link retornado
-            if (response?.data?.urlFotoPerfil) {
-                setFileName(response.data.urlFotoPerfil);
-                if (props.onFotoChange) props.onFotoChange(response.data.urlFotoPerfil);
-            } else {
-                // fallback local
-                const novaUrl = URL.createObjectURL(blob);
-                setFileName(novaUrl);
-                if (props.onFotoChange) props.onFotoChange(novaUrl);
-            }
+            const novaUrl = response?.data?.urlFotoPerfil || URL.createObjectURL(blob);
+            setFileName(novaUrl);
+
+            if (props.onFotoChange) props.onFotoChange(novaUrl); // notifica o pai
 
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Foto enviada com sucesso!" />
             ));
-
         } catch (err) {
             console.error(err);
             toast.custom((t) => (
@@ -132,6 +123,7 @@ export default function FotoPerfil(props) {
             setMensagemStatus("Confirmar");
         }
     };
+
 
 
     return (
