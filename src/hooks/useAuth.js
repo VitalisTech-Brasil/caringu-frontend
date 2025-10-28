@@ -9,39 +9,44 @@ import { checkAuth, requireAuth } from '../utils/authUtils';
 export const useAuth = (redirectOnFail = true) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading, true = authenticated, false = not authenticated
   const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState(null);
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        setIsLoading(true);
-        const authStatus = await checkAuth();
-        setIsAuthenticated(authStatus);
-        
-        if (!authStatus && redirectOnFail) {
-          // Se não estiver autenticado e deve redirecionar, limpa dados e redireciona
-          sessionStorage.clear();
-          navigate('/login');
-        }
-      } catch (error) {
-        console.error('Erro ao verificar autenticação:', error);
-        setIsAuthenticated(false);
-        
-        if (redirectOnFail) {
-          sessionStorage.clear();
-          navigate('/login');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+useEffect(() => {
+  const verifyAuth = async () => {
+    try {
+      setIsLoading(true);
+      const authStatus = await checkAuth();
+      setIsAuthenticated(authStatus);
 
-    verifyAuth();
-  }, [navigate, redirectOnFail]);
+      const tipo = sessionStorage.getItem('tipo');
+      setUserRole(tipo || null);
+
+      if (!authStatus && redirectOnFail) {
+        sessionStorage.clear();
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Erro ao verificar autenticação:', error);
+      setIsAuthenticated(false);
+
+      if (redirectOnFail) {
+        sessionStorage.clear();
+        navigate('/login');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  verifyAuth();
+}, [navigate, redirectOnFail]);
 
   return {
     isAuthenticated,
     isLoading,
+    userRole,
     checkAuth: () => requireAuth(navigate)
   };
 };
