@@ -319,6 +319,8 @@ const Planos = () => {
                                 ariaLabelButton="Cancelar Plano"
                                 classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
                                 onClickButton={openCancelarPlanoModal}
+                                gapConteudo="gap-2 lg:gap-0"
+                                fontTelefone="text-base"
                             />
                         ))
                     )}

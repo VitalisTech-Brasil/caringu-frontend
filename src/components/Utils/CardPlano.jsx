@@ -87,11 +87,11 @@ const CardPlano = ({
   return (
     <>
       <div className="w-[250px] sm:w-[450px] 2xl:w-[560px] h-auto rounded-md border-[2px] border-[#1D2D441C] sm:p-4 sm:pl-10 p-6 relative flex flex-col justify-center ">
-        <div className="h-auto  flex flex-row items-end justify-between">
-          <h5 className="break-all text-sm sm:text-[32px] font-medium text-[var(--cor-primaria)] 2xl:w-[56%] ">{nome}</h5>
-          <div className="h-full flex flex-row justify-end w-[12rem] gap-[0.3rem]">
+        <div className="h-auto flex flex-col-reverse sm:flex-row items-start sm:items-end sm:justify-between sm:gap-0 gap-4">
+          <h5 className="break-all text-sm sm:text-2xl font-extrabold text-[var(--cor-primaria)] w-auto 2xl:w-[56%] ">{nome}</h5>
+          <div className="h-full flex flex-row justify-between sm:justify-end sm:w-[12rem] w-full gap-[0.3rem]">
             <div className="h-full  flex flex-row items-end ">
-              <span className={`font-light text-sm sm:text-xl h-[2.75rem] pl-2 pr-2 sm:pl-6 sm:pr-6 w-auto rounded-[15px] flex flex-row items-center justify-center
+              <span className={`font-normal text-xs sm:text-base h-auto sm:h-[2.75rem] px-4 py-2.5 w-auto rounded-[15px] flex flex-row items-center justify-center
                ${periodo === "MENSAL"
                   ? "text-[var(--azul-claro)] bg-[#3d91ff36]"
                   : periodo === "AVULSO"
@@ -102,7 +102,13 @@ const CardPlano = ({
                 }
               `}
               >
-                {periodo}
+                {periodo === "MENSAL"
+                  ? "Mensal"
+                  : periodo === "AVULSO"
+                    ? "Avulso"
+                    : periodo === "SEMESTRAL"
+                      ? "Semestral"
+                      : periodo}
               </span>
             </div>
             {showDropdown && (
@@ -170,9 +176,9 @@ const CardPlano = ({
             )}
           </div>
         </div>
-        <div className="mt-3 sm:mt-0 flex items-baseline w-full gap-3">
+        <div className="mt-3 sm:mt-0 flex items-baseline w-full gap-2">
           <span
-            className={`text-base sm:text-2xl 2xl:text-[32px] font-extrabold
+            className={`text-base sm:text-2xl font-extrabold
                ${periodo === "MENSAL"
                 ? "text-[var(--azul-claro)]"
                 : periodo === "AVULSO"
@@ -184,18 +190,18 @@ const CardPlano = ({
           >
             R$
           </span>
-          <span className="text-base sm:text-2xl 2xl:text-[32px] font-extrabold text-[var(--cor-primaria)]">{valorPlano}</span>
+          <span className="text-base sm:text-2xl font-extrabold text-[var(--cor-primaria)]">{valorPlano}</span>
         </div>
-        <div className="flex sm:flex-row flex-col justify-between">
-          <ul role="list" className="space-y-7 my-4">
+        <div className="flex sm:flex-row flex-col justify-between text-base sm:text-xl font-normal text-[var(--cor-primaria)]">
+          <ul role="list" className="space-y-4 my-2">
             <li className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-[30px] sm:h-[30px]" viewBox="0 0 30 30" fill="none">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 sm:w-[22px] sm:h-[22px]" viewBox="0 0 30 30" fill="none">
                 <path d="M15.0002 0.833008C7.19433 0.833008 0.833496 7.19384 0.833496 14.9997C0.833496 22.8055 7.19433 29.1663 15.0002 29.1663C22.806 29.1663 29.1668 22.8055 29.1668 14.9997C29.1668 7.19384 22.806 0.833008 15.0002 0.833008ZM21.1627 20.0572C20.9643 20.3972 20.6102 20.5813 20.2418 20.5813C20.0577 20.5813 19.8735 20.5388 19.7035 20.4255L15.3118 17.8047C14.221 17.153 13.4135 15.7222 13.4135 14.4613V8.65301C13.4135 8.07217 13.8952 7.59051 14.476 7.59051C15.0568 7.59051 15.5385 8.07217 15.5385 8.65301V14.4613C15.5385 14.9713 15.9635 15.7222 16.4027 15.9772L20.7943 18.598C21.3043 18.8955 21.4743 19.5472 21.1627 20.0572Z" fill="#1D2D44" />
               </svg>
-              <span className="text-base sm:text-xl 2xl:text-2xl font-light text-[var(--cor-primaria)] leading-tight ms-6">60 min por aula</span>
+              <span className="leading-tight ms-2">60 min por aula</span>
             </li>
-            <li className="flex">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-[34px] sm:h-[34px]" viewBox="0 0 34 34" fill="none">
+            <li className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-[26px] sm:h-[26px]" viewBox="0 0 34 34" fill="none">
                 <path d="M12.9766 15.3988C12.835 15.3847 12.665 15.3847 12.5091 15.3988C9.13746 15.2855 6.45996 12.523 6.45996 9.12301C6.45996 5.65217 9.26496 2.83301 12.75 2.83301C16.2208 2.83301 19.04 5.65217 19.04 9.12301C19.0258 12.523 16.3483 15.2855 12.9766 15.3988Z"
                   stroke={`
                  ${periodo === "MENSAL"
@@ -241,14 +247,14 @@ const CardPlano = ({
                     }`}
                   strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="text-base sm:text-xl 2xl:text-2xl font-light text-[var(--cor-primaria)] leading-tight  ms-6">  {quantidadeAulas} {quantidadeAulas < 2 ? "aula" : "aulas"}</span>
+              <span className="leading-tight  ms-2">  {quantidadeAulas} {quantidadeAulas < 2 ? "aula" : "aulas"}</span>
             </li>
-            <li className="flex">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-[34px] sm:h-[34px]" viewBox="0 0 34 34" fill="none">
+            <li className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-[26px] sm:h-[26px]" viewBox="0 0 34 34" fill="none">
                 <path d="M17 0C7.61702 0 0 7.61702 0 17C0 26.383 7.61702 34 17 34C26.383 34 34 26.383 34 17C33.9787 7.61702 26.383 0 17 0ZM15 14.617L20.1277 16.4043C21.9787 17.0638 22.8723 18.3617 22.8723 20.3617C22.8723 22.6596 21.0426 24.5532 18.8085 24.5532H18.617V24.6596C18.617 25.5319 17.8936 26.2553 17.0213 26.2553C16.1489 26.2553 15.4255 25.5319 15.4255 24.6596V24.5319C13.0638 24.4255 11.1702 22.4468 11.1702 19.9787C11.1702 19.1064 11.8936 18.383 12.766 18.383C13.6383 18.383 14.3617 19.1064 14.3617 19.9787C14.3617 20.7447 14.9149 21.3617 15.5957 21.3617H18.7872C19.2766 21.3617 19.6596 20.9149 19.6596 20.3617C19.6596 19.617 19.5319 19.5745 19.0426 19.4043L13.9149 17.617C12.0851 16.9787 11.1702 15.6809 11.1702 13.6596C11.1702 11.3617 13 9.46808 15.234 9.46808H15.4255V9.38298C15.4255 8.51064 16.1489 7.78723 17.0213 7.78723C17.8936 7.78723 18.617 8.51064 18.617 9.38298V9.51064C20.9787 9.61702 22.8723 11.5957 22.8723 14.0638C22.8723 14.9362 22.1489 15.6596 21.2766 15.6596C20.4043 15.6596 19.6809 14.9362 19.6809 14.0638C19.6809 13.2979 19.1277 12.6809 18.4468 12.6809H15.2553C14.766 12.6809 14.383 13.1277 14.383 13.6809C14.3617 14.4043 14.4894 14.4468 15 14.617Z" fill="#1D2D44" />
               </svg>
-              <span className="text-base sm:text-xl 2xl:text-2xl font-semibold text-[var(--cor-primaria)] leading-tight ms-6">R${valorAulas}</span>
-              <span className="text-base sm:text-xl 2xl:text-2xl font-light text-[var(--cor-primaria)] leading-tight ms-2">por aula</span>
+              <span className="text-base sm:text-xl font-semibold text-[var(--cor-primaria)] leading-tight ms-2">R${valorAulas}</span>
+              <span className="leading-tight ms-2">por aula</span>
             </li>
           </ul>
           {showContratarPlano && (
