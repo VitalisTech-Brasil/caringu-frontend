@@ -8,23 +8,25 @@ import MascaraTelefone from "..//Utils/Functions/MascaraTelefone";
 export default function InformacoesPessoaisAluno() {
     const [formData, setFormData] = useState({});
     const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
+    const [alunoData, setAlunoData] = useState({});
 
     const alunoId = sessionStorage.getItem("pessoaId");
 
     useEffect(() => {
         document.title = "Perfil | CaringU";
-        console.log("Aluno ID:", alunoId);
         const fetchData = async () => {
             try {
                 const response = await caringuApi.get(`/alunos/${alunoId}`);
                 const celularComMascara = MascaraTelefone(response.data.celular);
 
-                setUrlFotoPerfil(response.data.urlFotoPerfil);
-
-                setFormData({
+                const dadosComMascara = {
                     ...response.data,
                     celular: celularComMascara,
-                });
+                };
+
+                setUrlFotoPerfil(response.data.urlFotoPerfil);
+                setFormData(dadosComMascara);
+                setAlunoData(dadosComMascara); // <- mantém cópia dos dados salvos
             } catch (error) {
                 console.error("Erro ao buscar aluno:", error);
             }
@@ -94,9 +96,11 @@ export default function InformacoesPessoaisAluno() {
                 <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
             ));
 
-            // Atualiza o estado local para refletir as mudanças sem reload
-            setFormData(prev => ({ ...prev, ...dataParaSalvar }));
+            // Atualiza os dados salvos (para o FotoPerfil)
+            setAlunoData((prev) => ({ ...prev, ...dataParaSalvar }));
 
+            // Atualiza o form local (caso algo tenha mudado)
+            setFormData((prev) => ({ ...prev, ...dataParaSalvar }));
         } catch (error) {
             toast.custom((t) => (
                 <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />
@@ -109,7 +113,11 @@ export default function InformacoesPessoaisAluno() {
     return (
         <>
             <div className="space-y-8">
-                <FotoPerfil urlFoto={urlFotoPerfil} nomePersonal={formData.nome || ""} />
+                <FotoPerfil
+                    urlFoto={urlFotoPerfil}
+                    nomePersonal={alunoData.nome || ""}
+                    onFotoChange={(novaUrl) => setUrlFotoPerfil(novaUrl)}
+                />
 
                 <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">
                     <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center w-full p-2">
