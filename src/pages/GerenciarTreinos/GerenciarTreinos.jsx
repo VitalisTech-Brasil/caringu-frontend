@@ -224,8 +224,8 @@ const GerenciarTreinos = () => {
             return true;
         })
         .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nome);
-            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nome);
+            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nomeTreino);
+            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nomeTreino);
             return 0;
         });
 
