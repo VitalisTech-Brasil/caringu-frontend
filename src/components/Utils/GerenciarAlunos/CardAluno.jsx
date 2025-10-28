@@ -23,6 +23,7 @@ const CardAluno = ({
     corButton = "var(--laranja)",
     ariaLabelButton = "Ver Feedbacks",
     classNameExtraButton = "sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1",
+    fontTelefone= "text-[12px]",
     onClickButton,
 
 }) => {
@@ -182,7 +183,7 @@ const CardAluno = ({
 
                     <div className="flex-1 w-full flex flex-col items-start justify-center">
                         <p className="font-bold text-base w-full sm:text-left text-center">{aluno.nomeAluno}</p>
-                        <p className="text-[12px] w-full text-gray-600 flex flex-col sm:flex-row items-start justify-center sm:justify-start">
+                        <p className={`${fontTelefone} w-full text-gray-600 flex flex-col sm:flex-row items-start justify-center sm:justify-start`}>
                             <b className="text-center sm:w-auto w-full">Telefone:</b> <span className="text-center sm:w-auto w-full">{MascaraTelefone(aluno.celular)}</span>
                         </p>
                     </div>
