@@ -563,31 +563,33 @@ const ProcurandoPersonal = () => {
           </div>
 
           {/* Lista de Personal Trainers */}
-          <div className="xl:w-[96%] m-6 p-4 h-auto flex flex-col mt-6 rounded-lg items-center bg-[var(--cor-secundaria)]">
+          <div className="xl:w-[96%] m-2 md:m-6 p-0 md:p-4 h-auto flex flex-col mt-6 rounded-lg items-center bg-[var(--cor-secundaria)]">
             <div className="md:mt-6 w-full h-auto rounded-md ">
-              <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
-                <input
-                  type="text"
-                  placeholder="Pesquisar Personal"
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
-                />
-                <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                  <path d="M22 22L20 20" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <button
-                  onClick={toggleFilterModal}
-                  aria-label="Filtrar"
-                  className="p-2 text-[#1E293B]"
-                >
-                  <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5.85002 2.27502H20.15C21.3417 2.27502 22.3167 3.25002 22.3167 4.44169V6.82502C22.3167 7.69169 21.775 8.77502 21.2333 9.31669L16.575 13.4334C15.925 13.975 15.4917 15.0584 15.4917 15.925V20.5834C15.4917 21.2334 15.0583 22.1 14.5167 22.425L13 23.4C11.5917 24.2667 9.64168 23.2917 9.64168 21.5584V15.8167C9.64168 15.0584 9.20835 14.0834 8.77502 13.5417L4.65835 9.20836C4.11668 8.66669 3.68335 7.69169 3.68335 7.04169V4.55002C3.68335 3.25002 4.65835 2.27502 5.85002 2.27502Z" stroke="#1D2D44" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M11.8408 2.27502L6.5 10.8334" stroke="#1D2D44" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+              <div className="w-full flex md:flex-row flex-col justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
+                <div className="w-full flex flex-row items-center justify-start h-auto gap-2 sm:gap-4">
+                  <input
+                    type="text"
+                    placeholder="Pesquisar Personal"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
+                  />
+                  <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M22 22L20 20" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
-                </button>
-                <div className="pt-2 pb-2 border-2 border-[#1D2D441C] rounded-md hidden items-center justify-center p-2 md:flex">
+                  <button
+                    onClick={toggleFilterModal}
+                    aria-label="Filtrar"
+                    className="p-2 text-[#1E293B]"
+                  >
+                    <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5.85002 2.27502H20.15C21.3417 2.27502 22.3167 3.25002 22.3167 4.44169V6.82502C22.3167 7.69169 21.775 8.77502 21.2333 9.31669L16.575 13.4334C15.925 13.975 15.4917 15.0584 15.4917 15.925V20.5834C15.4917 21.2334 15.0583 22.1 14.5167 22.425L13 23.4C11.5917 24.2667 9.64168 23.2917 9.64168 21.5584V15.8167C9.64168 15.0584 9.20835 14.0834 8.77502 13.5417L4.65835 9.20836C4.11668 8.66669 3.68335 7.69169 3.68335 7.04169V4.55002C3.68335 3.25002 4.65835 2.27502 5.85002 2.27502Z" stroke="#1D2D44" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M11.8408 2.27502L6.5 10.8334" stroke="#1D2D44" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="w-auto md:w-178 2xl:w-150 border-2 border-[#1D2D441C] rounded-md flex flex-row  items-center justify-center p-2">
                   <span>Exibir por avaliação</span>
                   <Rating
                     initialRating={rating}

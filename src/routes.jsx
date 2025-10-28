@@ -39,6 +39,7 @@ import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
 import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
 import AgendaAluno from './pages/Aluno/Agenda.jsx';
 import AcompanharAulaAluno from './pages/Aluno/AcompanharAula.jsx';
+import DashboardAluno from './pages/Aluno/DashboardAluno.jsx';
 
 
 const AppRoutes = () => {
@@ -70,8 +71,6 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-        <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
-        <Route path="/perfil-personal/:id" element={<PerfilPersonal />} />
 
         {/* Rotas protegidas */}
         <Route path="/home" element={
@@ -115,7 +114,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/visualizar-pdf/:idAluno/:idTreino" element={
-          <ProtectedRoute allowedRoles={['PERSONAL']}>
+          <ProtectedRoute>
             <VisualizarPdf />
           </ProtectedRoute>
         } />
@@ -152,6 +151,17 @@ const AppRoutes = () => {
         <Route path="/minha-evolucao" element={
           <ProtectedRoute allowedRoles={['ALUNO']}>
             <MinhaEvolucao />
+          </ProtectedRoute>
+        } />
+        <Route path="/procurando-personal" element={
+          <ProtectedRoute>
+            <ProcurandoPersonal />
+          </ProtectedRoute>
+        }
+        />
+        <Route path="/perfil-personal/:id" element={
+          <ProtectedRoute>
+            <PerfilPersonal />
           </ProtectedRoute>
         } />
         <Route path="/minhas-aulas" element={
@@ -217,6 +227,11 @@ const AppRoutes = () => {
         <Route path="/acompanhar-aula-aluno" element={
           <ProtectedRoute allowedRoles={['ALUNO']}>
             <AcompanharAulaAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard-aluno/:idTreino" element={
+          <ProtectedRoute allowedRoles={['ALUNO']}>
+          <DashboardAluno />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}
