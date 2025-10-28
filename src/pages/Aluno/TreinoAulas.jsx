@@ -55,7 +55,7 @@ function TreinoAulas() {
                         }
                     />
                     <div className="pl-[1rem] sm:pl-[3.5rem] w-[100%] h-auto flex mt-4 gap-7 border-b-2 border-[#1D2D441A]">
-                        <Link to={`/minhasAulas`}>
+                        <Link to={`/minhas-aulas`}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M9.57 5.92993L3.5 11.9999L9.57 18.0699" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M20.5 12H3.66998" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />

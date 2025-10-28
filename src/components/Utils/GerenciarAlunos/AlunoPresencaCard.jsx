@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaUserCircle } from "react-icons/fa";
 
 const AlunoPresencaCard = ({ 
     aluno, 
     filter,
-    imgErro,
-    setImgErro,
 }) => {
+    const [imgErroLocal, setImgErroLocal] = useState(false);
     const frequenciaMediaMensal = aluno.frequenciaTreino
         ? Math.round(aluno.frequenciaTreino * 52 / 12)
         : 0;
@@ -16,12 +15,12 @@ const AlunoPresencaCard = ({
             key={aluno.idAluno}
             className="relative flex sm:flex-row flex-col items-center justify-between bg-[var(--cor-secundaria)] rounded-md p-2 sm:p-4 gap-4 w-full border-2 border-[#E6E6E2] hover:bg-gray-50 transition duration-200"
         >
-            {aluno.urlFotoPerfil && !imgErro ? (
+            {aluno.urlFotoPerfil && !imgErroLocal ? (
                 <img
                     src={aluno.urlFotoPerfil}
                     alt="Imagem do aluno"
                     className='w-20 h-20 sm:w-12 sm:h-12 lg:w-15 lg:h-15 rounded-full'
-                    onError={() => setImgErro(true)}
+                    onError={() => setImgErroLocal(true)}
                 />
             ) : (
                 <FaUserCircle className="flex-shrink-0 w-12 h-12 lg:w-15 lg:h-15 text-[#4B5563]" />

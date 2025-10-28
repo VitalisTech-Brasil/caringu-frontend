@@ -433,16 +433,14 @@ const GerenciarAlunos = () => {
                 filter={filter}
                 alunosAtivos={alunosCompletos}
                 alunosFiltrados={alunosFiltrados}
-                imgErro={imgErro}
-                setImgErro={setImgErro}
+                /* imgErro removido — Card gerencia erro local */
                 onFilterChange={handleFilterChange}
                 onAlunoClick={handlePresencaAlunoClick}
               />
 
               <WidgetAlunosPlano
                 alunosAtivos={alunosCompletos}
-                imgErro={imgErro}
-                setImgErro={setImgErro}
+                /* imgErro removido — Card gerencia erro local */
               />
 
               {showCreateModal && alunoAtual && (

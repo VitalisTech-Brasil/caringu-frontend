@@ -212,7 +212,8 @@ const GerenciarTreinos = () => {
             if (searchTerm && !treino.nomeTreino.toLowerCase().includes(searchTerm.toLowerCase())) {
                 return false;
             }
-            if (difficultyFilter && treino.grauDificuldade.toLowerCase() !== difficultyFilter.toLowerCase()) {
+            const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            if (difficultyFilter && normalize(treino.grauDificuldade) !== normalize(difficultyFilter)) {
                 return false;
             }
             if (origemFilter && origemFilter !== "" && treino.origemTreinoExercicio.toLowerCase() !== origemFilter.toLowerCase()) {
@@ -224,8 +225,8 @@ const GerenciarTreinos = () => {
             return true;
         })
         .sort((a, b) => {
-            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nome);
-            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nome);
+            if (sortOrder === "A-Z") return a.nomeTreino.localeCompare(b.nomeTreino);
+            if (sortOrder === "Z-A") return b.nomeTreino.localeCompare(a.nomeTreino);
             return 0;
         });
 
@@ -326,7 +327,7 @@ const GerenciarTreinos = () => {
                 newItemsPerPage = 4;
             } else if (window.innerWidth >= 640) {
                 newItemsPerPage = 3;
-            }else {
+            } else {
                 newItemsPerPage = 1;
             }
             setItemsPerPage(newItemsPerPage);
@@ -590,6 +591,13 @@ const GerenciarTreinos = () => {
                         </div>
                     </div>
                     <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-110 sm:h-140 mt-5">
+                        {currentTreinos.length === 0 && (
+                            <div className="text-center text-gray-500 text-lg font-semibold mt-8">
+                                {treinos.length === 0
+                                    ? "Nenhum treino cadastrado."
+                                    : "Nenhum treino encontrado com os filtros atuais."}
+                            </div>
+                        )}
                         {currentTreinos.map((treino) => (
                             <TreinoCard
                                 key={treino.treinoId}

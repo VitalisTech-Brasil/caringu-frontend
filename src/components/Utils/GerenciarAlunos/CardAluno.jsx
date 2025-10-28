@@ -11,8 +11,6 @@ const CardAluno = ({
     onMenuAction,
     openMenuId,
     setOpenMenuId,
-    imgErro,
-    setImgErro,
     totalCards,
     alinhamentoCard = "justify-center",
     origemUso = "gerenciarAlunos",
@@ -25,14 +23,15 @@ const CardAluno = ({
     corButton = "var(--laranja)",
     ariaLabelButton = "Ver Feedbacks",
     classNameExtraButton = "sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1",
+    fontTelefone= "text-[12px]",
     onClickButton,
 
 }) => {
-
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
-    const [aulasDisponiveis, setAulasDisponiveis] = useState({aulasRestantes:0});
+    const [aulasDisponiveis, setAulasDisponiveis] = useState({ aulasRestantes: 0 });
 
+    const [imgErroLocal, setImgErroLocal] = useState(false);
     const formatarNivelAtividade = (nivel) => {
         if (!nivel) return "Não informado";
 
@@ -156,6 +155,12 @@ const CardAluno = ({
         };
     }, [openMenuId, aluno.idAluno]);
 
+    useEffect(() => {
+
+        console.log("Aluno no CardAluno: ");
+        console.log(aluno);
+    }, [aluno]);
+
     return (
         <div
             className={`flex flex-col w-full ${totalCards > 2 ? 'h-full' : `h-full sm:h-full 2xl:h-[${heightCardInterno}]`} items-start ${alinhamentoCard} bg-[var(--cor-secundaria)] rounded-md 2xl:p-4 sm:p-3 p-2 hover:bg-gray-50 border-2 border-gray-200 ${gapConteudo}`}
@@ -165,21 +170,20 @@ const CardAluno = ({
                 className={`relative flex flex-col-reverse sm:flex-row sm:items-center items-start justify-between  sm:gap-4 w-full h-[${heightCardInterno}] sm:h-1/3 gap-3`}
             >
                 <div className="gap-1 sm:gap-4 flex sm:flex-row flex-col items-center justify-end w-full h-full">
-                    {aluno.urlFotoPerfil && !imgErro ? (
+                    {aluno.urlFotoPerfil && !imgErroLocal ? (
                         <img
                             src={aluno.urlFotoPerfil}
                             alt="Imagem do aluno"
-                            className='sm:w-12 sm:h-12 w-20 h-20 lg:w-12 lg:h-12 rounded-full'
-                            onError={() => setImgErro(true)}
+                            className='sm:w-12 sm:h-12 w-20 h-20 lg:w-12 lg:h-12 rounded-full object-cover'
+                            onError={() => setImgErroLocal(true)}
                         />
-
                     ) : (
                         <FaUserCircle className="flex-shrink-0 sm:w-12 sm:h-12 w-15 h-15 lg:w-12 lg:h-12 text-[#4B5563]" />
                     )}
 
                     <div className="flex-1 w-full flex flex-col items-start justify-center">
                         <p className="font-bold text-base w-full sm:text-left text-center">{aluno.nomeAluno}</p>
-                        <p className="text-[12px] w-full text-gray-600 flex flex-col sm:flex-row items-start justify-center sm:justify-start">
+                        <p className={`${fontTelefone} w-full text-gray-600 flex flex-col sm:flex-row items-start justify-center sm:justify-start`}>
                             <b className="text-center sm:w-auto w-full">Telefone:</b> <span className="text-center sm:w-auto w-full">{MascaraTelefone(aluno.celular)}</span>
                         </p>
                     </div>
