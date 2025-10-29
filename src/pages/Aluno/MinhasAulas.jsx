@@ -150,4 +150,4 @@ function MinhasAulas() {
     );
 }
 
-export default MinhasAulas
+export default MinhasAulas;
