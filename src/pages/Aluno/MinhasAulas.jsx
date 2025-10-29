@@ -22,27 +22,30 @@ function MinhasAulas() {
 
 
     useEffect(() => {
-        const fetchAulas = async () => {
-            try {
-                const response = await caringuApi.get(`/aulas/aluno/${idAluno}/plano?page=${currentPage - 1}&size=${pageSize}`);
-                const { content, totalPages, totalElements } = response.data;
-                setAulas(Array.isArray(content) ? content : []);
-                setTotalPages(totalPages || 1);
-                setItemsLength(totalElements || 0);
-                console.log("Aulas:", content);
-            } catch (error) {
-                setAulas([]);
-                setTotalPages(1);
-                setItemsLength(0);
-                console.error("Erro ao buscar aulas:", error);
+    const fetchAulas = async () => {
+        try {
+            let url = `/aulas/aluno/${idAluno}/plano?page=${currentPage - 1}&size=${pageSize}`;
+            if (searchTerm) {
+                url += `&data=${searchTerm}`;
             }
-        };
+            const response = await caringuApi.get(url);
+            const { content, totalPages, totalElements } = response.data;
+            setAulas(Array.isArray(content) ? content : []);
+            setTotalPages(totalPages || 1);
+            setItemsLength(totalElements || 0);
+        } catch (error) {
+            setAulas([]);
+            setTotalPages(1);
+            setItemsLength(0);
+            console.error("Erro ao buscar aulas:", error);
+        }
+    };
 
-        fetchAulas();
-    }, [idAluno, currentPage]);
+    fetchAulas();
+}, [idAluno, currentPage, searchTerm]);
 
     const handleSearch = (e) => {
-        setSearchTerm(e.target.value); // Agora vem no formato 'dd-mm-yyyy'
+        setSearchTerm(e.target.value);
     };
 
 
@@ -62,14 +65,7 @@ function MinhasAulas() {
         }
     };
 
-    const filteredAulas = aulas.filter((aula) => {
-        if (!searchTerm) return true;
-
-        const [dia, mes, ano] = aula.dataAula.split('/');
-        const aulaDate = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
-        return aulaDate === searchTerm;
-    });
-
+    const filteredAulas = aulas;
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
