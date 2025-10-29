@@ -26,12 +26,11 @@ export default function FotoPerfil(props) {
     const personalId = sessionStorage.getItem('pessoaId');
 
     useEffect(() => {
-        // só atualiza se a foto vinda do pai for diferente da local
         if (props.urlFoto !== fileName) {
             setImgErro(false);
             setFileName(props.urlFoto);
         }
-    }, [props.urlFoto]);
+    }, [props.urlFoto], fileName);
 
     const handleRemoverFoto = async () => {
         try {
@@ -47,7 +46,7 @@ export default function FotoPerfil(props) {
                 <CustomToast t={t} type="success" message="Foto de perfil removida com sucesso!" />
             ));
 
-            if (props.onFotoChange) props.onFotoChange(""); // avisa o pai
+            if (props.onFotoChange) props.onFotoChange("");
         } catch (error) {
             console.error("Erro ao remover foto:", error);
             toast.custom((t) => (
@@ -64,7 +63,7 @@ export default function FotoPerfil(props) {
         const file = event.target.files[0];
 
         if (file) {
-            const tamanhoMaximoMB = 1; // Limite de 1MB
+            const tamanhoMaximoMB = 1;
             const tamanhoMaximoBytes = tamanhoMaximoMB * 1024 * 1024;
 
             if (file.size > tamanhoMaximoBytes) {
@@ -108,7 +107,7 @@ export default function FotoPerfil(props) {
             const novaUrl = response?.data?.urlFotoPerfil || URL.createObjectURL(blob);
             setFileName(novaUrl);
 
-            if (props.onFotoChange) props.onFotoChange(novaUrl); // notifica o pai
+            if (props.onFotoChange) props.onFotoChange(novaUrl);
 
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Foto enviada com sucesso!" />

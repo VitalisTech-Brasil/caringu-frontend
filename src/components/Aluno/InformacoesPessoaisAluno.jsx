@@ -3,7 +3,7 @@ import { caringuApi } from "../../provider/caringuApi";
 import { toast } from "react-hot-toast";
 import CustomToast from "../Utils/CustomToast";
 import FotoPerfil from "../../components/PerfilPersonal/FotoPerfil/FotoPerfil";
-import MascaraTelefone from "..//Utils/Functions/MascaraTelefone";
+import MascaraTelefone from "../Utils/Functions/MascaraTelefone";
 
 export default function InformacoesPessoaisAluno() {
     const [formData, setFormData] = useState({});
@@ -26,7 +26,7 @@ export default function InformacoesPessoaisAluno() {
 
                 setUrlFotoPerfil(response.data.urlFotoPerfil);
                 setFormData(dadosComMascara);
-                setAlunoData(dadosComMascara); // <- mantém cópia dos dados salvos
+                setAlunoData(dadosComMascara);
             } catch (error) {
                 console.error("Erro ao buscar aluno:", error);
             }
@@ -96,10 +96,8 @@ export default function InformacoesPessoaisAluno() {
                 <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
             ));
 
-            // Atualiza os dados salvos (para o FotoPerfil)
             setAlunoData((prev) => ({ ...prev, ...dataParaSalvar }));
 
-            // Atualiza o form local (caso algo tenha mudado)
             setFormData((prev) => ({ ...prev, ...dataParaSalvar }));
         } catch (error) {
             toast.custom((t) => (

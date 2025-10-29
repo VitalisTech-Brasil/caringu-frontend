@@ -16,7 +16,7 @@ export default function InformacoesPessoais() {
         telefone: "",
         cpf: "",
     });
-    const [nomeSalvo, setNomeSalvo] = useState(""); // <- novo estado
+    const [nomeSalvo, setNomeSalvo] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -221,11 +221,7 @@ export default function InformacoesPessoais() {
                 ));
             }
 
-            // ✅ Atualiza o nome exibido na div do FotoPerfil
             setNomeSalvo(formData.nome);
-
-            // ❌ Removido o reload — agora não recarrega a página
-            // window.location.reload(true);
 
         } catch (error) {
             toast.custom((t) => (
