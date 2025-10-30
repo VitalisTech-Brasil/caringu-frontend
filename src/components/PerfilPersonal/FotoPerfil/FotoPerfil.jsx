@@ -30,7 +30,7 @@ export default function FotoPerfil(props) {
             setImgErro(false);
             setFileName(props.urlFoto);
         }
-    }, [props.urlFoto], fileName);
+    }, [props.urlFoto, fileName]);
 
     const handleRemoverFoto = async () => {
         try {
