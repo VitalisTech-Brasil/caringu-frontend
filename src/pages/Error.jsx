@@ -18,7 +18,7 @@ const Error = () => {
                 </p>
                 <Button
                     id="btnVoltar"
-                    texto="Ir para a tela inicial"
+                    texto="Ir Para a Tela Inicial"
                     cor="var(--azul-claro)"
                     corTexto="var(--cor-secundaria)"
                     width="250px"

@@ -7,8 +7,6 @@ const WidgetPresencaAlunos = ({
     filter,
     alunosAtivos,
     alunosFiltrados,
-    imgErro,
-    setImgErro,
     onFilterChange,
 }) => {
     return (
@@ -46,8 +44,6 @@ const WidgetPresencaAlunos = ({
                                 key={aluno.idAluno}
                                 aluno={aluno}
                                 filter={filter}
-                                imgErro={imgErro}
-                                setImgErro={setImgErro}
                             />
                         ))}
                     </>

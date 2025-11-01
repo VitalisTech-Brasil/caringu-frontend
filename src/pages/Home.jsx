@@ -83,14 +83,14 @@ const Home = () => {
     data: formatarData(item.dataHorarioInicio),
     aluno: {
       nome: item.nomeAluno,
-      foto: item.urlFotoPerfil,
+      foto: item.urlFotoPerfilAluno,
     },
     finalizado: item.finalizado,
 
     dataHorarioFim: item.dataHorarioFim,
     dataHorarioInicio: item.dataHorarioInicio,
     nomeAluno: item.nomeAluno,
-    urlFotoPerfil: item.urlFotoPerfil,
+    urlFotoPerfil: item.urlFotoPerfilAluno,
     idAluno: item.idAluno
   }));
 

@@ -39,6 +39,7 @@ import AcompanharAula from './pages/Agenda/AcompanharAula.jsx';
 import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
 import AgendaAluno from './pages/Aluno/Agenda.jsx';
 import AcompanharAulaAluno from './pages/Aluno/AcompanharAula.jsx';
+import DashboardAluno from './pages/Aluno/DashboardAluno.jsx';
 
 
 const AppRoutes = () => {
@@ -70,47 +71,45 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
-        <Route path="/procurando-personal" element={<ProcurandoPersonal />} />
-        <Route path="/perfil-personal/:id" element={<PerfilPersonal />} />
 
         {/* Rotas protegidas */}
         <Route path="/home" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <Home />
           </ProtectedRoute>
         } />
         <Route path="/gerenciar-alunos" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <GerenciarAlunos />
           </ProtectedRoute>
         } />
         <Route path="/gerenciar-treinos" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <GerenciarTreinos />
           </ProtectedRoute>
         } />
         <Route path="/gerenciar-exercicios" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <GerenciarExercicios />
           </ProtectedRoute>
         } />
         <Route path="/criar-treino" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <CriarTreino />
           </ProtectedRoute>
         } />
         <Route path="/editar-treino/:id" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <EditarTreino />
           </ProtectedRoute>
         } />
         <Route path="/relatorio-treino/:id" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <RelatorioTreino />
           </ProtectedRoute>
         } />
         <Route path="/dashboard/:idAluno/:idTreino" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <Dashboard />
           </ProtectedRoute>
         } />
@@ -120,103 +119,119 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } />
         <Route path="/relatorios/registro-corporal/:idAluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <RegistroCorporal />
           </ProtectedRoute>
         } />
         <Route path="/ficha-aluno/:idAluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <FichaAluno />
           </ProtectedRoute>
         } />
         <Route path="/perfil" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <Perfil />
           </ProtectedRoute>
         } />
         <Route path="/planos" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <Planos />
           </ProtectedRoute>
         } />
         <Route path="/solicitacoes-pendentes" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <SolicitacoesPendentes />
           </ProtectedRoute>
         } />
         <Route path="/agenda" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <Agenda />
           </ProtectedRoute>
         } />
-        <Route path="/minhaEvolucao" element={
-          <ProtectedRoute>
+        <Route path="/minha-evolucao" element={
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <MinhaEvolucao />
           </ProtectedRoute>
         } />
-        <Route path="/minhasAulas" element={
+        <Route path="/procurando-personal" element={
           <ProtectedRoute>
+            <ProcurandoPersonal />
+          </ProtectedRoute>
+        }
+        />
+        <Route path="/perfil-personal/:id" element={
+          <ProtectedRoute>
+            <PerfilPersonal />
+          </ProtectedRoute>
+        } />
+        <Route path="/minhas-aulas" element={
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <MinhasAulas />
           </ProtectedRoute>
         } />
-        <Route path="/treinosAula/:idAula" element={
-          <ProtectedRoute>
+        <Route path="/treinos-aula/:idAula" element={
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <TreinoAulas />
           </ProtectedRoute>
         } />
         <Route path="/feedback/:idAluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <Feedback />
           </ProtectedRoute>
         } />
         <Route path="/home-aluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <HomeAluno />
           </ProtectedRoute>
         } />
         <Route path="/visualizar-aula/:idAluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <VisualizarAula />
           </ProtectedRoute>
         } />
         <Route path="/progresso-corporal-aluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <ProgressoCorporal />
           </ProtectedRoute>
         } />
         <Route path="/aluno-planos" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <AlunoPlanos />
           </ProtectedRoute>
         } />
         <Route path="/feedback-aluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <FeedbackAluno />
           </ProtectedRoute>
         } />
         <Route path="/feedback-mensagem" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <FeedbackMensagem />
           </ProtectedRoute>
         } />
         <Route path="/acompanhar-aula/:idAluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['PERSONAL']}>
             <AcompanharAula />
           </ProtectedRoute>
         } />
         <Route path="/agenda-aluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <AgendaAluno />
           </ProtectedRoute>
         } />
         <Route path="/perfil-aluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <PerfilAluno />
           </ProtectedRoute>
         } />
         <Route path="/acompanhar-aula-aluno" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={['ALUNO']}>
             <AcompanharAulaAluno />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard-aluno/:idTreino" element={
+          <ProtectedRoute allowedRoles={['ALUNO']}>
+          <DashboardAluno />
           </ProtectedRoute>
         } />
         {/* Rota de erro */}

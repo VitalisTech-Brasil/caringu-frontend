@@ -1,39 +1,71 @@
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Header from '../../components/Aluno/Header/Header';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AulaResumoCard from "../../components/Utils/GerenciarAlunos/CardAulaTreino"
+import { caringuApi } from '../../provider/caringuApi';
+import Pagination from '../../components/Utils/Pagination';
 
 function MinhasAulas() {
     const navigate = useNavigate();
     const menuRef = useRef(null);
-    const aulas = [
-        { idAula: 9, data_horario_inicio: "2025-12-03 15:00:00", data_horario_fim: "2025-12-03 16:00:00", nomePersonal: "Monica" },
-        { idAula: 10, data_horario_inicio: "2025-12-04 15:00:00", data_horario_fim: "2025-12-04 16:00:00", nomePersonal: "Monica" },
-        { idAula: 11, data_horario_inicio: "2025-12-05 15:00:00", data_horario_fim: "2025-12-05 16:00:00", nomePersonal: "Monica" },
-    ];
+    const idAluno = sessionStorage.getItem('pessoaId');
 
-    function getDiaSemana(dataString) {
-        const dias = [
-            "Domingo",
-            "Segunda-Feira",
-            "Terça-Feira",
-            "Quarta-Feira",
-            "Quinta-Feira",
-            "Sexta-Feira",
-            "Sábado"
-        ];
-        const data = new Date(dataString.replace(" ", "T"));
-        return dias[data.getDay()];
-    }
+    const [aulas, setAulas] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); // página começa em 1
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsLength, setItemsLength] = useState(0);
+    const pageSize = 4;
+    const [searchTerm, setSearchTerm] = useState('');
 
-    function getDataFormatada(dataString) {
-        const data = new Date(dataString.replace(" ", "T"));
-        const dia = String(data.getDate()).padStart(2, '0');
-        const mes = String(data.getMonth() + 1).padStart(2, '0');
-        const ano = data.getFullYear();
-        return `${dia}/${mes}/${ano}`;
-    }
+
+
+
+    useEffect(() => {
+    const fetchAulas = async () => {
+        try {
+            let url = `/aulas/aluno/${idAluno}/plano?page=${currentPage - 1}&size=${pageSize}`;
+            if (searchTerm) {
+                url += `&data=${searchTerm}`;
+            }
+            const response = await caringuApi.get(url);
+            const { content, totalPages, totalElements } = response.data;
+            setAulas(Array.isArray(content) ? content : []);
+            setTotalPages(totalPages || 1);
+            setItemsLength(totalElements || 0);
+        } catch (error) {
+            setAulas([]);
+            setTotalPages(1);
+            setItemsLength(0);
+            console.error("Erro ao buscar aulas:", error);
+        }
+    };
+
+    fetchAulas();
+}, [idAluno, currentPage, searchTerm]);
+
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
+
+    const goToPrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const goToNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const filteredAulas = aulas;
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -54,65 +86,68 @@ function MinhasAulas() {
                         </svg>
                     }
                 />
-                <div className="pl-[1rem] sm:pl-[3.5rem] w-[90%] h-auto flex mt-6 flex-col">
-                    <div>
-                        <h1 className="text-[20px] sm:text-[28px] font-bold text-[#1E293B]">
-                            Encontre Todas as Suas Aulas Aqui!
-                        </h1>
-                    </div>
-                    <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
-                        <input
-                            type="text"
-                            placeholder="Pesquisar Treino"
-                            // value={searchTerm}
-                            // onChange={handleSearch}
-                            className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
-                        />
-                        <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M22 22L20 20" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </div>
-                </div>
-                <div className="w-full h-auto grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 px-[1rem]">
-                    {/* Card de Evolução */}
-                    {aulas.length === 0 ? (
-                        <div className="text-sm italic text-gray-500">
-                            Nenhum treino atribuído.
+                <div className="flex flex-col w-full h-auto justify-center items-center gap-3">
+                    <div className="px-[1rem] w-full sm:w-[75%] xl:w-[40%] h-auto flex mt-6 flex-col">
+                        <div>
+                            <h1 className="text-[20px] sm:text-[28px] font-bold text-[#1E293B]">
+                                Encontre Todas as Suas Aulas Aqui!
+                            </h1>
                         </div>
-                    ) : (
-                        aulas.map(aulaExercicio => (
-                            <AulaResumoCard
-                                key={aulaExercicio.idAula}
-                                data={getDataFormatada(aulaExercicio.data_horario_inicio)}
-                                diaSemana={getDiaSemana(aulaExercicio.data_horario_inicio)}
-                                horarioInicio={aulaExercicio.data_horario_inicio.slice(11, 16)}
-                                horarioFim={aulaExercicio.data_horario_fim.slice(11, 16)}
-                                paddingCard="p-4"
-                                alignIcons="flex-row"
-                                alignText="justify-start"
-                                onVerTreinos={() => {
-                                    navigate(`/treinosAula/${aulaExercicio.idAula}`, {state: aulaExercicio});
-                                }}
+                        <div className="w-full flex justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
+                            <input
+                                type="date"
+                                placeholder="Pesquisar Aula - Data"
+                                value={searchTerm}
+                                onChange={handleSearch}
+                                className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
                             />
-                        ))
-                    )}
+                            <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M22 22L20 20" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div className="flex flex-col w-full justify-between h-170 pb-2">
+                        <div className="w-full sm:w-[75%] xl:w-[40%] h-auto grid grid-cols-1 gap-3 px-[1rem]">
+                            {filteredAulas.length === 0 ? (
+                                <div className="text-sm italic text-gray-500">
+                                    {searchTerm
+                                        ? "Nenhuma aula encontrada para essa data."
+                                        : "Nenhum treino atribuído."}
+                                </div>
+                            ) : (
+                                filteredAulas.map(aulaExercicio => (
+                                    <AulaResumoCard
+                                        key={aulaExercicio.aulaId}
+                                        data={aulaExercicio.dataAula}
+                                        diaSemana={aulaExercicio.diaSemana}
+                                        horarioInicio={aulaExercicio.horarioAula}
+                                        horarioFim={aulaExercicio.horarioFim}
+                                        paddingCard="p-4"
+                                        alignIcons="flex-row"
+                                        alignText="justify-start"
+                                        onVerTreinos={() => {
+                                            navigate(`/treinosAula/${aulaExercicio.aulaId}`, { state: aulaExercicio });
+                                        }}
+                                    />
+                                ))
+                            )}
+                        </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            itemsLength={filteredAulas.length}
+                            onPageChange={goToPage}
+                            onPrevious={goToPrevious}
+                            onNext={goToNext}
+                            maxVisible={3}
+                        />
+                    </div>
                 </div>
-                {/* Arrumar aqui Depois */}
-                {/* <Pagination
-                        currentPage={}
-                        totalPages={}
-                        itemsLength={}
-                        onPageChange={}
-                        onPrevious={}
-                        onNext={}
-                        maxVisible={}
-                    /> */}
-
             </div>
         </div >
 
     );
 }
 
-export default MinhasAulas
+export default MinhasAulas;
