@@ -71,38 +71,26 @@ export default function InformacoesPessoaisAluno() {
     };
 
     const handleSave = async () => {
-        if (!alunoId) {
-            console.error("ID do aluno não definido!");
-            return;
-        }
+        if (!alunoId) return console.error("ID do aluno não definido!");
 
-        const dataParaSalvar = {};
-
-        if (formData.nome) dataParaSalvar.nome = formData.nome;
-        if (formData.email) dataParaSalvar.email = formData.email;
-        if (formData.celular) dataParaSalvar.celular = removerMascara(formData.celular);
-        if (formData.urlFotoPerfil) dataParaSalvar.urlFotoPerfil = formData.urlFotoPerfil;
-        if (formData.dataNascimento) dataParaSalvar.dataNascimento = formData.dataNascimento;
-        if (formData.genero) dataParaSalvar.genero = formData.genero;
-        if (formData.peso != null) dataParaSalvar.peso = Number(formData.peso);
-        if (formData.altura != null) dataParaSalvar.altura = Number(formData.altura);
-        if (formData.nivelAtividade) dataParaSalvar.nivelAtividade = formData.nivelAtividade;
-        if (formData.nivelExperiencia) dataParaSalvar.nivelExperiencia = formData.nivelExperiencia;
+        const dataParaSalvar = {
+            nome: formData.nome || undefined,
+            email: formData.email || undefined,
+            celular: formData.celular ? removerMascara(formData.celular) : undefined,
+            urlFotoPerfil: formData.urlFotoPerfil || undefined,
+            dataNascimento: formData.dataNascimento || undefined,
+            genero: formData.genero || undefined,
+            peso: formData.peso != null ? Number(formData.peso) : undefined,
+            altura: formData.altura != null ? Number(formData.altura) : undefined,
+            nivelAtividade: formData.nivelAtividade || undefined,
+            nivelExperiencia: formData.nivelExperiencia || undefined,
+        };
 
         try {
             await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
-
-            toast.custom((t) => (
-                <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
-            ));
-
-            setAlunoData((prev) => ({ ...prev, ...dataParaSalvar }));
-
-            setFormData((prev) => ({ ...prev, ...dataParaSalvar }));
+            toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
         } catch (error) {
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />
-            ));
+            toast.custom(t => <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />);
             console.error("Erro ao atualizar informações:", error);
         }
     };
