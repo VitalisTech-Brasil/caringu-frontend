@@ -34,7 +34,10 @@ const ProcurandoPersonal = () => {
   const [especialidadeQuery, setEspecialidadeQuery] = useState("");
   const [especialidadeSugestoes, setEspecialidadeSugestoes] = useState([]);
   const [errosImagem, setErrosImagem] = useState({});
-  const [rating, setRating] = React.useState(0.0);
+  const [rating, setRating] = useState(0.0);
+  const [limparFiltro, setLimparFiltro] = useState(false);
+  const [lastFiltroNota, setLastFiltroNota] = useState(null);
+  const [loadingOpinioes, setLoadingOpinioes] = useState(false);
 
   const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,6 +68,10 @@ const ProcurandoPersonal = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, sortOrder, filteredTrainers]);
+
+  useEffect(() => {
+    document.title = "Procurando Personal | CaringU"
+  }, []);
 
   const goToPage = (page) => {
     setCurrentPage(page);
@@ -306,14 +313,12 @@ const ProcurandoPersonal = () => {
     setEspecialidadeSugestoes([]);
   };
 
-
   const handleRemoveEspecialidade = (esp) => {
     setDraftFilters((prev) => ({
       ...prev,
       especialidadesSelecionadas: prev.especialidadesSelecionadas.filter((e2) => e2.id !== esp.id),
     }));
   };
-
 
   const [appliedFilters, setAppliedFilters] = useState({
     cidadesSelecionadas: [],
@@ -351,8 +356,6 @@ const ProcurandoPersonal = () => {
     setIsFilterOpen(false);
   };
 
-
-
   const listarPersonais = async () => {
     try {
       const response = await caringuApi.get("personal-trainers/disponiveis");
@@ -364,12 +367,9 @@ const ProcurandoPersonal = () => {
     }
   };
 
-
   useEffect(() => {
     listarPersonais();
   }, []);
-
-
 
   function redirecionarPerfilPersonal(trainer) {
     navigate(`/perfil-personal/${trainer.id}`);
@@ -377,8 +377,41 @@ const ProcurandoPersonal = () => {
 
   const ratingChanged = (newRating) => {
     setRating(newRating);
-    console.log(newRating)
+    exibirAvaliacoes(newRating);
   }
+
+  const exibirAvaliacoes = async (filtroNota = 0, forceAll = false) => {
+    setLoadingOpinioes(true);
+    try {
+      let url = `/personal-trainers/disponiveis`;
+
+      if (!forceAll && filtroNota > 0) {
+        url += `?filtroNota=${filtroNota}`;
+      }
+      const response = await caringuApi.get(url);
+      console.log(response.data);
+      setAllTrainers(response.data);
+      setFilteredTrainers(response.data);
+
+      setLimparFiltro(false);
+      setLastFiltroNota(filtroNota);
+    } catch (error) {
+      console.error("Erro ao buscar Avaliações:", error);
+    } finally {
+      setLoadingOpinioes(false);
+    }
+  };
+
+  const handleLimparFiltro = () => {
+
+    if (lastFiltroNota === 0) {
+      setRating(0);
+      return;
+    }
+    setRating(0);
+    exibirAvaliacoes(0, true);
+  };
+
 
   const StarFull = () => (
     <svg className="mx-0.5 w-6 h-6 sm:w-8 sm:h-8 lg:w-9 lg:h-9 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
@@ -545,10 +578,10 @@ const ProcurandoPersonal = () => {
           menuRef={menuRef}
           icon={
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
-              <path d="M15 15C18.4518 15 21.25 12.2018 21.25 8.75C21.25 5.29822 18.4518 2.5 15 2.5C11.5482 2.5 8.75 5.29822 8.75 8.75C8.75 12.2018 11.5482 15 15 15Z" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M4.26245 27.5C4.26245 22.6625 9.07499 18.75 15 18.75" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M22.75 26.75C24.9592 26.75 26.75 24.9592 26.75 22.75C26.75 20.5409 24.9592 18.75 22.75 18.75C20.5409 18.75 18.75 20.5409 18.75 22.75C18.75 24.9592 20.5409 26.75 22.75 26.75Z" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M27.5 27.5L26.25 26.25" stroke="#1D2D44" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M15 15C18.4518 15 21.25 12.2018 21.25 8.75C21.25 5.29822 18.4518 2.5 15 2.5C11.5482 2.5 8.75 5.29822 8.75 8.75C8.75 12.2018 11.5482 15 15 15Z" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M4.26245 27.5C4.26245 22.6625 9.07499 18.75 15 18.75" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M22.75 26.75C24.9592 26.75 26.75 24.9592 26.75 22.75C26.75 20.5409 24.9592 18.75 22.75 18.75C20.5409 18.75 18.75 20.5409 18.75 22.75C18.75 24.9592 20.5409 26.75 22.75 26.75Z" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M27.5 27.5L26.25 26.25" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           }
         />
@@ -575,8 +608,8 @@ const ProcurandoPersonal = () => {
                     className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
                   />
                   <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M22 22L20 20" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M22 22L20 20" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <button
                     onClick={toggleFilterModal}
@@ -584,109 +617,136 @@ const ProcurandoPersonal = () => {
                     className="p-2 text-[#1E293B]"
                   >
                     <svg className="shrink-0 w-4 h-4 sm:w-6 sm:h-6 text-[#1E293B]" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5.85002 2.27502H20.15C21.3417 2.27502 22.3167 3.25002 22.3167 4.44169V6.82502C22.3167 7.69169 21.775 8.77502 21.2333 9.31669L16.575 13.4334C15.925 13.975 15.4917 15.0584 15.4917 15.925V20.5834C15.4917 21.2334 15.0583 22.1 14.5167 22.425L13 23.4C11.5917 24.2667 9.64168 23.2917 9.64168 21.5584V15.8167C9.64168 15.0584 9.20835 14.0834 8.77502 13.5417L4.65835 9.20836C4.11668 8.66669 3.68335 7.69169 3.68335 7.04169V4.55002C3.68335 3.25002 4.65835 2.27502 5.85002 2.27502Z" stroke="#1D2D44" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                      <path d="M11.8408 2.27502L6.5 10.8334" stroke="#1D2D44" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M5.85002 2.27502H20.15C21.3417 2.27502 22.3167 3.25002 22.3167 4.44169V6.82502C22.3167 7.69169 21.775 8.77502 21.2333 9.31669L16.575 13.4334C15.925 13.975 15.4917 15.0584 15.4917 15.925V20.5834C15.4917 21.2334 15.0583 22.1 14.5167 22.425L13 23.4C11.5917 24.2667 9.64168 23.2917 9.64168 21.5584V15.8167C9.64168 15.0584 9.20835 14.0834 8.77502 13.5417L4.65835 9.20836C4.11668 8.66669 3.68335 7.69169 3.68335 7.04169V4.55002C3.68335 3.25002 4.65835 2.27502 5.85002 2.27502Z" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M11.8408 2.27502L6.5 10.8334" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </button>
                 </div>
-                <div className="w-auto md:w-178 2xl:w-150 border-2 border-[#1D2D441C] rounded-md flex flex-row  items-center justify-center p-2">
-                  <span>Exibir por avaliação</span>
-                  <Rating
-                    initialRating={rating}
-                    fractions={2}
-                    emptySymbol={<StarEmpty />}
-                    fullSymbol={<StarFull />}
-                    onChange={ratingChanged}
-                  />
+                <div className="gap-5 p-4 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
+                  <span>
+                    Exibir por avaliação
+                  </span>
+                  <div className="pt-2 pb-2">
+                    <Rating
+                      initialRating={rating}
+                      fractions={2}
+                      emptySymbol={<StarEmpty />}
+                      fullSymbol={<StarFull />}
+                      onChange={ratingChanged}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleLimparFiltro}
+                    classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
+                    aria-label="Limpar filtro de avaliações"
+                    texto="Limpar filtro"
+                  ></Button>
                 </div>
               </div>
             </div>
             {currentTrainers.length > 0 ? (
               <div className="flex flex-wrap w-full gap-10 mt-4">
-                {currentTrainers.map((trainer, index) => {
-                  // calcula o menor plano desse personal
-                  const menorPlano = trainer.planos.reduce((menor, atual) =>
-                    atual.valorAulas < menor.valorAulas ? atual : menor
-                  );
-                  return (
-                    <div
-                      key={trainer.id}
-                      className="border-2 border-gray-200 mb-4 w-full h-110 sm:h-100 md:w-[45%] lg:w-[22%] lg:mx-2 flex items-center flex-col gap-3 rounded"
-                      onClick={() => toggleCardExpansion(index)}
-                    >
-                      <div className="w-full h-1/2 sm:h-40  flex items-center justify-center relative">
-                        {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
-                          <img
-                            src={trainer.urlFotoPerfil}
-                            alt={trainer.nomePersonal}
-                            className="w-full h-full sm:w-19 sm:h-19 lg:w-22 lg:h-22 object-cover rounded"
-                            onError={() => lidarErroImagem(trainer.email)}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                            <FaUserCircle className="flex-shrink-0 w-full h-1/2 sm:w-20 sm:h-20 md:h-40 lg:w-22 lg:h-22" />
-                          </div>
-                        )}
-                        {/* badge de avaliação no canto superior direito */}
-                        <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded flex items-center gap-1">
-                          <span className="text-sm font-semibold text-yellow-500 flex gap-2 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 21 19" fill="none">
-                              <path d="M11.9396 2.77875L13.361 5.56541C13.5549 5.95333 14.0717 6.32541 14.5079 6.39666L17.0842 6.81625C18.7317 7.08541 19.1194 8.25708 17.9322 9.41291L15.9293 11.3762C15.5901 11.7087 15.4043 12.35 15.5093 12.8092L16.0827 15.2396C16.535 17.1633 15.4932 17.9075 13.7568 16.9021L11.342 15.5008C10.9058 15.2475 10.1871 15.2475 9.74286 15.5008L7.32806 16.9021C5.59974 17.9075 4.54982 17.1554 5.0021 15.2396L5.57551 12.8092C5.6805 12.35 5.49475 11.7087 5.15554 11.3762L3.15263 9.41291C1.9735 8.25708 2.35308 7.08541 4.00064 6.81625L6.57697 6.39666C7.00501 6.32541 7.52189 5.95333 7.71572 5.56541L9.13714 2.77875C9.91246 1.26666 11.1724 1.26666 11.9396 2.77875Z" fill="#E96E35" stroke="#E96E35" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            {trainer.mediaEstrela ? trainer.mediaEstrela.toFixed(1) : "0.0"}
-                          </span>
-                        </div>
-                      </div>
-                      {/* conteúdo do card */}
-                      <div className="w-full flex flex-col gap-1 px-2">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
-                          <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
-                          <p className="text-sm flex gap-1 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
-                              <path d="M2.8848 5.25314C4.07807 -0.104942 11.8495 -0.0987544 13.0367 5.25933C13.7332 8.4024 11.8192 11.0629 10.1413 12.7087C8.92383 13.909 6.99764 13.909 5.77409 12.7087C4.1023 11.0629 2.18823 8.39622 2.8848 5.25314Z" fill="#FDFCFA" stroke="#1D2D44" stroke-width="1.5" />
-                              <path d="M7.96113 8.3094C9.00487 8.3094 9.85098 7.44513 9.85098 6.379C9.85098 5.31288 9.00487 4.44861 7.96113 4.44861C6.9174 4.44861 6.07129 5.31288 6.07129 6.379C6.07129 7.44513 6.9174 8.3094 7.96113 8.3094Z" stroke="#1D2D44" stroke-width="1.5" />
-                            </svg>
-                            {trainer.cidade}
-                          </p>
-                        </div>
-                        <p className="text-sm flex gap-1">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
-                            <path d="M7.96015 1.25C4.62264 1.25 1.90295 4.05625 1.90295 7.5C1.90295 10.9438 4.62264 13.75 7.96015 13.75C11.2977 13.75 14.0174 10.9438 14.0174 7.5C14.0174 4.05625 11.2977 1.25 7.96015 1.25ZM10.595 9.73125C10.5102 9.88125 10.3588 9.9625 10.2013 9.9625C10.1226 9.9625 10.0438 9.94375 9.97114 9.89375L8.09341 8.7375C7.62701 8.45 7.28175 7.81875 7.28175 7.2625V4.7C7.28175 4.44375 7.48769 4.23125 7.73604 4.23125C7.98438 4.23125 8.19033 4.44375 8.19033 4.7V7.2625C8.19033 7.4875 8.37204 7.81875 8.55982 7.93125L10.4375 9.0875C10.6556 9.21875 10.7283 9.50625 10.595 9.73125Z" fill="#1D2D44" />
-                          </svg>
-                          {trainer.experiencia} anos de experiência
-                        </p>
-                        {/* especialidades */}
-                        {trainer.especialidades?.length > 0 && (
-                          <div className="flex gap-1 lg:gap-10 items-center ">
-                            <span className="bg-[#E96E35]/11 text-xs px-1 py-1 rounded border-2 border-[#E96E35]/20 text-[#E96E35]">
-                              {trainer.especialidades[0]}
-                            </span>
-                            {trainer.especialidades.length > 1 && (
-                              <span className="text-[var(--cor-primaria)] text-xs px-1 py-1 rounded border-2 border-[var(--cor-primaria)]/11">
-                                +{trainer.especialidades.length - 1}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {/* plano mais barato */}
-                        <p className="text-sm">
-                          <span className="font-bold text-2xl">R$ {menorPlano.valorAulas}</span> /{" "}plano mais acessível
-                        </p>
-                        <Button
-                          texto="Ver Perfil"
-                          fontSize="14px"
-                          fontWeight="600"
-                          width="100%"
-                          height="35px"
-                          cor="#748CAB"
-                          corTexto="#FFFFFF"
-                          classNameExtra="my-4"
-                          onClick={() => redirecionarPerfilPersonal(trainer)}
-                        />
-                      </div>
+                {loadingOpinioes ? (
+                  <div className="col-span-1 xl:col-span-2 flex justify-center items-center py-8">
+                    <div className="flex items-center gap-3 text-[var(--cor-primaria)]">
+                      <svg className="animate-spin h-6 w-6 text-[#E96E35]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                      </svg>
+                      <span>Carregando personal trainers...</span>
                     </div>
-                  );
-                })}
+                  </div>
+                ) : currentTrainers.length == 0 ? (
+                  <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
+                    Ainda não existe nenhum personal trainer cadastrado.
+                  </div>
+                ) : (
+                  currentTrainers.map((trainer, index) => {
+                    // calcula o menor plano desse personal
+                    const menorPlano = trainer.planos.reduce((menor, atual) =>
+                      atual.valorAulas < menor.valorAulas ? atual : menor
+                    );
+                    return (
+                      <div
+                        key={trainer.id}
+                        className="border-2 border-gray-200 mb-4 w-full h-110 sm:h-100 md:w-[45%] lg:w-[22%] lg:mx-2 flex items-center flex-col gap-3 rounded"
+                        onClick={() => toggleCardExpansion(index)}
+                      >
+                        <div className="w-full h-1/2 sm:h-40  flex items-center justify-center relative">
+                          {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
+                            <img
+                              src={trainer.urlFotoPerfil}
+                              alt={trainer.nomePersonal}
+                              className="w-full h-full sm:w-19 sm:h-19 lg:w-22 lg:h-22 object-cover rounded"
+                              onError={() => lidarErroImagem(trainer.email)}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
+                              <FaUserCircle className="flex-shrink-0 w-full h-1/2 sm:w-20 sm:h-20 md:h-40 lg:w-22 lg:h-22" />
+                            </div>
+                          )}
+                          {/* badge de avaliação no canto superior direito */}
+                          <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded flex items-center gap-1">
+                            <span className="text-sm font-semibold text-yellow-500 flex gap-2 items-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 21 19" fill="none">
+                                <path d="M11.9396 2.77875L13.361 5.56541C13.5549 5.95333 14.0717 6.32541 14.5079 6.39666L17.0842 6.81625C18.7317 7.08541 19.1194 8.25708 17.9322 9.41291L15.9293 11.3762C15.5901 11.7087 15.4043 12.35 15.5093 12.8092L16.0827 15.2396C16.535 17.1633 15.4932 17.9075 13.7568 16.9021L11.342 15.5008C10.9058 15.2475 10.1871 15.2475 9.74286 15.5008L7.32806 16.9021C5.59974 17.9075 4.54982 17.1554 5.0021 15.2396L5.57551 12.8092C5.6805 12.35 5.49475 11.7087 5.15554 11.3762L3.15263 9.41291C1.9735 8.25708 2.35308 7.08541 4.00064 6.81625L6.57697 6.39666C7.00501 6.32541 7.52189 5.95333 7.71572 5.56541L9.13714 2.77875C9.91246 1.26666 11.1724 1.26666 11.9396 2.77875Z" fill="#E96E35" stroke="#E96E35" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                              {trainer.mediaEstrela ? trainer.mediaEstrela.toFixed(1) : "0.0"}
+                            </span>
+                          </div>
+                        </div>
+                        {/* conteúdo do card */}
+                        <div className="w-full flex flex-col gap-1 px-2">
+                          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+                            <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
+                            <p className="text-sm flex gap-1 items-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
+                                <path d="M2.8848 5.25314C4.07807 -0.104942 11.8495 -0.0987544 13.0367 5.25933C13.7332 8.4024 11.8192 11.0629 10.1413 12.7087C8.92383 13.909 6.99764 13.909 5.77409 12.7087C4.1023 11.0629 2.18823 8.39622 2.8848 5.25314Z" fill="#FDFCFA" stroke="#1D2D44" strokeWidth="1.5" />
+                                <path d="M7.96113 8.3094C9.00487 8.3094 9.85098 7.44513 9.85098 6.379C9.85098 5.31288 9.00487 4.44861 7.96113 4.44861C6.9174 4.44861 6.07129 5.31288 6.07129 6.379C6.07129 7.44513 6.9174 8.3094 7.96113 8.3094Z" stroke="#1D2D44" strokeWidth="1.5" />
+                              </svg>
+                              {trainer.cidade}
+                            </p>
+                          </div>
+                          <p className="text-sm flex gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
+                              <path d="M7.96015 1.25C4.62264 1.25 1.90295 4.05625 1.90295 7.5C1.90295 10.9438 4.62264 13.75 7.96015 13.75C11.2977 13.75 14.0174 10.9438 14.0174 7.5C14.0174 4.05625 11.2977 1.25 7.96015 1.25ZM10.595 9.73125C10.5102 9.88125 10.3588 9.9625 10.2013 9.9625C10.1226 9.9625 10.0438 9.94375 9.97114 9.89375L8.09341 8.7375C7.62701 8.45 7.28175 7.81875 7.28175 7.2625V4.7C7.28175 4.44375 7.48769 4.23125 7.73604 4.23125C7.98438 4.23125 8.19033 4.44375 8.19033 4.7V7.2625C8.19033 7.4875 8.37204 7.81875 8.55982 7.93125L10.4375 9.0875C10.6556 9.21875 10.7283 9.50625 10.595 9.73125Z" fill="#1D2D44" />
+                            </svg>
+                            {trainer.experiencia} anos de experiência
+                          </p>
+                          {/* especialidades */}
+                          {trainer.especialidades?.length > 0 && (
+                            <div className="flex gap-1 lg:gap-10 items-center ">
+                              <span className="bg-[#E96E35]/11 text-xs px-1 py-1 rounded border-2 border-[#E96E35]/20 text-[#E96E35]">
+                                {trainer.especialidades[0]}
+                              </span>
+                              {trainer.especialidades.length > 1 && (
+                                <span className="text-[var(--cor-primaria)] text-xs px-1 py-1 rounded border-2 border-[var(--cor-primaria)]/11">
+                                  +{trainer.especialidades.length - 1}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          {/* plano mais barato */}
+                          <p className="text-sm">
+                            <span className="font-bold text-2xl">R$ {menorPlano.valorAulas}</span> /{" "}plano mais acessível
+                          </p>
+                          <Button
+                            texto="Ver Perfil"
+                            fontSize="14px"
+                            fontWeight="600"
+                            width="100%"
+                            height="35px"
+                            cor="#748CAB"
+                            corTexto="#FFFFFF"
+                            classNameExtra="my-4"
+                            onClick={() => redirecionarPerfilPersonal(trainer)}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             ) : (
               <p className="text-center text-gray-600">
@@ -1063,7 +1123,7 @@ const ProcurandoPersonal = () => {
                           />
                           <div className="flex items-center">
                             <svg width="32" height="2" viewBox="0 0 32 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <line y1="1" x2="32" y2="1" stroke="#1D2D44" stroke-opacity="0.11" stroke-width="2" />
+                              <line y1="1" x2="32" y2="1" stroke="#1D2D44" stroke-opacity="0.11" strokeWidth="2" />
                             </svg>
                           </div>
                           <input
