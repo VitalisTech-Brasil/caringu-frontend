@@ -183,7 +183,7 @@ const PerfilPersonal = () => {
                         }
                     />
                     <div className="w-full h-auto">
-                        <div className="pl-[2.5rem] pt-2 w-full h-auto">
+                        <div className="pl-3 md:pl-[2.5rem] pt-2 w-full h-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" width="53" height="53" viewBox="0 0 53 53" fill="none"
                                 className="cursor-pointer"
                                 onClick={() => navigate("/procurando-personal")}>
@@ -209,11 +209,11 @@ const PerfilPersonal = () => {
                             />
                         </div>
                         <div className="flex flex-row items-end justify-between flex-nowrap h-auto w-full relative z-10">
-                            <div className="h-full flex pl-[2.5rem] pt-3">
+                            <div className="h-full flex pl-3 md:pl-[2.5rem] pt-3">
                                 <span className="text-[var(--cor-primaria)] font-medium text-lg sm:text-[24px] xl:text-[32px]"> Planos</span>
                             </div>
                         </div>
-                        <div className="ml-10 mt-4 overflow-x-auto max-w-[93vw]">
+                        <div className="ml-3 md:ml-10 mt-4 overflow-x-auto max-w-[93vw]">
                             <div className="flex gap-9 w-fit">
                                 {infoPersonal.planos.map((item) => {
                                     const existePlanoContratado = verfificaStatus && ["PENDENTE", "EM_PROCESSO", "ATIVO"].includes(verfificaStatus.status);
@@ -249,31 +249,33 @@ const PerfilPersonal = () => {
                             </div>
                         </div>
                         <div className="flex flex-row w-full h-auto">
-                            <div className="flex flex-col w-[95%] h-auto mt-3 mb-6 ml-[2.5rem] pt-5 border-solid border-[#1D2D441C] border-2 rounded-md">
+                            <div className="flex flex-col w-[95%] h-auto mt-3 mb-6 ml-3 md:ml-[2.5rem] pt-5 border-solid border-[#1D2D441C] border-2 rounded-md">
                                 <div className="w-[95%] h-auto flex flex-col lg:flex-row items-start gap-3 lg:gap-0 lg:items-center justify-between pl-[10%] sm:pl-[5rem]">
                                     <span className="text-[var(--cor-primaria)] text-base xl:text-[28px] 2xl:text-[32px] font-medium">
                                         Opiniões sobre o personal:
                                     </span>
-                                    <div className="gap-5 p-4 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
+                                    <div className="gap-5 p-4 flex flex-col md:flex-row items-center justify-center text-[var(--cor-primaria)] h-auto w-full lg:w-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base xl:text-[20px] font-light">
                                         <span>
                                             Exibir por avaliação
                                         </span>
-                                        <div className="pt-2 pb-2">
-                                            <Rating
-                                                initialRating={rating}
-                                                fractions={2}
-                                                emptySymbol={<StarEmpty />}
-                                                fullSymbol={<StarFull />}
-                                                onChange={ratingChanged}
-                                            />
+                                        <div className="flex flex-row gap-3 items-center justify-between">
+                                            <div className="pt-2 pb-2">
+                                                <Rating
+                                                    initialRating={rating}
+                                                    fractions={2}
+                                                    emptySymbol={<StarEmpty />}
+                                                    fullSymbol={<StarFull />}
+                                                    onChange={ratingChanged}
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                onClick={handleLimparFiltro}
+                                                classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
+                                                aria-label="Limpar filtro de avaliações"
+                                                texto="Limpar"
+                                            ></Button>
                                         </div>
-                                        <Button
-                                            type="button"
-                                            onClick={handleLimparFiltro}
-                                            classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
-                                            aria-label="Limpar filtro de avaliações"
-                                            texto="Limpar filtro"
-                                        ></Button>
                                     </div>
                                 </div>
                                 <div className="pl-[10%] sm:pl-[5rem] grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4 w-full pb-4">
