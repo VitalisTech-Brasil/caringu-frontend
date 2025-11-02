@@ -11,7 +11,6 @@ const CardPlano = ({
   valorAulas,
   valorPlano,
   onAvaliarPersonal,
-  personal,
   ativo = true,
   showContratarPlano = true,
   disabled = false
@@ -21,53 +20,7 @@ const CardPlano = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
-  const { fontSize, height } = useResponsiveStyles();
 
-  function useResponsiveStyles() {
-    const [styles, setStyles] = useState({ fontSize: "20px", height: "30%" });
-
-    useEffect(() => {
-
-      const updateStyles = () => {
-        const screenWidth = window.innerWidth;
-
-        if (screenWidth >= 1536) {
-          setStyles({ fontSize: "20px", height: "30%" });
-        } else if (screenWidth >= 1024) {
-          setStyles({ fontSize: "16px", height: "30%" });
-        } else if (screenWidth >= 640) {
-          setStyles({ fontSize: "16px", height: "30%" });
-        } else {
-          setStyles({ fontSize: "16px", height: "100%" });
-        }
-      };
-
-      updateStyles();
-      window.addEventListener("resize", updateStyles);
-      return () => window.removeEventListener("resize", updateStyles);
-    }, []);
-
-    return styles;
-  }
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  const handleEdit = () => {
-    setMenuOpen(false);
-    onEditar && onEditar();
-  };
-
-  const handleDelete = () => {
-    setMenuOpen(false);
-    onDeletar && onDeletar();
-  };
-
-  const handleContratar = () => {
-    setMenuOpen(false);
-    onModalContratar && onModalContratar();
-  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
