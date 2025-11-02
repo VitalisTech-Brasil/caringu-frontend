@@ -4,12 +4,12 @@ import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
 import { caringuApi } from "../provider/caringuApi";
 import Button from "../components/Utils/Button";
 import { FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const HomeAluno = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const alunoId = sessionStorage.getItem("pessoaId");
   const [errosImagem, setErrosImagem] = useState({});
-  const [aulas, setAulas] = useState([]);
 
   const menuRef = useRef(null);
 
@@ -104,9 +104,6 @@ const HomeAluno = () => {
 
         setExercicioEvolucao(mappedEvolucao);
 
-        const proximasData = Array.isArray(proximasResponse?.data)
-          ? proximasResponse.data
-          : [];
 
         const mappedProximas = Array.isArray(proximasResponse?.data)
           ? proximasResponse.data.map((aula) => ({
@@ -467,6 +464,8 @@ const HomeAluno = () => {
                       ariaLabel={"Acompanhar Aula"}
                       fontSize={"16px"}
                       classNameExtra="px-4 py-1"
+                      onClick={() => navigate(`/acompanhar-aula-aluno/${aula.idAula}`)}
+
                     />
                   </div>
                   <div className="w-full h-auto flex flex-col gap-4">
@@ -481,7 +480,7 @@ const HomeAluno = () => {
                         <path d="M14.5939 19.2864H22.4064" stroke="#FFFDF6" strokeWidth="2" />
                         <path d="M6 19.2864H8.34376" stroke="#FFFDF6" strokeWidth="2" />
                       </svg>
-                      <span className="text-[var(--azul-escuro)] font-semibold text-xl">Treino Superior </span>
+                      <span className="text-[var(--azul-escuro)] font-semibold text-xl"> {aula.nomeTreino} </span>
                     </div>
                     <div className="w-full h-auto flex flex-col items-start gap-2">
                       <div className="w-full h-auto">
@@ -537,7 +536,7 @@ const HomeAluno = () => {
                         <span>Personal Trainer</span>
                       </div>
                       <div className="flex flex-row items-center justify-start gap-4 text-[#15171B87] text-sm font-medium border border-gray-300 py-1.5 pl-4 rounded-[6px] w-full bg-[var(--cor-secundaria)] h-auto">
-                        {aula.urlFotoPerfil ? (
+                        {aula.urlFotoPerfil && !errosImagem[aula.urlFotoPerfil] ? (
                           <img
                             src={aula.urlFotoPerfil}
                             alt={aula.nomePersonal}
