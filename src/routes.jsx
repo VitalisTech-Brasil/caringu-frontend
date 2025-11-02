@@ -224,7 +224,7 @@ const AppRoutes = () => {
             <PerfilAluno />
           </ProtectedRoute>
         } />
-        <Route path="/acompanhar-aula-aluno" element={
+        <Route path="/acompanhar-aula-aluno/:idAula" element={
           <ProtectedRoute allowedRoles={['ALUNO']}>
             <AcompanharAulaAluno />
           </ProtectedRoute>

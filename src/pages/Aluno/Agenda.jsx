@@ -90,12 +90,6 @@ const Agenda = () => {
         }
     });
 
-    useEffect(() => {
-        document.title = "Agenda | Caringu";
-        // exibirTreinos();
-    }, []);
-
-
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
