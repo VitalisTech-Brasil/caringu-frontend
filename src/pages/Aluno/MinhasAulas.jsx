@@ -107,7 +107,7 @@ function MinhasAulas() {
                             </svg>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full justify-between h-170 pb-2">
+                    <div className="flex flex-col w-full justify-between h-170 pb-2 items-center">
                         <div className="w-full sm:w-[75%] xl:w-[40%] h-auto grid grid-cols-1 gap-3 px-[1rem]">
                             {filteredAulas.length === 0 ? (
                                 <div className="text-sm italic text-gray-500">
