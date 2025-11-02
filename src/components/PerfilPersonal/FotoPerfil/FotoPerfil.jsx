@@ -26,27 +26,44 @@ export default function FotoPerfil(props) {
     const personalId = sessionStorage.getItem('pessoaId');
 
     useEffect(() => {
-        setImgErro(false);
-        setFileName(null);
-    }, [props.urlFoto]);
+        if (props.urlFoto !== fileName) {
+            setImgErro(false);
+            setFileName(props.urlFoto);
+        }
+    }, [props.urlFoto, fileName]);
 
     const handleRemoverFoto = async () => {
         try {
+            setLoading(true);
+            setMensagemStatus("Removendo...");
+
             await caringuApi.delete(`/pessoas/${personalId}/remover-foto-perfil`);
+
             setFileName("");
-            toast.success("Foto de perfil removida com sucesso!");
-            window.location.reload(true);
+            setImgErro(false);
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Foto de perfil removida com sucesso!" />
+            ));
+
+            if (props.onFotoChange) props.onFotoChange("");
         } catch (error) {
-            toast.error("Erro ao remover a foto de perfil.");
             console.error("Erro ao remover foto:", error);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao remover a foto de perfil." />
+            ));
+        } finally {
+            setLoading(false);
+            setMensagemStatus("Confirmar");
         }
     };
+
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
 
         if (file) {
-            const tamanhoMaximoMB = 1; // Limite de 1MB
+            const tamanhoMaximoMB = 1;
             const tamanhoMaximoBytes = tamanhoMaximoMB * 1024 * 1024;
 
             if (file.size > tamanhoMaximoBytes) {
@@ -79,24 +96,34 @@ export default function FotoPerfil(props) {
             const formData = new FormData();
             formData.append("arquivo", blob, originalFile?.name || "imagem.jpg");
 
-            await caringuApi.post(
+            const response = await caringuApi.post(
                 `/pessoas/${personalId}/upload-foto-perfil`,
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
 
             setShowModal(false);
-            toast.success("Foto enviada com sucesso!");
-            window.location.reload(true);
 
+            const novaUrl = response?.data?.urlFotoPerfil || URL.createObjectURL(blob);
+            setFileName(novaUrl);
+
+            if (props.onFotoChange) props.onFotoChange(novaUrl);
+
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Foto enviada com sucesso!" />
+            ));
         } catch (err) {
             console.error(err);
-            toast.error("Erro ao enviar a imagem.");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao enviar a imagem." />
+            ));
         } finally {
             setLoading(false);
             setMensagemStatus("Confirmar");
         }
     };
+
+
 
     return (
         <>
