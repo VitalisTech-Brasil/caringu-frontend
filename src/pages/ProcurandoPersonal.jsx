@@ -42,8 +42,10 @@ const ProcurandoPersonal = () => {
   const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(() => {
-    if (window.innerWidth >= 640) return 4;
-    return 6;
+    if (window.innerWidth >= 1536) return 5;
+    if (window.innerWidth >= 1024) return 4;
+    if (window.innerWidth >= 768) return 2;
+    return 4;
   });
 
   const totalPages = Math.ceil(filteredTrainers.length / itemsPerPage);
@@ -52,10 +54,14 @@ const ProcurandoPersonal = () => {
   useEffect(() => {
     const handleResize = () => {
       let newItemsPerPage;
-      if (window.innerWidth >= 640) {
+      if (window.innerWidth >= 1536) {
+        newItemsPerPage = 5;
+      } else if (window.innerWidth >= 1024) {
         newItemsPerPage = 4;
+      } else if (window.innerWidth >= 768) {
+        newItemsPerPage = 2;
       } else {
-        newItemsPerPage = 6;
+        newItemsPerPage = 4;
       }
       setItemsPerPage(newItemsPerPage);
       setCurrentPage(1);
@@ -597,8 +603,8 @@ const ProcurandoPersonal = () => {
 
           {/* Lista de Personal Trainers */}
           <div className="xl:w-[96%] m-2 md:m-6 p-0 md:p-4 h-auto flex flex-col mt-6 rounded-lg items-center bg-[var(--cor-secundaria)]">
-            <div className="md:mt-6 w-full h-auto rounded-md ">
-              <div className="w-full flex md:flex-row flex-col justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
+            <div className="w-full h-auto rounded-md ">
+              <div className="w-full flex xl:flex-row flex-col justify-center items-center gap-2 sm:gap-4 bg-[var(--cor-secundaria)] py-4">
                 <div className="w-full flex flex-row items-center justify-start h-auto gap-2 sm:gap-4">
                   <input
                     type="text"
@@ -622,31 +628,36 @@ const ProcurandoPersonal = () => {
                     </svg>
                   </button>
                 </div>
-                <div className="gap-5 p-4 flex flex-col md:flex-row items-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
+                <div className="xl:w-230 w-full gap-4 p-2 flex md:flex-row flex-col items-center justify-center text-[var(--cor-primaria)] h-auto rounded-md border-solid border-[#1D2D441C] border-2 text-base sm:text-xl lg:text-base xl:text-xl font-light">
                   <span>
-                    Exibir por avaliação
+                    Exibir por avaliação:
                   </span>
-                  <div className="pt-2 pb-2">
-                    <Rating
-                      initialRating={rating}
-                      fractions={2}
-                      emptySymbol={<StarEmpty />}
-                      fullSymbol={<StarFull />}
-                      onChange={ratingChanged}
-                    />
+                  <div className="flex flex-row h-auto gap-5 items-center">
+                    <div className="pt-2 pb-2">
+                      <Rating
+                        initialRating={rating}
+                        fractions={2}
+                        emptySymbol={<StarEmpty />}
+                        fullSymbol={<StarFull />}
+                        onChange={ratingChanged}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={handleLimparFiltro}
+                      cor="#E96E35"
+                      height="40px"
+                      corTexto="white"
+                      classNameExtra="px-3  rounded text-sm transition-colors"
+                      ariaLabel="Limpar filtro de avaliações"
+                      texto="Limpar"
+                    ></Button>
                   </div>
-                  <Button
-                    type="button"
-                    onClick={handleLimparFiltro}
-                    classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
-                    ariaLabel="Limpar filtro de avaliações"
-                    texto="Limpar filtro"
-                  ></Button>
                 </div>
               </div>
             </div>
             {currentTrainers.length > 0 ? (
-              <div className="flex flex-wrap w-full gap-10 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-4 w-full h-auto">
                 {loadingOpinioes ? (
                   <div className="col-span-1 xl:col-span-2 flex justify-center items-center py-8">
                     <div className="flex items-center gap-3 text-[var(--cor-primaria)]">
@@ -657,7 +668,7 @@ const ProcurandoPersonal = () => {
                       <span>Carregando personal trainers...</span>
                     </div>
                   </div>
-                ) : currentTrainers.length == 0 ? (
+                ) : currentTrainers.length === 0 ? (
                   <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl ">
                     Ainda não existe nenhum personal trainer cadastrado.
                   </div>
@@ -670,22 +681,24 @@ const ProcurandoPersonal = () => {
                     return (
                       <div
                         key={trainer.id}
-                        className="border-2 border-gray-200 mb-4 w-full h-110 sm:h-100 md:w-[45%] lg:w-[22%] lg:mx-2 flex items-center flex-col gap-3 rounded"
+                        className="border-2 border-gray-200 mb-4 w-full h-110 lg:h-120 xl:h-112 lg:mx-2 flex items-center flex-col gap-3 rounded"
                         onClick={() => toggleCardExpansion(index)}
                       >
-                        <div className="w-full h-1/2 sm:h-40  flex items-center justify-center relative">
-                          {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
-                            <img
-                              src={trainer.urlFotoPerfil}
-                              alt={trainer.nomePersonal}
-                              className="w-full h-full sm:w-19 sm:h-19 lg:w-22 lg:h-22 object-cover rounded"
-                              onError={() => lidarErroImagem(trainer.email)}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
-                              <FaUserCircle className="flex-shrink-0 w-full h-1/2 sm:w-20 sm:h-20 md:h-40 lg:w-22 lg:h-22" />
-                            </div>
-                          )}
+                        <div className="w-full h-1/2  flex items-center justify-center relative">
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded">
+
+                            {trainer.urlFotoPerfil && !errosImagem[trainer.email] ? (
+                              <img
+                                src={trainer.urlFotoPerfil}
+                                alt={trainer.nomePersonal}
+                                className="w-full h-full md:w-35 md:h-35 xl:w-45 xl:h-45 object-cover md:rounded-full"
+                                onError={() => lidarErroImagem(trainer.email)}
+                              />
+                            ) : (
+                              <FaUserCircle className="flex-shrink-0 w-25 h-25 xl:w-30 xl:h-30" />
+
+                            )}
+                          </div>
                           {/* badge de avaliação no canto superior direito */}
                           <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded flex items-center gap-1">
                             <span className="text-sm font-semibold text-yellow-500 flex gap-2 items-center">
@@ -697,40 +710,42 @@ const ProcurandoPersonal = () => {
                           </div>
                         </div>
                         {/* conteúdo do card */}
-                        <div className="w-full flex flex-col gap-1 px-2">
-                          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
-                            <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
-                            <p className="text-sm flex gap-1 items-center">
+                        <div className="w-full h-1/2 flex flex-col px-2 justify-between">
+                          <div className="w-full h-auto gap-1 flex flex-col">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+                              <p className="text-md">{trainer.nomePersonal.split(" ").slice(0, 2).join(" ")}</p>
+                              <p className="text-sm flex gap-1 items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
+                                  <path d="M2.8848 5.25314C4.07807 -0.104942 11.8495 -0.0987544 13.0367 5.25933C13.7332 8.4024 11.8192 11.0629 10.1413 12.7087C8.92383 13.909 6.99764 13.909 5.77409 12.7087C4.1023 11.0629 2.18823 8.39622 2.8848 5.25314Z" fill="#FDFCFA" stroke="#1D2D44" strokeWidth="1.5" />
+                                  <path d="M7.96113 8.3094C9.00487 8.3094 9.85098 7.44513 9.85098 6.379C9.85098 5.31288 9.00487 4.44861 7.96113 4.44861C6.9174 4.44861 6.07129 5.31288 6.07129 6.379C6.07129 7.44513 6.9174 8.3094 7.96113 8.3094Z" stroke="#1D2D44" strokeWidth="1.5" />
+                                </svg>
+                                {trainer.cidade}
+                              </p>
+                            </div>
+                            <p className="text-sm flex gap-1">
                               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
-                                <path d="M2.8848 5.25314C4.07807 -0.104942 11.8495 -0.0987544 13.0367 5.25933C13.7332 8.4024 11.8192 11.0629 10.1413 12.7087C8.92383 13.909 6.99764 13.909 5.77409 12.7087C4.1023 11.0629 2.18823 8.39622 2.8848 5.25314Z" fill="#FDFCFA" stroke="#1D2D44" strokeWidth="1.5" />
-                                <path d="M7.96113 8.3094C9.00487 8.3094 9.85098 7.44513 9.85098 6.379C9.85098 5.31288 9.00487 4.44861 7.96113 4.44861C6.9174 4.44861 6.07129 5.31288 6.07129 6.379C6.07129 7.44513 6.9174 8.3094 7.96113 8.3094Z" stroke="#1D2D44" strokeWidth="1.5" />
+                                <path d="M7.96015 1.25C4.62264 1.25 1.90295 4.05625 1.90295 7.5C1.90295 10.9438 4.62264 13.75 7.96015 13.75C11.2977 13.75 14.0174 10.9438 14.0174 7.5C14.0174 4.05625 11.2977 1.25 7.96015 1.25ZM10.595 9.73125C10.5102 9.88125 10.3588 9.9625 10.2013 9.9625C10.1226 9.9625 10.0438 9.94375 9.97114 9.89375L8.09341 8.7375C7.62701 8.45 7.28175 7.81875 7.28175 7.2625V4.7C7.28175 4.44375 7.48769 4.23125 7.73604 4.23125C7.98438 4.23125 8.19033 4.44375 8.19033 4.7V7.2625C8.19033 7.4875 8.37204 7.81875 8.55982 7.93125L10.4375 9.0875C10.6556 9.21875 10.7283 9.50625 10.595 9.73125Z" fill="#1D2D44" />
                               </svg>
-                              {trainer.cidade}
+                              {trainer.experiencia} anos de experiência
+                            </p>
+                            {/* especialidades */}
+                            {trainer.especialidades?.length > 0 && (
+                              <div className="flex gap-1 lg:gap-10 items-center ">
+                                <span className="bg-[#E96E35]/11 text-xs px-1 py-1 rounded border-2 border-[#E96E35]/20 text-[#E96E35]">
+                                  {trainer.especialidades[0]}
+                                </span>
+                                {trainer.especialidades.length > 1 && (
+                                  <span className="text-[var(--cor-primaria)] text-xs px-1 py-1 rounded border-2 border-[var(--cor-primaria)]/11">
+                                    +{trainer.especialidades.length - 1}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            {/* plano mais barato */}
+                            <p className="text-sm">
+                              <span className="font-bold text-2xl">R$ {menorPlano.valorAulas}</span> /{" "}plano mais acessível
                             </p>
                           </div>
-                          <p className="text-sm flex gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 16 15" fill="none">
-                              <path d="M7.96015 1.25C4.62264 1.25 1.90295 4.05625 1.90295 7.5C1.90295 10.9438 4.62264 13.75 7.96015 13.75C11.2977 13.75 14.0174 10.9438 14.0174 7.5C14.0174 4.05625 11.2977 1.25 7.96015 1.25ZM10.595 9.73125C10.5102 9.88125 10.3588 9.9625 10.2013 9.9625C10.1226 9.9625 10.0438 9.94375 9.97114 9.89375L8.09341 8.7375C7.62701 8.45 7.28175 7.81875 7.28175 7.2625V4.7C7.28175 4.44375 7.48769 4.23125 7.73604 4.23125C7.98438 4.23125 8.19033 4.44375 8.19033 4.7V7.2625C8.19033 7.4875 8.37204 7.81875 8.55982 7.93125L10.4375 9.0875C10.6556 9.21875 10.7283 9.50625 10.595 9.73125Z" fill="#1D2D44" />
-                            </svg>
-                            {trainer.experiencia} anos de experiência
-                          </p>
-                          {/* especialidades */}
-                          {trainer.especialidades?.length > 0 && (
-                            <div className="flex gap-1 lg:gap-10 items-center ">
-                              <span className="bg-[#E96E35]/11 text-xs px-1 py-1 rounded border-2 border-[#E96E35]/20 text-[#E96E35]">
-                                {trainer.especialidades[0]}
-                              </span>
-                              {trainer.especialidades.length > 1 && (
-                                <span className="text-[var(--cor-primaria)] text-xs px-1 py-1 rounded border-2 border-[var(--cor-primaria)]/11">
-                                  +{trainer.especialidades.length - 1}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          {/* plano mais barato */}
-                          <p className="text-sm">
-                            <span className="font-bold text-2xl">R$ {menorPlano.valorAulas}</span> /{" "}plano mais acessível
-                          </p>
                           <Button
                             texto="Ver Perfil"
                             fontSize="14px"
