@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Header from "../components/Aluno/Header/Header";
 import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
 import { caringuApi } from "../provider/caringuApi";
+import Button from "../components/Utils/Button";
 
 const HomeAluno = () => {
   // const navigate = useNavigate();
@@ -53,66 +54,68 @@ const HomeAluno = () => {
             caringuApi.get(`/aulas-treinos-exercicios/buscar-aulas/${alunoId}`),
           ]);
 
-          const progressoData = progressoResponse?.data || {};
-          const mappedProgresso = {
-            total: progressoData.totalAulas ?? 0,
-            realizadas: progressoData.aulasRealizadas ?? 0,
-            pendentes: progressoData.aulasPendentes ?? 0,
-            percentual: progressoData.percentualConclusao ?? 0,
+        console.log("Respostas das requisições:", proximasResponse);
+
+        const progressoData = progressoResponse?.data || {};
+        const mappedProgresso = {
+          total: progressoData.totalAulas ?? 0,
+          realizadas: progressoData.aulasRealizadas ?? 0,
+          pendentes: progressoData.aulasPendentes ?? 0,
+          percentual: progressoData.percentualConclusao ?? 0,
+        };
+
+        const treinosData = Array.isArray(treinosResponse?.data)
+          ? treinosResponse.data
+          : [];
+        const mappedTreinos = treinosData.map((t) => ({
+          treinoId: t.treinoId ?? null,
+          nome: t.treinoNome ?? t.nome ?? "",
+          ocorrencias: t.qtdVezesRealizado ?? t.ocorrencias ?? 0,
+        }));
+
+        setProgressoAulas(mappedProgresso);
+        setTopTreinos(mappedTreinos);
+
+        const evolucaoData = evolucaoResponse?.data || null;
+
+        const mappedEvolucao = evolucaoData
+          ? {
+            exercicioId: evolucaoData.exercicioId ?? null,
+            nome: evolucaoData.nomeExercicio ?? evolucaoData.nome ?? "",
+            cargaAntiga: evolucaoData.cargaAntiga ?? 0,
+            cargaAtual: evolucaoData.cargaAtual ?? 0,
+          }
+          : {
+            exercicioId: null,
+            nome: "Nenhum exercício encontrado",
+            cargaAntiga: 0,
+            cargaAtual: 0,
           };
 
-          const treinosData = Array.isArray(treinosResponse?.data)
-            ? treinosResponse.data
-            : [];
-          const mappedTreinos = treinosData.map((t) => ({
-            treinoId: t.treinoId ?? null,
-            nome: t.treinoNome ?? t.nome ?? "",
-            ocorrencias: t.qtdVezesRealizado ?? t.ocorrencias ?? 0,
-          }));
+        setExercicioEvolucao(mappedEvolucao);
 
-          setProgressoAulas(mappedProgresso);
-          setTopTreinos(mappedTreinos);
-          
-          const evolucaoData = evolucaoResponse?.data || null;
-          
-          const mappedEvolucao = evolucaoData
-            ? {
-                exercicioId: evolucaoData.exercicioId ?? null,
-                nome: evolucaoData.nomeExercicio ?? evolucaoData.nome ?? "",
-                cargaAntiga: evolucaoData.cargaAntiga ?? 0,
-                cargaAtual: evolucaoData.cargaAtual ?? 0,
-              }
-            : {
-                exercicioId: null,
-                nome: "Nenhum exercício encontrado",
-                cargaAntiga: 0,
-                cargaAtual: 0,
-              };
+        const proximasData = Array.isArray(proximasResponse?.data)
+          ? proximasResponse.data
+          : [];
 
-          setExercicioEvolucao(mappedEvolucao);
+        const mappedProximas = proximasData.map((aula) => {
+          return {
+            id: aula.aulaId,
+            aulaTreinoExercicioId: aula.aulaTreinoExercicioId,
+            dataHorarioInicio: aula.dataHorarioInicio,
+            dataHorarioFim: aula.dataHorarioFim,
+            nomeTreino: aula.nomeTreino,
+            nomeExercicio: aula.nomeExercicio,
+            nomePersonal: aula.nomePersonal,
+            urlFotoPerfil: aula.urlFotoPerfil,
+            treinoId: aula.treinoId,
+            exercicioId: aula.exercicioId,
+            personalId: aula.personalId,
+            status: "AGENDADA",
+          };
+        });
 
-          const proximasData = Array.isArray(proximasResponse?.data)
-            ? proximasResponse.data
-            : [];
-          
-          const mappedProximas = proximasData.map((aula) => {
-            return {
-              id: aula.aulaId,
-              aulaTreinoExercicioId: aula.aulaTreinoExercicioId,
-              dataHorarioInicio: aula.dataHorarioInicio,
-              dataHorarioFim: aula.dataHorarioFim,
-              nomeTreino: aula.nomeTreino,
-              nomeExercicio: aula.nomeExercicio,
-              nomePersonal: aula.nomePersonal,
-              urlFotoPerfil: aula.urlFotoPerfil,
-              treinoId: aula.treinoId,
-              exercicioId: aula.exercicioId,
-              personalId: aula.personalId,
-              status: "AGENDADA", 
-            };
-          });
-
-          setProximasAulas(mappedProximas);
+        setProximasAulas(mappedProximas);
 
       } catch (error) {
         console.error("Erro ao buscar dados do aluno:", error);
@@ -444,134 +447,68 @@ const HomeAluno = () => {
               Próximas aulas
             </h2>
 
-            <div className="space-y-4">
-              {proximasAulas.length > 0 ? (
-                proximasAulas.map((aula) => (
-                  <div
-                    key={aula.id}
-                    className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-100"
-                  >
-                    {/* Cabeçalho da Aula */}
-                    <div className="flex items-center justify-between mb-3 lg:mb-4 pb-3 lg:pb-4 border-b border-gray-200">
-                      <div className="flex-1 min-w-0">
-                        <h3
-                          className="text-base lg:text-xl font-bold mb-1 truncate"
-                          style={{
-                            color: "#1D2D44",
-                            fontFamily: "Inter",
-                          }}
-                        >
-                          {aula.nomeTreino}
-                        </h3>
-                        <p className="text-xs lg:text-sm text-gray-600 break-words">
-                          {new Date(aula.dataHorarioInicio).toLocaleDateString('pt-BR', {
-                            weekday: 'short',
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </p>
-                      </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        aula.status === 'AGENDADA' ? 'bg-blue-100 text-blue-800' :
-                        aula.status === 'CONCLUIDA' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {aula.status}
-                      </div>
+            <div>
+              <div>
+                <span>
+                  Aula - 10/05/2025
+                </span>
+                <Button
+                  texto={"Acompanhar Aula"}
+                />
+              </div>
+              <div>
+                <div>
+                  <span>icon</span>
+                  <span></span>
+                </div>
+                <div>
+                  <div>
+                    <span>Exercícios</span>
+                  </div>
+                  <div>
+                    <div>
+                      <span> exercicio 1</span>
                     </div>
-
-                    <div className="space-y-3">
-                      {/* Personal */}
-                      <div className="flex items-center mb-2 lg:mb-3">
-                        {aula.urlFotoPerfil ? (
-                          <img
-                            src={aula.urlFotoPerfil}
-                            alt={aula.nomePersonal}
-                            className="w-8 h-8 lg:w-10 lg:h-10 rounded-full object-cover mr-2 lg:mr-3 flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gray-300 mr-2 lg:mr-3 flex items-center justify-center flex-shrink-0">
-                            <span className="text-gray-600 text-sm">👤</span>
-                          </div>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] lg:text-xs text-gray-500">Personal Trainer</p>
-                          <p className="font-medium text-sm lg:text-base text-gray-800 truncate">{aula.nomePersonal}</p>
-                        </div>
-                      </div>
-
-                      {/* Exercício */}
-                      <div className="flex items-center mb-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-600 flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                          />
-                        </svg>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] lg:text-xs text-gray-500">Exercício</p>
-                          <p className="font-medium text-sm lg:text-base text-gray-800 truncate">{aula.nomeExercicio}</p>
-                        </div>
-                      </div>
-
-                      {/* Horário */}
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="w-4 h-4 lg:w-5 lg:h-5 mr-2 lg:mr-3 text-gray-600 flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span className="font-medium text-sm lg:text-base text-gray-800">
-                          {new Date(aula.dataHorarioInicio).toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })} - {new Date(aula.dataHorarioFim).toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                      </div>
-
-                      {/* Botão de ação */}
-                      {aula.status === 'AGENDADA' && (
-                        <button
-                          className="w-full mt-3 lg:mt-4 text-white rounded-lg text-xs lg:text-sm font-medium hover:opacity-90 transition-opacity py-2"
-                          style={{
-                            backgroundColor: "#748CAB",
-                            fontFamily: "Inter, sans-serif",
-                          }}
-                        >
-                          Ver detalhes da aula
-                        </button>
-                      )}
+                    <div>
+                      <span> exercicio 1</span>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-gray-100 text-center">
-                  <div className="text-6xl mb-4">📅</div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-2">Nenhuma aula encontrada</h3>
-                  <p className="text-gray-600">Você não tem próximas aulas agendadas.</p>
+                  <div>
+                    <span>quantidade de exercicio</span>
+                  </div>
                 </div>
-              )}
+                <div>
+                  <div>
+                    <span>ConoGrama</span>
+                  </div>
+                  <div>
+                    <div>
+                      <span> Sabado </span>
+                    </div>
+                    <div>
+                      <span>
+                        icon
+                      </span>
+                      <span>
+                        horario
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div>
+                    <span>Personal Trainer</span>
+                  </div>
+                  <div>
+                    <div>
+                      <span> icon </span>
+                    </div>
+                    <span>
+                      nome personal
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
         </main>
