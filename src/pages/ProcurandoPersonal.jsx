@@ -639,7 +639,7 @@ const ProcurandoPersonal = () => {
                     type="button"
                     onClick={handleLimparFiltro}
                     classNameExtra="px-3 py-2 bg-[#E96E35] text-white rounded text-sm cursor-pointer hover:bg-[#cf5c29] transition-colors"
-                    aria-label="Limpar filtro de avaliações"
+                    ariaLabel="Limpar filtro de avaliações"
                     texto="Limpar filtro"
                   ></Button>
                 </div>
