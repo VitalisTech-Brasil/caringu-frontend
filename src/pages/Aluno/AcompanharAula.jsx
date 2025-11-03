@@ -21,7 +21,7 @@ const AcompanharAula = () => {
             grupoMuscular: "Peito",
             observacoes: "Manter postura correta",
             tempoDescanso: "90 segundos",
-            video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // ✅ YouTube
+            video: "https://www.youtube.com/embed/YiP-Zhk5YMk?si=cQN_GUWNfpiVz1b5", // ✅ YouTube
         },
         {
             id: 2,
@@ -31,7 +31,7 @@ const AcompanharAula = () => {
             grupoMuscular: "Bíceps",
             observacoes: "Sem balanço",
             tempoDescanso: "60 segundos",
-            video: "/videos/rosca.mp4", // ✅ arquivo local
+            video: "https://www.youtube.com/watch?v=DEzJ2D9765M", // ✅ arquivo local
         },
     ];
     return (
@@ -58,7 +58,7 @@ const AcompanharAula = () => {
                     />
                     <div className='flex w-full items-center flex-col justify-center'>
                         <div className="pl-[1rem] sm:pl-[3.5rem] w-[100%] h-auto flex mt-4 gap-7 border-b-2 border-[#1D2D441A] lg:max-w-4xl lg:border-b-0">
-                            <Link to={`/agenda-aluno`}>
+                            <Link to={`/home-aluno`}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9.57 5.92993L3.5 11.9999L9.57 18.0699" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M20.5 12H3.66998" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />

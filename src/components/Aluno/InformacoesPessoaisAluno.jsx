@@ -3,28 +3,30 @@ import { caringuApi } from "../../provider/caringuApi";
 import { toast } from "react-hot-toast";
 import CustomToast from "../Utils/CustomToast";
 import FotoPerfil from "../../components/PerfilPersonal/FotoPerfil/FotoPerfil";
-import MascaraTelefone from "..//Utils/Functions/MascaraTelefone";
+import MascaraTelefone from "../Utils/Functions/MascaraTelefone";
 
 export default function InformacoesPessoaisAluno() {
     const [formData, setFormData] = useState({});
     const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
+    const [alunoData, setAlunoData] = useState({});
 
     const alunoId = sessionStorage.getItem("pessoaId");
 
     useEffect(() => {
         document.title = "Perfil | CaringU";
-        console.log("Aluno ID:", alunoId);
         const fetchData = async () => {
             try {
                 const response = await caringuApi.get(`/alunos/${alunoId}`);
                 const celularComMascara = MascaraTelefone(response.data.celular);
 
-                setUrlFotoPerfil(response.data.urlFotoPerfil);
-
-                setFormData({
+                const dadosComMascara = {
                     ...response.data,
                     celular: celularComMascara,
-                });
+                };
+
+                setUrlFotoPerfil(response.data.urlFotoPerfil);
+                setFormData(dadosComMascara);
+                setAlunoData(dadosComMascara);
             } catch (error) {
                 console.error("Erro ao buscar aluno:", error);
             }
@@ -69,38 +71,26 @@ export default function InformacoesPessoaisAluno() {
     };
 
     const handleSave = async () => {
-        if (!alunoId) {
-            console.error("ID do aluno não definido!");
-            return;
-        }
+        if (!alunoId) return console.error("ID do aluno não definido!");
 
-        const dataParaSalvar = {};
-
-        if (formData.nome) dataParaSalvar.nome = formData.nome;
-        if (formData.email) dataParaSalvar.email = formData.email;
-        if (formData.celular) dataParaSalvar.celular = removerMascara(formData.celular);
-        if (formData.urlFotoPerfil) dataParaSalvar.urlFotoPerfil = formData.urlFotoPerfil;
-        if (formData.dataNascimento) dataParaSalvar.dataNascimento = formData.dataNascimento;
-        if (formData.genero) dataParaSalvar.genero = formData.genero;
-        if (formData.peso != null) dataParaSalvar.peso = Number(formData.peso);
-        if (formData.altura != null) dataParaSalvar.altura = Number(formData.altura);
-        if (formData.nivelAtividade) dataParaSalvar.nivelAtividade = formData.nivelAtividade;
-        if (formData.nivelExperiencia) dataParaSalvar.nivelExperiencia = formData.nivelExperiencia;
+        const dataParaSalvar = {
+            nome: formData.nome || undefined,
+            email: formData.email || undefined,
+            celular: formData.celular ? removerMascara(formData.celular) : undefined,
+            urlFotoPerfil: formData.urlFotoPerfil || undefined,
+            dataNascimento: formData.dataNascimento || undefined,
+            genero: formData.genero || undefined,
+            peso: formData.peso != null ? Number(formData.peso) : undefined,
+            altura: formData.altura != null ? Number(formData.altura) : undefined,
+            nivelAtividade: formData.nivelAtividade || undefined,
+            nivelExperiencia: formData.nivelExperiencia || undefined,
+        };
 
         try {
             await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
-
-            toast.custom((t) => (
-                <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />
-            ));
-
-            // Atualiza o estado local para refletir as mudanças sem reload
-            setFormData(prev => ({ ...prev, ...dataParaSalvar }));
-
+            toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
         } catch (error) {
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />
-            ));
+            toast.custom(t => <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />);
             console.error("Erro ao atualizar informações:", error);
         }
     };
@@ -109,7 +99,11 @@ export default function InformacoesPessoaisAluno() {
     return (
         <>
             <div className="space-y-8">
-                <FotoPerfil urlFoto={urlFotoPerfil} nomePersonal={formData.nome || ""} />
+                <FotoPerfil
+                    urlFoto={urlFotoPerfil}
+                    nomePersonal={alunoData.nome || ""}
+                    onFotoChange={(novaUrl) => setUrlFotoPerfil(novaUrl)}
+                />
 
                 <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">
                     <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center w-full p-2">

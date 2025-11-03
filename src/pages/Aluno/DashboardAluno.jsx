@@ -276,7 +276,7 @@ const DashboardAluno = () => {
                     <div className="bg-[var(--cor-secundaria)] rounded-lg p-4  border-2 border-[#E6E6E2] flex  flex-col w-full lg:w-[60%] gap-3">
                         <div className="flex flex-col justify-center w-full">
                             <div className="justify-start text-zinc-900 text-xl md:text-3xl font-semibold flex flex-wrap items-center gap-5 max-h-7">
-                                <Link to={`/relatorio-treino/${idAluno}`}>
+                                <Link to={`/minha-evolucao`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
                                         <path d="M21.1336 13.0957L7.729 26.5003L21.1336 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M45.2707 26.5H8.10449" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />

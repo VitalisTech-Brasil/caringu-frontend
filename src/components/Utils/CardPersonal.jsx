@@ -46,7 +46,7 @@ const CardPersonal = ({
     }
 
     return (
-        <div className="flex lg:flex-row flex-col items-start ml-[2.5rem] border-solid border-[#1D2D441C] border-2 rounded-md h-auto w-[85%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
+        <div className="flex lg:flex-row flex-col items-start ml-3 md:ml-[2.5rem] border-solid border-[#1D2D441C] border-2 rounded-md h-auto w-[94%] lg:w-[95%] gap-3 xl:gap-6 2xl:gap-12 pb-4 pl-[10%] lg:pl-3 xl:pl-5 2xl:pl-12">
             <div className="mt-9 lg:ml-0 ml-[31%]">
                 {urlFoto && !errosImagem[email] ? (
                     <img
@@ -59,14 +59,14 @@ const CardPersonal = ({
                     <FaUserCircle className="flex-shrink-0 w-25 h-25 sm:w-40 sm:h-40 lg:w-18 lg:h-18 xl:w-25 xl:h-25 2xl:w-33 2xl:h-33" />
                 )}
             </div>
-            <div className="flex flex-col items-start justify-start  mt-11 w-58 sm:w-115 lg:w-80 xl:w-100" >
+            <div className="flex flex-col items-start justify-start mt-3 md:mt-11 w-58 sm:w-115 lg:w-80 xl:w-100" >
                 <div>
                     <h2 className="text-xl sm:text-[32px] lg:text-2xl xl:text-[28px] text-[var(--cor-primaria)] font-semibold">
                         {nomePersonal}
                     </h2>
                 </div>
-                <div className="flex md:flex-row flex-col items-center justify-start w-full gap-4 md:gap-0">
-                    <div className="flex flex-col items-start justify-center w-[100%] md:w-[100%]">
+                <div className="flex md:flex-row flex-col items-center justify-start w-full gap-4 md:gap-0 mt-3 md:mt-0">
+                    <div className="flex flex-col items-start justify-center w-[100%] md:w-[100%] gap-1 md:gap-0">
                         <div className="flex flex-row items-center justify-start text-[var(--cor-primaria)] h-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" className="w-[25px] h-[25px] sm:w-[40px] sm:h-[40px] lg:w-[25px] lg:h-[25px]" viewBox="0 0 25 25" fill="none">
                                 <path d="M3.77045 8.06901C5.82253 -0.951821 19.1871 -0.941404 21.2288 8.07943C22.4267 13.3711 19.135 17.8503 16.2496 20.6211C14.1559 22.6419 10.8434 22.6419 8.7392 20.6211C5.8642 17.8503 2.57253 13.3607 3.77045 8.06901Z" fill="#FFFDF6" stroke="#1D2D44" strokeWidth="1.5" />
@@ -78,7 +78,7 @@ const CardPersonal = ({
                         </div>
                         <div className="flex flex-col text-base sm:text-xl lg:text-xs xl:text-base 2xl:text-xl text-[var(--cor-primaria)]">
                             <div className="flex flex-row gap-2 items-center">
-                                <svg className="w-[25px] h-[25px] sm:w-[40px] sm:h-[40px] lg:w-[17px] lg:h-[17px]" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="w-[21px] h-[21px] sm:w-[36px] sm:h-[36px] lg:w-[21px] lg:h-[21px]" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M15.5 0C6.9595 0 0 6.9595 0 15.5C0 24.0405 6.9595 31 15.5 31C24.0405 31 31 24.0405 31 15.5C31 6.9595 24.0405 0 15.5 0ZM22.2425 21.0335C22.0255 21.4055 21.638 21.607 21.235 21.607C21.0335 21.607 20.832 21.5605 20.646 21.4365L15.841 18.569C14.6475 17.856 13.764 16.2905 13.764 14.911V8.556C13.764 7.9205 14.291 7.3935 14.9265 7.3935C15.562 7.3935 16.089 7.9205 16.089 8.556V14.911C16.089 15.469 16.554 16.2905 17.0345 16.5695L21.8395 19.437C22.3975 19.7625 22.5835 20.4755 22.2425 21.0335Z" fill="#1D2D44" />
                                 </svg>
                                 <span className="font-normal h-auto break-all">
@@ -88,14 +88,14 @@ const CardPersonal = ({
                                         : `${experiencia} ${experiencia === 1 ? "ano" : "anos"}`}
                                 </span>
                             </div>
-                            <span className="font-normal h-auto break-all">
-                                {email}
-                            </span>
                         </div>
+                        <span className="font-normal h-auto break-all">
+                            {email}
+                        </span>
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col h-auto w-auto  text-[var(--cor-primaria)] mt-11">
+            <div className="flex flex-col h-auto w-auto  text-[var(--cor-primaria)] mt-3 md:mt-11">
                 <h3 className="text-xl sm:text-2xl lg:text-base xl:text-xl 2xl:text-2xl font-semibold mb-5">
                     Especialidades:
                 </h3>
@@ -111,7 +111,7 @@ const CardPersonal = ({
                 ))}
 
             </div>
-            <div className="flex flex-col justify-center items-start text-[var(--cor-primaria)] mt-11">
+            <div className="flex flex-col justify-center items-start text-[var(--cor-primaria)] mt-3 md:mt-11">
                 <div>
                     <h3 className="font-semibold text-xl sm:text-2xl lg:text-base xl:text-xl 2xl:text-2xl ml-1">
                         Avaliações:

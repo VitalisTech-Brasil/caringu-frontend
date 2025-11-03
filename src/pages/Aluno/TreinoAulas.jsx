@@ -133,7 +133,7 @@ function TreinoAulas() {
                                     <CardExercicio
                                         key={exercicio.idExecucaoExercicio}
                                         exercicio={exercicio}
-                                        expandido={expandidoId === exercicio.idExecucaoExercicio}
+                                        expandido={expandidoId}
                                         onExpand={() =>
                                             setExpandidoId(
                                                 expandidoId === exercicio.idExecucaoExercicio
