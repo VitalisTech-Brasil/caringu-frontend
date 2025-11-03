@@ -21,7 +21,7 @@ const AcompanharAula = () => {
             grupoMuscular: "Peito",
             observacoes: "Manter postura correta",
             tempoDescanso: "90 segundos",
-            video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // ✅ YouTube
+            video: "https://www.youtube.com/embed/YiP-Zhk5YMk?si=cQN_GUWNfpiVz1b5", // ✅ YouTube
         },
         {
             id: 2,
@@ -31,7 +31,7 @@ const AcompanharAula = () => {
             grupoMuscular: "Bíceps",
             observacoes: "Sem balanço",
             tempoDescanso: "60 segundos",
-            video: "/videos/rosca.mp4", // ✅ arquivo local
+            video: "https://www.youtube.com/watch?v=DEzJ2D9765M", // ✅ arquivo local
         },
     ];
     return (
