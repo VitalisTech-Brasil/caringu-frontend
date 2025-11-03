@@ -456,7 +456,7 @@ const HomeAluno = () => {
                     <span className="text-[var(--azul-escuro)] font-bold text-2xl">
                       Aula - {aula.dataAula}
                     </span>
-                    {/* <Button
+                    <Button
                       fontWeight="700"
                       texto={"Acompanhar Aula"}
                       cor="#748CAB"
@@ -466,7 +466,7 @@ const HomeAluno = () => {
                       classNameExtra="px-4 py-1"
                       onClick={() => navigate(`/acompanhar-aula-aluno/${aula.idAula}`)}
 
-                    /> */}
+                    />
                   </div>
                   <div className="w-full h-auto flex flex-col gap-4">
                     <div className="w-full h-auto flex flex-row justify-start items-center gap-2">
