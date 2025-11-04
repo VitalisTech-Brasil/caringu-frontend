@@ -8,11 +8,18 @@ import Input from '../../components/Utils/InputPosLogin'
 import Button from '../../components/Utils/Button'
 import CaixaFeedback from '../../components/Utils/GerenciarAlunos/CaixaFeedback'
 import { caringuApi } from '../../provider/caringuApi'
+import { useLocation } from 'react-router-dom'
+import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone"
+import MascaraData from "../../components/Utils/Functions/MascaraData"
+import MascaraNivelExperiencia from "../../components/Utils/Functions/MascaraNivelExperiencia";
+import MascaraGenero from '../../components/Utils/Functions/MascaraGenero';
 
 const Feedback = () => {
     const { idAluno } = useParams();
     const [imgErro, setImgErro] = useState(false);
     const [aluno, setAluno] = useState();
+    const location = useLocation();
+    const alunoFromState = location.state?.aluno;
 
 
     useEffect(() => {
@@ -31,21 +38,40 @@ const Feedback = () => {
     }, [idAluno]);
 
     const aulas = [
-        { id: 1, data: "10/05/2025", diaSemana: "Segunda-Feira", horarioInicio: "15:00", horarioFim: "16:00", quantidadeFeedbacks: 4, nomePersoal: "João Pedro", nomeTreino: "Treino A" },
-        { id: 2, data: "11/05/2025", diaSemana: "Terça-Feira", horarioInicio: "09:00", horarioFim: "10:00", quantidadeFeedbacks: 0, nomePersoal: "João Pedro", nomeTreino: "Treino B" },
-        { id: 3, data: "12/05/2025", diaSemana: "Quarta-Feira", horarioInicio: "18:00", horarioFim: "19:00", quantidadeFeedbacks: 2, nomePersoal: "João Pedro", nomeTreino: "Treino C" },
-        { id: 4, data: "13/05/2025", diaSemana: "Quinta-Feira", horarioInicio: "07:00", horarioFim: "08:00", quantidadeFeedbacks: 1, nomePersoal: "João Pedro", nomeTreino: "Treino D" },
-        { id: 5, data: "14/05/2025", diaSemana: "Sexta-Feira", horarioInicio: "17:00", horarioFim: "18:00", quantidadeFeedbacks: 3, nomePersoal: "João Pedro", nomeTreino: "Treino E" },
-        { id: 6, data: "15/05/2025", diaSemana: "Sábado", horarioInicio: "10:00", horarioFim: "11:00", quantidadeFeedbacks: 0, nomePersoal: "João Pedro", nomeTreino: "Treino F" },
+        { idAula: 1, data: "10/05/2025", diaSemana: "Segunda-Feira", horarioInicio: "15:00", horarioFim: "16:00", quantidadeFeedbacks: 4, nomePersoal: "João Pedro", nomeTreino: "Treino A" },
+        { idAula: 2, data: "11/05/2025", diaSemana: "Terça-Feira", horarioInicio: "09:00", horarioFim: "10:00", quantidadeFeedbacks: 0, nomePersoal: "João Pedro", nomeTreino: "Treino B" },
+        { idAula: 3, data: "12/05/2025", diaSemana: "Quarta-Feira", horarioInicio: "18:00", horarioFim: "19:00", quantidadeFeedbacks: 2, nomePersoal: "João Pedro", nomeTreino: "Treino C" },
+        { idAula: 4, data: "13/05/2025", diaSemana: "Quinta-Feira", horarioInicio: "07:00", horarioFim: "08:00", quantidadeFeedbacks: 1, nomePersoal: "João Pedro", nomeTreino: "Treino D" },
+        { idAula: 5, data: "14/05/2025", diaSemana: "Sexta-Feira", horarioInicio: "17:00", horarioFim: "18:00", quantidadeFeedbacks: 3, nomePersoal: "João Pedro", nomeTreino: "Treino E" },
+        { idAula: 6, data: "15/05/2025", diaSemana: "Sábado", horarioInicio: "10:00", horarioFim: "11:00", quantidadeFeedbacks: 0, nomePersoal: "João Pedro", nomeTreino: "Treino F" },
     ];
 
     const [aulaSelecionada, setAulaSelecionada] = useState(aulas[0] || null);
 
-    const mensagensFeedback = [
-        { id: 1, label: 'Resposta do Aluno(a):', texto: 'Não senti mais dor!' },
-        { id: 2, label: 'Seu comentário:', texto: 'Que bom!' },
-        { id: 3, label: 'Resposta do Aluno(a):', texto: 'Consegui fazer todos os exercícios!' },
-    ];
+    const [mensagensFeedback, setMensagensFeedback] = useState([]);
+
+    const fetchFeedbacksAula = async (idAula) => {
+        try {
+            const response = await caringuApi.get(`/feedbacks/aula/${idAula}`);
+            const feedbacksArray = response.data;
+            const feedbacks = Array.isArray(feedbacksArray) && feedbacksArray.length > 0
+                ? feedbacksArray[0].feedbacks
+                : [];
+            setMensagensFeedback(feedbacks);
+            console.log("Feedbacks da aula:", feedbacks);
+        } catch (error) {
+            console.error("Erro ao buscar feedbacks da aula:", error);
+            setMensagensFeedback([]);
+        }
+    };
+
+    useEffect(() => {
+        if (aulaSelecionada?.idAula) {
+            fetchFeedbacksAula(aulaSelecionada.idAula);
+        }
+    }, [aulaSelecionada]);
+
+
 
 
     return (
@@ -68,9 +94,9 @@ const Feedback = () => {
                         <div className="h-auto w-[95%] bg-[rgba(29,45,68,0.11)] border-2 border-gray-300 rounded-md flex lg:flex-row flex-col gap-10 justify-center lg:items-start items-center py-5">
                             <div className="lg:w-[28%] w-[90%] bg-[var(--cor-secundaria)] min-h-[400px] lg:min-h-[468px] h-auto p-4 border-2 border-gray-300 rounded-md flex flex-col gap-6">
                                 <div className="flex flex-row w-full h-auto gap-4 items-center">
-                                    {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
+                                    {alunoFromState?.urlFotoPerfil && !imgErro ? (
                                         <img
-                                            src={aluno.alunoId.urlFotoPerfil}
+                                            src={alunoFromState.urlFotoPerfil}
                                             alt="Imagem do aluno"
                                             className='w-10 h-10 sm:w-12 sm:h-12 lg:w-15 lg:h-15 rounded-full'
                                             onError={() => setImgErro(true)}
@@ -81,32 +107,32 @@ const Feedback = () => {
                                     )}
                                     <div className="xl:text-2xl text-base font-medium w-full">
                                         <span className="block w-full break-words">
-                                            Maria Gladys
+                                            {alunoFromState.nomeAluno}
                                         </span>
                                     </div>
                                 </div>
                                 <div className="w-full h-auto flex flex-col gap-3 lg:gap-6">
                                     <div className="h-auto flex flex-col">
                                         <span>Data de Nascimento</span>
-                                        <span className="block w-full break-words">22/11/2005</span>
+                                        <span className="block w-full break-words">{MascaraData(alunoFromState.dataNascimento)}</span>
                                     </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Gênero</span>
-                                        <span className="block w-full break-words">Feminino</span>
+                                        <span className="block w-full break-words">{MascaraGenero(alunoFromState.genero)}</span>
                                     </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Email</span>
                                         <span className="block w-full break-words whitespace-normal leading-snug">
-                                            mariagladys@gmail.com
+                                            {alunoFromState.email}
                                         </span>
                                     </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Telefone</span>
-                                        <span className="block w-full break-words">+55 (11) 91234-5678</span>
+                                        <span className="block w-full break-words">{MascaraTelefone(alunoFromState.celular)}</span>
                                     </div>
                                     <div className="h-auto flex flex-col">
                                         <span>Nível de experiência</span>
-                                        <span className="block w-full break-words">Levemente ativo</span>
+                                        <span className="block w-full break-words">{MascaraNivelExperiencia(alunoFromState.nivelExperiencia)}</span>
                                     </div>
                                 </div>
                             </div>

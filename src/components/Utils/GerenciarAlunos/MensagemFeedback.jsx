@@ -5,6 +5,13 @@ const MensagemFeedback = ({
     texto,
     paddingLeftMensagem = "10%"
 }) => {
+
+        const labelExibido = label === "ALUNO"
+        ? "Resposta do Aluno:"
+        : label === "PERSONAL"
+            ? "Seu comentário:"
+            : label;
+
     return (
         <div className="flex flex-col flex-wrap items-start w-auto h-auto gap-0.5 justify-start text-xs text-[#15171B]">
             <div className="flex flex-wrap flex-row items-center w-auto h-auto gap-1 justify-start">
@@ -15,11 +22,11 @@ const MensagemFeedback = ({
                     <path d="M3.99725 5.5H4.00174" stroke="#1D2D44" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <span>
-                    {label}
+                    {labelExibido}
                 </span>
             </div>
             <div className={`sm:pl-[4%] pl-[${paddingLeftMensagem}] w-full`}>
-                <span className="w-full text-sm whitespace-normal break-words">
+                <span className="w-full text-xs whitespace-normal break-words">
                     {texto}
                 </span>
             </div>

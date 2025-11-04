@@ -1,8 +1,25 @@
 import React from 'react';
 import MensagemFeedback from './MensagemFeedback';
 
+
+function formatarDataCriacao(dataCriacao) {
+  if (!dataCriacao) return "";
+
+  const [data, hora] = dataCriacao.split(" ");
+  const [ano, mes, dia] = data.split("-");
+
+  const diasSemana = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
+  const dateObj = new Date(`${ano}-${mes}-${dia}`);
+  const diaSemana = diasSemana[dateObj.getDay()];
+  return `${diaSemana}, ${dia}/${mes}/${ano} - ${hora}`;
+}
+
 const CaixaFeedback = ({ aula, mensagens, aluno }) => {
   if (!aula) return null;
+
+  const primeiraDataCriacao = mensagens.length > 0 ? mensagens[0].dataCriacao : null;
+  const titulo = primeiraDataCriacao ? formatarDataCriacao(primeiraDataCriacao) : "";
+
 
   return (
     <div className="border-2 border-gray-300 rounded p-2 flex flex-col h-auto max-h-[350px] w-[92%] gap-2 overflow-y-auto">
@@ -14,7 +31,7 @@ const CaixaFeedback = ({ aula, mensagens, aluno }) => {
           <path d="M10.375 8.80005H1.625" stroke="#1D2D44" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span>
-          {aula.diaSemana}, {aula.data} - {aula.horarioInicio}
+          {titulo}
         </span>
       </div>
 
@@ -25,9 +42,9 @@ const CaixaFeedback = ({ aula, mensagens, aluno }) => {
       ) : (
         mensagens.map(m => (
           <MensagemFeedback
-            key={m.id}
-            label={m.label}
-            texto={m.texto}
+            key={m.autorId}
+            label={m.autorTipo}
+            texto={m.descricao}
             paddingLeftMensagem={aluno === "aluno" ? "5%" : "10%"}
           />
         ))
