@@ -6,7 +6,6 @@ import Button from "../../components/Utils/Button";
 import relogioIcon from "../../assets/images/clock.png";
 import addPlanoIcon from "../../assets/images/additem.svg";
 import CardPlano from "../../components/Utils/CardPlano";
-import CardAlunoAtivos from "../../components/Utils/CardAlunoAtivos";
 import Modal from "../../components/Utils/Modal";
 import iconCancelar from "../../assets/images/cancelar.png";
 import lixeira from "../../assets/images/trash.png";
@@ -32,6 +31,7 @@ const Planos = () => {
     const [alunosAtivos, setAlunosAtivos] = useState([]);
     const [imgErro, setImgErro] = useState(false);
     const [openMenuId, setOpenMenuId] = useState(null);
+    const [idPlanoContratadoSelecionado, setIdPlanoContratadoSelecionado] = useState(null);
 
 
     const { fontSize, width } = useResponsiveStyles();
@@ -148,6 +148,22 @@ const Planos = () => {
         } catch (error) {
             toast.custom((t) => (
                 <CustomToast t={t} type="error" message="Erro ao editar plano. Verifique os dados e tente novamente." />
+            ));
+            console.error(error);
+        }
+    };
+
+    const cancelarPlanoContratado = async (idPlanoContratado) => {
+        try {
+            await caringuApi.patch(`/planos-contratados/${idPlanoContratado}/status`, { status: 'CANCELADO' });
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Plano cancelado com sucesso!" />
+            ));
+            await alunosPlanosAtivos(); 
+            setModalCancelarPlanoVisivel(false);
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao cancelar plano. Tente novamente." />
             ));
             console.error(error);
         }
@@ -311,15 +327,17 @@ const Planos = () => {
                                 onCardClick={(idAluno) => navigate(`/ficha-aluno/${idAluno}`)}
                                 imgErro={imgErro}
                                 setImgErro={setImgErro}
-                                totalCards={alunosAtivos.length}
+                                tamanhoCard={"sm:h-[240px] h-auto"}
                                 origemUsoOption={"Planos"}
                                 idButton="btn-cancelar-plano"
                                 textoButton="Cancelar Plano"
                                 corButton="#B41F1F"
                                 ariaLabelButton="Cancelar Plano"
                                 classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
-                                onClickButton={openCancelarPlanoModal}
-                                gapConteudo="gap-2 lg:gap-0"
+                                onClickButton={() => {
+                                    setIdPlanoContratadoSelecionado(aluno.idPlanoContratado);
+                                    openCancelarPlanoModal();
+                                }} gapConteudo="gap-2 lg:gap-0"
                                 fontTelefone="text-base"
                             />
                         ))
@@ -387,6 +405,11 @@ const Planos = () => {
                         textoBotaoCancelar="Sim, desejo cancelar"
                         ariaLabel="Modal de Cancelamento de Plano"
                         heightModalWeb="h-132"
+                        onConfirm={() => {
+                            if (idPlanoContratadoSelecionado) {
+                                cancelarPlanoContratado(idPlanoContratadoSelecionado);
+                            }
+                        }}
                     />
 
 
