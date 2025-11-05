@@ -152,8 +152,8 @@ const GerenciarAlunos = () => {
     navigate(`/ficha-aluno/${alunoId}`);
   };
 
-  const handleCardFeedbacksClick = (alunoId) => {
-    navigate(`/feedback/${alunoId}`);
+  const handleCardFeedbacksClick = (aluno) => {
+    navigate(`/feedback/${aluno.idAluno}`, { state: { aluno } });
   }
 
   const handleMenuAction = (action, aluno) => {
@@ -401,13 +401,14 @@ const GerenciarAlunos = () => {
                           setOpenMenuId={setOpenMenuId}
                           imgErro={imgErro}
                           setImgErro={setImgErro}
-                          totalCards={currentAlunos.length}
+                          tamanhoCard={"sm:h-[240px] h-auto"}
+                          alinhamentoCard="justify-around"
                           idButton="btn-ver-feedbacks"
                           textoButton="Ver Feedbacks"
                           corButton="var(--laranja)"
                           ariaLabelButton="Ver feedbacks"
                           classNameExtraButton="sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1"
-                          onClickButton={handleCardFeedbacksClick}
+                          onClickButton={() => handleCardFeedbacksClick(aluno)}
                         />
                       ))}
                     </div>

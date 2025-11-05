@@ -353,6 +353,7 @@ const ModalRemarcar = ({
                                         borderColor="#B41F1F"
                                         borderStyle="solid"
                                         borderWidth="2px"
+                                        onClick={handleFechar}
                                     />
                                     <Button
                                         texto="Salvar"
