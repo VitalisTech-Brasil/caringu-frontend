@@ -319,7 +319,6 @@ const ModalAgendarAula = ({
                                     setOpenMenuId={setOpenMenuId}
                                     imgErro={imgErro}
                                     setImgErro={setImgErro}
-                                    totalCards={currentAlunos.length}
                                     origemUso="ModalAgendarAula"
                                     origemUsoOption="ModalAgendarAula"
                                     alinhamentoCard="justify-center"
