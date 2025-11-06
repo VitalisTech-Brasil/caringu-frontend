@@ -5,11 +5,15 @@ import MensagemFeedback from './MensagemFeedback';
 function formatarDataCriacao(dataCriacao) {
   if (!dataCriacao) return "";
 
-  const [data, hora] = dataCriacao.split(" ");
-  const [ano, mes, dia] = data.split("-");
-
+  const parts = dataCriacao.split(" ");
+  if (parts.length !== 2) return "";
+  const [data, hora] = parts;
+  const dateParts = data.split("-");
+  if (dateParts.length !== 3) return "";
+  const [ano, mes, dia] = dateParts;
   const diasSemana = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
   const dateObj = new Date(`${ano}-${mes}-${dia}`);
+  if (isNaN(dateObj.getTime())) return "";
   const diaSemana = diasSemana[dateObj.getDay()];
   return `${diaSemana}, ${dia}/${mes}/${ano} - ${hora}`;
 }
@@ -40,9 +44,9 @@ const CaixaFeedback = ({ aula, mensagens, aluno }) => {
           Nenhum comentário sobre esse treino foi feito.
         </div>
       ) : (
-        mensagens.map(m => (
+        mensagens.map((m, idx) => (
           <MensagemFeedback
-            key={m.autorId}
+            key={`${m.autorId}-${m.dataCriacao}-${idx}`}
             label={m.autorTipo}
             texto={m.descricao}
             paddingLeftMensagem={aluno === "aluno" ? "5%" : "10%"}
