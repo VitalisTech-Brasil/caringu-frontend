@@ -54,9 +54,16 @@ const Feedback = () => {
         try {
             const response = await caringuApi.get(`/feedbacks/aula/${idAula}`);
             const feedbacksArray = response.data;
-            const feedbacks = Array.isArray(feedbacksArray) && feedbacksArray.length > 0
-                ? feedbacksArray[0].feedbacks
-                : [];
+            let feedbacks = [];
+            if (
+                Array.isArray(feedbacksArray) &&
+                feedbacksArray.length > 0 &&
+                feedbacksArray[0] &&
+                typeof feedbacksArray[0] === 'object' &&
+                Array.isArray(feedbacksArray[0].feedbacks)
+            ) {
+                feedbacks = feedbacksArray[0].feedbacks;
+            }
             setMensagensFeedback(feedbacks);
             console.log("Feedbacks da aula:", feedbacks);
         } catch (error) {
