@@ -141,13 +141,16 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                                     {compromisso.nomeAluno}
                                                 </span>
                                             </div>
-                                            <div className="text-white text-sm flex items-center gap-2">
+                                            <div className="text-white text-sm flex items-center gap-1.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 2xl:w-6 2xl:h-6 shrink-0" viewBox="0 0 25 25" fill="none">
                                                     <path d="M22.9168 12.4997C22.9168 18.2497 18.2502 22.9163 12.5002 22.9163C6.75016 22.9163 2.0835 18.2497 2.0835 12.4997C2.0835 6.74967 6.75016 2.08301 12.5002 2.08301C18.2502 2.08301 22.9168 6.74967 22.9168 12.4997Z" fill="#FFFDF6" stroke="#FFFDF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                     <path d="M16.3647 15.8128L13.1356 13.8857C12.5731 13.5524 12.1147 12.7503 12.1147 12.0941V7.82324" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                                 <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">
                                                     {compromisso.dataHorarioInicio ? compromisso.dataHorarioInicio.slice(11, 16) : ""}
+                                                </span>
+                                                <span>
+                                                    -
                                                 </span>
                                                 <span className="text-base 2xl:text-xl font-medium text-[var(--cor-secundaria)]">
                                                     {compromisso.dataHorarioFim ? compromisso.dataHorarioFim.slice(11, 16) : ""}
