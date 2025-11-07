@@ -691,7 +691,7 @@ const ProcurandoPersonal = () => {
                               <img
                                 src={trainer.urlFotoPerfil}
                                 alt={trainer.nomePersonal}
-                                className="w-full h-full md:w-35 md:h-35 xl:w-45 xl:h-45 object-cover md:rounded-full"
+                                className="w-35 h-35 xl:w-45 xl:h-45 object-cover rounded-full"
                                 onError={() => lidarErroImagem(trainer.email)}
                               />
                             ) : (
