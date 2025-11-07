@@ -226,6 +226,8 @@ const CardPlano = ({
               onClick={ativo ? onAvaliarPersonal : undefined}
             />
             <button
+              aria-expanded={expandido}
+              aria-label={expandido ? "Recolher detalhes do personal" : "Expandir detalhes do personal"}
               onClick={() => setExpandido(!expandido)}
               className="text-sm text-[var(--laranja)] hover:underline w-full flex flex-row justify-end items-center h-full"
             >
