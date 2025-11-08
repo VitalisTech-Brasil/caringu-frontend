@@ -1,57 +1,74 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Button from "../../components/Utils/Button";
 import Header from '../../components/Aluno/Header/Header';
 import { Link, useParams } from 'react-router-dom';
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro';
+import ModalEvolucaoCorporal from '../../components/Fotos/ModalEvolucaoCorporal';
+import { caringuApi } from '../../provider/caringuApi';
 
 const ProgressoCorporal = () => {
     const menuRef = useRef(null);
     const { idAluno } = useParams();
 
-    const imagensFrontais = [
-        { id: 1, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1frente.jpg" },
-        { id: 2, dataEnvio: "11/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2frente.jpeg" }
-    ];
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [tipoFoto, setTipoFoto] = useState(null);
+    const [periodoAvaliacaoEmMeses, setPeriodoAvaliacaoEmMeses] = useState(0);
 
-    const imagensPerfilDireita = [
-        { id: 3, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1ladoDireito.jpg" },
-        { id: 4, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2ladoDireito.jpg" }
-    ];
+    const [fotosCorporais, setFotosCorporais] = useState({
+        FRONTAL: [],
+        COSTAS: [],
+        PERFIL_DIREITO: [],
+        PERFIL_ESQUERDO: [],
+    });
 
-    const imagensPerfilEsquerda = [
-        { id: 5, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1ladoEsquerdo.jpg" },
-        { id: 6, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2ladoEsquerdo.jpg" }
+    const abrirModal = (tipo) => {
+        setTipoFoto(tipo);
+        setIsModalOpen(true);
+    };
 
-    ];
+    const fecharModal = () => {
+        setIsModalOpen(false);
+        setTipoFoto(null);
+    };
 
-    const imagensCosta = [
-        { id: 7, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1costas.jpg" },
-        { id: 8, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2costas.jpg" }
+    const handleListarFotosCorporais = async () => {
+        try {
+            const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
+            const fotos = response.data;
+            console.log("Fotos recebidas:", fotos);
 
-    ];
+            setPeriodoAvaliacaoEmMeses(fotos.length > 0 ? fotos[0].periodoAvaliacao : 0);
 
-    const imagensNaganoFrontais = [
-        { id: 9, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1frente.jpg" },
-        { id: 10, dataEnvio: "11/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2frente.jpg" }
-    ];
+            // Organiza as fotos por tipo
+            const agrupadas = {
+                FRONTAL: [],
+                COSTAS: [],
+                PERFIL_DIREITO: [],
+                PERFIL_ESQUERDO: [],
+            };
 
-    const imagensNaganoDireita = [
-        { id: 11, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1ladoDireito.jpg" },
-        { id: 12, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2ladoDireito.jpg" }
-    ];
+            fotos.forEach((f) => {
+                if (agrupadas[f.tipo]) {
+                    agrupadas[f.tipo].push({
+                        id: f.id,
+                        dataEnvio: new Date(f.dataEnvio).toLocaleDateString("pt-BR"),
+                        src: f.urlFotoShape
+                    });
+                }
+            });
 
-    const imagensNaganoEsquerda = [
-        { id: 13, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1ladoEsquerdo.jpg" }/* ,
-        { id: 14, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2ladoEsquerdo.jpg" } */
+            setFotosCorporais(agrupadas);
+            console.log("Evoluções corporais do aluno:", agrupadas);
+        } catch (error) {
+            console.error("Erro ao listar fotos:", error);
+        }
+    };
 
-    ];
-
-    const imagensNaganoCosta = [
-        { id: 15, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1costas.jpg" },
-        { id: 16, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2costas.jpg" }
-    ];
-
+    useEffect(() => {
+        handleListarFotosCorporais();
+    }, [idAluno]);
+    
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateralAluno ref={menuRef} />
@@ -74,102 +91,42 @@ const ProgressoCorporal = () => {
                             <h1>Acompanhe sua progressão corporal</h1>
                         </div>
                         <div className="flex flex-col max-h-[690px] overflow-y-auto">
-                            <div className='flex flex-col mt-10 max-h-[400px] p-4'>
-                                <div className='flex items-center justify-between'>
-                                    <h1 className='font-semibold text-[24px]'>Frente</h1>
-                                    <Button
-                                        texto="Enviar foto"
-                                        cor="#748CAB"
-                                        corTexto="#FFFFFF"
-                                        width=" 140px"
-                                        height="30px"
-                                        fontSize="12px"
-                                        logoSvg={<svg className='w-5 h-5' viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.87502 9.2085V5.9585L3.79169 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M4.875 5.9585L5.95833 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683V8.12516C11.9166 10.8335 10.8333 11.9168 8.12498 11.9168H4.87498C2.16665 11.9168 1.08331 10.8335 1.08331 8.12516V4.87516C1.08331 2.16683 2.16665 1.0835 4.87498 1.0835H7.58331" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683H9.74998C8.12498 5.41683 7.58331 4.87516 7.58331 3.25016V1.0835L11.9166 5.41683Z" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        }>
-                                    </Button>
+                            {[
+                                { titulo: "Frente", tipo: "FRONTAL", imagens: fotosCorporais.FRONTAL },
+                                { titulo: "Perfil Esquerdo", tipo: "PERFIL_ESQUERDO", imagens: fotosCorporais.PERFIL_ESQUERDO },
+                                { titulo: "Perfil Direito", tipo: "PERFIL_DIREITO", imagens: fotosCorporais.PERFIL_DIREITO },
+                                { titulo: "Costas", tipo: "COSTAS", imagens: fotosCorporais.COSTAS }
+                            ].map(({ titulo, tipo, imagens }) => (
+                                <div key={tipo} className='flex flex-col mt-10 max-h-[400px] p-4'>
+                                    <div className='flex items-center justify-between'>
+                                        <h1 className='font-semibold text-[24px]'>{titulo}</h1>
+                                        <Button
+                                            texto="Enviar foto"
+                                            cor="#748CAB"
+                                            corTexto="#FFFFFF"
+                                            onClick={() => abrirModal(tipo)}
+                                            width="140px"
+                                            height="30px"
+                                            fontSize="12px"
+                                        />
+                                    </div>
+                                    <div className='border-2 border-[#E6E6E2] rounded-lg'>
+                                        <CarrosselRegistro imagens={imagens} />
+                                    </div>
                                 </div>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoFrontais : imagensFrontais} />
-                                </div>
-                            </div>
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <div className='flex items-center justify-between'>
-                                    <h1 className='font-semibold text-[24px]'>Perfil Esquerdo</h1>
-                                    <Button
-                                        texto="Enviar foto"
-                                        cor="#748CAB"
-                                        corTexto="#FFFFFF"
-                                        width=" 140px"
-                                        height="30px"
-                                        fontSize="12px"
-                                        logoSvg={<svg className='w-5 h-5' viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.87502 9.2085V5.9585L3.79169 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M4.875 5.9585L5.95833 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683V8.12516C11.9166 10.8335 10.8333 11.9168 8.12498 11.9168H4.87498C2.16665 11.9168 1.08331 10.8335 1.08331 8.12516V4.87516C1.08331 2.16683 2.16665 1.0835 4.87498 1.0835H7.58331" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683H9.74998C8.12498 5.41683 7.58331 4.87516 7.58331 3.25016V1.0835L11.9166 5.41683Z" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        }>
-                                    </Button>
-                                </div>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoDireita : imagensPerfilDireita} />
-                                </div>
-                            </div>
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <div className='flex items-center justify-between'>
-                                    <h1 className='font-semibold text-[24px]'>Perfil Direito</h1>
-                                    <Button
-                                        texto="Enviar foto"
-                                        cor="#748CAB"
-                                        corTexto="#FFFFFF"
-                                        width=" 140px"
-                                        height="30px"
-                                        fontSize="12px"
-                                        logoSvg={<svg className='w-5 h-5' viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.87502 9.2085V5.9585L3.79169 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M4.875 5.9585L5.95833 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683V8.12516C11.9166 10.8335 10.8333 11.9168 8.12498 11.9168H4.87498C2.16665 11.9168 1.08331 10.8335 1.08331 8.12516V4.87516C1.08331 2.16683 2.16665 1.0835 4.87498 1.0835H7.58331" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683H9.74998C8.12498 5.41683 7.58331 4.87516 7.58331 3.25016V1.0835L11.9166 5.41683Z" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        }>
-                                    </Button>
-                                </div>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoEsquerda : imagensPerfilEsquerda} />
-                                </div>
-                            </div>
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <div className='flex items-center justify-between'>
-                                    <h1 className='font-semibold text-[24px]'>Contas</h1>
-                                    <Button
-                                        texto="Enviar foto"
-                                        cor="#748CAB"
-                                        corTexto="#FFFFFF"
-                                        width=" 140px"
-                                        height="30px"
-                                        fontSize="12px"
-                                        logoSvg={<svg className='w-5 h-5' viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.87502 9.2085V5.9585L3.79169 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M4.875 5.9585L5.95833 7.04183" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683V8.12516C11.9166 10.8335 10.8333 11.9168 8.12498 11.9168H4.87498C2.16665 11.9168 1.08331 10.8335 1.08331 8.12516V4.87516C1.08331 2.16683 2.16665 1.0835 4.87498 1.0835H7.58331" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.9166 5.41683H9.74998C8.12498 5.41683 7.58331 4.87516 7.58331 3.25016V1.0835L11.9166 5.41683Z" stroke="#FDFFFD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        }>
-                                    </Button>
-                                </div>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoCosta : imagensCosta} />
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </main>
             </div>
+            {isModalOpen && (
+                <ModalEvolucaoCorporal
+                    tipo={tipoFoto}
+                    alunoId={idAluno}
+                    periodoAvaliacao={periodoAvaliacaoEmMeses}
+                    onClose={fecharModal}
+                />
+            )}
         </div >
     )
 }
