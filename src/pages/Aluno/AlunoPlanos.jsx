@@ -17,25 +17,58 @@ const AlunoPlanos = () => {
     const [rating, setRating] = useState(0.0);
     const [comentario, setComentario] = useState("");
     const [alunoId, setAlunoId] = useState(null);
-
-
-
-    const personalId = 5;
+    const [planos, setPlanos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [personalIdSelecionado, setPersonalIdSelecionado] = useState(null);
+    const [avaliacaoExistente, setAvaliacaoExistente] = useState(null);
 
 
     useEffect(() => {
-        const id = sessionStorage.getItem("alunoId");
+        const id = sessionStorage.getItem("pessoaId");
         if (id) {
-            setAlunoId(Number(id)); // garante que vira número
+            setAlunoId(Number(id));
+            fetchPlanos(Number(id));
         }
     }, []);
 
-    const openModalAvaliar = () => setModalAvaliar(true);
+    const fetchPlanos = async (idAluno) => {
+        setLoading(true);
+        try {
+            const response = await caringuApi.get(`/alunos/${idAluno}/planos`);
+            setPlanos(response.data);
+        } catch (error) {
+            toast.custom(t =>
+                <CustomToast
+                    t={t}
+                    type="error"
+                    message="Erro ao carregar planos. Tente novamente."
+                />
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const openModalAvaliar = async (personalId, avaliacaoExistenteData) => {
+        setPersonalIdSelecionado(personalId);
+        
+        if (avaliacaoExistenteData) {
+            setAvaliacaoExistente(avaliacaoExistenteData);
+            setRating(avaliacaoExistenteData.nota || 0);
+            setComentario(avaliacaoExistenteData.comentario || "");
+        } else {
+            setAvaliacaoExistente(null);
+            setRating(0);
+            setComentario("");
+        }
+        
+        setModalAvaliar(true);
+    };
 
     const confirmarEnvio = async () => {
         const idAluno = alunoId || sessionStorage.getItem("pessoaId");
 
-        if (!idAluno || !personalId) {
+        if (!idAluno || !personalIdSelecionado) {
             toast.custom(t =>
                 <CustomToast
                     t={t}
@@ -58,20 +91,19 @@ const AlunoPlanos = () => {
         }
 
         const payload = {
-            personalId,
-            alunoId: Number(idAluno),
             nota: rating,
             comentario,
         };
 
         try {
-            await caringuApi.post("/avaliacoes", payload);
+            await caringuApi.post(`/alunos/${idAluno}/planos/${personalIdSelecionado}/avaliar`, payload);
             setModalAvaliar(false);
             setModalEnviado(true);
             setRating(0);
             setComentario("");
+            setPersonalIdSelecionado(null);
+            await fetchPlanos(idAluno);
         } catch (error) {
-            console.error("Erro ao enviar avaliação:", error);
             toast.custom(t =>
                 <CustomToast
                     t={t}
@@ -113,28 +145,39 @@ const AlunoPlanos = () => {
                 />
                 <div className="flex justify-center">
                     <div className="p-6 grid grid-cols-1 gap-6 w-full sm:w-[80%] lg:w-[60%]">
-                        <CardPlanoAluno
-                            key={1}
-                            id={1}
-                            nome="Plano Mensal"
-                            periodo="MENSAL"
-                            quantidadeAulas={2}
-                            valorAulas={20}
-                            valorPlano={40}
-                            onAvaliarPersonal={openModalAvaliar}
-                            ativo={true}
-                        />
-                        <CardPlanoAluno
-                            key={1}
-                            id={1}
-                            nome="Plano Mensal"
-                            periodo="MENSAL"
-                            quantidadeAulas={2}
-                            valorAulas={20}
-                            valorPlano={40}
-                            onAvaliarPersonal={openModalAvaliar}
-                            ativo={false}
-                        />
+                        {loading ? (
+                            <div className="flex justify-center items-center py-8">
+                                <div className="flex items-center gap-3 text-[var(--cor-primaria)]">
+                                    <svg className="animate-spin h-6 w-6 text-[#E96E35]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                    </svg>
+                                    <span>Carregando planos...</span>
+                                </div>
+                            </div>
+                        ) : planos.length === 0 ? (
+                            <div className="text-center text-[var(--cor-primaria)] font-medium text-lg sm:text-2xl py-8">
+                                Você ainda não possui planos contratados.
+                            </div>
+                        ) : (
+                            planos.map((planoContratado) => (
+                                <CardPlanoAluno
+                                    key={planoContratado.planoContratadoId}
+                                    id={planoContratado.planoContratadoId}
+                                    nome={planoContratado.plano.nome}
+                                    quantidadeAulas={planoContratado.plano.quantidadeAulas}
+                                    valorAulas={planoContratado.plano.valorAulas}
+                                    valorPlano={planoContratado.plano.valorAulas * planoContratado.plano.quantidadeAulas}
+                                    onAvaliarPersonal={() => openModalAvaliar(planoContratado.personalTrainer.id, planoContratado.avaliacao)}
+                                    ativo={planoContratado.status === "ATIVO"}
+                                    nomePersonal={planoContratado.personalTrainer.nome}
+                                    emailPersonal={planoContratado.personalTrainer.email}
+                                    experienciaPersonal={planoContratado.personalTrainer.experiencia}
+                                    locaisAtendimento={planoContratado.locaisAtendimento}
+                                    dataFim={planoContratado.dataFim}
+                                />
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
