@@ -28,6 +28,8 @@ const Feedback = () => {
     }, [idAluno]);
 
     const [aulas, setAulas] = useState([]);
+    const [aulaSelecionada, setAulaSelecionada] = useState(aulas[0] || null);
+
 
     const fetchAulas = async () => {
         let todasAulas = [];
@@ -43,14 +45,17 @@ const Feedback = () => {
                 page += 1;
             }
             setAulas(todasAulas);
+            if (todasAulas.length > 0) {
+                setAulaSelecionada(todasAulas[0]);
+            }
             console.log("Aulas do aluno:", todasAulas);
         } catch (error) {
             setAulas([]);
+            setAulaSelecionada(null);
             console.error("Erro ao buscar aulas:", error);
         }
     };
 
-    const [aulaSelecionada, setAulaSelecionada] = useState(aulas[0] || null);
 
     const [mensagensFeedback, setMensagensFeedback] = useState([]);
 
