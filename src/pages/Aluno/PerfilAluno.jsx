@@ -7,8 +7,10 @@ import Secoes from "../../components/PerfilPersonal/Secoes/Secoes";
 import { toast } from 'react-hot-toast';
 import CustomToast from "../../components/Utils/CustomToast.jsx";
 import MenuLateralAluno from "../../components/Aluno/MenuLateral/MenuLateral";
+import { useFotoPerfil } from "../../context/FotoPerfilContext"; // Importar o contexto
 
 const PerfilAluno = () => {
+    const { setFotoPerfil } = useFotoPerfil(); // Consumir o contexto
     const [modalVisible, setModalVisible] = useState(false);
     const [especialidadeSelecionada, setEspecialidadeSelecionada] = useState(null);
     const navigate = useNavigate();
@@ -32,6 +34,10 @@ const PerfilAluno = () => {
                 <CustomToast t={t} type="error" message="Não foi possível deletar a conta. Tente novamente." />
             ));
         }
+    };
+
+    const handleFotoChange = (novaFoto) => {
+        setFotoPerfil(novaFoto); // Atualizar o contexto com a nova foto
     };
 
     return (
@@ -65,7 +71,7 @@ const PerfilAluno = () => {
 
                     {/* Seções */}
                     <div className="w-full">
-                        <Secoes />
+                        <Secoes onFotoChange={handleFotoChange} />
                     </div>
                 </main>
             </div>
@@ -73,4 +79,4 @@ const PerfilAluno = () => {
     );
 }
 
-export default PerfilAluno
+export default PerfilAluno;

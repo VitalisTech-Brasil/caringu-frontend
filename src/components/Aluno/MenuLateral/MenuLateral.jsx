@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
-import { caringuApi } from "../../../provider/caringuApi";
+import { useFotoPerfil } from "../../../context/FotoPerfilContext"; // Consumir o contexto
+import { caringuApi } from "../../../provider/caringuApi"; // Importar API
 
 const MenuLateralAluno = React.forwardRef((props, ref) => {
+  const { fotoPerfil, setFotoPerfil } = useFotoPerfil(); // <-- usar contexto
   const [isOpen, setIsOpen] = useState(false);
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const navigate = useNavigate();
@@ -12,8 +14,6 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
 
   const [nomePessoa, setNomePessoa] = useState("");
   const [tipoPessoa, setTipoPessoa] = useState("");
-
-  const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
   const [imgErro, setImgErro] = useState(false);
 
   const alunoId = sessionStorage.getItem("pessoaId");
@@ -25,20 +25,28 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Buscar foto no backend e atualizar o contexto se necessário
+    const fetchFotoPerfil = async () => {
       try {
         const response = await caringuApi.get(`/alunos/${alunoId}`);
-
-        setUrlFotoPerfil(response?.data?.urlFotoPerfil || "");
+        const novaFoto = response?.data?.urlFotoPerfil || "";
+        if (novaFoto && novaFoto !== fotoPerfil) {
+          setFotoPerfil(novaFoto);
+        }
       } catch (error) {
-        console.error("Erro ao buscar Aluno:", error);
+        console.error("Erro ao buscar foto de perfil do aluno:", error);
       }
     };
 
     if (alunoId) {
-      fetchData();
+      fetchFotoPerfil();
     }
-  }, [alunoId]);
+  }, [alunoId, fotoPerfil, setFotoPerfil]);
+
+  // Resetar flag de erro sempre que o contexto mudar
+  useEffect(() => {
+    setImgErro(false);
+  }, [fotoPerfil]);
 
   useEffect(() => {
     const usuario = sessionStorage.getItem("usuario");
@@ -462,9 +470,10 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
               className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
               style={{ minHeight: "5rem" }}
             >
-              {urlFotoPerfil && !imgErro ? (
+              {/* usar fotoPerfil do contexto */}
+              {fotoPerfil && !imgErro ? (
                 <img
-                  src={urlFotoPerfil}
+                  src={fotoPerfil}
                   alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                   onError={() => setImgErro(true)}

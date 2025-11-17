@@ -8,10 +8,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
 import { caringuApi } from "../../../provider/caringuApi";
 import { logout } from "../../../utils/authUtils";
+import { useFotoPerfil } from "../../../context/FotoPerfilContext";
 
 
 
 const MenuLateral = () => {
+  const { fotoPerfil } = useFotoPerfil(); // Consumir o contexto
   const [isOpen, setIsOpen] = useState(false);
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const navigate = useNavigate();
@@ -20,26 +22,30 @@ const MenuLateral = () => {
   const [nomePessoa, setNomePessoa] = useState("");
   const [tipoPessoa, setTipoPessoa] = useState("");
 
-  const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
   const [imgErro, setImgErro] = useState(false);
 
   const personalId = sessionStorage.getItem('pessoaId');
 
+  // useEffect(() => {
+
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await caringuApi.get(`/personal-trainers/${personalId}`);
+
+  //       setUrlFotoPerfil(response.data.urlFotoPerfil);
+
+  //     } catch (error) {
+  //       console.error("Erro ao buscar personal trainer:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
+    setImgErro(false); // Resetar erro de imagem quando a foto de perfil muda
+  }, [fotoPerfil]); // Reagir às mudanças no contexto
 
-    const fetchData = async () => {
-      try {
-        const response = await caringuApi.get(`/personal-trainers/${personalId}`);
-
-        setUrlFotoPerfil(response.data.urlFotoPerfil);
-
-      } catch (error) {
-        console.error("Erro ao buscar personal trainer:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
 
   useEffect(() => {
@@ -195,9 +201,9 @@ const MenuLateral = () => {
         <div
           className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0 min-h-[5rem]"
         >
-          {urlFotoPerfil && !imgErro ? (
+          {fotoPerfil && !imgErro ? (
             <img
-              src={urlFotoPerfil}
+              src={fotoPerfil}
               alt="Foto de perfil"
               className="w-10 h-10 rounded-full object-cover flex-shrink-0"
               onError={() => setImgErro(true)}
@@ -307,9 +313,9 @@ const MenuLateral = () => {
               className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
               style={{ minHeight: "5rem" }}
             >
-              {urlFotoPerfil && !imgErro ? (
+              {fotoPerfil && !imgErro ? (
                 <img
-                  src={urlFotoPerfil}
+                  src={fotoPerfil}
                   alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                   onError={() => setImgErro(true)}
