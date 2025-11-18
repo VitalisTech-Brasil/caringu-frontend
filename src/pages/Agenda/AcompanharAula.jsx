@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import React from "react";
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import { caringuApi } from '../../provider/caringuApi';
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral';
 import Header from '../../components/Personal/Header/Header';
 import { FaUserCircle } from 'react-icons/fa';
 import ExercicioVideoCard from '../../components/Utils/GerenciarAlunos/ExercicioVideoCard';
 import Button from "../../components/Utils/Button"
-
+import MascaraData from "../../components/Utils/Functions/MascaraData";
+import MascaraGenero from "../../components/Utils/Functions/MascaraGenero";
+import MascaraNivelExperiencia from '../../components/Utils/Functions/MascaraNivelExperiencia';
+import MascaraTelefone from '../../components/Utils/Functions/MascaraTelefone';
 
 
 const AcompanharAula = () => {
@@ -16,52 +19,10 @@ const AcompanharAula = () => {
     const [aluno, setAluno] = useState();
     const [imgErro, setImgErro] = useState(false);
     const [aberto, setAberto] = useState(false);
+    const [treinos, setTreinos] = useState([]);
+    const location = useLocation();
+    const idAula = location.state?.idAula;
 
-
-    const [treinos, setTreinos] = useState([
-        {
-            id: 1,
-            nome: 'Treino superior',
-            treinoFinalizado: false,
-            exercicios: [
-                {
-                    id: 1,
-                    titulo: 'Rosca Direta Barra',
-                    carga: '20kg',
-                    repeticoes: '3x12',
-                    grupoMuscular: 'Bíceps',
-                    observacoes: 'Executar controlado.',
-                    videoUrl: 'https://www.youtube.com/watch?v=VXY9_csZXUY',
-                    tempoDescanso: '150',
-                    exerciciosFinalizados: false
-                },
-
-                {
-                    id: 3,
-                    titulo: 'Rosca Martelo',
-                    carga: '12kg',
-                    repeticoes: '4x12',
-                    grupoMuscular: 'Bíceps',
-                    observacoes: 'Executar com controle.',
-                    videoUrl: 'https://youtu.be/Tm98k4tmtxg?si=3I5kD-G_SAMSwBxy',
-                    tempoDescanso: '150',
-                    exerciciosFinalizados: false
-                },
-                {
-                    id: 4,
-                    titulo: 'Rosca Inversa',
-                    carga: '8kg',
-                    repeticoes: '4x10',
-                    grupoMuscular: 'Bíceps',
-                    observacoes: 'Executar com controle.',
-                    videoUrl: 'https://youtu.be/wxSUcEiO3kc?si=kuYAX_3Mcc6SettW',
-                    tempoDescanso: '150',
-                    exerciciosFinalizados: true
-                }
-            ]
-        },
-
-    ]);
 
     const handleToggleFinalizado = (treinoIdx, exIdx, checked) => {
         setTreinos(prev =>
@@ -94,16 +55,19 @@ const AcompanharAula = () => {
 
     useEffect(() => {
         document.title = "Acompanhar Aula | Caringu"
-        const fetchInfosAlunoFeedback = async () => {
+        const fetchInfosAluno = async () => {
             try {
-                const response = await caringuApi.get(`/anamnese/${idAluno}`);// MUDAR URL PARA O NOVO ENDPOINT(!!!por padrão, deve ser sempre estar aberto o ultimo card do treino)
+                const response = await caringuApi.get(`/alunos/${idAluno}`);
                 setAluno(response.data);
+                const treinosData = await caringuApi.get(`/aulas-treinos-exercicios/acompanhamento-aulas/${idAula}`);
+                setTreinos(treinosData.data);
+                console.log("Treinos:", treinosData.data);
             } catch (error) {
                 console.error("Erro ao buscar informações do aluno:", error);
             }
         };
 
-        fetchInfosAlunoFeedback();
+        fetchInfosAluno();
     }, [idAluno]);
 
 
@@ -155,27 +119,27 @@ const AcompanharAula = () => {
                                     <FaUserCircle className="flex-shrink-0 w-20 h-20 lg:w-12 lg:h-12 xl:w-20 xl:h-20 2xl:w-25 2xl:h-25 text-[#4B5563]" />
                                 )}
                                 <div className="flex flex-col h-auto w-full items-start justify-center gap-3 lg:gap-0">
-                                    <span className="text-base sm:text-xl lg:text-base 2xl:text-[24px] font-medium"> Maria Gladys</span>
+                                    <span className="text-base sm:text-xl lg:text-base 2xl:text-[24px] font-medium">{aluno?.nome}</span>
                                     <div className="flex lg:flex-row flex-col w-full h-auto items-start gap-3 xl:justify-between">
                                         <div className="flex flex-col w-auto h-auto">
                                             <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Data de Nascimento</span>
-                                            <span className="text-base lg:text-sm xl:text-base font-normal">22/11/2005</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">{MascaraData(aluno?.dataNascimento)}</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
                                             <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Gênero</span>
-                                            <span className="text-base lg:text-sm xl:text-base font-normal">Feminino</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">{MascaraGenero(aluno?.genero)}</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
                                             <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Nível de Experiência</span>
-                                            <span className="text-base lg:text-sm xl:text-base font-normal">Levemente ativo</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">{MascaraNivelExperiencia(aluno?.nivelExperiencia)}</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
                                             <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Telefone</span>
-                                            <span className="text-base lg:text-sm xl:text-base font-normal">+55 (11) 91234-5678</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">{MascaraTelefone(aluno?.telefone)}</span>
                                         </div>
                                         <div className="flex flex-col w-auto h-auto">
                                             <span className="text-base sm:text-xl lg:text-sm xl:text-base 2xl:text-xl text-[#15171B85] font-medium">Email</span>
-                                            <span className="text-base lg:text-sm xl:text-base font-normal">mariagladys@gmail.com</span>
+                                            <span className="text-base lg:text-sm xl:text-base font-normal">{aluno?.email}</span>
                                         </div>
                                     </div>
                                 </div>
