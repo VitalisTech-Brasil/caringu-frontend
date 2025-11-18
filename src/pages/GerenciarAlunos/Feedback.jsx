@@ -20,7 +20,8 @@ const Feedback = () => {
     const [aluno, setAluno] = useState();
     const location = useLocation();
     const alunoFromState = location.state?.aluno;
-
+    const [novoFeedback, setNovoFeedback] = useState("");
+    const personalId = sessionStorage.getItem('pessoaId');
 
     useEffect(() => {
         document.title = "Feedback | Caringu"
@@ -78,6 +79,30 @@ const Feedback = () => {
         } catch (error) {
             console.error("Erro ao buscar feedbacks da aula:", error);
             setMensagensFeedback([]);
+        }
+    };
+
+    const enviarFeedback = async (e) => {
+        e.preventDefault();
+        if (!novoFeedback.trim() || !aulaSelecionada) return;
+        const now = new Date();
+        const brasiliaOffsetMs = -3 * 60 * 60 * 1000; 
+        const brasiliaDate = new Date(now.getTime() + brasiliaOffsetMs);
+
+        try {
+            const payload = {
+                autorId: Number(personalId),
+                aulaId: aulaSelecionada.aulaId,
+                autorTipo: "PERSONAL",
+                descricao: novoFeedback,
+                dataCriacao: brasiliaDate.toISOString()
+            };
+            await caringuApi.post("/feedbacks", payload);
+            setNovoFeedback("");
+            fetchFeedbacksAula(aulaSelecionada.aulaId);
+        } catch (error) {
+            alert("Erro ao enviar feedback.");
+            console.error(error);
         }
     };
 
@@ -241,7 +266,10 @@ const Feedback = () => {
                                                 aula={aulaSelecionada}
                                                 mensagens={mensagensFeedback}
                                             />
-                                            <form className="border-t-2 border-solid border-gray-300 px-4 flex flex-col h-auto gap-2 w-full pt-5">
+                                            <form
+                                                className="border-t-2 border-solid border-gray-300 px-4 flex flex-col h-auto gap-2 w-full pt-5"
+                                                onSubmit={enviarFeedback}
+                                            >
                                                 <Input
                                                     id={`feedback`}
                                                     name={`feedback`}
@@ -250,6 +278,8 @@ const Feedback = () => {
                                                     fontSize="16px"
                                                     fontWeight="500"
                                                     width="100%"
+                                                    value={novoFeedback}
+                                                    onChange={e => setNovoFeedback(e.target.value)}
                                                 />
                                                 <div className="w-full h-auto flex flex-col items-center">
                                                     <Button
