@@ -3,19 +3,19 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 const FotoPerfilContext = createContext();
 
 export const FotoPerfilProvider = ({ children }) => {
-  const [fotoPerfil, setFotoPerfilState] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
+  const [forceUpdate, setForceUpdate] = useState(0);
 
-  // Restaurar a URL da foto do sessionStorage ao carregar o contexto
   useEffect(() => {
-    const storedFoto = sessionStorage.getItem("fotoPerfil");
-    if (storedFoto) {
-      setFotoPerfilState(storedFoto);
+    const storedPhoto = sessionStorage.getItem("fotoPerfil");
+    if (storedPhoto) {
+      setProfilePhoto(storedPhoto);
     }
   }, []);
 
-  // Atualizar o estado e salvar no sessionStorage
   const setFotoPerfil = (url) => {
-    setFotoPerfilState(url);
+    setProfilePhoto(url);
+    setForceUpdate((prev) => prev + 1);
     if (url) {
       sessionStorage.setItem("fotoPerfil", url);
     } else {
@@ -24,7 +24,7 @@ export const FotoPerfilProvider = ({ children }) => {
   };
 
   return (
-    <FotoPerfilContext.Provider value={{ fotoPerfil, setFotoPerfil }}>
+    <FotoPerfilContext.Provider value={{ fotoPerfil: profilePhoto, setFotoPerfil, forceUpdate }}>
       {children}
     </FotoPerfilContext.Provider>
   );

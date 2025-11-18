@@ -26,25 +26,10 @@ const MenuLateral = () => {
 
   const personalId = sessionStorage.getItem('pessoaId');
 
-  // useEffect(() => {
-
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await caringuApi.get(`/personal-trainers/${personalId}`);
-
-  //       setUrlFotoPerfil(response.data.urlFotoPerfil);
-
-  //     } catch (error) {
-  //       console.error("Erro ao buscar personal trainer:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   useEffect(() => {
-    setImgErro(false); // Resetar erro de imagem quando a foto de perfil muda
-  }, [fotoPerfil]); // Reagir às mudanças no contexto
+    setImgErro(false);
+  }, [fotoPerfil]);
 
 
 
@@ -80,7 +65,7 @@ const MenuLateral = () => {
 
   const getCurrentDay = () => {
     const today = new Date();
-    return today.getDate(); // Retorna o dia atual
+    return today.getDate();
   };
 
   const menuItems = [
