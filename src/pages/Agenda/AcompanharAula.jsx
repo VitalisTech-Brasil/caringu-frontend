@@ -22,6 +22,8 @@ const AcompanharAula = () => {
     const [treinos, setTreinos] = useState([]);
     const location = useLocation();
     const idAula = location.state?.idAula;
+    const [aula, setAula] = useState(null);
+
 
 
     const handleToggleFinalizado = (treinoIdx, exIdx, checked) => {
@@ -59,16 +61,16 @@ const AcompanharAula = () => {
             try {
                 const response = await caringuApi.get(`/alunos/${idAluno}`);
                 setAluno(response.data);
-                const treinosData = await caringuApi.get(`/aulas-treinos-exercicios/acompanhamento-aulas/${idAula}`);
-                setTreinos(treinosData.data);
-                console.log("Treinos:", treinosData.data);
+                const aulaData = await caringuApi.get(`/aulas-treinos-exercicios/acompanhamento-aulas/${idAula}`);
+                setAula(aulaData.data);
+                console.log("Aula:", aulaData.data);
             } catch (error) {
                 console.error("Erro ao buscar informações do aluno:", error);
             }
         };
 
         fetchInfosAluno();
-    }, [idAluno]);
+    }, [idAluno, idAula]);
 
 
     // ENDPOINT ANTIGO DE MARCAR COMO CONCLUIDO
