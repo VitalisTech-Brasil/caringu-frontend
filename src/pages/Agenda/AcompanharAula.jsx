@@ -150,7 +150,7 @@ const AcompanharAula = () => {
                             {aula && (
                                 <>
                                     <div
-                                        className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md py-4 flex flex-row w-[95%] 2xl:w-[85%] h-auto justify-between font-semibold text-base sm:text-xl lg:text-base xl:text-xl text-[var(--azul-escuro)] items-center cursor-pointer"
+                                        className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md py-4 px-2 sm:px-4 xl:px-12 flex flex-row w-[95%] 2xl:w-[85%] h-auto justify-between font-semibold text-base sm:text-xl lg:text-base xl:text-xl text-[var(--azul-escuro)] items-center cursor-pointer"
                                         onClick={() => setAberto(v => !v)}
                                     >
                                         <span>
