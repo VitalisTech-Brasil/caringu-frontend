@@ -30,15 +30,15 @@ const ColunaInputs = () => {
   const validarAlunoENavegar = (pessoaId) => {
     caringuApi.get(`/alunos/validacao-contratacao/${pessoaId}`)
       .then(res => {
-        console.log("Retorno do endpoint de validação:", res.data);
         if (res.data === true) {
           navigate('/home-aluno');
         } else {
           navigate('/procurando-personal');
         }
       })
-      .catch(() => {
-        navigate('/procurando-personal');
+      .catch((error) => {
+        console.error("Erro ao validar aluno:", error);
+        toast.error("Ocorreu um erro ao validar seu acesso. Tente novamente mais tarde.");
       });
   };
 
