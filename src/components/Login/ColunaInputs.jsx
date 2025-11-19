@@ -12,6 +12,7 @@ import { api } from '../../provider/api';
 import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
 import alert from "../../assets/images/alert.svg";
+import { caringuApi } from '../../provider/caringuApi';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
@@ -25,6 +26,21 @@ const ColunaInputs = () => {
       toast.remove();
     };
   }, []);
+
+  const validarAlunoENavegar = (pessoaId) => {
+    caringuApi.get(`/alunos/validacao-contratacao/${pessoaId}`)
+      .then(res => {
+        console.log("Retorno do endpoint de validação:", res.data);
+        if (res.data === true) {
+          navigate('/home-aluno');
+        } else {
+          navigate('/procurando-personal');
+        }
+      })
+      .catch(() => {
+        navigate('/procurando-personal');
+      });
+  };
 
   // efeito para fazer o contador regressivo
   useEffect(() => {
@@ -72,11 +88,11 @@ const ColunaInputs = () => {
 
           setTimeout(() => {
             const tipo = (response.data.tipo || "").toString().toUpperCase();
-              if (tipo === "PERSONAL") {
-                navigate('/home');
-              } else if (tipo === "ALUNO") {
-                navigate('/home-aluno');
-              }
+            if (tipo === "PERSONAL") {
+              navigate('/home');
+            } else if (tipo === "ALUNO") {
+              validarAlunoENavegar(response.data.pessoaId);
+            }
           }, 1000);
         }
       } catch (error) {
@@ -119,11 +135,11 @@ const ColunaInputs = () => {
 
         setTimeout(() => {
           const tipo = (response.data.tipo || "").toString().toUpperCase();
-            if (tipo === "PERSONAL") {
-              navigate('/home');
-            } else if (tipo === "ALUNO") {
-              navigate('/home-aluno');
-            }
+          if (tipo === "PERSONAL") {
+            navigate('/home');
+          } else if (tipo === "ALUNO") {
+            validarAlunoENavegar(response.data.pessoaId);
+          }
         }, 1000);
       } else {
         throw new Error('Ops! Ocorreu um erro interno.');
