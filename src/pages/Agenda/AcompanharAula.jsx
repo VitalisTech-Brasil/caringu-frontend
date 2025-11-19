@@ -26,23 +26,23 @@ const AcompanharAula = () => {
     const [exerciciosAbertos, setExerciciosAbertos] = useState({});
 
 
-
-
-    const handleToggleFinalizado = (treinoIdx, exIdx, checked) => {
-        setTreinos(prev =>
-            prev.map((treino, tIdx) =>
-                tIdx === treinoIdx
-                    ? {
-                        ...treino,
-                        exercicios: treino.exercicios.map((ex, eIdx) =>
-                            eIdx === exIdx
-                                ? { ...ex, exerciciosFinalizados: checked }
-                                : ex
-                        )
-                    }
-                    : treino
-            )
-        );
+    const marcarExercicioComoFinalizado = async (idExecucaoExercicio, finalizado) => {
+        try {
+            await caringuApi.patch(
+                `/execucoes-exercicios/${idExecucaoExercicio}/status`,
+                { finalizado }
+            );
+            setAula(prev => ({
+                ...prev,
+                exercicios: prev.exercicios.map(ex =>
+                    ex.idExecucaoExercicio === idExecucaoExercicio
+                        ? { ...ex, finalizado }
+                        : ex
+                )
+            }));
+        } catch (error) {
+            console.error("Erro ao atualizar status do exercício:", error);
+        }
     };
 
 
@@ -196,6 +196,9 @@ const AcompanharAula = () => {
                                                         onToggleAberto={() => handleToggleExercicio(ex.idExecucaoExercicio)}
                                                         espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
                                                         larguraVideo="xl:w-[40%] md:w-[80%] w-full"
+                                                        onToggleFinalizado={checked =>
+                                                            marcarExercicioComoFinalizado(ex.idExecucaoExercicio, checked)
+                                                        }
                                                     />
                                                 ))}
                                             </div>
@@ -209,10 +212,11 @@ const AcompanharAula = () => {
                                     texto={"Finalizar Treino"}
                                     corTexto="#fff"
                                     cor="var(--azul-claro)"
-                                    classNameExtra="w-50 h-10 text-base"
+                                    classNameExtra={`w-50 h-10 text-base ${aula && aula.aulaStatus === "REALIZADO" ? "cursor-not-allowed opacity-60" : ""}`}
                                     ariaLabel={"Botão de Finalizar Treino"}
                                     fontWeight="600"
-                                    onClick={() => marcarComoConcluido(aula.idAula)}
+                                    onClick={() => aula && marcarComoConcluido(aula.idAula)}
+                                    disabled={aula && aula.aulaStatus === "REALIZADO"}
                                 />
                             </div>
 
