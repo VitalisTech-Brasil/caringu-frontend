@@ -159,7 +159,7 @@ const Planos = () => {
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Plano cancelado com sucesso!" />
             ));
-            await alunosPlanosAtivos(); 
+            await alunosPlanosAtivos();
             setModalCancelarPlanoVisivel(false);
         } catch (error) {
             toast.custom((t) => (
@@ -337,7 +337,8 @@ const Planos = () => {
                                 onClickButton={() => {
                                     setIdPlanoContratadoSelecionado(aluno.idPlanoContratado);
                                     openCancelarPlanoModal();
-                                }} gapConteudo="gap-2 lg:gap-0"
+                                }}
+                                gapConteudo="gap-2 lg:gap-0"
                                 fontTelefone="text-base"
                             />
                         ))
