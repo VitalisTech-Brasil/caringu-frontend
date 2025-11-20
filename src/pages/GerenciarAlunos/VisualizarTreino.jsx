@@ -79,6 +79,20 @@ const VisualizarTreino = () => {
         }
     }, [aulas]);
 
+    if (!alunoFromState) {
+        return (
+            <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
+                <MenuLateral />
+                <div className="flex-1 overflow-y-auto">
+                    <Header />
+                    <div className="w-full h-auto p-2 md:p-4 2xl:">
+                        <span className="text-xl text-gray-500">Informações do aluno não disponíveis.</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />

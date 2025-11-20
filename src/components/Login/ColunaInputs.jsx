@@ -12,6 +12,7 @@ import { api } from '../../provider/api';
 import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
 import alert from "../../assets/images/alert.svg";
+import { caringuApi } from '../../provider/caringuApi';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
@@ -25,6 +26,21 @@ const ColunaInputs = () => {
       toast.remove();
     };
   }, []);
+
+  const validarAlunoENavegar = (pessoaId) => {
+    caringuApi.get(`/alunos/validacao-contratacao/${pessoaId}`)
+      .then(res => {
+        if (res.data === true) {
+          navigate('/home-aluno');
+        } else {
+          navigate('/procurando-personal');
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao validar aluno:", error);
+        toast.error("Ocorreu um erro ao validar seu acesso. Tente novamente mais tarde.");
+      });
+  };
 
   // efeito para fazer o contador regressivo
   useEffect(() => {
@@ -71,10 +87,11 @@ const ColunaInputs = () => {
           ));
 
           setTimeout(() => {
-            if (response.data.tipo === "PERSONAL") {
+            const tipo = (response.data.tipo || "").toString().toUpperCase();
+            if (tipo === "PERSONAL") {
               navigate('/home');
-            } else {
-              navigate('/procurando-personal');
+            } else if (tipo === "ALUNO") {
+              validarAlunoENavegar(response.data.pessoaId);
             }
           }, 1000);
         }
@@ -117,10 +134,11 @@ const ColunaInputs = () => {
         ));
 
         setTimeout(() => {
-          if (response.data.tipo === "PERSONAL") {
+          const tipo = (response.data.tipo || "").toString().toUpperCase();
+          if (tipo === "PERSONAL") {
             navigate('/home');
-          } else {
-            navigate('/procurando-personal');
+          } else if (tipo === "ALUNO") {
+            validarAlunoENavegar(response.data.pessoaId);
           }
         }, 1000);
       } else {

@@ -11,12 +11,10 @@ const CardAluno = ({
     onMenuAction,
     openMenuId,
     setOpenMenuId,
-    totalCards,
     alinhamentoCard = "justify-center",
     origemUso = "gerenciarAlunos",
     origemUsoOption = "gerenciarAlunos",
     heightCardInterno = "55%",
-    heightCardInternoWeb = "50%",
     gapConteudo = "gap-0",
     idButton = "btn-ver-feedbacks",
     textoButton = "Ver Feedbacks",
@@ -25,6 +23,7 @@ const CardAluno = ({
     classNameExtraButton = "sm:text-base text-xs 2xl:h-[50px] sm:h-[35px] h-[30px] sm:w-[40%] w-[90%] mt-1",
     fontTelefone= "text-[12px]",
     onClickButton,
+    tamanhoCard
 
 }) => {
     const menuRef = useRef(null);
@@ -163,7 +162,7 @@ const CardAluno = ({
 
     return (
         <div
-            className={`flex flex-col w-full ${totalCards > 2 ? 'h-full' : `h-full sm:h-full 2xl:h-[${heightCardInterno}]`} items-start ${alinhamentoCard} bg-[var(--cor-secundaria)] rounded-md 2xl:p-4 sm:p-3 p-2 hover:bg-gray-50 border-2 border-gray-200 ${gapConteudo}`}
+            className={`flex flex-col w-full ${tamanhoCard} items-start ${alinhamentoCard} bg-[var(--cor-secundaria)] rounded-md 2xl:p-4 sm:p-3 p-2 hover:bg-gray-50 border-2 border-gray-200 ${gapConteudo}`}
             key={aluno.idAluno}
         >
             <div
