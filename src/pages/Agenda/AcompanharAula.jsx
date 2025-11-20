@@ -19,11 +19,9 @@ const AcompanharAula = () => {
     const [aluno, setAluno] = useState();
     const [imgErro, setImgErro] = useState(false);
     const [aberto, setAberto] = useState(false);
-    const [treinos, setTreinos] = useState([]);
     const location = useLocation();
     const idAula = location.state?.idAula;
     const [aula, setAula] = useState(null);
-    const [exerciciosAbertos, setExerciciosAbertos] = useState({});
 
 
     const marcarExercicioComoFinalizado = async (idExecucaoExercicio, finalizado) => {
@@ -32,14 +30,18 @@ const AcompanharAula = () => {
                 `/execucoes-exercicios/${idExecucaoExercicio}/status`,
                 { finalizado }
             );
-            setAula(prev => ({
-                ...prev,
-                exercicios: prev.exercicios.map(ex =>
-                    ex.idExecucaoExercicio === idExecucaoExercicio
-                        ? { ...ex, finalizado }
-                        : ex
-                )
-            }));
+            setAula(prev =>
+                prev
+                    ? {
+                        ...prev,
+                        exercicios: prev.exercicios?.map(ex =>
+                            ex.idExecucaoExercicio === idExecucaoExercicio
+                                ? { ...ex, finalizado }
+                                : ex
+                        ) || []
+                    }
+                    : prev
+            );
         } catch (error) {
             console.error("Erro ao atualizar status do exercício:", error);
         }
@@ -71,7 +73,9 @@ const AcompanharAula = () => {
             }
         };
 
-        fetchInfosAluno();
+        if (idAula) {
+            fetchInfosAluno();
+        }
     }, [idAluno, idAula]);
 
 
@@ -86,7 +90,7 @@ const AcompanharAula = () => {
             );
             setAula(prev => prev ? { ...prev, aulaStatus: "REALIZADO" } : prev);
         } catch (error) {
-            console.error("Erro ao marcar aula como concluído:", error);
+            console.error("Erro ao marcar aula como concluída:", error);
         }
     };
 
@@ -181,7 +185,7 @@ const AcompanharAula = () => {
                                                 <span>{aula.nomeTreino}</span>
                                             </div>
                                             <div className="flex flex-col h-auto w-full gap-2">
-                                                {aula.exercicios.map((ex, exIdx) => (
+                                                {aula.exercicios?.map((ex) => (
                                                     <ExercicioVideoCard
                                                         key={ex.idExecucaoExercicio}
                                                         titulo={ex.nomeExercicio}
@@ -192,8 +196,6 @@ const AcompanharAula = () => {
                                                         tempoDescanso={segundosParaMinutos(Number(ex.descansoSegundos))}
                                                         exerciciosFinalizados={ex.finalizado}
                                                         origemUso="visualizarAulas"
-                                                        inicialmenteAberto={!!exerciciosAbertos[ex.idExecucaoExercicio]}
-                                                        onToggleAberto={() => handleToggleExercicio(ex.idExecucaoExercicio)}
                                                         espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
                                                         larguraVideo="xl:w-[40%] md:w-[80%] w-full"
                                                         onToggleFinalizado={checked =>
