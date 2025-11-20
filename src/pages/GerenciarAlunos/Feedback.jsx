@@ -13,6 +13,9 @@ import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone"
 import MascaraData from "../../components/Utils/Functions/MascaraData"
 import MascaraNivelExperiencia from "../../components/Utils/Functions/MascaraNivelExperiencia";
 import MascaraGenero from '../../components/Utils/Functions/MascaraGenero';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../../components/Utils/CustomToast';
 
 const Feedback = () => {
     const { idAluno } = useParams();
@@ -101,7 +104,9 @@ const Feedback = () => {
             setNovoFeedback("");
             fetchFeedbacksAula(aulaSelecionada.aulaId);
         } catch (error) {
-            alert("Erro ao enviar feedback.");
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
+            ));
             console.error(error);
         }
     };
@@ -284,6 +289,7 @@ const Feedback = () => {
                                                 <div className="w-full h-auto flex flex-col items-center">
                                                     <Button
                                                         id="enviarFeedback"
+                                                        type="submit"
                                                         texto="Enviar Feedback"
                                                         corTexto="#fff"
                                                         cor="var(--azul-claro)"
@@ -313,6 +319,7 @@ const Feedback = () => {
                     </div>
                 </div>
             </div>
+            <Toaster position="top-right" reverseOrder={false} />
         </div>
     )
 }
