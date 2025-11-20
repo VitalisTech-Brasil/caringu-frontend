@@ -161,7 +161,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                             <div>
                                                 <div>
                                                     <button
-                                                        onClick={() => navigate(`/acompanhar-aula/${compromisso.idAluno}`)}
+                                                        onClick={() => navigate(`/acompanhar-aula/${compromisso.idAluno}`, { state: { idAula: compromisso.id } })}
                                                         className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-transparent border-solid border-2 border-[#E2E4E7] text-[var(--cor-secundaria)] text-base 2xl:text-xl font-normal rounded-md py-1 px-4 cursor-pointer"
                                                     >
                                                         Acompanhar aula
