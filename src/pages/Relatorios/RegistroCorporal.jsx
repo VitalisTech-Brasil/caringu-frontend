@@ -1,55 +1,70 @@
-import React, { use } from 'react'
+import React, { useEffect, useState } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
 import { Link } from 'react-router-dom'
 import { useParams, useNavigate } from 'react-router-dom'
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro'
+import { caringuApi } from '../../provider/caringuApi'
+import Button from '../../components/Utils/Button'
+import ModalCompararFoto from '../../components/Fotos/ModalCompararFoto';
+import { Toaster } from 'react-hot-toast';
+
 
 const RelatorioTreinos = () => {
     const { idAluno } = useParams();
 
-    const imagensFrontais = [
-        { id: 1, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1frente.jpg" },
-        { id: 2, dataEnvio: "11/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2frente.jpeg" }
-    ];
+    const [tipoFoto, setTipoFoto] = useState(null);
+    const [periodoAvaliacaoEmMeses, setPeriodoAvaliacaoEmMeses] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const imagensPerfilDireita = [
-        { id: 3, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1ladoDireito.jpg" },
-        { id: 4, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2ladoDireito.jpg" }
-    ];
+    const [fotosCorporais, setFotosCorporais] = useState({
+        FRONTAL: [],
+        COSTAS: [],
+        PERFIL_DIREITO: [],
+        PERFIL_ESQUERDO: [],
+    });
 
-    const imagensPerfilEsquerda = [
-        { id: 5, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1ladoEsquerdo.jpg" },
-        { id: 6, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2ladoEsquerdo.jpg" }
+    const handleListarFotosCorporais = async () => {
+        try {
+            const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
+            const fotos = response.data;
+            console.log("Fotos recebidas:", fotos);
 
-    ];
+            setPeriodoAvaliacaoEmMeses(fotos.length > 0 ? fotos[0].periodoAvaliacao : 0);
 
-    const imagensCosta = [
-        { id: 7, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/1costas.jpg" },
-        { id: 8, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/suellen/2costas.jpg" }
+            // Organiza as fotos por tipo
+            const agrupadas = {
+                FRONTAL: [],
+                COSTAS: [],
+                PERFIL_DIREITO: [],
+                PERFIL_ESQUERDO: [],
+            };
 
-    ];
+            fotos.forEach((f) => {
+                if (agrupadas[f.tipo]) {
+                    agrupadas[f.tipo].push({
+                        id: f.id,
+                        dataEnvio: new Date(f.dataEnvio).toLocaleDateString("pt-BR"),
+                        src: f.urlFotoShape
+                    });
+                }
+            });
 
-    const imagensNaganoFrontais = [
-        { id: 9, dataEnvio: "10/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1frente.jpg" },
-        { id: 10, dataEnvio: "11/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2frente.jpg" }
-    ];
+            setFotosCorporais(agrupadas);
+            console.log("Evoluções corporais do aluno:", agrupadas);
+        } catch (error) {
+            console.error("Erro ao listar fotos:", error);
+        }
+    };
 
-    const imagensNaganoDireita = [
-        { id: 11, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1ladoDireito.jpg" },
-        { id: 12, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2ladoDireito.jpg" }
-    ];
+    useEffect(() => {
+        handleListarFotosCorporais();
+    }, [idAluno]);
 
-    const imagensNaganoEsquerda = [
-        { id: 13, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1ladoEsquerdo.jpg" }/* ,
-        { id: 14, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2ladoEsquerdo.jpg" } */
-
-    ];
-
-    const imagensNaganoCosta = [
-        { id: 15, dataEnvio: "12/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/1costas.jpg" },
-        { id: 16, dataEnvio: "13/05/2025", src: "https://storagevitalis.blob.core.windows.net/fotos-perfil/Nagano/2costas.jpg" }
-    ];
+    const abrirModal = (tipo) => {
+        setTipoFoto(tipo);
+        setIsModalOpen(true);
+    };
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -68,33 +83,44 @@ const RelatorioTreinos = () => {
                             <h1>Progresso corporal</h1>
                         </div>
                         <div className="flex flex-col max-h-[690px] overflow-y-auto">
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <h1 className='font-semibold text-[24px]'>Frente</h1>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoFrontais : imagensFrontais} />
+                            {[
+                                { titulo: "Frente", tipo: "FRONTAL", imagens: fotosCorporais.FRONTAL },
+                                { titulo: "Perfil Esquerdo", tipo: "PERFIL_ESQUERDO", imagens: fotosCorporais.PERFIL_ESQUERDO },
+                                { titulo: "Perfil Direito", tipo: "PERFIL_DIREITO", imagens: fotosCorporais.PERFIL_DIREITO },
+                                { titulo: "Costas", tipo: "COSTAS", imagens: fotosCorporais.COSTAS }
+                            ].map(({ titulo, tipo, imagens }) => (
+                                <div key={tipo} className='flex flex-col mt-8 max-h-[400px] sm:p-4 p-0'>
+                                    <div className='flex sm:flex-row flex-col items-start sm:items-center justify-between sm:gap-0 gap-2 sm:pb-0 pb-3'>
+                                        <h1 className='font-semibold text-[24px]'>{titulo}</h1>
+                                        <Button
+                                            texto="Comparar Fotos"
+                                            cor="#748CAB"
+                                            corTexto="#FFFFFF"
+                                            onClick={() => abrirModal(tipo)}
+                                            width="140px"
+                                            height="30px"
+                                            fontSize="12px"
+                                            fontWeight={"700"}
+                                        />
+                                    </div>
+                                    <div className='border-2 border-[#E6E6E2] rounded-lg'>
+                                        <CarrosselRegistro imagens={imagens} />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <h1 className='font-semibold text-[24px]'>Perfil Direita</h1>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoDireita : imagensPerfilDireita} />
-                                </div>
-                            </div>
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <h1 className='font-semibold text-[24px]'>Perfil Esquerdo</h1>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoEsquerda : imagensPerfilEsquerda} />
-                                </div>
-                            </div>
-                            <div className='flex flex-col mt-10 max-h-[400px]'>
-                                <h1 className='font-semibold text-[24px]'>Costa</h1>
-                                <div className='border-2 border-[#E6E6E2] rounded-lg'>
-                                    <CarrosselRegistro imagens={idAluno == 7 ? imagensNaganoCosta : imagensCosta} />
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
+                    {isModalOpen && (
+                        <ModalCompararFoto
+                            visivel={isModalOpen}
+                            fecharModal={() => setIsModalOpen(false)}
+                            ariaLabel="Modal para comparar fotos corporais"
+                            fotosCorporais={fotosCorporais}
+                            tipoSelecionado={tipoFoto}
+                        />
+                    )}
                 </main>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div >
     )
