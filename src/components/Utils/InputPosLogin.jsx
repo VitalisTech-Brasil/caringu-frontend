@@ -18,6 +18,7 @@ const InputPosLogin = ({
     inputMode,
     onChange,
     onFocus,
+    maxLength,
     onBlur,
     ...rest
  }) => {
@@ -37,6 +38,7 @@ const InputPosLogin = ({
                 name={name}
                 required={required}
                 placeholder={placeholder}
+                maxLength={maxLength}
                 style={{
                     fontSize: fontSize,
                     fontWeight: fontWeight,

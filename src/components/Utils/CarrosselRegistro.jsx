@@ -1,4 +1,3 @@
-// components/CarrosselRegistro.jsx
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -33,7 +32,7 @@ const CarrosselRegistro = ({ imagens = [], titulo = "" }) => {
   };
 
   return (
-    <div className="relative py-8 flex flex-col items-center justify-center gap-2 w-[95%] mx-auto">
+    <div className="relative py-8 flex flex-col items-center justify-center gap-2 w-[95%] mx-auto cursor-grab">
       {titulo && <h2 className="text-xl font-bold text-gray-800">{titulo}</h2>}
 
       {/* Botão Esquerda */}
@@ -70,7 +69,7 @@ const CarrosselRegistro = ({ imagens = [], titulo = "" }) => {
               <div className="flex flex-col items-center">
                 <div
                   onClick={() => abrirModal(item.src)}
-                  className="w-35 h-35 xl:w-56 xl:h-56 bg-gray-300 rounded cursor-pointer flex items-center justify-center"
+                  className="w-25 h-25 xl:w-56 xl:h-56 bg-gray-300 rounded cursor-pointer flex items-center justify-center"
                 >
                   {item.src ? (
                     <img
