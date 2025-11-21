@@ -1,8 +1,29 @@
 import React from 'react';
 import MensagemFeedback from './MensagemFeedback';
 
+
+function formatarDataCriacao(dataCriacao) {
+  if (!dataCriacao) return "";
+
+  const parts = dataCriacao.split(" ");
+  if (parts.length !== 2) return "";
+  const [data, hora] = parts;
+  const dateParts = data.split("-");
+  if (dateParts.length !== 3) return "";
+  const [ano, mes, dia] = dateParts;
+  const diasSemana = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
+  const dateObj = new Date(`${ano}-${mes}-${dia}`);
+  if (isNaN(dateObj.getTime())) return "";
+  const diaSemana = diasSemana[dateObj.getDay()];
+  return `${diaSemana}, ${dia}/${mes}/${ano} - ${hora}`;
+}
+
 const CaixaFeedback = ({ aula, mensagens, aluno }) => {
   if (!aula) return null;
+
+  const primeiraDataCriacao = mensagens.length > 0 ? mensagens[0].dataCriacao : null;
+  const titulo = primeiraDataCriacao ? formatarDataCriacao(primeiraDataCriacao) : "";
+
 
   return (
     <div className="border-2 border-gray-300 rounded p-2 flex flex-col h-auto max-h-[350px] w-[92%] gap-2 overflow-y-auto">
@@ -14,7 +35,7 @@ const CaixaFeedback = ({ aula, mensagens, aluno }) => {
           <path d="M10.375 8.80005H1.625" stroke="#1D2D44" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span>
-          {aula.diaSemana}, {aula.data} - {aula.horarioInicio}
+          {titulo}
         </span>
       </div>
 
@@ -23,11 +44,11 @@ const CaixaFeedback = ({ aula, mensagens, aluno }) => {
           Nenhum comentário sobre esse treino foi feito.
         </div>
       ) : (
-        mensagens.map(m => (
+        mensagens.map((m, idx) => (
           <MensagemFeedback
-            key={m.id}
-            label={m.label}
-            texto={m.texto}
+            key={`${m.autorId}-${m.dataCriacao}-${idx}`}
+            label={m.autorTipo}
+            texto={m.descricao}
             paddingLeftMensagem={aluno === "aluno" ? "5%" : "10%"}
           />
         ))
