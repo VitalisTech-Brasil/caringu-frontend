@@ -7,7 +7,7 @@ import CustomToast from '../../components/Utils/CustomToast';
 
 function parseDataEnvio(dataEnvio) {
     const [dia, mes, ano] = dataEnvio.split("/");
-    return new Date(`${ano}-${mes}-${dia}`);
+    return new Date(Number(ano), Number(mes) - 1, Number(dia));
 }
 
 function handleInput(e, setter, valorAtual) {
@@ -84,6 +84,15 @@ function ModalCompararFoto({
             ));
             return;
         }
+        const dataInicio = new Date(mesAnoParaISO(inicio));
+        const dataFim = new Date(mesAnoParaISO(fim));
+        if (dataInicio > dataFim) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="A data inicial deve ser anterior ou igual à data final." />
+            ));
+            return;
+
+        }
         setFiltro({ inicio, fim });
     }
 
@@ -132,17 +141,17 @@ function ModalCompararFoto({
                             <h2 className="text-base md:text-xl font-bold mt-4 mb-2">
                                 Comparar Fotos {tipoLabel[tipoSelecionado]}
                             </h2>
-                            <div className="flex md:flex-row flex-col gap-4 justify-between items-center-600 w-full px-6 md:px-12">
+                            <div className="flex md:flex-row flex-col gap-4 justify-between items-center w-full px-6 md:px-12">
                                 <div className="flex flex-row md:gap-10 items-center justify-between md:justify-center md:w-auto w-full">
                                     <div className="flex flex-col items-start h-auto w-1/2 md:w-auto">
                                         <Label
-                                            id="Data de início"
+                                            id="DataDeInicio"
                                             fontSize="14px"
                                             nomeLabel="Início"
                                             fontWeight="500"
                                         />
                                         <InputPosLogin
-                                            id="Data de início"
+                                            id="DataDeInicio"
                                             name="dataInicio"
                                             inputType="text"
                                             placeholder="MM/AAAA"
@@ -159,13 +168,13 @@ function ModalCompararFoto({
                                     </div>
                                     <div className=" flex flex-col items-start h-auto w-1/2 md:w-auto">
                                         <Label
-                                            id="Data de fim"
+                                            id="DataDeFim"
                                             fontSize="14px"
                                             nomeLabel="Fim"
                                             fontWeight="500"
                                         />
                                         <InputPosLogin
-                                            id="Data de fim"
+                                            id="DataDeFim"
                                             name="dataFim"
                                             inputType="text"
                                             placeholder="MM/AAAA"
