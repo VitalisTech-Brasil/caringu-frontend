@@ -10,7 +10,7 @@ function parseDataEnvio(dataEnvio) {
     return new Date(Number(ano), Number(mes) - 1, Number(dia));
 }
 
-function handleInput(e, setter, valorAtual) {
+function handleInput(e, setter) {
     const valor = e.target.value;
     if (/^[0-9/]*$/.test(valor)) {
         let v = valor.replace(/\D/g, "");
@@ -29,7 +29,6 @@ function handleInput(e, setter, valorAtual) {
 }
 
 function mesAnoParaISO(mesAno) {
-    // mesAno: "MM/YYYY"
     if (!mesAno || !/^\d{2}\/\d{4}$/.test(mesAno)) return null;
     const [mes, ano] = mesAno.split("/");
     return `${ano}-${mes}-01`;
