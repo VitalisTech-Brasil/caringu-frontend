@@ -5,6 +5,7 @@ import { useCadastro } from "./context/CadastroContext";
 
 import axios from "axios";
 import { caringuApi } from "../../provider/caringuApi";
+import { pythonApi } from "../../provider/pythonApi";
 
 import styleCadastro from "./module/cadastro.module.css";
 
