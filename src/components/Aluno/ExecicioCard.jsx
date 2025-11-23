@@ -53,7 +53,7 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
       <div className="h-full flex items-center m-2">
         <input
           type="checkbox"
-          checked={!!finalizado}
+          checked={finalizado}
           onChange={e => onToggleFinalizado && onToggleFinalizado(e.target.checked)}
           aria-label="Marcar exercício como concluído"
         />
@@ -136,7 +136,7 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
                 <div className="text-[10px] sm:text-[20px]"
                   style={getIndicadorStyle(finalizado)}
                 >
-                  <b className="text-[10px] sm:text-[20px]">Grupo Muscular: </b>{grupoMuscular ? grupoMuscular : "Sem grupo muscular"}
+                  <b className="text-[10px] sm:text-[20px]">Grupo Muscular: </b>{grupoMuscular ? grupoMuscular : "Sem Grupo Muscular"}
                 </div>
               </span>
             </div>
