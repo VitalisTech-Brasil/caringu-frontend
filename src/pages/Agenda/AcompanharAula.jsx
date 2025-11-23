@@ -188,7 +188,7 @@ const AcompanharAula = () => {
                                                 {aula.exercicios?.map((ex) => (
                                                     <ExercicioVideoCard
                                                         key={ex.idExecucaoExercicio}
-                                                        titulo={ex.nomeExercicio}
+                                                        nomeExercicio={ex.nomeExercicio}
                                                         carga={ex.cargaKg}
                                                         repeticoesSeries={ex.repeticoesSeries}
                                                         observacoes={ex.observacoes}

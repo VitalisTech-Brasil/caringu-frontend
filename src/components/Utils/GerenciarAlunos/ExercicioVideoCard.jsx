@@ -8,7 +8,7 @@ const extrairYoutubeId = (url) => {
 };
 
 const ExercicioVideoCard = ({
-    titulo,
+    nomeExercicio,
     carga,
     repeticoesSeries,
     grupoMuscular,
@@ -84,7 +84,7 @@ const ExercicioVideoCard = ({
                             style={
                                 getTituloStyle(exerciciosFinalizados)
                             }>
-                            <span className="break-words whitespace-normal">{titulo}</span>
+                            <span className="break-words whitespace-normal">{nomeExercicio}</span>
                         </div>
                         <div className={`sm:mt-0 mt-4 flex flex-col lg:flex-row lg:flex-wrap items-start w-full ${espacamentoEntreIcons} text-base`}>
                             <div className="flex flex-col sm:flex-row items-center h-auto sm:w-auto w-full gap-2 flex-shrink-0">
@@ -157,9 +157,9 @@ const ExercicioVideoCard = ({
                 {aberto && (
                     <div className="flex flex-col h-auto w-full px-1 sm:px-7">
                         <div className="flex flex-col h-auto w-full">
-                            <label htmlFor={`observacoes-${titulo}`}>Observações</label>
+                            <label htmlFor={`observacoes-${nomeExercicio}`}>Observações</label>
                             <Input
-                                id={`observacoes-${titulo}`}
+                                id={`observacoes-${nomeExercicio}`}
                                 name="Observações"
                                 inputType="text"
                                 placeholder="Observações sobre o exercício"
