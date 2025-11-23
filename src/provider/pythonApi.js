@@ -5,27 +5,5 @@ export const pythonApi = axios.create({
   headers: {
     "Content-Type": "application/json"
   },
-  withCredentials: true, // Necessário para enviar cookies HttpOnly
+  withCredentials: false
 });
-
-// request = requisição
-pythonApi.interceptors.request.use(
-  (config) => {
-    // Com cookies HttpOnly, o token é enviado automaticamente
-    // Não precisamos mais adicionar o Authorization header manualmente
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// response = resposta
-pythonApi.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      window.dispatchEvent(new Event("sessaoExpirada"));
-    }
-
-    return Promise.reject(error);
-  }
-);

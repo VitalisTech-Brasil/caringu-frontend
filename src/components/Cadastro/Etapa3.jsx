@@ -121,15 +121,16 @@ export default function Etapa3({ setEtapa }) {
     try {
       const response = await pythonApi.get(`/consultar?registro=${cref}`);
 
-      if (true) {
+      // Ajuste simples: se veio algum dado da API Python, consideramos CREF válido
+      if (response?.data && response.data.length > 0 && response.data[0].nome == dadosCadastro.nome && response.data[0].cref == cref) {
         setCrefStatus("ok");
         setMensagemCref("CREF válido!");
       } else {
         setCrefStatus("erro");
-        setMensagemCref("Cref e/ou nome não encontrado ou inválido.");
+        setMensagemCref("CREF e/ou nome não encontrado ou inválido.");
       }
 
-      console.log("Resposta da função:", response.data[0]);
+      console.log("Resposta da função:", response.data);
     } catch (error) {
       setCrefStatus("erro");
       setMensagemCref("Erro ao verificar o CREF. Tente novamente.");
@@ -252,6 +253,7 @@ export default function Etapa3({ setEtapa }) {
       celular: formatarCelular(dadosCadastro.telefone),
       dataNascimento: converterParaISO(dadosCadastro.dataNascimento),
       genero: dadosCadastro.genero || "",
+      urlFotoPerfil: dadosCadastro.fotoPerfilGoogle || null,
       tipoConta: dadosCadastro.tipoConta || "personal",
       cref: data.cref,
       especialidadesIds: especialidadesSelecionadas.map((esp) =>
