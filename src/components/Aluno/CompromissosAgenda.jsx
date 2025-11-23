@@ -139,7 +139,10 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                             </div>
                                             <div className="flex flex-row  items-center pl-4 w-full">
                                                 <button
-                                                    onClick={() => navigate(`/acompanhar-aula-aluno/${compromisso.id}`)}
+                                                    onClick={() => navigate(
+                                                        `/acompanhar-aula-aluno/${compromisso.id}`,
+                                                        { state: { compromisso } }
+                                                    )}
                                                     className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-[color:var(--azul-claro)] text-[var(--cor-secundaria)] text-xs 2xl:text-xl font-semibold rounded-md py-1 px-4 cursor-pointer h-auto w-45 2xl:w-70"
                                                 >
                                                     Acompanhar Aula
