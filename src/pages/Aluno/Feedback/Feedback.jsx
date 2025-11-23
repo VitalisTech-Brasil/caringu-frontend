@@ -52,7 +52,7 @@ const Feedback = () => {
             }
         };
         fetchInfosAula();
-    }, [idAluno, currentPage, itemsPerPage, searchActive, selectedDate]);
+    }, [idAluno, currentPage, searchActive, selectedDate]);
 
     const goToPage = (page) => {
         setCurrentPage(page);
@@ -139,7 +139,6 @@ const Feedback = () => {
                                     horarioFim={a.horarioFim}
                                     nomePersonal={a.nomePersonal}
                                     nomeTreino={a.nomeTreino}
-                                    quantidadeFeedbacks={a.quantidadeFeedbacks}
                                     onVerFeedbacks={() => navigate('/feedback-mensagem', { state: { aula: a } })}
                                 />
                             ))
