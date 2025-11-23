@@ -1,5 +1,24 @@
 import React, { useState } from "react";
 
+
+
+function getTituloStyle(finalizado) {
+  return {
+    color: finalizado ? '#C5C8C6' : 'var(--laranja)',
+    textDecoration: finalizado ? 'line-through' : 'none'
+  };
+}
+
+function getIndicadorStyle(finalizado) {
+  return {
+    color: finalizado ? '#C5C8C6' : 'var(--cor-primaria)',
+  };
+}
+
+function getIconIndicadorStyle(finalizado) {
+  return finalizado ? '#C5C8C6' : 'var(--azul-escuro)';
+}
+
 export default function CardExercicio({ data, onToggleFinalizado }) {
   const [expandido, setExpandido] = useState(false);
   const { nome, carga, repeticoes, grupoMuscular, observacoes, tempoDescanso, video, finalizado } = data;
@@ -11,37 +30,23 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
   // Verifica se é imagem (gif, jpg, png, jpeg)
   const isImage =
     video &&
-    (video.endsWith(".gif") ||
-      video.endsWith(".jpg") ||
-      video.endsWith(".jpeg") ||
-      video.endsWith(".png"));
+    /\.(gif|jpe?g|png)(\?|$)/i.test(video);
 
-  // Extrai o ID do vídeo do YouTube e monta o link embed
-  const embedUrl =
-    isYouTube && video
-      ? `https://www.youtube.com/embed/${video.includes("v=")
-        ? new URLSearchParams(new URL(video).search).get("v")
-        : video.split("/").pop()
-      }`
-      : video;
-
-
-  function getTituloStyle(finalizado) {
-    return {
-      color: finalizado ? '#C5C8C6' : 'var(--laranja)',
-      textDecoration: finalizado ? 'line-through' : 'none'
-    };
+  let embedUrl = video;
+  if (isYouTube && video) {
+    try {
+      if (video.includes("v=")) {
+        const urlObj = new URL(video);
+        const vId = new URLSearchParams(urlObj.search).get("v");
+        embedUrl = `https://www.youtube.com/embed/${vId}`;
+      } else {
+        embedUrl = `https://www.youtube.com/embed/${video.split("/").pop()}`;
+      }
+    } catch (e) {
+      embedUrl = video;
+    }
   }
 
-  function getIndicadorStyle(finalizado) {
-    return {
-      color: finalizado ? '#C5C8C6' : 'var(--cor-primaria)',
-    };
-  }
-
-  function getIconIndicadorStyle(finalizado) {
-    return finalizado ? '#C5C8C6' : 'var(--azul-escuro)';
-  }
 
   return (
     <div className="flex">
@@ -50,6 +55,7 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
           type="checkbox"
           checked={!!finalizado}
           onChange={e => onToggleFinalizado && onToggleFinalizado(e.target.checked)}
+          aria-label="Marcar exercício como concluído"
         />
       </div>
 
@@ -130,7 +136,7 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
                 <div className="text-[10px] sm:text-[20px]"
                   style={getIndicadorStyle(finalizado)}
                 >
-                  <b className="text-[10px] sm:text-[20px]">Grupo Muscular: </b>{grupoMuscular}
+                  <b className="text-[10px] sm:text-[20px]">Grupo Muscular: </b>{grupoMuscular ? grupoMuscular : "Sem grupo muscular"}
                 </div>
               </span>
             </div>

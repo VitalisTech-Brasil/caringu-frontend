@@ -130,7 +130,7 @@ const AcompanharAula = () => {
                     />
                     <div className='flex w-full items-center flex-col justify-center'>
                         <div className="pl-[1rem] sm:pl-[3.5rem] w-[100%] h-auto flex mt-4 gap-7 border-b-2 border-[#1D2D441A] lg:max-w-4xl lg:border-b-0">
-                            <Link to={`/home-aluno`}>
+                            <Link to={`/agenda-aluno`}>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9.57 5.92993L3.5 11.9999L9.57 18.0699" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M20.5 12H3.66998" stroke="#1D2D44" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -140,7 +140,8 @@ const AcompanharAula = () => {
                                 <h1 className=' text-[20px] sm:text-[28px] font-bold text-[#1E293B]'>
                                     Aula - {compromisso?.dataHorarioInicio
                                         ? new Date(compromisso.dataHorarioInicio).toLocaleDateString('pt-BR')
-                                        : "Carregando..."}                                </h1>
+                                        : "Carregando..."}
+                                </h1>
                                 <div className='flex flex-col'>
                                     <span className='flex items-center gap-2'>
                                         <svg className='shrink-0' width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -239,11 +240,13 @@ const AcompanharAula = () => {
                                                 key={exercicio.idExecucaoExercicio}
                                                 data={{
                                                     nome: exercicio.nomeExercicio,
-                                                    carga: exercicio.cargaKg,
+                                                    carga: (Number.isFinite(exercicio.cargaKg) ? `${exercicio.cargaKg} kg` : exercicio.cargaKg),
                                                     repeticoes: exercicio.repeticoesSeries,
                                                     grupoMuscular: exercicio.grupoMuscular || "",
                                                     observacoes: exercicio.observacoes,
-                                                    tempoDescanso: segundosParaMinutos(Number(exercicio.descansoSegundos)),
+                                                    tempoDescanso: exercicio.descansoSegundos != null
+                                                        ? segundosParaMinutos(Number(exercicio.descansoSegundos))
+                                                        : "Sem Tempo de Descanso",
                                                     video: exercicio.urlExemploExecucao,
                                                     finalizado: exercicio.finalizado
                                                 }}
