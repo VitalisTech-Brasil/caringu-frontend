@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { caringuApi } from '../../../provider/caringuApi';
 
 const Feedback = () => {
-    const alunoId = sessionStorage.getItem("pessoaId");
     const navigate = useNavigate();
     const menuRef = useRef(null);
     const idAluno = sessionStorage.getItem('pessoaId');
@@ -54,8 +53,6 @@ const Feedback = () => {
         };
         fetchInfosAula();
     }, [idAluno, currentPage, itemsPerPage, searchActive, selectedDate]);
-
-    const filteredAulas = aulas;
 
     const goToPage = (page) => {
         setCurrentPage(page);
@@ -128,12 +125,12 @@ const Feedback = () => {
                         </div>
                     </div>
                     <div className="lg:w-[70%] w-full 2xl:w-[50%]  p-4 h-[70vh] gap-3 flex flex-col overflow-y-auto">
-                        {filteredAulas.length === 0 ? (
+                        {aulas.length === 0 ? (
                             <div className="text-sm italic text-gray-500">
                                 Nenhum treino atribuído.
                             </div>
                         ) : (
-                            filteredAulas.map(a => (
+                            aulas.map(a => (
                                 <AulaResumoCard
                                     key={a.id}
                                     data={a.data}
@@ -151,7 +148,7 @@ const Feedback = () => {
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
-                        itemsLength={filteredAulas.length}
+                        itemsLength={aulas.length}
                         onPageChange={goToPage}
                         onPrevious={goToPrevious}
                         onNext={goToNext}

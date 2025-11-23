@@ -62,7 +62,8 @@ const FeedbackMensagem = () => {
         } catch (error) {
             toast.custom((t) => (
                 <CustomToast t={t} type="error" message="Erro ao enviar feedback." />
-            )); console.error(error);
+            ));
+            console.error(error);
         }
     };
 
@@ -91,7 +92,7 @@ const FeedbackMensagem = () => {
                             </svg>
                         }
                     />
-                    <div className="w-full h-auto p-2 md:p-4 2xl:">
+                    <div className="w-full h-auto p-2 md:p-4">
                         <span className="text-xl text-gray-500">Informações da aula não disponíveis.</span>
                     </div>
                 </div>
