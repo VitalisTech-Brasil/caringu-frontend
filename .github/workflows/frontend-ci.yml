@@ -24,7 +24,7 @@ jobs:
           node-version: 20
 
       - name: Instalar dependências (sem scripts pós-instalação)
-        run: npm ci --ignore-scripts
+        run: npm install --ignore-scripts
 
       - name: Rodar ESLint
         run: npm run lint
