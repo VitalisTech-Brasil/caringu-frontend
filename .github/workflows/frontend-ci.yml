@@ -3,8 +3,8 @@ name: Caringu Frontend - CI (Lint)
 on:
   push:
     branches:
+      - 'feature/*'
       - develop
-      - main
   pull_request:
     branches:
       - develop
