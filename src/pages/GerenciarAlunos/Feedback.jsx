@@ -105,7 +105,7 @@ const Feedback = () => {
             fetchFeedbacksAula(aulaSelecionada.aulaId);
         } catch (error) {
             toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
+                <CustomToast t={t} type="error" message="Erro ao enviar feedback." />
             ));
             console.error(error);
         }
