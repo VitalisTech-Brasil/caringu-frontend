@@ -49,7 +49,7 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
 
 
   return (
-    <div className="flex">
+    <div className="flex cursor-pointer">
       <div className="h-full flex items-center m-2">
         <input
           type="checkbox"
