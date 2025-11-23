@@ -78,6 +78,34 @@ const AcompanharAula = () => {
         }
     };
 
+    if (!compromisso) {
+        return (
+            <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
+                <MenuLateralAluno ref={menuRef} />
+                <div className="flex-1 overflow-y-auto">
+                    <Header
+                        menuRef={menuRef}
+                        title="Acompanhar aula"
+                        icon={
+                            <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24.375 6.25006H26.25C26.7675 6.25006 27.1875 6.81006 27.1875 7.50006V20.0001C27.1875 20.6901 26.7675 21.2501 26.25 21.2501H24.375C23.8575 21.2501 23.4375 20.6901 23.4375 20.0001V7.50006C23.4375 6.81006 23.8575 6.25006 24.375 6.25006Z" stroke="#1D2D44" strokeWidth="2.5" />
+                                <path d="M20.625 1.25H22.5C23.0175 1.25 23.4375 1.81 23.4375 2.5V25C23.4375 25.69 23.0175 26.25 22.5 26.25H20.625C20.1075 26.25 19.6875 25.69 19.6875 25V2.5C19.6875 1.81 20.1075 1.25 20.625 1.25Z" stroke="#1D2D44" strokeWidth="2.5" />
+                                <path d="M7.5 1.25H9.375C9.8925 1.25 10.3125 1.81 10.3125 2.5V25C10.3125 25.69 9.8925 26.25 9.375 26.25H7.5C6.9825 26.25 6.5625 25.69 6.5625 25V2.5C6.5625 1.81 6.9825 1.25 7.5 1.25Z" stroke="#1D2D44" strokeWidth="2.5" />
+                                <path d="M3.75 6.25018H5.625C6.1425 6.25018 6.5625 6.81018 6.5625 7.50018V20.0002C6.5625 20.6902 6.1425 21.2502 5.625 21.2502H3.75C3.2325 21.2502 2.8125 20.6902 2.8125 20.0002V7.50018C2.8125 6.81018 3.2325 6.25018 3.75 6.25018Z" stroke="#1D2D44" strokeWidth="2.5" />
+                                <path d="M27.1875 13.75H30" stroke="#1D2D44" strokeWidth="2.5" />
+                                <path d="M10.3125 13.75H19.6875" stroke="#1D2D44" strokeWidth="2.5" />
+                                <path d="M0 13.75H2.8125" stroke="#1D2D44" strokeWidth="2.5" />
+                            </svg>
+
+                        }
+                    />
+                    <div className="w-full h-auto p-2 md:p-4 2xl:">
+                        <span className="text-xl text-gray-500">Informações da aula não disponíveis.</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div>
