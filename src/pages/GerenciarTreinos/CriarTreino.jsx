@@ -34,11 +34,13 @@ const CriarTreino = () => {
 
     const onSubmit = (data) => {
         setExerciciosSelecionados(prev => {
-            const existe = prev.some(ex => ex.id === exercicioEditando.id);
+            const existe = exercicioEditando && prev.some(ex => ex.id === exercicioEditando.id);
             if (existe) {
                 return prev.map(ex => ex.id === exercicioEditando.id ? { ...ex, ...data } : ex);
             } else {
-                return prev;
+                // adiciona novo exercício ao array (usa id do exercício vindo do backend; se ausente, gera um id robusto)
+                const newId = exercicioEditando?.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString());
+                return [...prev, { id: newId, ...(exercicioEditando || {}), ...data }];
             }
         });
 
@@ -83,8 +85,9 @@ const CriarTreino = () => {
     useEffect(() => {
         const buscarExercicios = async () => {
             try {
-                const response = await caringuApi.get('/exercicios');
+                const response = await caringuApi.get(`/exercicios/por-personal/${sessionStorage.getItem("pessoaId")}`);
                 setExercicios(response.data);
+                console.log("Exercicios", response.data);
             } catch (error) {
                 console.error('Erro ao buscar exercícios:', error);
             }
@@ -94,20 +97,28 @@ const CriarTreino = () => {
     }, []);
 
 
-    const adicionarExercicio = async (exercicio) => {
-        const valido = await trigger(['nomeTreino', 'descricao', 'dificuldade']);
-        if (!valido) {
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Preencha os campos do treino antes de adicionar exercícios." />
-            ));
-            return;
-        }
-
+    const adicionarExercicio = (exercicio) => {
         setExercicioEditando(exercicio);
         setShowCreateModal(true);
         setExercicioInput('');
         setSugestoes([]);
     };
+
+    const {
+        register: registerExercicio,
+        handleSubmit: handleSubmitExercicio,
+        formState: { errors: errorsExercicio },
+        reset: resetExercicio
+    } = useForm({
+        defaultValues: {
+            carga: "",
+            series: "",
+            repeticoes: "",
+            tempoDescanso: "",
+            videoUrl: ""
+        }
+    });
+
 
     const isValidYoutubeUrl = (url) => {
         if (!url || url.trim() === "") return true;
@@ -186,12 +197,15 @@ const CriarTreino = () => {
 
     useEffect(() => {
         if (exercicioEditando) {
-            setValue('carga', exercicioEditando.carga || '');
-            setValue('series', exercicioEditando.series || '');
-            setValue('repeticoes', exercicioEditando.repeticoes || '');
-            setValue('tempoDescanso', exercicioEditando.tempoDescanso || '');
+            resetExercicio({
+                carga: exercicioEditando.carga || '',
+                series: exercicioEditando.series || '',
+                repeticoes: exercicioEditando.repeticoes || '',
+                tempoDescanso: exercicioEditando.tempoDescanso || '',
+                videoUrl: exercicioEditando.videoUrl || ''
+            });
         }
-    }, [exercicioEditando, setValue]);
+    }, [exercicioEditando, resetExercicio]);
 
     const handleOpenModal = (exercicio) => {
         setShowCreateModal(true);
@@ -388,10 +402,10 @@ const CriarTreino = () => {
                             <ModalPersonalizarExercicio
                                 visivel={showCreateModal}
                                 onClose={() => setModalConfirmarCancelarVisivel(true)}
-                                onSubmit={handleSubmit(onSubmit)}
-                                register={register}
-                                handleSubmit={handleSubmit}
-                                errors={errors}
+                                onSubmit={handleSubmitExercicio(onSubmit)}
+                                register={registerExercicio}
+                                handleSubmit={handleSubmitExercicio}
+                                errors={errorsExercicio}
                                 exercicio={exercicioEditando}
                                 InputComponent={InputPosLogin}
                                 isValidYoutubeUrl={isValidYoutubeUrl}
