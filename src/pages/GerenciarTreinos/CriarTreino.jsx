@@ -38,8 +38,7 @@ const CriarTreino = () => {
             if (existe) {
                 return prev.map(ex => ex.id === exercicioEditando.id ? { ...ex, ...data } : ex);
             } else {
-                // adiciona novo exercício ao array (usa id do exercício vindo do backend; se ausente, gera um id robusto)
-                const newId = exercicioEditando?.id || (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString());
+                const newId = exercicioEditando?.id || crypto.randomUUID();
                 return [...prev, { id: newId, ...(exercicioEditando || {}), ...data }];
             }
         });
@@ -83,9 +82,13 @@ const CriarTreino = () => {
     }, [exercicioInput, exercicios, exerciciosSelecionados]);
 
     useEffect(() => {
+        const pessoaId = sessionStorage.getItem("pessoaId")
+
+        if (pessoaId === null) return;
+
         const buscarExercicios = async () => {
             try {
-                const response = await caringuApi.get(`/exercicios/por-personal/${sessionStorage.getItem("pessoaId")}`);
+                const response = await caringuApi.get(`/exercicios/por-personal/${pessoaId}`);
                 setExercicios(response.data);
                 console.log("Exercicios", response.data);
             } catch (error) {
@@ -97,27 +100,19 @@ const CriarTreino = () => {
     }, []);
 
 
-    const adicionarExercicio = (exercicio) => {
+    const adicionarExercicio = async (exercicio) => {
+    const valido = await trigger(['nomeTreino', 'descricao', 'dificuldade']);
+    if (!valido) {
+        toast.custom((t) => (
+            <CustomToast t={t} type="error" message="Preencha os campos do treino antes de adicionar exercícios." />
+        ));
+        return;
+    }
         setExercicioEditando(exercicio);
         setShowCreateModal(true);
         setExercicioInput('');
         setSugestoes([]);
     };
-
-    const {
-        register: registerExercicio,
-        handleSubmit: handleSubmitExercicio,
-        formState: { errors: errorsExercicio },
-        reset: resetExercicio
-    } = useForm({
-        defaultValues: {
-            carga: "",
-            series: "",
-            repeticoes: "",
-            tempoDescanso: "",
-            videoUrl: ""
-        }
-    });
 
 
     const isValidYoutubeUrl = (url) => {
@@ -129,6 +124,14 @@ const CriarTreino = () => {
     const handleSubmitTreino = async (data) => {
         try {
             const personalId = sessionStorage.getItem("pessoaId");
+
+            if (!personalId) {
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Sessão expirada. Faça login novamente." />
+                ));
+                navigate("/login");
+                return;
+            }
 
             const treinoResponse = await caringuApi.post('/treino', {
                 nome: data.nomeTreino,
@@ -204,8 +207,25 @@ const CriarTreino = () => {
                 tempoDescanso: exercicioEditando.tempoDescanso || '',
                 videoUrl: exercicioEditando.videoUrl || ''
             });
+        }else{
+            resetExercicio()
         }
     }, [exercicioEditando, resetExercicio]);
+
+        const {
+        register: registerExercicio,
+        handleSubmit: handleSubmitExercicio,
+        formState: { errors: errorsExercicio },
+        reset: resetExercicio
+    } = useForm({
+        defaultValues: {
+            carga: "",
+            series: "",
+            repeticoes: "",
+            tempoDescanso: "",
+            videoUrl: ""
+        }
+    });
 
     const handleOpenModal = (exercicio) => {
         setShowCreateModal(true);

@@ -63,7 +63,7 @@ const GerenciarTreinos = () => {
         setTreinosAtribuidos((prev) => [
             ...prev,
             {
-                alunosId: data.email.value, // ou outro campo de ID
+                alunosId: data.email.value,
                 treinosExerciciosId: data.treino.value,
                 treinoNome: data.treino.label,
                 diasSemana: data.diasDaSemana.map(d => d.value),
@@ -71,8 +71,6 @@ const GerenciarTreinos = () => {
             },
         ]);
 
-
-        // Limpar campos do formulário, exceto o email
         reset({
             email: data.email,
             treino: null,
@@ -153,16 +151,13 @@ const GerenciarTreinos = () => {
 
     const toggleFavorito = async (id) => {
         try {
-            // Pega o treino atual
             const treinoAtual = treinos.find((treino) => treino.treinoId === id);
             const novoFavorito = !treinoAtual.favorito;
 
-            // Envia o novo valor para o backend
             await caringuApi.patch(`/treino/${id}/favorito`, {
                 favorito: novoFavorito
             });
 
-            // Atualiza o estado local após sucesso
             const treinoIndex = treinos.findIndex((treino) => treino.treinoId === id);
             const updatedTreinos = [...treinos];
             updatedTreinos[treinoIndex].favorito = novoFavorito;
@@ -244,7 +239,6 @@ const GerenciarTreinos = () => {
         try {
             const response = await caringuApi.delete(`/treino/${id}`);
 
-            // Considera sucesso se status for 204 (No Content) ou 200 (OK)
             if (response.status === 204 || response.status === 200) {
                 setExerciciosSelecionados(prev => prev.filter(ex => ex.id !== id));
                 toast.custom((t) => (
@@ -342,7 +336,6 @@ const GerenciarTreinos = () => {
         setCurrentPage(1);
     }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites]);
 
-    // Funções de paginação
     const goToPage = (page) => {
         setCurrentPage(page);
     };
@@ -406,7 +399,6 @@ const GerenciarTreinos = () => {
                                         />
                                     </svg>}
                                 options={[
-                                    // 🔤 Ordenação
                                     {
                                         id: "az",
                                         label: "A-Z",
@@ -480,7 +472,6 @@ const GerenciarTreinos = () => {
                                         onSelect: handleOrigemSelect,
                                     },
 
-                                    // 🎯 Dificuldade
                                     {
                                         id: "INICIANTE",
                                         label: "Dificuldade: Iniciante",
