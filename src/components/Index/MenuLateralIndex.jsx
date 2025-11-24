@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { FaBars, FaChevronDown, FaChevronUp, FaUserCircle, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../../assets/logos/caringu-logotipo-light.svg";
 import { logout } from "../../utils/authUtils";
 
 const MenuLateral = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 800);
 
   const navigate = useNavigate();
