@@ -1,12 +1,10 @@
-import { Tabs } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Personal/Header/Header";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import ModalRemoverEspecialidade from "../../components/Utils/ModalRemoverEspecialidade";
 import { caringuApi } from '../../provider/caringuApi';
-import Secoes from "../../components/PerfilPersonal/Secoes/Secoes";
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import CustomToast from "../../components/Utils/CustomToast.jsx";
 import FotoPerfil from "../../components/PerfilPersonal/FotoPerfil/FotoPerfil.jsx";
 import { HiOutlineExternalLink, HiOutlineTrash } from "react-icons/hi";
@@ -18,57 +16,65 @@ const Perfil = () => {
     const { fotoPerfil, setFotoPerfil } = useFotoPerfil(); // Consumir o contexto
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [especialidadeSelecionada, setEspecialidadeSelecionada] = useState(null);
-    const [deletarContaModal, setDeletarContaModal] = useState(false);
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState("informacoes");
     const tipo = sessionStorage.getItem("tipo");
     const colunas = tipo === "PERSONAL" ? "lg:grid-cols-3" : "lg:grid-cols-2";
     const [formData, setFormData] = useState({});
-    const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
-    const [alunoData, setAlunoData] = useState({});
-
     const alunoId = sessionStorage.getItem("pessoaId");
-    const [fotoPerfilState, setFotoPerfilState] = useState(formData.urlFotoPerfil || "");
+    const personalId = sessionStorage.getItem('pessoaId');
 
-    const [nomeSalvo, setNomeSalvo] = useState("");
     const [showModal, setShowModal] = useState(false);
-
-    const [idEspecialidade, setIdEspecialidade] = useState(false);
+    const [idEspecialidade, setIdEspecialidade] = useState(null);
     const [novaEspecialidade, setNovaEspecialidade] = useState('');
-    const [buscaEspecialidade, setBuscaEspecialidade] = useState("");
-
     const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState([]);
     const [sugestoesEspecialidade, setSugestoesEspecialidade] = useState([]);
     const [especialidadesDisponiveis, setEspecialidadesDisponiveis] = useState([]);
 
-    const [nomeBairroAntigo, setNomeBairroAntigo] = useState("");
+    // Funções de fetch reutilizáveis
+    const fetchPersonalData = async () => {
+        try {
+            const response = await caringuApi.get(`/personal-trainers/${personalId}`);
+            const celularComMascara = MascaraTelefone(response.data.celular);
 
-    const personalId = sessionStorage.getItem('pessoaId');
+            setFormData({
+                ...response.data,
+                celular: celularComMascara,
+            });
+            // Atualiza contexto de foto também
+            setFotoPerfil(response.data.urlFotoPerfil || "");
+        } catch (error) {
+            console.error("Erro ao buscar personal trainer:", error);
+        }
+    };
 
+    const fetchAlunoData = async () => {
+        try {
+            const response = await caringuApi.get(`/alunos/${alunoId}`);
+            const celularComMascara = MascaraTelefone(response.data.celular);
+
+            const dadosComMascara = {
+                ...response.data,
+                celular: celularComMascara,
+            };
+
+            setFormData(dadosComMascara);
+            setFotoPerfil(response.data.urlFotoPerfil || "");
+        } catch (error) {
+            console.error("Erro ao buscar aluno:", error);
+        }
+    };
+
+    // Busca inicial condicional baseada no tipo de usuário
     useEffect(() => {
-        document.title = "Perfil | CaringU"
+        document.title = "Perfil | CaringU";
 
-        const fetchData = async () => {
-            try {
-                const response = await caringuApi.get(`/personal-trainers/${personalId}`);
-                const celularComMascara = MascaraTelefone(response.data.celular);
-
-                setNomeBairroAntigo(response.data.nomeBairro);
-                setUrlFotoPerfil(response.data.urlFotoPerfil);
-
-                setFormData({
-                    ...response.data,
-                    celular: celularComMascara,
-                });
-                setNomeSalvo(response.data.nome);
-            } catch (error) {
-                console.error("Erro ao buscar personal trainer:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
+        if (tipo === "PERSONAL") {
+            fetchPersonalData();
+        } else if (tipo === "ALUNO") {
+            fetchAlunoData();
+        }
+    }, [tipo, personalId, alunoId]);
 
     useEffect(() => {
         caringuApi.get('/especialidades')
@@ -94,46 +100,24 @@ const Perfil = () => {
             setEspecialidadesSelecionadas([]);
             setShowModal(false);
 
-            window.location.reload(true);
+            // Recarregar dados do personal via API (melhor que reload de página)
+            await fetchPersonalData();
+            toast.custom(t => <CustomToast t={t} type="success" message="Especialidades adicionadas com sucesso!" />);
 
         } catch (error) {
             console.error('Erro ao adicionar especialidades:', error);
+            toast.custom(t => <CustomToast t={t} type="error" message="Erro ao adicionar especialidades." />);
         }
     };
 
-    const handleBuscaEspecialidade = (e) => {
-        const valor = e.target.value;
-        setBuscaEspecialidade(valor);
-
-        if (valor.length > 0) {
-            const filtradas = especialidadesDisponiveis.filter(op =>
-                op.nome.toLowerCase().includes(valor.toLowerCase()) &&
-                !formData.especialidades?.some(esp => esp.id === op.id)
-            );
-            setSugestoesEspecialidade(filtradas);
-        } else {
-            setSugestoesEspecialidade([]);
-        }
-    };
-
-    const selecionarEspecialidade = (especialidade) => {
-        setFormData((prev) => ({
-            ...prev,
-            especialidades: [...(prev.especialidades || []), especialidade],
-        }));
-        setBuscaEspecialidade("");
-        setSugestoesEspecialidade([]);
-    };
-
-
+    // Remover especialidade
     const handleRemoveEspecialidade = async (idEspecialidade) => {
-
         try {
             await caringuApi.delete(`/personal-trainers/${personalId}/especialidades/${idEspecialidade}`);
 
             setFormData((prev) => ({
                 ...prev,
-                especialidades: prev.especialidades.filter(e => e.id !== idEspecialidade)
+                especialidades: (prev.especialidades || []).filter(e => e.id !== idEspecialidade)
             }));
         } catch (error) {
             console.error("Erro ao remover especialidade:", error);
@@ -143,48 +127,91 @@ const Perfil = () => {
         }
     };
 
-    useEffect(() => {
-        document.title = "Perfil | CaringU";
-
-        const fetchData = async () => {
-            try {
-                const response = await caringuApi.get(`/alunos/${alunoId}`);
-                const celularComMascara = MascaraTelefone(response.data.celular);
-
-                const dadosComMascara = {
-                    ...response.data,
-                    celular: celularComMascara,
-                };
-
-                setUrlFotoPerfil(response.data.urlFotoPerfil);
-                setFotoPerfil(response.data.urlFotoPerfil || ""); // Atualizar o contexto com a foto do aluno
-                setFormData(dadosComMascara);
-                setAlunoData(dadosComMascara);
-            } catch (error) {
-                console.error("Erro ao buscar aluno:", error);
-            }
-        };
-
-        fetchData();
-    }, [alunoId, setFotoPerfil]); // Adicionar setFotoPerfil como dependência
-
     const removerMascara = (celular) => celular.replace(/\D/g, "");
 
-    const handleTelefoneChange = (e) => {
-        let input = e.target.value;
-        let digitos = input.replace(/\D/g, "");
-        if (digitos.length > 11) digitos = digitos.slice(0, 11);
+    // Unifica handleSave para ALUNO e PERSONAL
+    const handleSave = async () => {
+        if (tipo === "ALUNO") {
+            if (!alunoId) {
+                toast.custom(t => <CustomToast t={t} type="error" message="ID do aluno não definido!" />);
+                return;
+            }
 
-        let formatted = "";
-        if (digitos.length > 7) {
-            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
-        } else if (digitos.length > 2) {
-            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
-        } else if (digitos.length > 0) {
-            formatted = `(${digitos}`;
+            const dataParaSalvar = {
+                nome: formData.nome || undefined,
+                email: formData.email || undefined,
+                celular: formData.celular ? removerMascara(formData.celular) : undefined,
+                urlFotoPerfil: formData.urlFotoPerfil || undefined,
+                dataNascimento: formData.dataNascimento || undefined,
+                genero: formData.genero || undefined,
+                peso: formData.peso != null ? Number(formData.peso) : undefined,
+                altura: formData.altura != null ? Number(formData.altura) : undefined,
+                nivelAtividade: formData.nivelAtividade || undefined,
+                nivelExperiencia: formData.nivelExperiencia || undefined,
+            };
+
+            try {
+                await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
+                setFotoPerfil(formData.urlFotoPerfil || "");
+                toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
+            } catch (error) {
+                toast.custom(t => <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />);
+                console.error("Erro ao atualizar informações (aluno):", error);
+            }
+            return;
         }
 
-        setFormData((prev) => ({ ...prev, celular: formatted }));
+        if (tipo === "PERSONAL") {
+            if (!personalId) {
+                toast.custom(t => <CustomToast t={t} type="error" message="ID do personal não definido!" />);
+                return;
+            }
+
+            const dataParaSalvarPersonal = {
+                nome: formData.nome || undefined,
+                email: formData.email || undefined,
+                celular: formData.celular ? removerMascara(formData.celular) : undefined,
+                urlFotoPerfil: formData.urlFotoPerfil || undefined,
+                dataNascimento: formData.dataNascimento || undefined,
+                genero: formData.genero || undefined,
+                experiencia: formData.experiencia != null ? Number(formData.experiencia) : undefined,
+                bairro: formData.bairro || undefined,
+                nomeBairro: formData.nomeBairro || undefined,
+                cref: formData.cref || undefined,
+                nivelAtividade: formData.nivelAtividade || undefined,
+                nivelExperiencia: formData.nivelExperiencia || undefined,
+            };
+
+            try {
+                await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvarPersonal);
+                setFotoPerfil(formData.urlFotoPerfil || "");
+                await fetchPersonalData();
+                toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
+            } catch (error) {
+                toast.custom(t => <CustomToast t={t} type="error" message="Não foi possível salvar as informações do personal." />);
+                console.error("Erro ao atualizar informações (personal):", error);
+            }
+            return;
+        }
+    };
+
+    const handleCancelRemove = () => {
+        setModalVisible(false);
+        setIdEspecialidade(null);
+    };
+
+    const handleDeletarConta = async () => {
+        const pessoaId = sessionStorage.getItem('pessoaId');
+
+        try {
+            await caringuApi.delete(`/personal-trainers/${pessoaId}`);
+            navigate("/", { replace: true });
+        } catch (error) {
+            console.error("Erro ao deletar conta:", error);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Não foi possível deletar a conta. Tente novamente." />
+            ));
+        }
     };
 
     const handleInputChange = (e) => {
@@ -203,67 +230,34 @@ const Perfil = () => {
         }
     };
 
-    const handleSave = async () => {
-        if (!alunoId) return console.error("ID do aluno não definido!");
+    const handleTelefoneChange = (e) => {
+        let input = e.target.value;
+        let digitos = input.replace(/\D/g, "");
+        if (digitos.length > 11) digitos = digitos.slice(0, 11);
 
-        const dataParaSalvar = {
-            nome: formData.nome || undefined,
-            email: formData.email || undefined,
-            celular: formData.celular ? removerMascara(formData.celular) : undefined,
-            urlFotoPerfil: formData.urlFotoPerfil || undefined,
-            dataNascimento: formData.dataNascimento || undefined,
-            genero: formData.genero || undefined,
-            peso: formData.peso != null ? Number(formData.peso) : undefined,
-            altura: formData.altura != null ? Number(formData.altura) : undefined,
-            nivelAtividade: formData.nivelAtividade || undefined,
-            nivelExperiencia: formData.nivelExperiencia || undefined,
-        };
-
-        try {
-            await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
-            setFotoPerfil(formData.urlFotoPerfil || ""); // Atualizar o contexto
-            toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
-        } catch (error) {
-            toast.custom(t => <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />);
-            console.error("Erro ao atualizar informações:", error);
+        let formatted = "";
+        if (digitos.length > 7) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+        } else if (digitos.length > 2) {
+            formatted = `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+        } else if (digitos.length > 0) {
+            formatted = `(${digitos}`;
         }
-    };
 
-
-    const handleCancelRemove = () => {
-        setModalVisible(false);
-        setEspecialidadeSelecionada(null);
-    };
-
-    const handleDeletarConta = async () => {
-        const pessoaId = sessionStorage.getItem('pessoaId');
-
-        try {
-            await caringuApi.delete(`/personal-trainers/${pessoaId}`);
-            navigate("/", { replace: true });
-        } catch (error) {
-            console.error("Erro ao deletar conta:", error);
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Não foi possível deletar a conta. Tente novamente." />
-            ));
-        }
+        setFormData((prev) => ({ ...prev, celular: formatted }));
     };
 
     return (
         <div className="flex md:flex-row min-h-screen bg-[var(--cor-secundaria)]">
-            {/* Menu Lateral visível apenas em telas médias para cima */}
-
-            <MenuLateral isOpen={true} urlFotoPerfil={urlFotoPerfil}  />
+            <MenuLateral isOpen={true} />
 
             <div className="flex-1 flex flex-col w-full overflow-y-auto">
-                {/* Cabeçalho */}
                 <Header />
 
                 <main className="flex-grow p-4 md:p-8 space-y-8 w-full h-[90vh]">
-                    {/* Modal de confirmação */}
                     {modalVisible && (
                         <ModalRemoverEspecialidade
-                            especialidadeId={especialidadeSelecionada}
+                            especialidadeId={idEspecialidade}
                             onConfirm={handleDeletarConta}
                             onCancel={handleCancelRemove}
                         />
@@ -325,13 +319,14 @@ const Perfil = () => {
                                     {tipo === "ALUNO" ? (
                                         <div className="space-y-8">
                                             <FotoPerfil
+                                                key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                nomePersonal={formData.nome || ""}
-                                                onFotoChange={(novaFoto) => {
-                                                    setFotoPerfil(novaFoto); // Atualizar o contexto
-                                                    setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
-                                                }}
-                                            />
+                                                 nomePersonal={formData.nome || ""}
+                                                 onFotoChange={(novaFoto) => {
+                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
+                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
+                                                 }}
+                                             />
 
 
                                             <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">
@@ -432,13 +427,14 @@ const Perfil = () => {
                                         <div className="space-y-8">
                                             {/* Foto de Perfil */}
                                             <FotoPerfil
+                                                key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                nomePersonal={formData.nome || ""}
-                                                onFotoChange={(novaFoto) => {
-                                                    setFotoPerfil(novaFoto); // Atualizar o contexto
-                                                    setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
-                                                }}
-                                            />
+                                                 nomePersonal={formData.nome || ""}
+                                                 onFotoChange={(novaFoto) => {
+                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
+                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
+                                                 }}
+                                             />
 
 
                                             {/* Informações Profissionais */}
@@ -496,7 +492,7 @@ const Perfil = () => {
                                                                     <div key={especialidade.id} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-md text-[16px]">
                                                                         {especialidade.nome}
                                                                         <button
-                                                                            onClick={() => { setModalVisible(true), setIdEspecialidade(especialidade.id) }}
+                                                                            onClick={() => { setModalVisible(true); setIdEspecialidade(especialidade.id); }}
                                                                             className="text-red-600"
                                                                         >
                                                                             <HiOutlineTrash className="w-5 h-5 cursor-pointer" />

@@ -10,7 +10,7 @@ import MenuLateralAluno from "../../components/Aluno/MenuLateral/MenuLateral";
 import { useFotoPerfil } from "../../context/FotoPerfilContext";
 
 const PerfilAluno = () => {
-  const { setFotoPerfil } = useFotoPerfil();
+  const { fotoPerfil, setFotoPerfil } = useFotoPerfil();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
   const navigate = useNavigate();
@@ -24,7 +24,8 @@ const PerfilAluno = () => {
   const handleDeleteAccount = async () => {
     const personId = sessionStorage.getItem('pessoaId');
     try {
-      await caringuApi.delete(`/personal-trainers/${personId}`);
+      // Corrigido: deve deletar o aluno, não o personal trainer
+      await caringuApi.delete(`/alunos/${personId}`);
       navigate("/", { replace: true });
     } catch (error) {
       console.error("Erro ao deletar conta:", error);
@@ -61,7 +62,12 @@ const PerfilAluno = () => {
             />
           )}
           <div className="w-full">
-            <Secoes onFotoChange={handlePhotoChange} />
+            {/* Forçar remount de Secoes quando fotoPerfil mudar */}
+            <Secoes
+              key={fotoPerfil || 'secoes-aluno'}
+              fotoPerfil={fotoPerfil}
+              onFotoChange={handlePhotoChange}
+            />
           </div>
         </main>
       </div>

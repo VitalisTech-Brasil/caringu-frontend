@@ -29,7 +29,7 @@ export default function FotoPerfil({ urlFoto, nomePersonal, onFotoChange }) {
       setFileName(urlFoto);
       setImgErro(false);
     }
-  }, [urlFoto, fileName]);
+  }, [urlFoto]);
 
   const handleRemoverFoto = async () => {
     try {

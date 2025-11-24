@@ -32,7 +32,7 @@ const MenuLateralAluno = forwardRef((props, ref) => {
       }
     };
     if (studentId) fetchProfilePhoto();
-  }, [studentId, setFotoPerfil, forceUpdate]);
+  }, [studentId, forceUpdate]);
 
   useEffect(() => {
     setImgError(false);
