@@ -101,13 +101,13 @@ const CriarTreino = () => {
 
 
     const adicionarExercicio = async (exercicio) => {
-    const valido = await trigger(['nomeTreino', 'descricao', 'dificuldade']);
-    if (!valido) {
-        toast.custom((t) => (
-            <CustomToast t={t} type="error" message="Preencha os campos do treino antes de adicionar exercícios." />
-        ));
-        return;
-    }
+        const valido = await trigger(['nomeTreino', 'descricao', 'dificuldade']);
+        if (!valido) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Preencha os campos do treino antes de adicionar exercícios." />
+            ));
+            return;
+        }
         setExercicioEditando(exercicio);
         setShowCreateModal(true);
         setExercicioInput('');
@@ -156,7 +156,7 @@ const CriarTreino = () => {
                 carga: Number(exercicio.carga) || 0,
                 repeticoes: Number(exercicio.repeticoes) || 10,
                 series: Number(exercicio.series) || 3,
-                descanso: Number(exercicio.tempoDescanso) || 60, 
+                descanso: Number(exercicio.tempoDescanso) || 60,
                 dataHoraCriacao: new Date().toISOString(),
                 dataHoraModificacao: new Date().toISOString(),
                 origemTreinoExercicio: 'PERSONAL',
@@ -207,12 +207,12 @@ const CriarTreino = () => {
                 tempoDescanso: exercicioEditando.tempoDescanso || '',
                 videoUrl: exercicioEditando.videoUrl || ''
             });
-        }else{
+        } else {
             resetExercicio()
         }
     }, [exercicioEditando, resetExercicio]);
 
-        const {
+    const {
         register: registerExercicio,
         handleSubmit: handleSubmitExercicio,
         formState: { errors: errorsExercicio },
@@ -230,12 +230,6 @@ const CriarTreino = () => {
     const handleOpenModal = (exercicio) => {
         setShowCreateModal(true);
         setExercicioEditando(exercicio);
-    };
-
-    const cancelarEdicao = () => {
-        setModalConfirmarCancelarVisivel(false);
-        setShowCreateModal(false);
-        setExercicioEditando(null);
     };
 
     return (
