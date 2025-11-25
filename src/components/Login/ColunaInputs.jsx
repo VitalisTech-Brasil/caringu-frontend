@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
 import alert from "../../assets/images/alert.svg";
 import { caringuApi } from '../../provider/caringuApi';
+import { useGoogleSSO } from '../../hooks/useGoogleSSO';
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const ColunaInputs = () => {
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
   const [tempoRestante, setTempoRestante] = useState(null);
+  const { loginWithGoogle } = useGoogleSSO();
 
   useEffect(() => {
     return () => {
@@ -65,51 +67,15 @@ const ColunaInputs = () => {
     return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   };
 
-  const loginGoogle = useGoogleLogin({
-    onSuccess: async (codeResponse) => {
-      setLoadingGoogle(true);
-      try {
-        const response = await api.post('/login/google', {
-          code: codeResponse.code
-        }, {
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (response.status === 200) {
-          // authToken agora é enviado via cookie HttpOnly
-          sessionStorage.setItem('usuario', response.data.nome);
-          sessionStorage.setItem('pessoaId', response.data.pessoaId);
-          sessionStorage.setItem('tipo', response.data.tipo);
-          sessionStorage.setItem('email', response.data.email);
-
-          toast.custom((t) => (
-            <CustomToast t={t} type="success" message="Login com Google realizado!" />
-          ));
-
-          setTimeout(() => {
-            const tipo = (response.data.tipo || "").toString().toUpperCase();
-            if (tipo === "PERSONAL") {
-              navigate('/home');
-            } else if (tipo === "ALUNO") {
-              validarAlunoENavegar(response.data.pessoaId);
-            }
-          }, 1000);
-        }
-      } catch (error) {
-        toast.custom((t) => (
-          <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
-        ));
-      } finally {
-        setLoadingGoogle(false);
-      }
-    },
-    onError: () => {
-      toast.custom((t) => (
-        <CustomToast t={t} type="error" message="Login com Google falhou." />
-      ));
-    },
-    flow: 'auth-code'
-  });
+  // Wrapper para controlar estado de loading do botão Google
+  const handleLoginGoogle = () => {
+    setLoadingGoogle(true);
+    try {
+      loginWithGoogle();
+    } finally {
+      setLoadingGoogle(false);
+    }
+  };
 
   const verificarUsuario = async (data) => {
     setLoading(true);
@@ -254,7 +220,7 @@ const ColunaInputs = () => {
             width="100%"
             height="12.15%"
             fontSize="14px"
-            onClick={() => loginGoogle()}
+            onClick={handleLoginGoogle}
             disabled={!!tempoRestante}
           />
 
