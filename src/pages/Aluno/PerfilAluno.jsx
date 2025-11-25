@@ -12,13 +12,13 @@ import { useFotoPerfil } from "../../context/FotoPerfilContext";
 const PerfilAluno = () => {
   const { fotoPerfil, setFotoPerfil } = useFotoPerfil();
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedSpecialty, setSelectedSpecialty] = useState(null);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
   const handleCancelRemove = () => {
     setModalVisible(false);
-    setSelectedSpecialty(null);
+    setAccountIdToDelete(null);
   };
 
   const handleDeleteAccount = async () => {
@@ -56,7 +56,7 @@ const PerfilAluno = () => {
         <main className="flex-grow p-4 md:p-8 space-y-8 w-full h-[90vh]">
           {modalVisible && (
             <ModalRemoverEspecialidade
-              especialidadeId={selectedSpecialty}
+              especialidadeId={accountIdToDelete}
               onConfirm={handleDeleteAccount}
               onCancel={handleCancelRemove}
             />
