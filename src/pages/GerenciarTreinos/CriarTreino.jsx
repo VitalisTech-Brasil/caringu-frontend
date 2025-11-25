@@ -10,11 +10,12 @@ import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
 import iconCancelar from "../../assets/images/cancelar.png";
 import info2 from "../../assets/images/info-2.svg";
-import { caringuApi } from '../../provider/caringuApi.js'
-import toast, { Toaster } from 'react-hot-toast'
-import CustomToast from '../../components/Utils/CustomToast.jsx'
-import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx'
-import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
+import { caringuApi } from '../../provider/caringuApi.js';
+import toast, { Toaster } from 'react-hot-toast';
+import CustomToast from '../../components/Utils/CustomToast.jsx';
+import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx';
+import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx';
+import useSessionValidation from "./hook/useSessionValidation.jsx"
 
 const CriarTreino = () => {
 
@@ -84,7 +85,7 @@ const CriarTreino = () => {
     useEffect(() => {
         const pessoaId = sessionStorage.getItem("pessoaId")
 
-        if (pessoaId === null) return;
+        useSessionValidation();
 
         const buscarExercicios = async () => {
             try {
@@ -123,16 +124,7 @@ const CriarTreino = () => {
 
     const handleSubmitTreino = async (data) => {
         try {
-            const personalId = sessionStorage.getItem("pessoaId");
-
-            if (!personalId) {
-                toast.custom((t) => (
-                    <CustomToast t={t} type="error" message="Sessão expirada. Faça login novamente." />
-                ));
-                navigate("/login");
-                return;
-            }
-
+            useSessionValidation();
             const treinoResponse = await caringuApi.post('/treino', {
                 nome: data.nomeTreino,
                 descricao: data.descricao,
@@ -197,6 +189,20 @@ const CriarTreino = () => {
         mode: "onChange"
     });
 
+    const {
+        register: registerExercicio,
+        handleSubmit: handleSubmitExercicio,
+        formState: { errors: errorsExercicio },
+        reset: resetExercicio
+    } = useForm({
+        defaultValues: {
+            carga: "",
+            series: "",
+            repeticoes: "",
+            tempoDescanso: "",
+            videoUrl: ""
+        }
+    });
 
     useEffect(() => {
         if (exercicioEditando) {
@@ -212,20 +218,7 @@ const CriarTreino = () => {
         }
     }, [exercicioEditando, resetExercicio]);
 
-    const {
-        register: registerExercicio,
-        handleSubmit: handleSubmitExercicio,
-        formState: { errors: errorsExercicio },
-        reset: resetExercicio
-    } = useForm({
-        defaultValues: {
-            carga: "",
-            series: "",
-            repeticoes: "",
-            tempoDescanso: "",
-            videoUrl: ""
-        }
-    });
+
 
     const handleOpenModal = (exercicio) => {
         setShowCreateModal(true);
