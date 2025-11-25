@@ -15,10 +15,10 @@ const CompletarPerfil = () => {
     document.title = "Completar perfil | CaringU";
   }, []);
 
-  const pessoaId = sessionStorage.getItem("pessoaId");
 
   const handleSave = async (e) => {
     e.preventDefault();
+    const pessoaId = sessionStorage.getItem("pessoaId");
     if (!pessoaId) {
       toast.custom((t) => (
         <CustomToast
@@ -33,11 +33,12 @@ const CompletarPerfil = () => {
 
     setSaving(true);
     try {
+      const cleanedPhone = telefone.replace(/\D/g, "") || null;
       const payload = {
         nome: null,
         email: null,
         senha: null,
-        celular: telefone.replace(/\D/g, "") || null,
+        celular: cleanedPhone,
         urlFotoPerfil: null,
         dataNascimento: dataNascimento || null,
         genero: genero || null,
