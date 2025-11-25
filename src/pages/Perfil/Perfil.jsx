@@ -11,6 +11,7 @@ import { HiOutlineExternalLink, HiOutlineTrash } from "react-icons/hi";
 import CidadeInput from "../../components/Utils/InputCidade/CidadeInput.jsx";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone.js";
 import { useFotoPerfil } from "../../context/FotoPerfilContext";
+import PreferenciasNotificacao from "../../components/PerfilPersonal/Secoes/PreferenciasNotificacao.jsx";
 
 const Perfil = () => {
     const { fotoPerfil, setFotoPerfil } = useFotoPerfil(); // Consumir o contexto
@@ -68,11 +69,34 @@ const Perfil = () => {
     // Busca inicial condicional baseada no tipo de usuário
     useEffect(() => {
         document.title = "Perfil | CaringU";
-
+        const fetchPersonalDataEffect = async () => {
+            try {
+                const response = await caringuApi.get(`/personal-trainers/${personalId}`);
+                setFormData(response.data);
+                setFotoPerfil(response.data.urlFotoPerfil || "");
+                setEspecialidadesSelecionadas(response.data.especialidades || []);
+            } catch (error) {
+                console.error("Erro ao buscar personal:", error);
+            }
+        };
+        const fetchAlunoDataEffect = async () => {
+            try {
+                const response = await caringuApi.get(`/alunos/${alunoId}`);
+                const celularComMascara = MascaraTelefone(response.data.celular);
+                const dadosComMascara = {
+                    ...response.data,
+                    celular: celularComMascara,
+                };
+                setFormData(dadosComMascara);
+                setFotoPerfil(response.data.urlFotoPerfil || "");
+            } catch (error) {
+                console.error("Erro ao buscar aluno:", error);
+            }
+        };
         if (tipo === "PERSONAL") {
-            fetchPersonalData();
+            fetchPersonalDataEffect();
         } else if (tipo === "ALUNO") {
-            fetchAlunoData();
+            fetchAlunoDataEffect();
         }
     }, [tipo, personalId, alunoId]);
 
@@ -321,12 +345,12 @@ const Perfil = () => {
                                             <FotoPerfil
                                                 key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                 nomePersonal={formData.nome || ""}
-                                                 onFotoChange={(novaFoto) => {
-                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
-                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
-                                                 }}
-                                             />
+                                                nomePersonal={formData.nome || ""}
+                                                onFotoChange={(novaFoto) => {
+                                                    setFotoPerfil(novaFoto); // Atualizar o contexto
+                                                    setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
+                                                }}
+                                            />
 
 
                                             <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">
@@ -429,12 +453,12 @@ const Perfil = () => {
                                             <FotoPerfil
                                                 key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                 nomePersonal={formData.nome || ""}
-                                                 onFotoChange={(novaFoto) => {
-                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
-                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
-                                                 }}
-                                             />
+                                                nomePersonal={formData.nome || ""}
+                                                onFotoChange={(novaFoto) => {
+                                                    setFotoPerfil(novaFoto); // Atualizar o contexto
+                                                    setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
+                                                }}
+                                            />
 
 
                                             {/* Informações Profissionais */}
@@ -584,7 +608,7 @@ const Perfil = () => {
 
                                                                             <div className="flex justify-end gap-4 mt-4">
                                                                                 <button
-                                                                                    onClick={() => { setShowModal(false), setNovaEspecialidade("") }}
+                                                                                    onClick={() => { setShowModal(false); setNovaEspecialidade(""); }}
                                                                                     className="text-gray-600 hover:text-gray-800 cursor-pointer"
                                                                                 >
                                                                                     Cancelar

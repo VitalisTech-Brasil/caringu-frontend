@@ -119,7 +119,7 @@ const PerfilPersonal = () => {
         } else if (modalContratar) {
             setStatusEtapa("INICIAL");
         }
-    }, [modalContratar, verfificaStatus, planoSelecionado]);
+    }, [modalContratar, verfificaStatus?.planoId, verfificaStatus?.status, planoSelecionado]);
 
 
     const ratingChanged = (newRating) => {
