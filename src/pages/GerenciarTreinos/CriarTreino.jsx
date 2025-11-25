@@ -15,9 +15,10 @@ import toast, { Toaster } from 'react-hot-toast';
 import CustomToast from '../../components/Utils/CustomToast.jsx';
 import ModalPersonalizarExercicio from '../../components/Utils/ModalPersonalizarExercicio.jsx';
 import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx';
-import useSessionValidation from "./hook/useSessionValidation.jsx"
+import useSessionValidation from "./hook/useSessionValidation.jsx";
 
 const CriarTreino = () => {
+    useSessionValidation();
 
     const [exercicioInput, setExercicioInput] = useState('');
     const [sugestoes, setSugestoes] = useState([]);
@@ -85,8 +86,6 @@ const CriarTreino = () => {
     useEffect(() => {
         const pessoaId = sessionStorage.getItem("pessoaId")
 
-        useSessionValidation();
-
         const buscarExercicios = async () => {
             try {
                 const response = await caringuApi.get(`/exercicios/por-personal/${pessoaId}`);
@@ -102,13 +101,6 @@ const CriarTreino = () => {
 
 
     const adicionarExercicio = async (exercicio) => {
-        const valido = await trigger(['nomeTreino', 'descricao', 'dificuldade']);
-        if (!valido) {
-            toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Preencha os campos do treino antes de adicionar exercícios." />
-            ));
-            return;
-        }
         setExercicioEditando(exercicio);
         setShowCreateModal(true);
         setExercicioInput('');
@@ -124,7 +116,6 @@ const CriarTreino = () => {
 
     const handleSubmitTreino = async (data) => {
         try {
-            useSessionValidation();
             const treinoResponse = await caringuApi.post('/treino', {
                 nome: data.nomeTreino,
                 descricao: data.descricao,
