@@ -159,9 +159,9 @@ const CriarTreino = () => {
             navigate("/gerenciar-treinos")
 
         } catch (error) {
-            console.error('Erro ao cadastrar treino:', error);
+            console.error('Preencha todos os campos corretamente:', error);
             toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Erro ao cadastrar treino" />
+                <CustomToast t={t} type="error" message="Preencha todos os campos corretamente." />
             ));
         }
     };
