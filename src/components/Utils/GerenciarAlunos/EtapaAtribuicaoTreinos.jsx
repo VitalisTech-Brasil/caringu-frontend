@@ -356,7 +356,7 @@ const EtapaAtribuicao = ({
             setTimeout(() => {
                 sessionStorage.removeItem("RASCUNHO_RESPONDIDO");
                 fecharModal();
-            }, 1500);
+            }, 1000);
 
         } catch (error) {
             toast.custom((t) => (

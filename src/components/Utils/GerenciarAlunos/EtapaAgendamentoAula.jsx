@@ -46,7 +46,8 @@ const EtapaAgendamentoAula = ({
     atualizarAlunos
 }) => {
     const { atualizarAgendamento } = useAgendamento();
-
+    const [aulas, setAulas] = useState([]);
+    const [datasAulasBloqueadas, setDatasAulasBloqueadas] = useState([]);
     const rascunhosDates = rascunhosPersistidos ?? [];      // array de { id, date }
     const setRascunhosDates = setRascunhosPersistidos;     // setter vindo do pai
 
@@ -245,7 +246,8 @@ const EtapaAgendamentoAula = ({
             });
 
             if (typeof atualizarAlunos === "function") {
-                atualizarAlunos();             }
+                atualizarAlunos();
+            }
 
             onProsseguir();
         } catch (error) {
@@ -258,7 +260,24 @@ const EtapaAgendamentoAula = ({
 
     useEffect(() => {
         getBuscarAulasDisponiveis();
-    }, []);
+
+        const exibirAulas = async () => {
+            try {
+                const response = await caringuApi.get(`/aulas/alunos-aulas/${aluno.idAluno}`);
+                setAulas(response.data);
+                const datas = response.data.map(aula =>
+                    new Date(aula.dataHorarioInicio).toDateString()
+                );
+                setDatasAulasBloqueadas(datas);
+
+                console.log("Aulas do aluno selecionado:", response.data);
+            } catch (error) {
+                console.error("Erro ao exibir aulas:", error);
+            }
+        };
+
+        exibirAulas();
+    }, [aluno.idAluno]);
 
     // manualDates vem via props do ModalAgendarAula
     useEffect(() => {
@@ -403,6 +422,9 @@ const EtapaAgendamentoAula = ({
                             return str.charAt(0).toUpperCase() + str.slice(1);
                         }}
                         tileClassName={({ date, view }) => {
+                            if (view === 'month' && datasAulasBloqueadas.includes(date.toDateString())) {
+                                return 'bg-[#E96E354F] text-black rounded-full'; // ou sua classe customizada
+                            }
                             if (view === 'month' && date < brasiliaToday) {
                                 return 'text-gray-400';
                             }
@@ -413,6 +435,9 @@ const EtapaAgendamentoAula = ({
                                 return 'rounded-full';
                             }
                             return 'cursor-pointer';
+                        }}
+                        tileDisabled={({ date, view }) => {
+                            return view === 'month' && datasAulasBloqueadas.includes(date.toDateString());
                         }}
                         prevLabel={<span className="text-[24px] font-medium">ᐸ</span>}
                         nextLabel={<span className="text-[24px] font-medium">ᐳ</span>}
