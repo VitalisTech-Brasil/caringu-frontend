@@ -69,34 +69,10 @@ const Perfil = () => {
     // Busca inicial condicional baseada no tipo de usuário
     useEffect(() => {
         document.title = "Perfil | CaringU";
-        const fetchPersonalDataEffect = async () => {
-            try {
-                const response = await caringuApi.get(`/personal-trainers/${personalId}`);
-                setFormData(response.data);
-                setFotoPerfil(response.data.urlFotoPerfil || "");
-                setEspecialidadesSelecionadas(response.data.especialidades || []);
-            } catch (error) {
-                console.error("Erro ao buscar personal:", error);
-            }
-        };
-        const fetchAlunoDataEffect = async () => {
-            try {
-                const response = await caringuApi.get(`/alunos/${alunoId}`);
-                const celularComMascara = MascaraTelefone(response.data.celular);
-                const dadosComMascara = {
-                    ...response.data,
-                    celular: celularComMascara,
-                };
-                setFormData(dadosComMascara);
-                setFotoPerfil(response.data.urlFotoPerfil || "");
-            } catch (error) {
-                console.error("Erro ao buscar aluno:", error);
-            }
-        };
         if (tipo === "PERSONAL") {
-            fetchPersonalDataEffect();
+            fetchPersonalData();
         } else if (tipo === "ALUNO") {
-            fetchAlunoDataEffect();
+            fetchAlunoData();
         }
     }, [tipo, personalId, alunoId]);
 
