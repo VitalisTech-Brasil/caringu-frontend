@@ -40,6 +40,12 @@ const ModalAgendarAula = ({
 
     const currentAlunos = [aluno];
 
+      useEffect(() => {
+        return () => {
+          toast.remove();
+        };
+      }, []);
+
     const handleDateClick = (clickedDate) => {
         const dateStr = clickedDate.toDateString();
 

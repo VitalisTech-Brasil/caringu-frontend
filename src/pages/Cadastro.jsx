@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-import { CadastroProvider } from "../components/Cadastro/context/CadastroContext";
+import { CadastroProvider, useCadastro } from "../components/Cadastro/context/CadastroContext";
 
 import Etapa1 from "../components/Cadastro/Etapa1";
 import Etapa2 from "../components/Cadastro/Etapa2";
@@ -16,16 +16,29 @@ import styleCadastro from "../components/Cadastro/module/cadastro.module.css";
 import mochilaFitness from "../../assets/images/mochila-treino.svg";
 
 Não remover nenhum comentário, pois será utilizado na etapa que o Aluno existir no projeto */
-const Cadastro = () => {
+const CadastroInner = () => {
+  const location = useLocation();
+  const { atualizarDados } = useCadastro();
+  const [etapa, setEtapa] = useState(1);
+
   useEffect(() => {
     document.title = "Cadastro | CaringU";
   }, []);
 
-  const [etapa, setEtapa] = useState(1);
+  useEffect(() => {
+    // Prefill de dados vindos do Google SSO
+    if (location.state?.fromGoogle) {
+      atualizarDados({
+        nome: location.state.name || "",
+        email: location.state.email || "",
+        fotoPerfilGoogle: location.state.picture || "",
+      });
+    }
+    // Este efeito roda apenas uma vez na montagem para evitar loop de atualização
+  }, [location.state, atualizarDados]);
+
   return (
-    <>
-      <CadastroProvider>
-        <main className="flex items-center justify-start h-[100vh] w-full p-[1%]">
+    <main className="flex items-center justify-start h-[100vh] w-full p-[1%]">
           <section
             className="hidden md:block w-[40%] h-full
                         bg-cover lg:bg-center bg-position-[70%] bg-no-repeat
@@ -45,7 +58,9 @@ const Cadastro = () => {
           </section>
 
           <section
-            className={`w-full lg:w-[60%] h-full flex ${etapa === 2 ? "items-start" : "items-center"} justify-center overflow-visible sm:py-0 py-4`}
+            className={`w-full lg:w-[60%] h-full flex ${
+              etapa === 2 ? "items-start" : "items-center"
+            } justify-center overflow-visible sm:py-0 py-4`}
           >
             <div
               className={`${styleCadastro["container-form"]} 2xl:h-[95%] h-auto 2xl:w-[85%] w-[90%]`}
@@ -60,8 +75,14 @@ const Cadastro = () => {
             </div>
           </section>
         </main>
-      </CadastroProvider>
-    </>
+  );
+};
+
+const Cadastro = () => {
+  return (
+    <CadastroProvider>
+      <CadastroInner />
+    </CadastroProvider>
   );
 };
 

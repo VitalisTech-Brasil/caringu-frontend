@@ -353,8 +353,11 @@ const EtapaAtribuicao = ({
                 <CustomToast t={t} type="success" message="Treinos associados às aulas com sucesso!" />
             ));
 
-            sessionStorage.removeItem("RASCUNHO_RESPONDIDO");
-            fecharModal();
+            setTimeout(() => {
+                sessionStorage.removeItem("RASCUNHO_RESPONDIDO");
+                fecharModal();
+            }, 1000);
+
         } catch (error) {
             toast.custom((t) => (
                 <CustomToast

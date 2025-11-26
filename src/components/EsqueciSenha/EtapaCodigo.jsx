@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios'; // Importando o axios
 import { caringuApi } from '../../provider/caringuApi';
 import InputVerificacao from './InputVerificacao';
 import Button from '../Utils/Button';
@@ -11,7 +10,6 @@ import { useEmail } from './Context/EsqueciSenhaContext';  // Importando o useEm
 
 const EtapaCodigo = ({ onAvancar }) => {
   const { email } = useEmail(); // Pega o email do Context
-  const { register, handleSubmit, formState: { errors } } = useForm();
   const [codigo, setCodigo] = useState('');
   const [contadorReset, setContadorReset] = useState(60);
   const [permiteReenviar, setPermiteReenviar] = useState(false);
