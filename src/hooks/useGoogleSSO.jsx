@@ -196,6 +196,7 @@ export const useGoogleSSO = () => {
     try {
       googleLogin();
     } catch (err) {
+      console.error("Erro ao abrir o popup do Google:", err);
       toast.custom((t) => (
         <CustomToast
           t={t}
