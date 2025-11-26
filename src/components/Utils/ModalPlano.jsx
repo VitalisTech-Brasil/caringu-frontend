@@ -11,7 +11,6 @@ const ModalPlano = ({
     onSubmit,
     titulo = "Criar plano",
     planoData = null,
-    duracaoValue
 }) => {
     const {
         register,

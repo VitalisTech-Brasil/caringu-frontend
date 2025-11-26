@@ -1,5 +1,4 @@
 import { React, useEffect, useState } from 'react';
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import loadingGif from "../../assets/gifs/loading.gif";
@@ -19,7 +18,7 @@ const ColunaInputs = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [tempoRestante, setTempoRestante] = useState(null);
   const { loginWithGoogle } = useGoogleSSO();
 

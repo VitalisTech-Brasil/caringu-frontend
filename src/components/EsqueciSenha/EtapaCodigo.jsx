@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { caringuApi } from '../../provider/caringuApi';
 import InputVerificacao from './InputVerificacao';
 import Button from '../Utils/Button';

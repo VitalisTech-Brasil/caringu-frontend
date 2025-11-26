@@ -15,7 +15,6 @@ const RelatorioTreinos = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
     const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
-    const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
     const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
     const [treinos, setTreinos] = useState({ content: [], totalPages: 0, number: 0, size: 2 });
 
@@ -58,10 +57,7 @@ const RelatorioTreinos = () => {
         }
     }
 
-    const handleGrupoMuscularSelect = (value) => {
-        setGrupoMuscularSelecionado(value);
-        setGrupoMuscularFilter(value);
-    };
+
 
     const irParaDash = (idTreino) => {
         navigate(`/dashboard/${idAluno}/${idTreino}`);

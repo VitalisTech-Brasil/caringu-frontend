@@ -1,7 +1,5 @@
 import { FaUserCircle } from "react-icons/fa";
-import { useState, useEffect } from "react";
-import { caringuApi } from "../../provider/caringuApi";
-import { format } from "date-fns";
+import { useState } from "react";
 import ModalRemarcar from "./GerenciarAlunos/ModalRemarcar";
 import { useNavigate } from "react-router-dom";
 
@@ -20,11 +18,6 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
             [id]: true,
         }));
     };
-
-    const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
-
-
-
 
     const handleAbrirModalRemarcar = (compromisso) => {
         setAgendamentoSelecionado({ id: compromisso.id });

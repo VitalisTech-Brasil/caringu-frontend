@@ -12,7 +12,6 @@ const ModalPersonalizarExercicio = ({
     errors,
     exercicio,
     isValidYoutubeUrl,
-    InputComponent = () => null,
 }) => {
     if (!visivel) return null;
 

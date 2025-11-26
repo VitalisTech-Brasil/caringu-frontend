@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import alert from "../../assets/images/alert.svg";
 import { logout } from "../../utils/authUtils";
 
@@ -9,7 +8,6 @@ export default function SessaoExpiradaModal({
     titulo = "Sessão expirada",
     mensagem = "Sua sessão expirou por inatividade ou tempo limite. Clique em \"Redirecionar\" para fazer login."
 }) {
-    const navigate = useNavigate();
 
     if (!visible) return null;
 
