@@ -181,9 +181,7 @@ const Perfil = () => {
                 cref: formData.cref || undefined,
                 nivelAtividade: formData.nivelAtividade || undefined,
                 nivelExperiencia: formData.nivelExperiencia || undefined,
- especialidades: (formData.especialidades || []).map(e =>
-        typeof e === "object" ? { id: e.id } : { id: e }
-    ),
+                especialidades: (formData.especialidades || []).map(e => typeof e === "object" ? { id: e.id } : { id: e }),
             };
 
             try {
