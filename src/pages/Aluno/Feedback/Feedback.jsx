@@ -18,11 +18,6 @@ const Feedback = () => {
     const [selectedDate, setSelectedDate] = useState('');
     const [searchActive, setSearchActive] = useState(false);
 
-    const formatInputDate = (dateStr) => {
-        if (!dateStr) return '';
-        const [year, month, day] = dateStr.split('-');
-        return `${day}/${month}/${year}`;
-    };
 
     useEffect(() => {
         document.title = "Feedback | Caringu";

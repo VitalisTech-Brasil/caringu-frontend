@@ -20,7 +20,7 @@ const AlunoPlanos = () => {
     const [planos, setPlanos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [personalIdSelecionado, setPersonalIdSelecionado] = useState(null);
-    const [avaliacaoExistente, setAvaliacaoExistente] = useState(null);
+    const [, setAvaliacaoExistente] = useState(null);
 
 
     useEffect(() => {
@@ -37,6 +37,7 @@ const AlunoPlanos = () => {
             const response = await caringuApi.get(`/alunos/${idAluno}/planos`);
             setPlanos(response.data);
         } catch (error) {
+            console.error("Erro ao carregar planos:", error);
             toast.custom(t =>
                 <CustomToast
                     t={t}
@@ -104,6 +105,7 @@ const AlunoPlanos = () => {
             setPersonalIdSelecionado(null);
             await fetchPlanos(idAluno);
         } catch (error) {
+            console.error("Erro ao enviar avaliação:", error);
             toast.custom(t =>
                 <CustomToast
                     t={t}

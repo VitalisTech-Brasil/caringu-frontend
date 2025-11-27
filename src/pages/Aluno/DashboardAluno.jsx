@@ -29,7 +29,6 @@ const DashboardAluno = () => {
     /* Gráficos */
     const [dadosEvolucaoCarga, setDadosEvolucaoCarga] = useState([]);
     const [dadosEvolucaoTreinosCumpridos, setDadosEvolucaoTreinosCumpridos] = useState([]);
-    const [dadosHorasTreinadas, setDadosHorasTreinadas] = useState([]);
     const [dadosGraficoHorasPorMes, setDadosGraficoHorasPorMes] = useState(new Array(12).fill(0))
 
     /* KPIs */
@@ -155,7 +154,6 @@ const DashboardAluno = () => {
             });
 
             const dados = response.data.dados;
-            setDadosHorasTreinadas(response.data);
 
             const resultado = calcularHorasKPI(dados);
             setHorasTreinadasSemanal(resultado.valor);

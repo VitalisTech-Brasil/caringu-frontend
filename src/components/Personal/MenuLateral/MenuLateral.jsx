@@ -6,7 +6,6 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
-import { caringuApi } from "../../../provider/caringuApi";
 import { logout } from "../../../utils/authUtils";
 import { useFotoPerfil } from "../../../context/FotoPerfilContext";
 
@@ -23,8 +22,6 @@ const MenuLateral = () => {
   const [tipoPessoa, setTipoPessoa] = useState("");
 
   const [imgErro, setImgErro] = useState(false);
-
-  const personalId = sessionStorage.getItem('pessoaId');
 
 
   useEffect(() => {

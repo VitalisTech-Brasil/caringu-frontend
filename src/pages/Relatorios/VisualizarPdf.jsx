@@ -15,7 +15,6 @@ import GraficoHorasTreinadas from '../../components/Dashboard/GraficoHorasTreina
 
 const VisualizarPdf = () => {
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const { idAluno, idTreino } = useParams();
 
     const location = useLocation();
@@ -24,16 +23,12 @@ const VisualizarPdf = () => {
     const [fontSize, setFontSize] = useState("16px");
     const pdfRef = useRef(null);
 
-    const [exercicios, setExercicios] = useState([]);
-    const [exercicioSelecionado, setExercicioSelecionado] = useState('');
 
     const [nomeTreino, setNomeTreino] = useState("");
 
     /* Gráficos */
-    const [nomeExercicio, setNomeExercicio] = useState("");
     const [dadosEvolucaoCarga, setDadosEvolucaoCarga] = useState([]);
     const [dadosEvolucaoTreinosCumpridos, setDadosEvolucaoTreinosCumpridos] = useState([]);
-    const [dadosHorasTreinadas, setDadosHorasTreinadas] = useState([]);
     const [dadosGraficoHorasPorMes, setDadosGraficoHorasPorMes] = useState(new Array(12).fill(0))
 
     /* KPIs */
@@ -57,16 +52,10 @@ const VisualizarPdf = () => {
                 const lista = response.data;
 
                 if (lista.length > 0) {
-                    setExercicioSelecionado(lista[0].exercicioId);
-
-                    setNomeTreino(lista[0].nomeTreino)
-
+                    setNomeTreino(lista[0].nomeTreino);
                     buscarEvolucaoCargaPorExercicio(exercicioSelecionadoId);
                     buscarEvolucaoTreinosCumpridosMensal(lista[0].exercicioId);
                     buscarHorasTreinadas(lista[0].exercicioId);
-
-                    setNomeExercicio(lista[0].nomeExercicio);
-                    setExercicios(lista)
                 }
             })
             .catch(error => {
@@ -153,7 +142,6 @@ const VisualizarPdf = () => {
             });
 
             const dados = response.data.dados;
-            setDadosHorasTreinadas(response.data);
 
             const resultado = calcularHorasKPI(dados);
             setHorasTreinadasSemanal(resultado.valor);
@@ -345,7 +333,7 @@ const VisualizarPdf = () => {
                                 <GraficoEvolucaoTreinosCumpridos dadosAPI={dadosEvolucaoTreinosCumpridos} />
                                 <h1 className='text-xl font-semibold'>Total de horas treinadas por mês</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-md p-5'>
-                                    <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes}/>
+                                    <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes} />
                                 </div>
 
                             </div>

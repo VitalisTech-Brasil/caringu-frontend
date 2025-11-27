@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
 import { Link } from 'react-router-dom'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams} from 'react-router-dom'
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro'
 import { caringuApi } from '../../provider/caringuApi'
 import Button from '../../components/Utils/Button'
@@ -14,7 +14,6 @@ const RelatorioTreinos = () => {
     const { idAluno } = useParams();
 
     const [tipoFoto, setTipoFoto] = useState(null);
-    const [periodoAvaliacaoEmMeses, setPeriodoAvaliacaoEmMeses] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [fotosCorporais, setFotosCorporais] = useState({
@@ -29,8 +28,6 @@ const RelatorioTreinos = () => {
             const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
             const fotos = response.data;
             console.log("Fotos recebidas:", fotos);
-
-            setPeriodoAvaliacaoEmMeses(fotos.length > 0 ? fotos[0].periodoAvaliacao : 0);
 
             // Organiza as fotos por tipo
             const agrupadas = {

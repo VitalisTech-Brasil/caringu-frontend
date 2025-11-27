@@ -1,11 +1,12 @@
 import React from 'react';
 
-const TreinoActionsMenu = ({ treino, onEdit, onDelete }) => {
+const TreinoActionsMenu = ({ treino, onEdit, onDelete, disabled }) => {
     return (
         <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
             <button 
-                className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
+                className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => onEdit(treino.treinoId)}
+                disabled={disabled}
             >
                 Editar
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -15,8 +16,9 @@ const TreinoActionsMenu = ({ treino, onEdit, onDelete }) => {
                 </svg>
             </button>
             <button
-                className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer"
+                className="flex items-center justify-end gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => onDelete(treino.treinoId)}
+                disabled={disabled}
             >
                 Excluir
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

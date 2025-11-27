@@ -1,7 +1,6 @@
 import MenuLateralAluno from '../../components/Aluno/MenuLateral/MenuLateral';
 import Header from '../../components/Aluno/Header/Header';
-import Pagination from '../../components/Utils/Pagination';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import CardExercicio from '../../components/Aluno/CardExercicio'
 import { caringuApi } from '../../provider/caringuApi';
@@ -146,17 +145,6 @@ function TreinoAulas() {
                             )}
                         </div>
                     </div>
-                    {/* Arrumar aqui Depois */}
-                    {/* <Pagination
-                        currentPage={}
-                        totalPages={}
-                        itemsLength={}
-                        onPageChange={}
-                        onPrevious={}
-                        onNext={}
-                        maxVisible={}
-                    /> */}
-
                 </div>
             </div >
 

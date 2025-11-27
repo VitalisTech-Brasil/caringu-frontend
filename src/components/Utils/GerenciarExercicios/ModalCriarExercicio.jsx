@@ -6,7 +6,7 @@ import Label from "../../Utils/Label";
 import Button from "../Button";
 import info2 from "../../../assets/images/info-2.svg";
 
-const ModalCriarExercicio = ({ onClose, onSubmit, isVisible, setModalConfirmarCancelarVisivel }) => {
+const ModalCriarExercicio = ({ onSubmit, isVisible, setModalConfirmarCancelarVisivel }) => {
     const {
         register,
         handleSubmit,

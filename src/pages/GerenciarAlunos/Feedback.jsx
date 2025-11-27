@@ -20,7 +20,6 @@ import CustomToast from '../../components/Utils/CustomToast';
 const Feedback = () => {
     const { idAluno } = useParams();
     const [imgErro, setImgErro] = useState(false);
-    const [aluno, setAluno] = useState();
     const location = useLocation();
     const alunoFromState = location.state?.aluno;
     const [novoFeedback, setNovoFeedback] = useState("");
@@ -201,7 +200,7 @@ const Feedback = () => {
                                         Nenhum treino atribuído.
                                     </div>
                                 ) : (
-                                    aulas.map((a, idx) => (
+                                    aulas.map((a) => (
                                         <AulaResumoCard
                                             key={a.aulaId}
                                             dataAula={a.dataAula}

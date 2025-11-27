@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import ButtonInterno from "../../components/Utils/Button";
-import { useParams, useNavigate } from "react-router-dom";
 import iconCancelar from "../../assets/images/cancelar.png";
 import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
@@ -29,17 +28,12 @@ const GerenciarExercicios = () => {
     const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
     const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
     const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
-    const [difficultyFilter, setDifficultyFilter] = useState(null); // "Fácil", "Média", "Difícil"
+    const [difficultyFilter, ] = useState(null); // "Fácil", "Média", "Difícil"
     const [origemSelecionada, setOrigemSelecionada] = useState("");
     const [grupoMuscularSelecionado, setGrupoMuscularSelecionado] = useState("");
 
     const [origemFilter, setOrigemFilter] = useState("");
     const [grupoMuscularFilter, setGrupoMuscularFilter] = useState("");
-
-    const menuRef = useRef(null);
-    const buttonRef = useRef(null);
-    const params = useParams();
-    const navigate = useNavigate();
 
     const [totalExerciciosKpi, setTotalExerciciosKpi] = useState({
         kpiBiblioteca: {},
@@ -51,7 +45,7 @@ const GerenciarExercicios = () => {
 
     // Estados para paginação
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(() => {
+    const [itemsPerPage, ] = useState(() => {
         if (window.innerWidth >= 640) return 3;
         return 1;
     });
@@ -87,11 +81,11 @@ const GerenciarExercicios = () => {
         }
     };
 
-    // Busca todos os exercícios do personal (sem paginação)
     const listarTodosExercicios = async () => {
         const idPersonal = sessionStorage.getItem("pessoaId");
         try {
             const { data } = await caringuApi.get(`/exercicios/por-personal/${idPersonal}`);
+console.log("Exercícios do personal:", data);
             setTodosExercicios(data);
         } catch (e) {
             console.error(`Erro ao buscar os exercícios do personal com ID ${idPersonal}:`, e);
@@ -176,7 +170,7 @@ const GerenciarExercicios = () => {
     };
 
     // Responsividade
-    const { fontSize, width } = useResponsiveStyles();
+    const { fontSize } = useResponsiveStyles();
     function useResponsiveStyles() {
         const [styles, setStyles] = useState({ fontSize: "16px", width: "100%" });
         useEffect(() => {
@@ -287,30 +281,15 @@ const GerenciarExercicios = () => {
         setCurrentPage(1);
     }, [searchTerm, sortOrder, difficultyFilter, origemFilter, showOnlyFavorites, grupoMuscularFilter]);
 
-    // Funções de paginação
-    const goToPage = (page) => {
-        setCurrentPage(page);
-    };
 
-    const goToPrevious = () => {
-        if (currentPage > 1) {
-            goToPage(currentPage - 1);
-        }
-    };
-
-    const goToNext = () => {
-        if (currentPage < totalPages) {
-            goToPage(currentPage + 1);
-        }
-    };
-
-
-
-    const ExercicioActionsMenu = ({ exercicio }) => (
+    const ExercicioActionsMenu = ({ exercicio }) => {
+        const isBiblioteca = exercicio.origem === "BIBLIOTECA";
+        return(
         <div className="flex flex-col text-sm font-medium w-[120px] max-w-[200px]">
             <button
-                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
+                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => handleEditarExercicio(exercicio)}
+                disabled={isBiblioteca}
             >
                 Editar
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -320,8 +299,9 @@ const GerenciarExercicios = () => {
                 </svg>
             </button>
             <button
-                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer"
+                className="flex items-center justify-end min-h-[44px] gap-2 p-2 hover:text-gray-900 hover:bg-gray-100 rounded text-left w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => openDeleteModal(exercicio.id)}
+                disabled={isBiblioteca}
             >
                 Excluir
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -330,7 +310,8 @@ const GerenciarExercicios = () => {
                 </svg>
             </button>
         </div>
-    );
+        );
+};
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">

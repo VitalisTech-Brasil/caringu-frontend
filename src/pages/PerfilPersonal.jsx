@@ -21,7 +21,6 @@ const PerfilPersonal = () => {
     const [statusEtapa, setStatusEtapa] = useState("");
     const [opinioes, setOpinioes] = useState([]);
     const [loadingOpinioes, setLoadingOpinioes] = useState(false);
-    const [limparFiltro, setLimparFiltro] = useState(false);
     const [lastFiltroNota, setLastFiltroNota] = useState(null);
     const { id } = useParams();
     const idAluno = sessionStorage.getItem('pessoaId');
@@ -37,7 +36,6 @@ const PerfilPersonal = () => {
             }
             const response = await caringuApi.get(url);
             setOpinioes(response.data);
-            setLimparFiltro(false);
             setLastFiltroNota(filtroNota);
         } catch (error) {
             console.error("Erro ao buscar Avaliações:", error);
@@ -90,6 +88,7 @@ const PerfilPersonal = () => {
             setStatusEtapa("PENDENTE");
             fetchPlanos();
         } catch (error) {
+            console.error("Erro ao combinar com o personal:", error);
             toast.custom((t) => (
                 <CustomToast t={t} type="error" message="Erro ao combinar com o personal." />
             ));
@@ -105,6 +104,7 @@ const PerfilPersonal = () => {
             setStatusEtapa("COMBINADO");
             fetchPlanos();
         } catch (error) {
+            console.error("Erro ao confirmar pagamento:", error);
             toast.custom((t) => (
                 <CustomToast t={t} type="error" message="Erro ao confirmar pagamento." />
             ));

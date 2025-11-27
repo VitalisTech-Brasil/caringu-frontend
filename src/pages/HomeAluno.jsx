@@ -450,7 +450,7 @@ const HomeAluno = () => {
             </h2>
               <div className="w-full h-auto flex flex-col gap-2">
             {proximasAulas.length > 0 ? (
-              proximasAulas.map((aula, idx) => (
+              proximasAulas.map((aula) => (
                 <div key={aula.idAula} className="w-full h-auto flex flex-col border border-gray-300 rounded-lg p-4 bg-[#1D2D4405] gap-3">
                   <div className="w-full h-auto flex lg:flex-row flex-col justify-between lg:items-center items-start gap-2 lg:gap-0">
                     <span className="text-[var(--azul-escuro)] font-bold text-2xl">
@@ -490,7 +490,7 @@ const HomeAluno = () => {
                       </div>
                       <div className="w-full h-auto flex flex-col gap-1 text-[#15171B87] text-sm font-medium">
                         {aula.exercicios && aula.exercicios.length > 0 ? (
-                          aula.exercicios.slice(0, 2).map((ex, i) => (
+                          aula.exercicios.slice(0, 2).map((ex) => (
                             <div key={ex.idExercicio} className="border border-gray-300 py-2.5 pl-4 rounded-[6px] w-full bg-[var(--cor-secundaria)] h-auto">
                               <span>{ex.nomeExercicio}</span>
                             </div>

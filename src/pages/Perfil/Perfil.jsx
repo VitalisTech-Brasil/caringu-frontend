@@ -12,9 +12,10 @@ import CidadeInput from "../../components/Utils/InputCidade/CidadeInput.jsx";
 import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone.js";
 import { useFotoPerfil } from "../../context/FotoPerfilContext";
 import PreferenciasNotificacao from "../../components/PerfilPersonal/Secoes/PreferenciasNotificacao.jsx";
+import toast from "react-hot-toast";
 
 const Perfil = () => {
-    const { fotoPerfil, setFotoPerfil } = useFotoPerfil(); // Consumir o contexto
+    const { fotoPerfil, setFotoPerfil } = useFotoPerfil();
 
     const [modalVisible, setModalVisible] = useState(false);
     const navigate = useNavigate();
@@ -180,9 +181,14 @@ const Perfil = () => {
                 cref: formData.cref || undefined,
                 nivelAtividade: formData.nivelAtividade || undefined,
                 nivelExperiencia: formData.nivelExperiencia || undefined,
+ especialidades: (formData.especialidades || []).map(e =>
+        typeof e === "object" ? { id: e.id } : { id: e }
+    ),
             };
 
             try {
+                console.log("Enviando para API:", dataParaSalvarPersonal);
+
                 await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvarPersonal);
                 setFotoPerfil(formData.urlFotoPerfil || "");
                 await fetchPersonalData();

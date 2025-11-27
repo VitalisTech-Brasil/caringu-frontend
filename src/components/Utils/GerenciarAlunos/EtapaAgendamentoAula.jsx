@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Calendar from 'react-calendar';
 import Button from "../Button";
-import { format, addDays, isAfter } from "date-fns";
+import { format, addDays } from "date-fns";
 import ptBR from 'date-fns/locale/pt-BR';
 import { useAgendamento } from "./Context/AgendamentoContext";
 import { caringuApi } from "../../../provider/caringuApi";
-import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import CustomToast from '../../Utils/CustomToast';
 import ButtonLoading from "../ButtonLoading";
@@ -27,11 +26,8 @@ const EtapaAgendamentoAula = ({
     setHorarioFim,
     todosHorariosPreenchidos,
     diasSelecionados,
-    setDiasSelecionados,
     showDropdown,
-    setShowDropdown,
     handleDateClick,
-    handleRemoveDate,
     handleSelectAll,
     handleCheck,
     handleToggleDropdown,
@@ -46,7 +42,6 @@ const EtapaAgendamentoAula = ({
     atualizarAlunos
 }) => {
     const { atualizarAgendamento } = useAgendamento();
-    const [aulas, setAulas] = useState([]);
     const [datasAulasBloqueadas, setDatasAulasBloqueadas] = useState([]);
     const rascunhosDates = rascunhosPersistidos ?? [];      // array de { id, date }
     const setRascunhosDates = setRascunhosPersistidos;     // setter vindo do pai
@@ -54,8 +49,7 @@ const EtapaAgendamentoAula = ({
     const [aulasDisponiveis, setAulasDisponiveis] = useState({})
     const [showRascunhoModal, setShowRascunhoModal] = useState(false);
     const [rascunhosCarregados, setRascunhosCarregados] = useState(false);
-    const [idsRascunhos, setIdsRascunhos] = useState([]);
-    const [generatedDates, setGeneratedDates] = useState([]);
+    const [, setGeneratedDates] = useState([]);
 
     function getNextAvailableDates(weekdays, slotsToFill, startDate = new Date(), occupiedSet = new Set()) {
         const diasMap = {
@@ -227,7 +221,6 @@ const EtapaAgendamentoAula = ({
 
             // Limpar estado
             setSelectedDates([]);
-            setIdsRascunhos([]);
             setShowRascunhoModal(false);
             setRascunhosCarregados(false);
 
@@ -264,7 +257,6 @@ const EtapaAgendamentoAula = ({
         const exibirAulas = async () => {
             try {
                 const response = await caringuApi.get(`/aulas/alunos-aulas/${aluno.idAluno}`);
-                setAulas(response.data);
                 const datas = response.data.map(aula =>
                     new Date(aula.dataHorarioInicio).toDateString()
                 );
@@ -339,25 +331,6 @@ const EtapaAgendamentoAula = ({
                     };
                 })
         };
-    };
-
-    const handleProsseguir = () => {
-        const aulas = selectedDates
-            .filter(date => horarios[date.toISOString()])
-            .map(date => {
-                const { inicio, fim } = horarios[date.toISOString()];
-                const dataStr = date.toISOString().slice(0, 10);
-                return {
-                    dataHorarioInicio: `${dataStr}T${inicio}:00`,
-                    dataHorarioFim: `${dataStr}T${fim}:00`
-                };
-            });
-
-        atualizarAgendamento({
-            aulas,
-            diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
-        });
-        onProsseguir();
     };
 
     return (
@@ -526,7 +499,7 @@ const EtapaAgendamentoAula = ({
                                         // se a data for igual, compara pelo horário
                                         return horarioA.localeCompare(horarioB);
                                     })
-                                    .map((data, idx) => (
+                                    .map((data) => (
                                         <div key={data.toISOString()} className="w-full h-auto flex flex-col xl:flex-row xl:items-center">
                                             <div className="flex flex-row gap-2 w-full xl:w-[60%] h-auto items-center text-[14px]">
                                                 <input

@@ -9,7 +9,6 @@ import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
 import Button from "../components/Utils/Button";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import FaleConosco from "../components/Index/FaleConosco";
 import MenuLateral from "../components/Index/MenuLateralIndex";
 
@@ -27,7 +26,6 @@ export default function   HomePage() {
     }
   };
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
 
   const objetivos = [
     {

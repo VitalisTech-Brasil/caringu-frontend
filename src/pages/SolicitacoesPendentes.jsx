@@ -9,6 +9,7 @@ import Modal from "../components/Utils/Modal";
 import iconCancelar from "../assets/images/cancelar.png";
 import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../components/Utils/CustomToast";
+import alerta from "../assets/images/alert.svg";
 
 
 const SolicitacoesPendentes = () => {

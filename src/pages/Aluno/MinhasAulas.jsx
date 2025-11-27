@@ -14,7 +14,6 @@ function MinhasAulas() {
     const [aulas, setAulas] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // página começa em 1
     const [totalPages, setTotalPages] = useState(1);
-    const [itemsLength, setItemsLength] = useState(0);
     const pageSize = 4;
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -29,14 +28,12 @@ function MinhasAulas() {
                 url += `&data=${searchTerm}`;
             }
             const response = await caringuApi.get(url);
-            const { content, totalPages, totalElements } = response.data;
+            const { content, totalPages } = response.data;
             setAulas(Array.isArray(content) ? content : []);
             setTotalPages(totalPages || 1);
-            setItemsLength(totalElements || 0);
         } catch (error) {
             setAulas([]);
             setTotalPages(1);
-            setItemsLength(0);
             console.error("Erro ao buscar aulas:", error);
         }
     };

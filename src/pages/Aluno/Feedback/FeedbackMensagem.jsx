@@ -67,8 +67,7 @@ const FeedbackMensagem = () => {
         }
     };
 
-    const [aulaSelecionada, setAulaSelecionada] = useState(aula || null);
-
+    const [aulaSelecionada, ] = useState(aula || null);
 
     useEffect(() => {
         if (aulaSelecionada?.id) {
