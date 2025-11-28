@@ -2,7 +2,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import ModalRemarcar from "./GerenciarAlunos/ModalRemarcar";
 import { useNavigate } from "react-router-dom";
-import Modal from "./Modal"
+import Modal from "./Modal";
 import iconCancelar from "../../assets/images/cancelar.png";
 
 
