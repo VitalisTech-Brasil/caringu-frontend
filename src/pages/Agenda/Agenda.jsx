@@ -80,10 +80,6 @@ const Agenda = () => {
         }
     });
 
-    useEffect(() => {
-        document.title = "Agenda | Caringu";
-        exibirTreinos();
-    }, []);
 
 
 

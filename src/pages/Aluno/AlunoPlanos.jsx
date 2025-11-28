@@ -22,6 +22,10 @@ const AlunoPlanos = () => {
     const [personalIdSelecionado, setPersonalIdSelecionado] = useState(null);
     const [, setAvaliacaoExistente] = useState(null);
 
+    useEffect(() => {
+        document.title = "Planos | CaringU";
+    }, []);
+
 
     useEffect(() => {
         const id = sessionStorage.getItem("pessoaId");
@@ -52,7 +56,7 @@ const AlunoPlanos = () => {
 
     const openModalAvaliar = async (personalId, avaliacaoExistenteData) => {
         setPersonalIdSelecionado(personalId);
-        
+
         if (avaliacaoExistenteData) {
             setAvaliacaoExistente(avaliacaoExistenteData);
             setRating(avaliacaoExistenteData.nota || 0);
@@ -62,7 +66,7 @@ const AlunoPlanos = () => {
             setRating(0);
             setComentario("");
         }
-        
+
         setModalAvaliar(true);
     };
 

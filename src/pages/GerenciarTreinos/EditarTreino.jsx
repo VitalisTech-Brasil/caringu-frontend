@@ -18,6 +18,10 @@ import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 
 
 const EditarTreino = () => {
+
+    useEffect(() => {
+        document.title = "Editar Treino | CaringU";
+    }, []);
     // Estados locais
     const [exercicioInput, setExercicioInput] = useState('');
     const [focado, setFocado] = useState(false);
@@ -77,7 +81,7 @@ const EditarTreino = () => {
                 console.log("buscando treino e exercícios");
                 const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
                 const data = response.data;
-                console.log("treino salvo",data);
+                console.log("treino salvo", data);
                 if (data.length > 0) {
                     setTreino(data);
                     setExerciciosEditados(data);

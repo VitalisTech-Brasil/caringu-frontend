@@ -14,7 +14,7 @@ const PerfilAluno = () => {
     const [imgErro, setImgErro] = useState(false);
 
     useEffect(() => {
-        document.title = "Perfil do Aluno | Caringu"
+        document.title = "Ficha do Aluno | Caringu"
         const fetchInfosAluno = async () => {
             try {
                 const response = await caringuApi.get(`/anamnese/${idAluno}`);

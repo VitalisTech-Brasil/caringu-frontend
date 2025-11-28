@@ -26,6 +26,10 @@ const PerfilPersonal = () => {
     const idAluno = sessionStorage.getItem('pessoaId');
     const [rating, setRating] = React.useState(0.0);
 
+    useEffect(() => {
+        document.title = "Perfil | CaringU";
+    }, []);
+
     const exibirAvaliacoes = async (filtroNota = 0, forceAll = false) => {
         setLoadingOpinioes(true);
         try {

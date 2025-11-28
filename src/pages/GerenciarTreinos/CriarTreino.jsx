@@ -18,6 +18,11 @@ import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 import useSessionValidation from "./hook/useSessionValidation.jsx";
 
 const CriarTreino = () => {
+
+    useEffect(() => {
+        document.title = "Criar Treino | CaringU";
+    }, []);
+
     useSessionValidation();
 
     const [exercicioInput, setExercicioInput] = useState('');

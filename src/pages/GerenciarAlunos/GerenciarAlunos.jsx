@@ -39,6 +39,10 @@ const GerenciarAlunos = () => {
     return 1;
   });
 
+  useEffect(() => {
+    document.title = "Gerenciar Alunos | CaringU";
+  }, []);
+
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
