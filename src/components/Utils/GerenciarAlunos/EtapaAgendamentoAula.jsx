@@ -563,6 +563,7 @@ const EtapaAgendamentoAula = ({
                                             toast.custom((t) => (
                                                 <CustomToast t={t} type="error" message={`Horário inválido: o término não pode ser menor ou igual ao início.`} />
                                             ));
+                                            setHorarioFim("");
                                             return;
                                         }
 
