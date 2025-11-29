@@ -39,7 +39,7 @@ const ModalRemoverEspecialidade = ({
         <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={() => {onConfirm(especialidadeId), onCancel()}}
-            className="text-red-600 font-semibold hover:underline bg-transparent cursor-pointer text-[16px]"
+            className="text-red-600 border-solid border-2 border-[#B41F1F] font-semibold bg-transparent cursor-pointer text-[16px] p-2 rounded-md"
           >
             Remover mesmo assim
           </button>

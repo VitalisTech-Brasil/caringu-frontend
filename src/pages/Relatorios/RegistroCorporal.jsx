@@ -11,6 +11,10 @@ import { Toaster } from 'react-hot-toast';
 
 
 const RelatorioTreinos = () => {
+
+    useEffect(() => {
+    document.title = "Progresso Corporal | CaringU";
+  }, []);
     const { idAluno } = useParams();
 
     const [tipoFoto, setTipoFoto] = useState(null);

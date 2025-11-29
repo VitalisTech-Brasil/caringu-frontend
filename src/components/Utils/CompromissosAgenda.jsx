@@ -2,6 +2,9 @@ import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import ModalRemarcar from "./GerenciarAlunos/ModalRemarcar";
 import { useNavigate } from "react-router-dom";
+import Modal from "./Modal";
+import iconCancelar from "../../assets/images/cancelar.png";
+
 
 
 const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
@@ -9,6 +12,7 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
     const [errosImagem, setErrosImagem] = useState({});
     const [modalRemarcarVisivel, setModalRemarcarVisivel] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
+    const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
 
     const navigate = useNavigate();
 
@@ -24,10 +28,8 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         setModalRemarcarVisivel(true);
     };
 
-
-    const handleFecharModalRemarcar = () => {
-        setModalRemarcarVisivel(false);
-        setAgendamentoSelecionado(null);
+    const handleFecharRemarcarComConfirmacao = () => {
+        setModalConfirmarCancelarVisivel(true);
     };
 
 
@@ -190,10 +192,25 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
             </div>
             <ModalRemarcar
                 visivel={modalRemarcarVisivel}
-                fecharModal={handleFecharModalRemarcar}
+                fecharModal={handleFecharRemarcarComConfirmacao}
                 agendamento={agendamentoSelecionado}
                 ariaLabel="Modal de Remarcar Agendamento"
                 atualizarCalendario={carregarEventosCalendario}
+            />
+            <Modal
+                visivel={modalConfirmarCancelarVisivel}
+                fecharModal={() => setModalConfirmarCancelarVisivel(false)}
+                titulo="Tem certeza que deseja cancelar?"
+                descricao="Alterações que não forem salvas serão perdidas"
+                onConfirm={() => {
+                    setModalRemarcarVisivel(false);
+                    setModalConfirmarCancelarVisivel(false);
+                    setAgendamentoSelecionado(null);
+                }}
+                icone={iconCancelar}
+                textoBotaoConfirmar="Voltar"
+                textoBotaoCancelar="Cancelar mesmo assim"
+                ariaLabel="Modal de Cancelamento"
             />
         </>
     );

@@ -15,6 +15,10 @@ function TreinoAulas() {
     const [exercicios, setExercicios] = useState([]);
     const [expandidoId, setExpandidoId] = useState(null);
 
+    useEffect(() => {
+        document.title = "Treinos | CaringU";
+    }, []);
+
     const fetchInfosAulasFeedback = async (idAula) => {
         try {
             const response = await caringuApi.get(`/aulas-treinos-exercicios/visualizar-aula/${idAula}?idAluno=${idAluno}`);

@@ -122,13 +122,16 @@ const ModalCriarExercicio = ({ onSubmit, isVisible, setModalConfirmarCancelarVis
                         <div className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                             <Button
                                 texto="Cancelar"
-                                corTexto="var(--cor-secundaria)"
+                                corTexto="#B41F1F"
+                                cor="var(--cor-secundaria)"
                                 type="button"
-                                cor="#B41F1F"
                                 height="2.75rem"
                                 width="13.25rem"
                                 fontWeight="500"
                                 onClick={() => setModalConfirmarCancelarVisivel(true)}
+                                borderStyle={"solid"}
+                                borderWidth={"2px"}
+                                borderColor={"#B41F1F"}
                             />
                             <Button
                                 texto="Salvar"
