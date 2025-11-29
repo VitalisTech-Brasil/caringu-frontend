@@ -33,6 +33,8 @@ const Perfil = () => {
     const [sugestoesEspecialidade, setSugestoesEspecialidade] = useState([]);
     const [especialidadesDisponiveis, setEspecialidadesDisponiveis] = useState([]);
 
+    const [nomeOriginal, setNomeOriginal] = useState("");
+
     // Funções de fetch reutilizáveis
     const fetchPersonalData = async () => {
         try {
@@ -45,6 +47,7 @@ const Perfil = () => {
             });
             // Atualiza contexto de foto também
             setFotoPerfil(response.data.urlFotoPerfil || "");
+            setNomeOriginal(response.data.nome);
         } catch (error) {
             console.error("Erro ao buscar personal trainer:", error);
         }
@@ -62,6 +65,7 @@ const Perfil = () => {
 
             setFormData(dadosComMascara);
             setFotoPerfil(response.data.urlFotoPerfil || "");
+            setNomeOriginal(response.data.nome);
         } catch (error) {
             console.error("Erro ao buscar aluno:", error);
         }
@@ -181,7 +185,9 @@ const Perfil = () => {
                 cref: formData.cref || undefined,
                 nivelAtividade: formData.nivelAtividade || undefined,
                 nivelExperiencia: formData.nivelExperiencia || undefined,
-                especialidades: (formData.especialidades || []).map(e => typeof e === "object" ? { id: e.id } : { id: e }),
+                especialidadesIds: (formData.especialidades || []).map(e =>
+                    typeof e === "object" ? e.id : e
+                ),
             };
 
             try {
@@ -325,7 +331,7 @@ const Perfil = () => {
                                             <FotoPerfil
                                                 key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                nomePersonal={formData.nome || ""}
+                                                nomePersonal={nomeOriginal}
                                                 onFotoChange={(novaFoto) => {
                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
