@@ -556,7 +556,19 @@ const EtapaAgendamentoAula = ({
                                 <input
                                     type="time"
                                     value={horarioFim}
-                                    onChange={e => setHorarioFim(e.target.value)}
+                                    onChange={e => {
+                                        const novoFim = e.target.value;
+
+                                        if (horarioInicio && novoFim <= horarioInicio) {
+                                            toast.custom((t) => (
+                                                <CustomToast t={t} type="error" message={`Horário inválido: o término não pode ser menor ou igual ao início.`} />
+                                            ));
+                                            return;
+                                        }
+
+                                        setHorarioFim(novoFim);
+                                    }}
+
                                     className="bg-transparent border-2 border-[#1D2D441A] border-solid p-2 rounded-md w-1/2 md:w-full"
                                 />
                             </div>
