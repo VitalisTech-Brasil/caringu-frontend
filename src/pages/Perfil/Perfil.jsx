@@ -329,6 +329,7 @@ const Perfil = () => {
                                     {tipo === "ALUNO" ? (
                                         <div className="space-y-8">
                                             <FotoPerfil
+                                                key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
                                                 nomePersonal={nomeOriginal}
                                                 onFotoChange={(novaFoto) => {
