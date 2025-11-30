@@ -9,14 +9,12 @@ export default function Secoes() {
     const [selectedTab, setSelectedTab] = useState("informacoes");
     const navigate = useNavigate();
     const tipo = sessionStorage.getItem("tipo");
-    const colunas = tipo === "PERSONAL" ? "lg:grid-cols-3" : "lg:grid-cols-2";
-
     return (
         <div className="w-full h-full">
             {/* Cabeçalho das abas */}
             <div className="flex justify-center w-full mb-6 items-center">
                 <div
-                    className={`grid grid-cols-1 ${colunas} w-full max-w-[900px] justify-items-center`}
+                    className={`grid grid-cols-1 lg:grid-cols-3 w-full max-w-[900px] justify-items-center`}
                 >
                     {/* Informações pessoais */}
                     <button
@@ -31,7 +29,7 @@ export default function Secoes() {
                     </button>
 
                     {/* Notificações (apenas para personal) */}
-                    {tipo === "PERSONAL" && (
+                    {tipo === "PERSONAL" || tipo === "ALUNO" && (
                         <button
                             onClick={() => setSelectedTab("notificacao")}
                             className={`w-full max-w-[300px] px-6 py-2 text-md font-medium border-2 cursor-pointer transition-all duration-200 rounded-md 
