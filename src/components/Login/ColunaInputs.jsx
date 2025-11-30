@@ -13,6 +13,7 @@ import CustomToast from '../Utils/CustomToast';
 import alert from "../../assets/images/alert.svg";
 import { caringuApi } from '../../provider/caringuApi';
 import { useGoogleSSO } from '../../hooks/useGoogleSSO';
+import { useFotoPerfil } from "../../context/FotoPerfilContext";
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const ColunaInputs = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [tempoRestante, setTempoRestante] = useState(null);
   const { loginWithGoogle } = useGoogleSSO();
+  const { setFotoPerfil } = useFotoPerfil();
 
   useEffect(() => {
     return () => {
@@ -89,10 +91,32 @@ const ColunaInputs = () => {
 
       if (response.status === 200) {
         // authToken agora é enviado via cookie HttpOnly
-        sessionStorage.setItem('pessoaId', response.data.pessoaId);
+        const pessoaId = response.data.pessoaId;
+        const tipo = (response.data.tipo || "").toString().toUpperCase();
+
+        sessionStorage.setItem('pessoaId', pessoaId);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
         sessionStorage.setItem('email', email);
+
+        // Busca inicial da foto de perfil para preencher o contexto/logo do menu
+        try {
+          let url = "";
+          if (tipo === "PERSONAL") {
+            const resp = await caringuApi.get(`/personal-trainers/${pessoaId}`);
+            url = resp?.data?.urlFotoPerfil || "";
+          } else if (tipo === "ALUNO") {
+            const resp = await caringuApi.get(`/alunos/${pessoaId}`);
+            url = resp?.data?.urlFotoPerfil || "";
+          } else {
+            const resp = await caringuApi.get(`/pessoas/${pessoaId}/foto-perfil`);
+            url = resp?.data?.urlFotoPerfil || "";
+          }
+          setFotoPerfil(url);
+        } catch (e) {
+          console.error("Erro ao buscar foto de perfil após login:", e);
+          setFotoPerfil("");
+        }
 
         toast.custom((t) => (
           <CustomToast t={t} type="success" message="Login realizado com sucesso!" />

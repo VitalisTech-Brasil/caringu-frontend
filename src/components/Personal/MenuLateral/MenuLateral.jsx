@@ -31,29 +31,42 @@ const MenuLateral = () => {
 
 
   useEffect(() => {
-    const usuario = sessionStorage.getItem("usuario");
+    const atualizarNomeDoStorage = () => {
+      const usuario = sessionStorage.getItem("usuario");
 
-    if (usuario) {
-      const nomeSeparado = usuario.split(" ");
+      if (usuario) {
+        const nomeSeparado = usuario.split(" ");
 
-      const nome = nomeSeparado[0];
-      const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
+        const nome = nomeSeparado[0];
+        const nomeFormatado = nome[0]?.toUpperCase() + nome.slice(1);
 
-      const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
-      const ultimoNomeFormatado =
-        ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
+        const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
+        const ultimoNomeFormatado =
+          ultimoNome[0]?.toUpperCase() + ultimoNome.slice(1);
 
-      const tipo = sessionStorage.getItem("tipo");
+        const tipo = sessionStorage.getItem("tipo");
 
-      let nomeFinal = nomeFormatado + " " + ultimoNomeFormatado;
+        // Sempre usar primeiro e último nome completos (sem abreviar)
+        const nomeFinal = `${nomeFormatado} ${ultimoNomeFormatado}`;
 
-      if (nomeFinal.length > 13) {
-        nomeFinal = nomeFormatado + " " + ultimoNomeFormatado[0] + ".";
+        setNomePessoa(nomeFinal);
+        setTipoPessoa(tipo);
       }
+    };
 
-      setNomePessoa(nomeFinal);
-      setTipoPessoa(tipo);
-    }
+    atualizarNomeDoStorage();
+
+    const listener = (event) => {
+      if (event.type === "usuarioAtualizado") {
+        atualizarNomeDoStorage();
+      }
+    };
+
+    window.addEventListener("usuarioAtualizado", listener);
+
+    return () => {
+      window.removeEventListener("usuarioAtualizado", listener);
+    };
   }, []);
 
   const handleLogout = async () => {

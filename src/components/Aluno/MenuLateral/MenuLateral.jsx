@@ -6,7 +6,7 @@ import { useFotoPerfil } from "../../../context/FotoPerfilContext";
 import { caringuApi } from "../../../provider/caringuApi";
 
 const MenuLateralAluno = forwardRef((props, ref) => {
-  const { fotoPerfil, setFotoPerfil, forceUpdate } = useFotoPerfil();
+  const { fotoPerfil, setFotoPerfil } = useFotoPerfil();
   const [isOpen, setIsOpen] = useState(false);
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const [userName, setUserName] = useState("");
@@ -32,25 +32,58 @@ const MenuLateralAluno = forwardRef((props, ref) => {
       }
     };
     if (studentId) fetchProfilePhoto();
-  }, [studentId, forceUpdate]);
+  }, [studentId]);
 
   useEffect(() => {
     setImgError(false);
   }, [fotoPerfil]);
 
   useEffect(() => {
-    const user = sessionStorage.getItem("usuario");
-    if (user) {
-      const nameParts = user.split(" ");
-      const firstName = nameParts[0];
-      const lastName = nameParts[nameParts.length - 1];
-      let displayName = `${firstName[0].toUpperCase() + firstName.slice(1)} ${lastName[0].toUpperCase() + lastName.slice(1)}`;
-      if (displayName.length > 13) {
-        displayName = `${firstName[0].toUpperCase() + firstName.slice(1)} ${lastName[0].toUpperCase()}.`;
+    const atualizarNomeDoStorage = () => {
+      const user = sessionStorage.getItem("usuario");
+      if (user) {
+        const nameParts = user.trim().split(/\s+/); // separa por espaços múltiplos
+
+        let displayName = "";
+
+        if (nameParts.length === 1) {
+          // Caso especial: só um nome
+          const name = nameParts[0];
+          const formatted =
+            name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+          displayName = formatted;
+        } else {
+          // Primeiro e último nome (sem duplicar)
+          const firstName = nameParts[0];
+          const lastName = nameParts[nameParts.length - 1];
+
+          const firstNameFormatted =
+            firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+
+          const lastNameFormatted =
+            lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
+
+          displayName = `${firstNameFormatted} ${lastNameFormatted}`;
+        }
+
+        setUserName(displayName);
+        setUserType(sessionStorage.getItem("tipo"));
       }
-      setUserName(displayName);
-      setUserType(sessionStorage.getItem("tipo"));
-    }
+    };
+
+    atualizarNomeDoStorage();
+
+    const listener = (event) => {
+      if (event.type === "usuarioAtualizado") {
+        atualizarNomeDoStorage();
+      }
+    };
+
+    window.addEventListener("usuarioAtualizado", listener);
+
+    return () => {
+      window.removeEventListener("usuarioAtualizado", listener);
+    };
   }, []);
 
   const handleLogout = () => {

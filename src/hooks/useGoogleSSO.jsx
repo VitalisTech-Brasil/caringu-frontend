@@ -5,9 +5,11 @@ import toast from "react-hot-toast";
 import { api } from "../provider/api";
 import { caringuApi } from "../provider/caringuApi";
 import CustomToast from "../components/Utils/CustomToast";
+import { useFotoPerfil } from "../context/FotoPerfilContext";
 
 export const useGoogleSSO = () => {
   const navigate = useNavigate();
+  const { setFotoPerfil } = useFotoPerfil();
 
   const handleBackendResponse = useCallback(
     (dados) => {
@@ -47,6 +49,18 @@ export const useGoogleSSO = () => {
           sessionStorage.setItem("usuario", nome);
           sessionStorage.setItem("email", email);
           sessionStorage.setItem("tipo", tipo);
+
+          // Foto de perfil inicial (perfil incompleto mas já pode ter foto)
+          caringuApi
+            .get(`/pessoas/${id}/foto-perfil`)
+            .then((fotoResponse) => {
+              const url = fotoResponse?.data?.urlFotoPerfil || "";
+              setFotoPerfil(url);
+            })
+            .catch((e) => {
+              console.error("Erro ao buscar foto de perfil (perfil incompleto):", e);
+              setFotoPerfil("");
+            });
         }
 
         toast.custom((t) => (
@@ -66,6 +80,7 @@ export const useGoogleSSO = () => {
         const { id, nome, email, perfis } = dados.usuario;
         const tipo =
           Array.isArray(perfis) && perfis.length > 0 ? perfis[0] : "ALUNO";
+        const upperTipo = (tipo || "").toString().toUpperCase();
 
         // Token também vem na resposta, mas o backend já grava o JWT em cookie HttpOnly
         if (dados.token) {
@@ -77,6 +92,26 @@ export const useGoogleSSO = () => {
         sessionStorage.setItem("email", email);
         sessionStorage.setItem("tipo", tipo);
 
+        // Foto de perfil inicial após login com Google
+        let requestPromise;
+        if (upperTipo === "PERSONAL") {
+          requestPromise = caringuApi.get(`/personal-trainers/${id}`);
+        } else if (upperTipo === "ALUNO") {
+          requestPromise = caringuApi.get(`/alunos/${id}`);
+        } else {
+          requestPromise = caringuApi.get(`/pessoas/${id}/foto-perfil`);
+        }
+
+        requestPromise
+          .then((resp) => {
+            const url = resp?.data?.urlFotoPerfil || "";
+            setFotoPerfil(url);
+          })
+          .catch((e) => {
+            console.error("Erro ao buscar foto de perfil após login Google:", e);
+            setFotoPerfil("");
+          });
+
         toast.custom((t) => (
           <CustomToast
             t={t}
@@ -86,7 +121,6 @@ export const useGoogleSSO = () => {
         ));
 
         setTimeout(async () => {
-          const upperTipo = (tipo || "").toString().toUpperCase();
           if (upperTipo === "PERSONAL") {
             navigate("/home");
           } else if (upperTipo === "ALUNO" && id) {
