@@ -25,7 +25,7 @@ const Feedback = () => {
             try {
                 const page = currentPage - 1;
                 // Monta a query de data se houver busca
-                let url = `/aulas/aluno/${idAluno}/plano?page=${page}&size=${itemsPerPage}`;
+                let url = `/feedbacks/aluno/${idAluno}/aulas?page=${page}&size=${itemsPerPage}`;
                 if (searchActive && selectedDate) {
                     url += `&data=${selectedDate}`; // selectedDate já está no formato yyyy-mm-dd
                 }

@@ -47,7 +47,7 @@ const MenuLateral = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed top-4 left-4 z-50 bg-transparent p-2 rounded shadow-lg"
+          className="fixed top-4 left-4 z-50 p-2 rounded shadow-lg bg-[var(--azul-escuro)]"
         >
           <FaBars className="text-white" size={24} />
         </button>

@@ -41,7 +41,7 @@ const Feedback = () => {
 
         try {
             while (!last) {
-                const response = await caringuApi.get(`/aulas/aluno/${idAluno}/plano?page=${page}&size=20`);
+                const response = await caringuApi.get(`/feedbacks/aluno/${idAluno}/aulas?page=${page}&size=20`);
                 const { content, last: isLast } = response.data;
                 todasAulas = todasAulas.concat(Array.isArray(content) ? content : []);
                 last = isLast;
