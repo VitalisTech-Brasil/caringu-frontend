@@ -1,30 +1,16 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext } from "react";
 
 const FotoPerfilContext = createContext();
 
 export const FotoPerfilProvider = ({ children }) => {
   const [profilePhoto, setProfilePhoto] = useState("");
-  const [forceUpdate, setForceUpdate] = useState(0);
-
-  useEffect(() => {
-    const storedPhoto = sessionStorage.getItem("fotoPerfil");
-    if (storedPhoto) {
-      setProfilePhoto(storedPhoto);
-    }
-  }, []);
 
   const setFotoPerfil = (url) => {
-    setProfilePhoto(url);
-    setForceUpdate((prev) => prev + 1);
-    if (url) {
-      sessionStorage.setItem("fotoPerfil", url);
-    } else {
-      sessionStorage.removeItem("fotoPerfil");
-    }
+    setProfilePhoto(url || "");
   };
 
   return (
-    <FotoPerfilContext.Provider value={{ fotoPerfil: profilePhoto, setFotoPerfil, forceUpdate }}>
+    <FotoPerfilContext.Provider value={{ fotoPerfil: profilePhoto, setFotoPerfil }}>
       {children}
     </FotoPerfilContext.Provider>
   );

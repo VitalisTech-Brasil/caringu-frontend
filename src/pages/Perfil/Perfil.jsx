@@ -35,6 +35,8 @@ const Perfil = () => {
 
     const [nomeOriginal, setNomeOriginal] = useState("");
 
+    const nomeSessionStorage = sessionStorage.getItem("usuario");
+
     // Funções de fetch reutilizáveis
     const fetchPersonalData = async () => {
         try {
@@ -79,7 +81,7 @@ const Perfil = () => {
         } else if (tipo === "ALUNO") {
             fetchAlunoData();
         }
-    }, [tipo, personalId, alunoId]);
+    }, []);
 
     useEffect(() => {
         caringuApi.get('/especialidades')
@@ -157,6 +159,15 @@ const Perfil = () => {
 
             try {
                 await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
+                
+                // Atualiza nome na sessionStorage e contexto
+                const novoNome = dataParaSalvar.nome || formData.nome || "";
+                if (novoNome) {
+                    sessionStorage.setItem("usuario", novoNome);
+                    window.dispatchEvent(new CustomEvent("usuarioAtualizado", { detail: { nome: novoNome } }));
+                    setNomeOriginal(novoNome);
+                }
+
                 setFotoPerfil(formData.urlFotoPerfil || "");
                 toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
             } catch (error) {
@@ -194,6 +205,14 @@ const Perfil = () => {
                 console.log("Enviando para API:", dataParaSalvarPersonal);
 
                 await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvarPersonal);
+
+                // Atualiza nome na sessionStorage e contexto
+                const novoNome = dataParaSalvarPersonal.nome || formData.nome || "";
+                if (novoNome) {
+                    sessionStorage.setItem("usuario", novoNome);
+                    window.dispatchEvent(new CustomEvent("usuarioAtualizado", { detail: { nome: novoNome } }));
+                }
+
                 setFotoPerfil(formData.urlFotoPerfil || "");
                 await fetchPersonalData();
                 toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
@@ -331,7 +350,7 @@ const Perfil = () => {
                                             <FotoPerfil
                                                 key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                nomePersonal={nomeOriginal}
+                                                nomePersonal={formData.nome || nomeOriginal}
                                                 onFotoChange={(novaFoto) => {
                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
@@ -342,7 +361,7 @@ const Perfil = () => {
                                             <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">
                                                 <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center w-full p-2">
                                                     <h2 className="text-[24px] font-bold text-gray-800 flex justify-between items-center ">
-                                                        Informações Pessoais
+                                                        Informações PessoaisALUNO
                                                     </h2>
 
                                                     <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-4 mt-4 sm:mt-0">
@@ -439,7 +458,7 @@ const Perfil = () => {
                                             <FotoPerfil
                                                 key={fotoPerfil || formData.urlFotoPerfil || 'foto-perfil'}
                                                 urlFoto={fotoPerfil}
-                                                nomePersonal={formData.nome || ""}
+                                                nomePersonal={nomeSessionStorage ||  formData.nome || ""}
                                                 onFotoChange={(novaFoto) => {
                                                     setFotoPerfil(novaFoto); // Atualizar o contexto
                                                     setFormData((prev) => ({ ...prev, urlFotoPerfil: novaFoto })); // Atualizar o estado local
