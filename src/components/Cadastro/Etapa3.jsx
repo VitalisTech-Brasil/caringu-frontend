@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCadastro } from "./context/CadastroContext";
 
-import axios from "axios";
 import { caringuApi } from "../../provider/caringuApi";
 import { pythonApi } from "../../provider/pythonApi";
 
@@ -45,7 +44,7 @@ export default function Etapa3({ setEtapa }) {
     Object.entries(dadosCadastro).forEach(([key, value]) => {
       if (value) setValue(key, value);
     });
-  }, []);
+  }, [dadosCadastro, setValue]);
 
   const [buscaEspecialidade, setBuscaEspecialidade] = useState("");
   const [sugestoes, setSugestoes] = useState([]);
@@ -68,7 +67,7 @@ export default function Etapa3({ setEtapa }) {
   useEffect(() => {
     setValue("especialidade", especialidadesSelecionadas);
     trigger("especialidade");
-  }, [especialidadesSelecionadas]);
+  }, [especialidadesSelecionadas, setValue, trigger]);
 
   const handleEspecialidadeChange = (e) => {
     const valor = e.target.value;
@@ -120,6 +119,7 @@ export default function Etapa3({ setEtapa }) {
   const debouncedAzureCall = debounce(async (cref) => {
     try {
       const response = await pythonApi.get(`/consultar?registro=${cref}`);
+
 
       // Ajuste simples: se veio algum dado da API Python, consideramos CREF válido
       if (response?.data && response.data.length > 0 && response.data[0].nome == dadosCadastro.nome && response.data[0].cref == cref) {
@@ -343,8 +343,8 @@ export default function Etapa3({ setEtapa }) {
                   crefStatus === "ok"
                     ? "green"
                     : crefStatus === "validando"
-                    ? "#999"
-                    : "#D45C56",
+                      ? "#999"
+                      : "#D45C56",
               }}
             >
               <img
@@ -352,8 +352,8 @@ export default function Etapa3({ setEtapa }) {
                   crefStatus === "ok"
                     ? check
                     : crefStatus === "validando"
-                    ? loading
-                    : alert
+                      ? loading
+                      : alert
                 }
                 alt="Ícone de status"
                 width={"18px"}

@@ -11,6 +11,11 @@ import toast from 'react-hot-toast';
 import CustomToast from '../../../components/Utils/CustomToast';
 
 const FeedbackMensagem = () => {
+
+    useEffect(() => {
+        document.title = "Feedback | CaringU";
+    }, []);
+
     const menuRef = useRef(null);
 
     const location = useLocation();
@@ -67,8 +72,7 @@ const FeedbackMensagem = () => {
         }
     };
 
-    const [aulaSelecionada, setAulaSelecionada] = useState(aula || null);
-
+    const [aulaSelecionada,] = useState(aula || null);
 
     useEffect(() => {
         if (aulaSelecionada?.id) {

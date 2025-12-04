@@ -57,6 +57,27 @@ const PREFERENCIAS_INFO = {
             </svg>
         )
     },
+    PAGAMENTO_CANCELADO: {
+        titulo: "Pagamento Cancelado",
+        descricao: "Notificações sobre pagamentos de planos que foram cancelados ou não processados.",
+        icone: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 56 52" fill="none">
+                <path d="M27.5 42C28.8807 42 30 40.8807 30 39.5C30 38.1193 28.8807 37 27.5 37C26.1193 37 25 38.1193 25 39.5C25 40.8807 26.1193 42 27.5 42Z" fill="#1D2D44" />
+                <path d="M28 20V31" stroke="#1D2D44" strokeWidth="4" strokeLinecap="round" />
+                <path d="M3.60951 42.0737L22.8985 5.0276C25.0005 0.990785 30.9995 0.990812 33.1015 5.0276L52.3905 42.0737C54.2866 45.7153 51.529 50 47.289 50H8.71088C4.47097 50 1.71335 45.7153 3.60951 42.0737Z" stroke="#1D2D44" strokeWidth="4" />
+            </svg>
+        )
+    },
+    AULAS_PENDENTES: {
+        titulo: "Aulas pendentes para agendamento",
+        descricao: "Receba notificações quando houver aulas pendentes que precisam ser agendadas.",
+        icone: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 53 53" fill="none">
+                <path d="M19.3542 41.5417H18.25C9.41667 41.5417 5 39.3333 5 28.2917V17.25C5 8.41667 9.41667 4 18.25 4H35.9167C44.75 4 49.1667 8.41667 49.1667 17.25V28.2917C49.1667 37.125 44.75 41.5417 35.9167 41.5417H34.8125C34.1279 41.5417 33.4654 41.8729 33.0458 42.425L29.7333 46.8417C28.2758 48.785 25.8908 48.785 24.4333 46.8417L21.1208 42.425C20.7675 41.9392 19.9504 41.5417 19.3542 41.5417Z" stroke="#1D2D44" strokeWidth="4" />
+                <path d="M38 20.6667H35.2208V18H31.5792V23.0833H21.4208V18H17.7792V20.6667H15V27.3333H17.7792V30H21.4208V24.9167H31.5792V30H35.2208V27.3333H38V20.6667Z" fill="#1D2D44" />
+            </svg>
+        )
+    }
 };
 
 export default function PreferenciasNotificacao() {
@@ -104,7 +125,7 @@ export default function PreferenciasNotificacao() {
             })
             .catch(err => {
                 console.error("Erro ao atualizar preferência:", err);
-            
+
                 setPreferencias((prev) =>
                     prev.map((p) =>
                         p.id === id ? { ...p, ativada: item.ativada } : p

@@ -1,6 +1,6 @@
 import React from "react";
-import bgImage from "../assets/images/primeira-imagem-fundo-index.svg";
-import logoImage from '../assets/logos/caringu-logo-branco.svg'
+import bgImage from "../assets/images/fundonovo.svg";
+import logoImage from '../assets/logos/caringu-logo-escura.svg'
 import cardImage from '../assets/images/ginasio-sem-pessoas-interior_107420-6120.svg'
 import cardImage2 from '../assets/images/Foto2CardsIndex.svg'
 import cardImage3 from '../assets/images/Being A Personal Trainer_ Pros and Cons.svg'
@@ -9,7 +9,6 @@ import Carrossel from "../components/Index/Carrossel";
 import PerguntasFrequentes from "../components/Index/PerguntasFrequentes";
 import Button from "../components/Utils/Button";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import FaleConosco from "../components/Index/FaleConosco";
 import MenuLateral from "../components/Index/MenuLateralIndex";
 
@@ -27,7 +26,6 @@ export default function   HomePage() {
     }
   };
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
 
   const objetivos = [
     {
@@ -57,9 +55,9 @@ export default function   HomePage() {
       <MenuLateral />
 
       {/* Header principal (desktop) */}
-      <header className="max-[800px]:fixed min-[800px]:absolute top-0 left-0 z-11 w-full h-[80px] flex items-center bg-[#000001] md:bg-transparent justify-between text-white px-8 pl-20 pr-20">
+      <header className="max-[800px]:fixed min-[800px]:absolute top-0 left-0 z-11 w-full h-[80px] flex items-center md:bg-transparent justify-between text-white px-8 pl-20 pr-20">
         {/* Menu de navegação — some abaixo de 800px */}
-        <nav className="hidden min-[800px]:flex gap-8 m-4 justify-center items-center h-16 w-[400px] rounded-[6px]
+        <nav className="text-[var(--cor-primaria)] hidden min-[800px]:flex gap-8 m-4 justify-center items-center h-16 w-[400px] rounded-[6px]
                         max-[1050px]:gap-4 max-[1050px]:w-[320px] max-[1050px]:text-[12px] max-[1050px]:h-[48px] max-[900px]:w-[300px] max-[900px]:text-[10px] 
                         max-[900px]:gap-2">
           <a className="hover:underline font-bold text-[14px] cursor-pointer transition-all max-[1050px]:text-[12px]"
@@ -81,7 +79,7 @@ export default function   HomePage() {
         <div className="hidden min-[800px]:flex gap-16 items-center w-[300px] justify-end
                         max-[1050px]:gap-8 max-[1050px]:w-[240px] max-[1050px]:text-[12px] max-[900px]:gap-4:">
           <Link to="/cadastro"
-            className="font-bold text-[14px] cursor-pointer hover:underline transition-all max-[1050px]:text-[12px]">
+            className="text-[var(--cor-primaria)] font-bold text-[14px] cursor-pointer hover:underline transition-all max-[1050px]:text-[12px]">
             Inscreva-se
           </Link>
           <Link to="/login">
@@ -98,12 +96,12 @@ export default function   HomePage() {
         </div>
       </header>
       <section id="home" className="relative w-full h-screen bg-cover flex items-start" style={{ backgroundImage: `url(${bgImage})` }}>
-        <div className="absolute inset-0 bg-black opacity-60" />
-        <div className="relative z-10 flex flex-col justify-center items-start h-full text-white max-w-250 mx-25 max-lg:mx-16 max-sm:mx-6 max-md:mx-10">
-          <p className="text-[64px] font-extrabold mb-6 max-[700px]:text-[56px] max-[525px]:text-[48px] max-[500px]:text-[40px] max-[500px]:w-[380px] max-[425px]:text-[32px] max-[425px]:w-[325px]">
-            Conquiste alunos com mais facilidade e praticidade
+        <div className="absolute inset-0 bg-black opacity-10" />
+        <div className="relative z-10 flex flex-col justify-center items-start h-full text-white max-w-250 mx-55 max-lg:mx-16 max-sm:mx-6 max-md:mx-10">
+          <p className="text-[var(--cor-primaria)] text-[64px] font-extrabold mb-6 max-[700px]:text-[56px] max-[525px]:text-[48px] max-[500px]:text-[40px] max-[500px]:w-[380px] max-[425px]:text-[32px] max-[425px]:w-[325px]">
+            Conquiste alunos com mais <span className="text-[var(--laranja)]">facilidade</span> e <span className="text-[var(--azul-escuro)]">praticidade</span>
           </p>
-          <p className="text-[24px] mb-8 max-w-160 max-[700px]:text-[20px] max-[525px]:text-[16px] max-[500px]:w-[370px] max-[425px]:w-[300px]">
+          <p className="text-[var(--cor-primaria)] text-[24px] mb-8 max-w-160 max-[700px]:text-[20px] max-[525px]:text-[16px] max-[500px]:w-[370px] max-[425px]:w-[300px]">
             A CaringU facilita a gestão, conecta você a novos alunos e otimiza a comunicação, permitindo focar no que importa: Transformar vidas através do treino.
           </p>
           <Link to="/cadastro"><Button texto="Cadastre-se" cor="var(--laranja)" corTexto="var(--cor-secundaria)" width="200px" height="50px" fontSize="18px" /></Link>

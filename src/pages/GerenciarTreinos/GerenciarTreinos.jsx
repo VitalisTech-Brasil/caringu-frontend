@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
 import Header from "../../components/Personal/Header/Header";
 import ButtonInterno from "../../components/Utils/Button";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import iconCancelar from "../../assets/images/cancelar.png";
 import Modal from "../../components/Utils/Modal.jsx";
 import lixeira from "../../assets/images/trash.png";
@@ -32,7 +32,7 @@ const GerenciarTreinos = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [origemFilter, setOrigemFilter] = useState("");
     const [origemSelecionada, setOrigemSelecionada] = useState("");
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [, setShowEditModal] = useState(false);
     const menuRef = useRef(null);
     const buttonRef = useRef(null);
     const navigate = useNavigate();
@@ -40,13 +40,12 @@ const GerenciarTreinos = () => {
     const [treinos, setTreinos] = useState([]);
     const [alunos, setAlunos] = useState([]);
     const idPersonal = sessionStorage.getItem("pessoaId")
-    const { fontSize, width } = useResponsiveStyles();
+    const { fontSize } = useResponsiveStyles();
     const [idTreinoExercicioParaDeletar, setIdTreinoExercicioParaDeletar] = useState(null);
-    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
 
 
 
-    const { register, handleSubmit, control, reset, watch, formState: { errors, isSubmitted }, setValue, trigger } = useForm({
+    const { register, handleSubmit, control, reset, watch, formState: { errors } } = useForm({
         defaultValues: {
             plano: "",
             duracao: "",
@@ -240,7 +239,6 @@ const GerenciarTreinos = () => {
             const response = await caringuApi.delete(`/treino/${id}`);
 
             if (response.status === 204 || response.status === 200) {
-                setExerciciosSelecionados(prev => prev.filter(ex => ex.id !== id));
                 toast.custom((t) => (
                     <CustomToast t={t} type="success" message="Treino excluido com sucesso!" />
                 ));
@@ -273,10 +271,6 @@ const GerenciarTreinos = () => {
         }
     };
 
-    const handleOpenModal = () => {
-        setOpenMenuId(false);
-        setShowCreateModal(true);
-    };
 
     const handleEditTreino = (treinoId) => {
         navigate(`/editar-treino/${treinoId}`);
@@ -559,26 +553,7 @@ const GerenciarTreinos = () => {
                                     </svg>
                                 }
                             />
-                            {/* <ButtonInterno
-                                texto="Atribuir Treinos"
-                                type="submit"
-                                corTexto="var(--azul-escuro)"
-                                borderColor={"#E6E6E2"}
-                                borderStyle={"solid"}
-                                borderWidth={"2px"}
-                                cor="var(--cor-secundaria)"
-                                classNameExtra="w-full sm:w-1/2"
-                                height="50px"
-                                font-size={fontSize}
-                                logoSvg={
-                                    <svg className="w-8 h-8" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M36.7591 17.2984L36.7353 25.4233C36.7115 33.5483 33.4519 36.7888 25.327 36.7649L15.577 36.7363C7.45205 36.7125 4.21159 33.453 4.23542 25.328L4.26401 15.5781C4.28783 7.45311 7.54735 4.21265 15.6723 4.23648L23.7973 4.2603" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M36.7592 17.2978L30.2592 17.2788C25.3842 17.2645 23.764 15.6347 23.7783 10.7597L23.7974 4.25977L36.7592 17.2978Z" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        <path d="M31.7368 18.6667H28.9895V16H25.3895V21.0833H15.3474V16H11.7474V18.6667H9V25.3333H11.7474V28H15.3474V22.9167H25.3895V28H28.9895V25.3333H31.7368V18.6667Z" fill="#1D2D44" />
-                                    </svg>
-                                }
-                                onClick={handleOpenModal}
-                            /> */}
+
                         </div>
                     </div>
                     <div className="relative flex flex-col items-center gap-4 bg-transparent p-4 rounded-lg h-110 sm:h-140 mt-5">
@@ -603,6 +578,7 @@ const GerenciarTreinos = () => {
                                     treino={treino}
                                     onEdit={handleEditTreino}
                                     onDelete={handleDeleteTreino}
+                                    disabled={treino.origemTreinoExercicio === "BIBLIOTECA"}
                                 />
                             </TreinoCard>
                         ))}

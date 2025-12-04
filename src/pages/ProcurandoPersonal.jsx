@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { HiOutlineFilter, HiOutlineSearch } from "react-icons/hi";
 import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
 import Header from "../components/Aluno/Header/Header";
 import Button from "../components/Utils/Button";
@@ -8,7 +7,6 @@ import Label from "../components/Utils/Label";
 import InputPosLogin from "../components/Utils/InputPosLogin";
 import { useForm } from "react-hook-form";
 import { caringuApi } from "../provider/caringuApi";
-import MascaraTelefone from "../components/Utils/Functions/MascaraTelefone";
 import axios from "axios";
 import Rating from 'react-rating'
 import Pagination from "../../src/components/Utils/Pagination";
@@ -16,14 +14,12 @@ import MenuLateralAluno from "../components/Aluno/MenuLateral/MenuLateral";
 
 const ProcurandoPersonal = () => {
 
-  const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm();
+  const { register, handleSubmit, formState: setValue } = useForm();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedCards, setExpandedCards] = useState([]);
-  const { fontSize, width } = useResponsiveStyles();
+  const [, setExpandedCards] = useState([]);
   const [allTrainers, setAllTrainers] = useState([]);
   const [filteredTrainers, setFilteredTrainers] = useState([]);
-  const sugestaoRef = useRef(null);
   const [cidadeQuery, setCidadeQuery] = useState("");
   const [sugestoes, setSugestoes] = useState([]);
   const [todasCidadesSP, setTodasCidadesSP] = useState([]);
@@ -35,11 +31,9 @@ const ProcurandoPersonal = () => {
   const [especialidadeSugestoes, setEspecialidadeSugestoes] = useState([]);
   const [errosImagem, setErrosImagem] = useState({});
   const [rating, setRating] = useState(0.0);
-  const [limparFiltro, setLimparFiltro] = useState(false);
   const [lastFiltroNota, setLastFiltroNota] = useState(null);
   const [loadingOpinioes, setLoadingOpinioes] = useState(false);
 
-  const [sortOrder, setSortOrder] = useState(null); // A-Z or Z-A
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(() => {
     if (window.innerWidth >= 1536) return 5;
@@ -73,7 +67,7 @@ const ProcurandoPersonal = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, sortOrder, filteredTrainers]);
+  }, [searchTerm, filteredTrainers]);
 
   useEffect(() => {
     document.title = "Procurando Personal | CaringU"
@@ -138,6 +132,7 @@ const ProcurandoPersonal = () => {
         setBairroSugestoes([...new Set(bairros)]);
       } catch (error) {
         setBairroSugestoes([]);
+        console.error("Erro ao buscar bairros:", error);
       }
     }, 500);
 
@@ -399,7 +394,6 @@ const ProcurandoPersonal = () => {
       setAllTrainers(response.data);
       setFilteredTrainers(response.data);
 
-      setLimparFiltro(false);
       setLastFiltroNota(filtroNota);
     } catch (error) {
       console.error("Erro ao buscar Avaliações:", error);
@@ -432,33 +426,6 @@ const ProcurandoPersonal = () => {
   )
 
   const navigate = useNavigate();
-
-  function useResponsiveStyles() {
-    const [styles, setStyles] = useState({ fontSize: "24", width: "40%" });
-
-    useEffect(() => {
-
-      const updateStyles = () => {
-        const screenWidth = window.innerWidth;
-
-        if (screenWidth >= 1536) {
-          setStyles({ fontSize: "20px", width: "40%" });
-        } else if (screenWidth >= 1280) {
-          setStyles({ fontSize: "20px", width: "40%" });
-        } else if (screenWidth >= 640) {
-          setStyles({ fontSize: "16px", width: "60%" });
-        } else {
-          setStyles({ fontSize: "16px", width: "90%" });
-        }
-      };
-
-      updateStyles();
-      window.addEventListener("resize", updateStyles);
-      return () => window.removeEventListener("resize", updateStyles);
-    }, []);
-
-    return styles;
-  }
 
   const toggleFilterModal = () => {
     if (!isFilterOpen) {
@@ -571,7 +538,6 @@ const ProcurandoPersonal = () => {
       [id]: true,
     }));
   };
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const menuRef = useRef(null);
 
@@ -848,7 +814,7 @@ const ProcurandoPersonal = () => {
                         )}
 
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {draftFilters.cidadesSelecionadas.map((cidade, idx) => (
+                          {draftFilters.cidadesSelecionadas.map((cidade) => (
                             <div
                               key={cidade}
                               className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"
@@ -926,7 +892,7 @@ const ProcurandoPersonal = () => {
                             </div>
                           )}
                           <div className="flex flex-wrap gap-2 mt-2">
-                            {draftFilters.bairrosSelecionados.map((bairro, idx) => (
+                            {draftFilters.bairrosSelecionados.map((bairro) => (
                               <div
                                 key={bairro}
                                 className="bg-orange-500 text-white px-3 py-1 rounded-[5px] flex items-center cursor-pointer"

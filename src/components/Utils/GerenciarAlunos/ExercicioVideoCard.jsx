@@ -28,7 +28,6 @@ const ExercicioVideoCard = ({
     const [observacoesLocal, setObservacoesLocal] = useState(observacoes);
     const videoId = useMemo(() => extrairYoutubeId(urlVideoExecucao), [urlVideoExecucao]);
     const isYoutube = urlVideoExecucao?.includes('youtube.com') || urlVideoExecucao?.includes('youtu.be');
-    const isGif = urlVideoExecucao?.endsWith('.gif');
 
     const toggle = () => setAberto(v => !v);
     const handlePlay = () => setIsPlaying(true);

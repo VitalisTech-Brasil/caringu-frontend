@@ -10,6 +10,12 @@ import ImageModal from "../../components/Utils/ImageModal";
 
 const CarrosselRegistro = ({ imagens = [], titulo = "" }) => {
 
+  
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [imagemSelecionada, setImagemSelecionada] = useState("");
+
   if (imagens.length === 0) {
     return (
       <div className="py-12 flex flex-col items-center justify-center">
@@ -18,11 +24,6 @@ const CarrosselRegistro = ({ imagens = [], titulo = "" }) => {
       </div>
     );
   }
-
-  const [activeIndex, setActiveIndex] = useState(0);
-  const swiperRef = useRef(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [imagemSelecionada, setImagemSelecionada] = useState("");
 
   const podeFazerLoop = imagens.length > 3;
 

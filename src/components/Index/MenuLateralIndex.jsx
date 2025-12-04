@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { FaBars, FaChevronDown, FaChevronUp, FaUserCircle, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
 import logo from "../../assets/logos/caringu-logotipo-light.svg";
 import { logout } from "../../utils/authUtils";
 
 const MenuLateral = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 800);
 
   const navigate = useNavigate();
@@ -48,7 +47,7 @@ const MenuLateral = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed top-4 left-4 z-50 bg-transparent p-2 rounded shadow-lg"
+          className="fixed top-4 left-4 z-50 p-2 rounded shadow-lg bg-[var(--azul-escuro)]"
         >
           <FaBars className="text-white" size={24} />
         </button>

@@ -18,6 +18,10 @@ const ProgressoCorporal = () => {
     const [tipoFoto, setTipoFoto] = useState(null);
     const [periodoAvaliacaoEmMeses, setPeriodoAvaliacaoEmMeses] = useState(0);
 
+    useEffect(() => {
+        document.title = "Progresso Corporal | CaringU";
+    }, []);
+
     const [fotosCorporais, setFotosCorporais] = useState({
         FRONTAL: [],
         COSTAS: [],

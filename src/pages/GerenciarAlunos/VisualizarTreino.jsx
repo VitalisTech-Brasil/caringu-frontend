@@ -18,7 +18,6 @@ const VisualizarTreino = () => {
     const location = useLocation();
     const alunoFromState = location.state?.aluno;
     const { idAluno } = useParams();
-    const [aluno, setAluno] = useState(alunoFromState || null);
     const [nomeTreino, setNomeTreino] = useState('');
 
 

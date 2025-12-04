@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Aluno/Header/Header";
 import ModalRemoverEspecialidade from "../../components/Utils/ModalRemoverEspecialidade";
@@ -15,6 +15,10 @@ const PerfilAluno = () => {
   const [accountIdToDelete, setAccountIdToDelete] = useState(null);
   const navigate = useNavigate();
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    document.title = "Perfil | CaringU";
+  }, []);
 
   const handleCancelRemove = () => {
     setModalVisible(false);

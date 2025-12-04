@@ -13,7 +13,6 @@ const InputAnamnese = ({
   onChange,
   onFocus,
   onBlur,
-  className,
   fontSize,
   fontWeight,
   width,

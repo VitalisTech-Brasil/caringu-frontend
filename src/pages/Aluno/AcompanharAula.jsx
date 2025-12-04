@@ -8,6 +8,10 @@ import { caringuApi } from '../../provider/caringuApi';
 
 const AcompanharAula = () => {
 
+    useEffect(() => {
+        document.title = "Acompanhar Aula | CaringU";
+    }, []);
+
     const menuRef = useRef(null);
     const location = useLocation();
     const compromisso = location.state?.compromisso;

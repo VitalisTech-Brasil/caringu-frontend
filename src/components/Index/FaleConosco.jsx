@@ -5,7 +5,7 @@ import { caringuApi } from '../../provider/caringuApi';
 import loading from "../../assets/gifs/loading.gif";
 
 const FaleConosco = () => {
-    const { register, handleSubmit, formState: { errors, isDirty }, reset } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
     const [telefone, setTelefone] = useState('')

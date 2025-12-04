@@ -31,7 +31,6 @@ const GerenciarAlunos = () => {
   const [showAgendarAulaModal, setShowAgendarAulaModal] = useState(false);
   const [alunoParaAgendar, setAlunoParaAgendar] = useState(null);
 
-  const [totalElements, setTotalElements] = useState(0);
   const [totalPagesAPI, setTotalPagesAPI] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(() => {
@@ -40,11 +39,15 @@ const GerenciarAlunos = () => {
     return 1;
   });
 
+  useEffect(() => {
+    document.title = "Gerenciar Alunos | CaringU";
+  }, []);
+
   const navigate = useNavigate();
 
   const [openMenuId, setOpenMenuId] = useState(null);
 
-  const [respostasBack, setRespostasBack] = useState({});
+  const [respostasBack, ] = useState({});
   const [alunoAtual, setAlunoAtual] = useState(null);
   const [imgErro, setImgErro] = useState(false);
 
@@ -54,9 +57,6 @@ const GerenciarAlunos = () => {
     setOpenMenuId(null)
   };
 
-  const handleRadioChange = (id, value) => {
-    setRespostas(prev => ({ ...prev, [id]: value }));
-  };
   const now = new Date();
 
   const alunosFiltrados = alunosCompletos
@@ -122,7 +122,6 @@ const GerenciarAlunos = () => {
       if (searchTerm || anamnesesPendentes || aguardandoTreino || sortOrder) {
 
         setAlunosCards(responseCompletos.data);
-        setTotalElements(responseCompletos.data.length);
         setTotalPagesAPI(0); // Reset para usar paginação local
 
       } else {
@@ -136,7 +135,6 @@ const GerenciarAlunos = () => {
 
         const data = responsePaginado.data;
         setAlunosCards(data.content);
-        setTotalElements(data.totalElements);
         setTotalPagesAPI(data.totalPages);
       }
     } catch (error) {

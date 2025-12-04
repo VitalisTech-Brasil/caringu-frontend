@@ -11,7 +11,6 @@ const ModalPlano = ({
     onSubmit,
     titulo = "Criar plano",
     planoData = null,
-    duracaoValue
 }) => {
     const {
         register,
@@ -28,9 +27,9 @@ const ModalPlano = ({
     const duracaoWatch = useWatch({ control, name: "duracao" });
 
     useEffect(() => {
-        if (visivel) { 
+        if (visivel) {
             if (planoData) {
-                
+
                 setTimeout(() => {
                     reset({
                         plano: planoData.nome || "",
@@ -39,7 +38,7 @@ const ModalPlano = ({
                         aulas: planoData.quantidadeAulas?.toString() || ""
                     });
                 }, 100);
-                
+
             } else {
                 reset({
                     plano: "",
@@ -63,7 +62,7 @@ const ModalPlano = ({
                 trigger("aulas");
             }
         }
-    }, [duracaoWatch, setValue, trigger, isSubmitted, touchedFields.aulas, planoData]); 
+    }, [duracaoWatch, setValue, trigger, isSubmitted, touchedFields.aulas, planoData]);
 
     const handlePrecoChange = (e) => {
         let input = e.target.value;
@@ -249,14 +248,17 @@ const ModalPlano = ({
                         <div aria-label="Opções de Botões" className="flex flex-col items-center sm:flex-row gap-4 w-full justify-center">
                             <Button
                                 texto="Cancelar"
-                                corTexto="var(--cor-secundaria)"
-                                cor="#B41F1F"
+                                corTexto="#B41F1F"
+                                cor="var(--cor-secundaria)"
                                 height="2.75rem"
                                 width="13.25rem"
                                 fontWeight="500"
                                 ariaLabel="Botão de Cancelar"
                                 type="button"
                                 onClick={onClose}
+                                borderStyle={"solid"}
+                                borderWidth={"2px"}
+                                borderColor={"#B41F1F"}
                             />
                             <Button
                                 texto="Salvar"

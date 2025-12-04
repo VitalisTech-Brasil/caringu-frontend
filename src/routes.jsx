@@ -44,13 +44,11 @@ import CompletarPerfil from "./pages/CompletarPerfil.jsx";
 const AppRoutes = () => {
 
   const [sessaoExpirada, setSessaoExpirada] = useState(false);
-  const [modalMensagem, setModalMensagem] = useState("");
-  const [modalTitulo, setModalTitulo] = useState("");
+
 
   useEffect(() => {
     const handler = () => {
-      /*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
-            setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
+
       setSessaoExpirada(true);
     };
 

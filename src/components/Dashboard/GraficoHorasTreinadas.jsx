@@ -4,7 +4,7 @@ import ReactApexChart from 'react-apexcharts';
 
 const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
-const GraficoHorasTreinadas = ({ dados, titulo = "Total de horas treinadas por mês" }) => {
+const GraficoHorasTreinadas = ({ dados }) => {
     const [startIndex, setStartIndex] = useState(0);
     const [windowSize, setWindowSize] = useState(12);
 
@@ -73,7 +73,6 @@ const GraficoHorasTreinadas = ({ dados, titulo = "Total de horas treinadas por m
 
     return (
         <div className="w-full border-2 border-[#E6E6E2] rounded-md p-5">
-            {/* <h1 className='text-xl font-semibold mb-5'>{titulo}</h1> */}
 
             {windowSize < 12 && (
                 <div className="flex justify-center items-center mb-2 gap-4">

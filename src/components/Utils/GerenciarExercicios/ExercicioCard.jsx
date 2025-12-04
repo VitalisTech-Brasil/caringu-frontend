@@ -7,6 +7,7 @@ const ExercicioCard = ({
     isOpen,
     setOpenMenuId,
     toggleFavorito,
+    // eslint-disable-next-line no-unused-vars
     ExercicioActionsMenu,
 }) => {
     const buttonRef = useRef();

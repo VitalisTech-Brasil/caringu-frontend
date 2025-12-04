@@ -6,7 +6,7 @@ import { caringuApi } from "../../provider/caringuApi";
 import CustomToast from "../Utils/CustomToast";
 import loadingGif from "../../assets/gifs/loading.gif";
 
-export default function ModalEvolucaoCorporal({ tipo, alunoId, periodoAvaliacao, onClose }) {
+export default function ModalEvolucaoCorporal({ tipo, periodoAvaliacao, onClose }) {
     const [imageSrc, setImageSrc] = useState(null);
     const [originalFile, setOriginalFile] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });

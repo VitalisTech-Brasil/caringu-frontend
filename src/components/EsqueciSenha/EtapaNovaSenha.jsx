@@ -1,6 +1,5 @@
 import { React, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import { caringuApi } from '../../provider/caringuApi';
 
 import styleCadastro from '../Cadastro/module/cadastro.module.css';

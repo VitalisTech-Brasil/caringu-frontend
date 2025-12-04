@@ -1,10 +1,9 @@
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
-import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 
-const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
+const CompromissosAgenda = ({ compromissos, selectedDay }) => {
 
     const [errosImagem, setErrosImagem] = useState({});
 
@@ -16,8 +15,6 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
             [id]: true,
         }));
     };
-
-    const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     const today = new Date();
     const todayFormatted = today.toLocaleDateString("pt-BR", {
@@ -64,11 +61,6 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         return compromissoDate.getTime() === selectedDate.getTime();
     });
 
-    const carregarEventosCalendario = () => {
-        if (typeof atualizarTreinos === "function") {
-            atualizarTreinos();
-        }
-    };
 
     return (
         <>

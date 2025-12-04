@@ -6,7 +6,6 @@ const ButtonLoading = ({
   onClick,
   cor,
   corTexto,
-  corHover = "none",
   width,
   height,
   type,

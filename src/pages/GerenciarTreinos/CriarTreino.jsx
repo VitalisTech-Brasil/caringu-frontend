@@ -18,6 +18,11 @@ import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 import useSessionValidation from "./hook/useSessionValidation.jsx";
 
 const CriarTreino = () => {
+
+    useEffect(() => {
+        document.title = "Criar Treino | CaringU";
+    }, []);
+
     useSessionValidation();
 
     const [exercicioInput, setExercicioInput] = useState('');
@@ -28,7 +33,7 @@ const CriarTreino = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [modalConfirmarCancelarVisivel, setModalConfirmarCancelarVisivel] = useState(false);
     const [modalDeletarVisivel, setModalDeletarVisivel] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [setShowEditModal] = useState(false);
     const [exercicios, setExercicios] = useState([]);
     const [exercicioEditando, setExercicioEditando] = useState(null);
     const [selectAberto, setSelectAberto] = useState(false);
@@ -113,6 +118,7 @@ const CriarTreino = () => {
         const youtubeRegex = /^(https:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
         return youtubeRegex.test(url);
     };
+    const personalId = sessionStorage.getItem("pessoaId");
 
     const handleSubmitTreino = async (data) => {
         try {
@@ -170,7 +176,7 @@ const CriarTreino = () => {
         setExerciciosSelecionados(exerciciosSelecionados.filter(e => e.id !== id));
     };
 
-    const { register, handleSubmit, formState: { errors, isSubmitted }, setValue, trigger, reset } = useForm({
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             nomeTreino: "",
             dificuldade: "",

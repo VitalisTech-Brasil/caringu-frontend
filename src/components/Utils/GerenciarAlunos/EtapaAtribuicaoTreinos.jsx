@@ -12,12 +12,6 @@ import { caringuApi } from "../../../provider/caringuApi";
 
 const EtapaAtribuicao = ({
     aluno,
-    diasSelecionados,
-    setDiasSelecionados,
-    datasSelecionadas,
-    setDatasSelecionadas,
-    showDropdown,
-    setShowDropdown,
     diasSemana,
     fecharModal,
     onVoltar
@@ -82,13 +76,8 @@ const EtapaAtribuicao = ({
 
     const { dadosAgendamento } = useAgendamento();
     const aulasAgendadas = dadosAgendamento.aulas || [];
-    const diasMarcados = (dadosAgendamento.diasSemanaMarcados || []).map(d => d.value);
     const selectedDates = (dadosAgendamento.aulas || []).map(aula => new Date(aula.dataHorarioInicio));
 
-    function buscarHorarioDaAula(dataISO) {
-        const dataStr = dataISO.slice(0, 10);
-        return aulasAgendadas.find(aula => aula.dataHorarioInicio.slice(0, 10) === dataStr);
-    }
 
     const buscarTreinosDoPersonal = async () => {
         let idPersonal = sessionStorage.getItem("pessoaId");
@@ -127,18 +116,6 @@ const EtapaAtribuicao = ({
             const diaSemana = diaSemanaMap[dateObj.getDay()];
             return datasPersonalizadas.includes(iso) || diasSemanais.includes(diaSemana);
         });
-    }
-
-    function getBrasiliaDateString() {
-        const now = new Date();
-        const brasiliaOffset = -3 * 60;
-        const localOffset = now.getTimezoneOffset();
-        const brasiliaTime = new Date(now.getTime() + (brasiliaOffset - localOffset) * 60000);
-
-        const dia = String(brasiliaTime.getDate()).padStart(2, '0');
-        const mes = String(brasiliaTime.getMonth() + 1).padStart(2, '0');
-        const ano = brasiliaTime.getFullYear();
-        return `${dia}/${mes}/${ano}`;
     }
 
     useEffect(() => {
@@ -208,22 +185,6 @@ const EtapaAtribuicao = ({
 
         // filtra só os dias que estão na lista padrão (diasSemana)
         return diasSemana.filter(diaObj => diasUsados.includes(diaObj.value));
-    };
-
-    const handleCheckData = (data) => {
-        setDatasSelecionadas(prev =>
-            prev.includes(data)
-                ? prev.filter(d => d !== data)
-                : [...prev, data]
-        );
-    };
-
-    const handleSelectAllDias = () => {
-        if (diasSelecionados.length === diasSemana.length) {
-            setDiasSelecionados([]);
-        } else {
-            setDiasSelecionados(diasSemana.map(d => d.value));
-        }
     };
 
     const handleRemoverTreino = (idx) => {
@@ -445,29 +406,6 @@ const EtapaAtribuicao = ({
                                     </div>
                                 </div>
                                 <div className="w-[95%] mt-3 md:mt-5 flex flex-col md:flex-row md:gap-10 xl:gap-25">
-                                    {/* <div className="w-full md:w-[15rem]">
-                                        <Label
-                                            id={`date_vencimento_${idx}`}
-                                            nomeLabel="Data de Vencimento"
-                                            fontSize={fontSizeResponsive}
-                                            fontWeight="500"
-                                        />
-                                        <Input
-                                            id={`date_vencimento_${idx}`}
-                                            name={`date_vencimento_${idx}`}
-                                            inputType={treino.inputType}
-                                            placeholder={getBrasiliaDateString()}
-                                            fontSize="16px"
-                                            fontWeight="500"
-                                            width="100%"
-                                            value={treino.dateVencimento}
-                                            onChange={e => handleTreinoChange(idx, "dateVencimento", e.target.value)}
-                                            onFocus={() => handleTreinoChange(idx, "inputType", "date")}
-                                            onBlur={e => {
-                                                if (!e.target.value) handleTreinoChange(idx, "inputType", "text");
-                                            }}
-                                        />
-                                    </div> */}
                                     <div className="w-full md:w-auto mt-3 md:mt-0">
                                         <div className="w-full gap-2 flex flex-row items-center">
                                             <Label

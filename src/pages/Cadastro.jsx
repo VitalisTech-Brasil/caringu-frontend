@@ -35,7 +35,7 @@ const CadastroInner = () => {
       });
     }
     // Este efeito roda apenas uma vez na montagem para evitar loop de atualização
-  }, [location.state, atualizarDados]);
+  }, []);
 
   return (
     <main className="flex items-center justify-start h-[100vh] w-full p-[1%]">

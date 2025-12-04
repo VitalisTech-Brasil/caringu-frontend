@@ -43,6 +43,7 @@ export default function CardExercicio({ data, onToggleFinalizado }) {
         embedUrl = `https://www.youtube.com/embed/${video.split("/").pop()}`;
       }
     } catch (e) {
+      console.error("Erro ao processar URL do vídeo:", e);
       embedUrl = video;
     }
   }
