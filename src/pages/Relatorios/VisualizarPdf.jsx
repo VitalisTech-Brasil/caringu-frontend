@@ -39,6 +39,12 @@ const VisualizarPdf = () => {
 
     const [aderencia, setAderencia] = useState("");
 
+    const tipoUsuario = sessionStorage.getItem('tipo');
+
+    const rotaVoltar = tipoUsuario === "PERSONAL"
+        ? `/dashboard/${idAluno}/${idTreino}`
+        : `/dashboard-aluno/${idTreino}`;
+
     useEffect(() => {
         if (exercicioSelecionadoId) {
             buscarEvolucaoCargaPorExercicio(exercicioSelecionadoId);
@@ -268,7 +274,7 @@ const VisualizarPdf = () => {
                     >
                         <div className="flex flex-col justify-center w-full">
                             <div className="h-15 justify-start text-zinc-900 text-xl md:text-3xl flex flex-wrap items-center gap-5">
-                                <Link to={`/dashboard/${idAluno}/${idTreino}`}>
+                                <Link to={rotaVoltar}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
                                         <path d="M21.1336 13.0957L7.729 26.5003L21.1336 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M45.2707 26.5H8.10449" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />

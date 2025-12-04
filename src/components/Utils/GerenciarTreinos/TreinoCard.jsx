@@ -36,7 +36,7 @@ const TreinoCard = ({
             <div className="relative flex gap-1 sm:gap-2 sm:flex-row flex-col-reverse sm:items-center items-start justify-between md:gap-8 w-full sm:p-4 p-2 md:p-5">
                 <div className="relative flex sm:flex-row flex-col gap-5 md:gap-10 items-center md:items-start justify-start w-full">
                     {/* Ícone do treino */}
-                    <div className="relative flex grid-cols-2 items-center justify-between bg-[#FFFDF6] rounded-lg w-12 md:w-10">
+                    <div className="relative flex grid-cols-2 items-center justify-between bg-[#FDFFFD] rounded-lg w-12 md:w-10">
                         <svg xmlns="http://www.w3.org/2000/svg" className="sm:w-10 sm:h-15 w:14 h-21 col-span-1" viewBox="0 0 60 49" fill="none">
                             <path d="M48.3716 10.4004H52.0925C53.1194 10.4004 53.9529 11.4532 53.9529 12.7504V36.2504C53.9529 37.5476 53.1194 38.6004 52.0925 38.6004H48.3716C47.3447 38.6004 46.5112 37.5476 46.5112 36.2504V12.7504C46.5112 11.4532 47.3447 10.4004 48.3716 10.4004Z" stroke="#E96E35" strokeWidth="2" />
                             <path d="M40.9298 1H44.6506C45.6775 1 46.511 2.0528 46.511 3.35V45.65C46.511 46.9472 45.6775 48 44.6506 48H40.9298C39.9028 48 39.0693 46.9472 39.0693 45.65V3.35C39.0693 2.0528 39.9028 1 40.9298 1Z" stroke="#E96E35" strokeWidth="2" />

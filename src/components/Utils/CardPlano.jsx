@@ -165,7 +165,7 @@ const CardPlano = ({
                       role="button" aria-label="Mais opções do plano"
                       className="group-hover:[&_rect]:fill-[#1D2D4417] cursor-pointer"
                     >
-                      <rect width="38" height="38" rx="6" fill="#FFFDF6" className="transition-colors duration-20" />
+                      <rect width="38" height="38" rx="6" fill="#FDFFFD" className="transition-colors duration-20" />
                       <path d="M21 12C21 10.9 20.1 10 19 10C17.9 10 17 10.9 17 12C17 13.1 17.9 14 19 14C20.1 14 21 13.1 21 12Z" fill="#15171B" />
                       <path d="M21 19C21 17.9 20.1 17 19 17C17.9 17 17 17.9 17 19C17 20.1 17.9 21 19 21C20.1 21 21 20.1 21 19Z" fill="#15171B" />
                       <path d="M21 26C21 24.9 20.1 24 19 24C17.9 24 17 24.9 17 26C17 27.1 17.9 28 19 28C20.1 28 21 27.1 21 26Z" fill="#15171B" />

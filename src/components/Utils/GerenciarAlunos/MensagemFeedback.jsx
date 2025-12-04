@@ -6,11 +6,15 @@ const MensagemFeedback = ({
     paddingLeftMensagem = "10%"
 }) => {
 
-        const labelExibido = label === "ALUNO"
-        ? "Resposta do Aluno:"
-        : label === "PERSONAL"
-            ? "Seu comentário:"
-            : label;
+    const tipoPessoa = sessionStorage.getItem("tipo");
+
+    let labelExibido = label;
+    if (label === "ALUNO") {
+        labelExibido = tipoPessoa === "ALUNO" ? "Sua resposta:" : "Resposta do Aluno:";
+    }
+    if (label === "PERSONAL") {
+        labelExibido = tipoPessoa === "PERSONAL" ? "Seu comentário:" : "Comentário do Personal:";
+    }
 
     return (
         <div className="flex flex-col flex-wrap items-start w-auto h-auto gap-0.5 justify-start text-xs text-[#15171B]">
