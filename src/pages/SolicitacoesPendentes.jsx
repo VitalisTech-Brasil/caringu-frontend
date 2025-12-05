@@ -39,29 +39,31 @@ const SolicitacoesPendentes = () => {
         }
     }
 
-   const atualizarStatus = async (id, status) => {
-    try {
-        await caringuApi.patch(`/planos-contratados/${id}/status`, { status });
-        listarSolicitacoesPendentes();
-        setModalCancelarVisivel(false);
-        setSolicitacaoParaCancelar(null);
-
-        const mensagens = {
-            ATIVO: "Pagamento confirmado!",
-            CANCELADO: "Solicitação cancelada!",
-        };
-
-        toast.custom((t) => (
-            <CustomToast
-                t={t}
-                type={status === "ATIVO" ? "success" : "warning"}
-                message={mensagens[status] ?? "Status atualizado."}
-            />
-        ));
-    } catch (error) {
-        console.error("Erro ao atualizar status:", error);
-    }
-};
+      const atualizarStatus = async (id, status) => {
+        try {
+            await caringuApi.patch(
+                `/planos-contratados/${id}/status`,
+                { status },
+            );
+            listarSolicitacoesPendentes();
+            setModalCancelarVisivel(false);
+            setSolicitacaoParaCancelar(null);
+            if (status === "ATIVO") {
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Pagamento confirmado!" />
+                ));
+            }else{
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Cancelamento realizado!" />
+                ));
+            }
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+            toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Erro ao atualizar status!" />
+                ));
+        }
+    };
 
     useEffect(() => {
         document.title = "Solicitações Pendentes | Caringu";
