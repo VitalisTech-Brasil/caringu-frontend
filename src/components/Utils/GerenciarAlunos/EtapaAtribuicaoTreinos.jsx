@@ -39,7 +39,9 @@ const EtapaAtribuicao = ({
     }
     const fontSizeResponsive = useResponsiveFontSize();
 
-    const [treinos, setTreinos] = useState([
+    const { dadosAgendamento, treinosEtapa2, setTreinosEtapa2 } = useAgendamento();
+
+    const treinosIniciais = treinosEtapa2 || [
         {
             tipoSelecao: "",
             inputType: "text",
@@ -49,7 +51,9 @@ const EtapaAtribuicao = ({
             diasSelecionados: [],
             showDropdown: false,
         }
-    ]);
+    ];
+
+    const [treinos, setTreinos] = useState(treinosIniciais);
 
     const dropdownRefs = useRef([]);
 
@@ -74,9 +78,14 @@ const EtapaAtribuicao = ({
         );
     };
 
-    const { dadosAgendamento } = useAgendamento();
     const aulasAgendadas = dadosAgendamento.aulas || [];
     const selectedDates = (dadosAgendamento.aulas || []).map(aula => new Date(aula.dataHorarioInicio));
+
+    // Sempre que o usuário alterar algo na etapa 2,
+    // persistimos o estado no contexto para não perder ao clicar em "Voltar"
+    useEffect(() => {
+        setTreinosEtapa2(treinos);
+    }, [treinos, setTreinosEtapa2]);
 
 
     const buscarTreinosDoPersonal = async () => {
