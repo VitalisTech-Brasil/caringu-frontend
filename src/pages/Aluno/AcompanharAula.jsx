@@ -26,6 +26,7 @@ const AcompanharAula = () => {
                     const response = await caringuApi.get(`/aulas-treinos-exercicios/acompanhamento-aulas/${idAula}`);
                     setAula(response.data);
                     console.log("Aula:", response.data);
+                    console.log("Compromisso:", compromisso);
                 }
             } catch (error) {
                 console.error("Erro ao buscar aula:", error);
@@ -142,9 +143,11 @@ const AcompanharAula = () => {
                             </Link>
                             <div className='mb-4 w-[40%]'>
                                 <h1 className=' text-[20px] sm:text-[28px] font-bold text-[#1E293B]'>
-                                    Aula - {compromisso?.dataHorarioInicio
-                                        ? new Date(compromisso.dataHorarioInicio).toLocaleDateString('pt-BR')
-                                        : "Carregando..."}
+                                    Aula - {
+                                        compromisso?.dataHorarioInicio && !isNaN(new Date(compromisso.dataHorarioInicio).getTime())
+                                            ? new Date(compromisso.dataHorarioInicio).toLocaleDateString('pt-BR')
+                                            : compromisso?.dataAula || "Carregando..."
+                                    }
                                 </h1>
                                 <div className='flex flex-col'>
                                     <span className='flex items-center gap-2'>
@@ -171,11 +174,11 @@ const AcompanharAula = () => {
                                                 </clipPath>
                                             </defs>
                                         </svg>
-                                        {compromisso?.dataHorarioInicio
+                                        {compromisso?.dataHorarioInicio && !isNaN(new Date(compromisso.dataHorarioInicio).getTime())
                                             ? new Date(compromisso.dataHorarioInicio)
                                                 .toLocaleDateString('pt-BR', { weekday: 'long' })
                                                 .replace(/^./, str => str.toUpperCase())
-                                            : ""}
+                                            : compromisso?.diaSemana || ""}
                                     </span>
                                     <span className='flex items-center gap-2'>
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -183,7 +186,7 @@ const AcompanharAula = () => {
                                         </svg>
                                         {compromisso?.dataHorarioInicio && compromisso?.dataHorarioFim
                                             ? `${compromisso.dataHorarioInicio.slice(11, 16)} - ${compromisso.dataHorarioFim.slice(11, 16)}`
-                                            : ""}
+                                            : compromisso?.horarioInicioFim || ""}
                                     </span>
                                 </div>
                             </div>

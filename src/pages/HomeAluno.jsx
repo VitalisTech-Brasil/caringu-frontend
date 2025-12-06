@@ -69,7 +69,6 @@ const HomeAluno = () => {
             caringuApi.get(`/aulas-treinos-exercicios/buscar-aulas/${alunoId}`),
           ]);
 
-        console.log("Respostas das requisições:", proximasResponse);
 
         const progressoData = progressoResponse?.data || {};
         const mappedProgresso = {
@@ -110,19 +109,25 @@ const HomeAluno = () => {
         setExercicioEvolucao(mappedEvolucao);
 
 
-        const mappedProximas = Array.isArray(proximasResponse?.data)
-          ? proximasResponse.data.map((aula) => ({
-            idAula: aula.idAula,
-            dataAula: aula.dataAula,
-            diaSemana: aula.diaSemana,
-            horarioInicioFim: aula.horarioInicioFim,
-            nomeTreino: aula.nomeTreino,
-            exercicios: aula.exercicios,
-            nomePersonal: aula.nomePersonal,
-            urlFotoPerfil: aula.urlFotoPerfil,
-          }))
+        const compromisso = Array.isArray(proximasResponse?.data)
+          ? proximasResponse.data.map((aula) => {
+            return {
+              id: aula.idAula,
+              dataAula: aula.dataAula,
+              diaSemana: aula.diaSemana,
+              horarioInicioFim: aula.horarioInicioFim,
+              nomeTreino: aula.nomeTreino,
+              exercicios: aula.exercicios,
+              personal: {
+                nome: aula.nomePersonal,
+                urlFotoPerfil: aula.urlFotoPerfil,
+              },
+            };
+          })
           : [];
-        setProximasAulas(mappedProximas);
+        setProximasAulas(compromisso);
+        console.log("Próximas aulas:", compromisso);
+
 
       } catch (error) {
         console.error("Erro ao buscar dados do aluno:", error);
@@ -469,7 +474,10 @@ const HomeAluno = () => {
                         ariaLabel={"Acompanhar Aula"}
                         fontSize={"16px"}
                         classNameExtra="px-4 py-1"
-                        onClick={() => navigate(`/acompanhar-aula-aluno/${aula.idAula}`)}
+                        onClick={() => navigate(
+                          `/acompanhar-aula-aluno/${aula.idAula}`,
+                          { state: { compromisso: { ...aula, status: "compromisso" } } }
+                        )}
 
                       />
                     </div>
