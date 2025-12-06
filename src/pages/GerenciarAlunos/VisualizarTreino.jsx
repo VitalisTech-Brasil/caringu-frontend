@@ -11,6 +11,7 @@ import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone"
 import MascaraData from "../../components/Utils/Functions/MascaraData"
 import MascaraNivelExperiencia from "../../components/Utils/Functions/MascaraNivelExperiencia";
 import MascaraGenero from '../../components/Utils/Functions/MascaraGenero';
+import { Toaster } from 'react-hot-toast';
 
 
 const VisualizarTreino = () => {
@@ -245,6 +246,7 @@ const VisualizarTreino = () => {
                         </div>
                     </div>
                 </div>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div>
     )
