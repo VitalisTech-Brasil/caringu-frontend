@@ -11,7 +11,10 @@ import { Toaster } from 'react-hot-toast';
 
 const ProgressoCorporal = () => {
     const menuRef = useRef(null);
-    const { idAluno } = useParams();
+
+    // Pode vir pela rota (/aluno/:idAluno) ou pelo sessionStorage ("pessoaId")
+    const params = useParams();
+    const idAluno = params.idAluno || sessionStorage.getItem("pessoaId");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenComparacao, setIsModalOpenComparacao] = useState(false);
@@ -45,7 +48,7 @@ const ProgressoCorporal = () => {
 
     const handleListarFotosCorporais = async () => {
         try {
-            const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
+            const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno}`);
             const fotos = response.data;
             console.log("Fotos recebidas:", fotos);
 
@@ -79,6 +82,11 @@ const ProgressoCorporal = () => {
     useEffect(() => {
         handleListarFotosCorporais();
     }, [idAluno]);
+
+    const handleFotoEnviadaComSucesso = async () => {
+        await handleListarFotosCorporais();
+        fecharModal();
+    };
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -159,6 +167,7 @@ const ProgressoCorporal = () => {
                     alunoId={idAluno}
                     periodoAvaliacao={periodoAvaliacaoEmMeses}
                     onClose={fecharModal}
+                    onSuccess={handleFotoEnviadaComSucesso}
                 />
             )}
         </div >
