@@ -11,6 +11,7 @@ import MascaraData from "../../components/Utils/Functions/MascaraData";
 import MascaraGenero from "../../components/Utils/Functions/MascaraGenero";
 import MascaraNivelExperiencia from '../../components/Utils/Functions/MascaraNivelExperiencia';
 import MascaraTelefone from '../../components/Utils/Functions/MascaraTelefone';
+import { Toaster } from 'react-hot-toast';
 
 
 const AcompanharAula = () => {
@@ -209,6 +210,7 @@ const AcompanharAula = () => {
                                                         urlVideoExecucao={ex.urlExemploExecucao}
                                                         tempoDescanso={segundosParaMinutos(Number(ex.descansoSegundos))}
                                                         exerciciosFinalizados={ex.finalizado}
+                                                        idAulaTreinoExercicio={ex.idAulaTreinoExercicio}
                                                         origemUso="visualizarAulas"
                                                         espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
                                                         larguraVideo="xl:w-[40%] md:w-[80%] w-full"
@@ -239,6 +241,7 @@ const AcompanharAula = () => {
                         </div>
                     </div>
                 </div>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div>
     );

@@ -69,7 +69,6 @@ const HomeAluno = () => {
             caringuApi.get(`/aulas-treinos-exercicios/buscar-aulas/${alunoId}`),
           ]);
 
-        console.log("Respostas das requisições:", proximasResponse);
 
         const progressoData = progressoResponse?.data || {};
         const mappedProgresso = {
@@ -110,19 +109,25 @@ const HomeAluno = () => {
         setExercicioEvolucao(mappedEvolucao);
 
 
-        const mappedProximas = Array.isArray(proximasResponse?.data)
-          ? proximasResponse.data.map((aula) => ({
-            idAula: aula.idAula,
-            dataAula: aula.dataAula,
-            diaSemana: aula.diaSemana,
-            horarioInicioFim: aula.horarioInicioFim,
-            nomeTreino: aula.nomeTreino,
-            exercicios: aula.exercicios,
-            nomePersonal: aula.nomePersonal,
-            urlFotoPerfil: aula.urlFotoPerfil,
-          }))
+        const compromisso = Array.isArray(proximasResponse?.data)
+          ? proximasResponse.data.map((aula) => {
+            return {
+              id: aula.idAula,
+              dataAula: aula.dataAula,
+              diaSemana: aula.diaSemana,
+              horarioInicioFim: aula.horarioInicioFim,
+              nomeTreino: aula.nomeTreino,
+              exercicios: aula.exercicios,
+              personal: {
+                nome: aula.nomePersonal,
+                urlFotoPerfil: aula.urlFotoPerfil,
+              },
+            };
+          })
           : [];
-        setProximasAulas(mappedProximas);
+        setProximasAulas(compromisso);
+        console.log("Próximas aulas:", compromisso);
+
 
       } catch (error) {
         console.error("Erro ao buscar dados do aluno:", error);
@@ -469,7 +474,10 @@ const HomeAluno = () => {
                         ariaLabel={"Acompanhar Aula"}
                         fontSize={"16px"}
                         classNameExtra="px-4 py-1"
-                        onClick={() => navigate(`/acompanhar-aula-aluno/${aula.idAula}`)}
+                        onClick={() => navigate(
+                          `/acompanhar-aula-aluno/${aula.id}`,
+                          { state: { compromisso: { ...aula, status: "compromisso" } } }
+                        )}
 
                       />
                     </div>
@@ -541,18 +549,18 @@ const HomeAluno = () => {
                           <span>Personal Trainer</span>
                         </div>
                         <div className="flex flex-row items-center justify-start gap-4 text-[#15171B87] text-sm font-medium border border-gray-300 py-1.5 pl-4 rounded-[6px] w-full bg-[var(--cor-secundaria)] h-auto">
-                          {aula.urlFotoPerfil && !errosImagem[aula.urlFotoPerfil] ? (
+                          {aula.personal.urlFotoPerfil && !errosImagem[aula.personal.urlFotoPerfil] ? (
                             <img
-                              src={aula.urlFotoPerfil}
-                              alt={aula.nomePersonal}
+                              src={aula.personal.urlFotoPerfil}
+                              alt={aula.personal.nome}
                               className="w-[45px] h-[45px] object-cover rounded"
-                              onError={() => lidarErroImagem(aula.urlFotoPerfil)}
+                              onError={() => lidarErroImagem(aula.personal.urlFotoPerfil)}
                             />
                           ) : (
                             <FaUserCircle className="flex-shrink-0 w-[45px] h-[45px]" />
                           )}
                           <span>
-                            {aula.nomePersonal}
+                            {aula.personal.nome}
                           </span>
                         </div>
                       </div>
