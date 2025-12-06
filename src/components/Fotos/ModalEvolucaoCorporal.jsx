@@ -6,7 +6,7 @@ import { caringuApi } from "../../provider/caringuApi";
 import CustomToast from "../Utils/CustomToast";
 import loadingGif from "../../assets/gifs/loading.gif";
 
-export default function ModalEvolucaoCorporal({ tipo, periodoAvaliacao, onClose }) {
+export default function ModalEvolucaoCorporal({ tipo, periodoAvaliacao, alunoId, onClose, onSuccess }) {
     const [imageSrc, setImageSrc] = useState(null);
     const [originalFile, setOriginalFile] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -34,7 +34,7 @@ export default function ModalEvolucaoCorporal({ tipo, periodoAvaliacao, onClose 
             formData.append("arquivo", blob, originalFile?.name || "imagem.jpg");
             formData.append("tipo", tipo);
             formData.append("periodoAvaliacao", periodoAvaliacao);
-            formData.append("alunoId", 7);
+            formData.append("alunoId", alunoId);
 
             await caringuApi.post("/evolucao-corporal", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -43,7 +43,12 @@ export default function ModalEvolucaoCorporal({ tipo, periodoAvaliacao, onClose 
             toast.custom((t) => (
                 <CustomToast t={t} type="success" message="Foto enviada com sucesso!" />
             ));
-            onClose();
+
+            if (typeof onSuccess === "function") {
+                await onSuccess();
+            } else if (typeof onClose === "function") {
+                onClose();
+            }
         } catch (err) {
             console.error(err);
             toast.custom((t) => (
