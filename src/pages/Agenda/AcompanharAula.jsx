@@ -129,9 +129,9 @@ const AcompanharAula = () => {
                     <div className="h-auto w-full flex flex-row items-center justify-center">
                         <div className="max-h-[80vh] h-auto w-[95%] bg-[rgba(29,45,68,0.11)] border-2 border-gray-300 rounded-md flex flex-col justify-start items-center py-5 gap-4 overflow-y-auto">
                             <div className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex lg:flex-row flex-col items-center h-auto w-[95%] 2xl:w-[85%] py-5 px-2 sm:px-4 xl:px-12 gap-8">
-                                {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
+                                {aluno?.urlFotoPerfil && !imgErro ? (
                                     <img
-                                        src={aluno.alunoId.urlFotoPerfil}
+                                        src={aluno.urlFotoPerfil}
                                         alt="Imagem do aluno"
                                         className='w-20 h-20 lg:w-12 lg:h-12 xl:w-20 xl:h-20 2xl:w-25 2xl:h-25 rounded-full'
                                         onError={() => setImgErro(true)}
