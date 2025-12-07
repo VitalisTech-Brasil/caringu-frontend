@@ -110,7 +110,7 @@ jobs:
       PROXY_HOST: ${{ secrets.PROXY_HOST }}
       FRONTEND1_HOST_IP: ${{ secrets.FRONTEND1_HOST_IP }}
       FRONTEND2_HOST_IP: ${{ secrets.FRONTEND2_HOST_IP }}
-      REMOTE_APP_DIR_FRONTEND: /home/ubuntu/caringu-frontend
+      REMOTE_APP_DIR_FRONTEND: /home/ubuntu/caringu-infra/cloud/public
 
     steps:
       - name: Checkout repositório (para acessar scripts)
