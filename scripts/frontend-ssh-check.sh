@@ -7,7 +7,7 @@ FRONTEND2_HOST="${3:-}"
 SSH_KEY_FILE="${4:-}"
 SSH_USER="ubuntu"
 
-if [[ -z "$PROXY_HOST" || -z "$FRONTEND1_HOST" || -z "$SSH_KEY_FILE" ]]; then
+if [[ -z "$PROXY_HOST" || -z "$FRONTEND1_HOST" || ! -f "$SSH_KEY_FILE" ]]; then
   echo "Uso: $0 <PROXY_HOST> <FRONTEND1_HOST> <FRONTEND2_HOST(opcional)> <SSH_KEY_FILE>"
   exit 1
 fi
@@ -23,7 +23,7 @@ test_target() {
   [[ -z "$target_host" ]] && return 0
 
   echo "🔍 Testando conexão SSH Proxy → Target ($target_host)..."
-  ssh -i "$SSH_KEY_FILE" -o StrictHostKeyChecking=no -J "$SSH_USER@$PROXY_HOST" "$SSH_USER@$target_host" "echo OK" || {
+  ssh -i "$SSH_KEY_FILE" -o StrictHostKeyChecking=no "$SSH_USER@$PROXY_HOST" "ssh -i /home/ubuntu/caringu-infra/iac/caringu.pem -o StrictHostKeyChecking=no $SSH_USER@$target_host 'echo OK'" || {
     echo "❌ Falha ao conectar (Proxy → $target_host)"
     exit 1
   }
