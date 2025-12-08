@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Personal/Header/Header";
 import MenuLateral from "../../components/Personal/MenuLateral/MenuLateral";
@@ -30,7 +30,6 @@ const Planos = () => {
     const [planoEditado, setPlanoEditado] = useState(null);
     const [alunosAtivos, setAlunosAtivos] = useState([]);
     const [imgErro, setImgErro] = useState(false);
-    const [openMenuId, setOpenMenuId] = useState(null);
     const [idPlanoContratadoSelecionado, setIdPlanoContratadoSelecionado] = useState(null);
 
 
@@ -54,22 +53,6 @@ const Planos = () => {
             setAlunosAtivos(response.data);
         } catch (error) {
             console.error("Erro ao buscar alunos com planos ativos:", error);
-        }
-    }
-
-    function formatarNivelExperiencia(nivel) {
-        if (!nivel) {
-            return 'Nível não informado';
-        }
-        switch (nivel) {
-            case 'INICIANTE':
-                return 'Iniciante';
-            case 'INTERMEDIARIO':
-                return 'Intermediário';
-            case 'AVANCADO':
-                return 'Avançado';
-            default:
-                return nivel;
         }
     }
 
@@ -320,7 +303,7 @@ const Planos = () => {
                             Nenhum aluno com plano ativo no momento.
                         </div>
                     ) : (
-                        alunosAtivos.map((aluno, idx) => (
+                        alunosAtivos.map((aluno) => (
                             <CardAluno
                                 key={aluno.idAluno}
                                 aluno={aluno}

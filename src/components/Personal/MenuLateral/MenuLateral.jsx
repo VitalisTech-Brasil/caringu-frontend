@@ -6,12 +6,13 @@ import {
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
-import { caringuApi } from "../../../provider/caringuApi";
 import { logout } from "../../../utils/authUtils";
+import { useFotoPerfil } from "../../../context/FotoPerfilContext";
 
 
 
 const MenuLateral = () => {
+  const { fotoPerfil } = useFotoPerfil(); // Consumir o contexto
   const [isOpen, setIsOpen] = useState(false);
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
   const navigate = useNavigate();
@@ -20,52 +21,52 @@ const MenuLateral = () => {
   const [nomePessoa, setNomePessoa] = useState("");
   const [tipoPessoa, setTipoPessoa] = useState("");
 
-  const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
   const [imgErro, setImgErro] = useState(false);
 
-  const personalId = sessionStorage.getItem('pessoaId');
 
   useEffect(() => {
+    setImgErro(false);
+  }, [fotoPerfil]);
 
-    const fetchData = async () => {
-      try {
-        const response = await caringuApi.get(`/personal-trainers/${personalId}`);
 
-        setUrlFotoPerfil(response.data.urlFotoPerfil);
 
-      } catch (error) {
-        console.error("Erro ao buscar personal trainer:", error);
+  useEffect(() => {
+    const atualizarNomeDoStorage = () => {
+      const usuario = sessionStorage.getItem("usuario");
+
+      if (usuario) {
+        const nomeSeparado = usuario.split(" ");
+
+        const nome = nomeSeparado[0];
+        const nomeFormatado = nome[0]?.toUpperCase() + nome.slice(1);
+
+        const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
+        const ultimoNomeFormatado =
+          ultimoNome[0]?.toUpperCase() + ultimoNome.slice(1);
+
+        const tipo = sessionStorage.getItem("tipo");
+
+        // Sempre usar primeiro e último nome completos (sem abreviar)
+        const nomeFinal = `${nomeFormatado} ${ultimoNomeFormatado}`;
+
+        setNomePessoa(nomeFinal);
+        setTipoPessoa(tipo);
       }
     };
 
-    fetchData();
-  }, []);
+    atualizarNomeDoStorage();
 
-
-  useEffect(() => {
-    const usuario = sessionStorage.getItem("usuario");
-
-    if (usuario) {
-      const nomeSeparado = usuario.split(" ");
-
-      const nome = nomeSeparado[0];
-      const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
-
-      const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
-      const ultimoNomeFormatado =
-        ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
-
-      const tipo = sessionStorage.getItem("tipo");
-
-      let nomeFinal = nomeFormatado + " " + ultimoNomeFormatado;
-
-      if (nomeFinal.length > 13) {
-        nomeFinal = nomeFormatado + " " + ultimoNomeFormatado[0] + ".";
+    const listener = (event) => {
+      if (event.type === "usuarioAtualizado") {
+        atualizarNomeDoStorage();
       }
+    };
 
-      setNomePessoa(nomeFinal);
-      setTipoPessoa(tipo);
-    }
+    window.addEventListener("usuarioAtualizado", listener);
+
+    return () => {
+      window.removeEventListener("usuarioAtualizado", listener);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -74,7 +75,7 @@ const MenuLateral = () => {
 
   const getCurrentDay = () => {
     const today = new Date();
-    return today.getDate(); // Retorna o dia atual
+    return today.getDate();
   };
 
   const menuItems = [
@@ -195,9 +196,9 @@ const MenuLateral = () => {
         <div
           className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0 min-h-[5rem]"
         >
-          {urlFotoPerfil && !imgErro ? (
+          {fotoPerfil && !imgErro ? (
             <img
-              src={urlFotoPerfil}
+              src={fotoPerfil}
               alt="Foto de perfil"
               className="w-10 h-10 rounded-full object-cover flex-shrink-0"
               onError={() => setImgErro(true)}
@@ -307,9 +308,9 @@ const MenuLateral = () => {
               className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
               style={{ minHeight: "5rem" }}
             >
-              {urlFotoPerfil && !imgErro ? (
+              {fotoPerfil && !imgErro ? (
                 <img
-                  src={urlFotoPerfil}
+                  src={fotoPerfil}
                   alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover flex-shrink-0"
                   onError={() => setImgErro(true)}

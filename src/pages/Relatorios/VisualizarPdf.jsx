@@ -15,7 +15,6 @@ import GraficoHorasTreinadas from '../../components/Dashboard/GraficoHorasTreina
 
 const VisualizarPdf = () => {
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const { idAluno, idTreino } = useParams();
 
     const location = useLocation();
@@ -24,16 +23,12 @@ const VisualizarPdf = () => {
     const [fontSize, setFontSize] = useState("16px");
     const pdfRef = useRef(null);
 
-    const [exercicios, setExercicios] = useState([]);
-    const [exercicioSelecionado, setExercicioSelecionado] = useState('');
 
     const [nomeTreino, setNomeTreino] = useState("");
 
     /* Gráficos */
-    const [nomeExercicio, setNomeExercicio] = useState("");
     const [dadosEvolucaoCarga, setDadosEvolucaoCarga] = useState([]);
     const [dadosEvolucaoTreinosCumpridos, setDadosEvolucaoTreinosCumpridos] = useState([]);
-    const [dadosHorasTreinadas, setDadosHorasTreinadas] = useState([]);
     const [dadosGraficoHorasPorMes, setDadosGraficoHorasPorMes] = useState(new Array(12).fill(0))
 
     /* KPIs */
@@ -43,6 +38,12 @@ const VisualizarPdf = () => {
     const [labelHoras, setLabelHoras] = useState("Carregando...");
 
     const [aderencia, setAderencia] = useState("");
+
+    const tipoUsuario = sessionStorage.getItem('tipo');
+
+    const rotaVoltar = tipoUsuario === "PERSONAL"
+        ? `/dashboard/${idAluno}/${idTreino}`
+        : `/dashboard-aluno/${idTreino}`;
 
     useEffect(() => {
         if (exercicioSelecionadoId) {
@@ -57,16 +58,10 @@ const VisualizarPdf = () => {
                 const lista = response.data;
 
                 if (lista.length > 0) {
-                    setExercicioSelecionado(lista[0].exercicioId);
-
-                    setNomeTreino(lista[0].nomeTreino)
-
+                    setNomeTreino(lista[0].nomeTreino);
                     buscarEvolucaoCargaPorExercicio(exercicioSelecionadoId);
                     buscarEvolucaoTreinosCumpridosMensal(lista[0].exercicioId);
                     buscarHorasTreinadas(lista[0].exercicioId);
-
-                    setNomeExercicio(lista[0].nomeExercicio);
-                    setExercicios(lista)
                 }
             })
             .catch(error => {
@@ -153,7 +148,6 @@ const VisualizarPdf = () => {
             });
 
             const dados = response.data.dados;
-            setDadosHorasTreinadas(response.data);
 
             const resultado = calcularHorasKPI(dados);
             setHorasTreinadasSemanal(resultado.valor);
@@ -280,7 +274,7 @@ const VisualizarPdf = () => {
                     >
                         <div className="flex flex-col justify-center w-full">
                             <div className="h-15 justify-start text-zinc-900 text-xl md:text-3xl flex flex-wrap items-center gap-5">
-                                <Link to={`/dashboard/${idAluno}/${idTreino}`}>
+                                <Link to={rotaVoltar}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-10 md:w-10 cursor-pointer" viewBox="0 0 53 53" fill="none">
                                         <path d="M21.1336 13.0957L7.729 26.5003L21.1336 39.9049" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
                                         <path d="M45.2707 26.5H8.10449" stroke="#1D2D44" strokeWidth="3" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
@@ -345,7 +339,7 @@ const VisualizarPdf = () => {
                                 <GraficoEvolucaoTreinosCumpridos dadosAPI={dadosEvolucaoTreinosCumpridos} />
                                 <h1 className='text-xl font-semibold'>Total de horas treinadas por mês</h1>
                                 <div className='border-2 border-[#E6E6E2] rounded-md p-5'>
-                                    <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes}/>
+                                    <GraficoHorasTreinadas dados={dadosGraficoHorasPorMes} />
                                 </div>
 
                             </div>

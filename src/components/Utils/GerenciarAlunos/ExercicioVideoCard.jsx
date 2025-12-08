@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Input from '../../Utils/InputPosLogin';
-import Button from '../../Utils/Button';
+import Button from '../../Utils/ButtonLoading';
+import { caringuApi } from '../../../provider/caringuApi';
+import toast from 'react-hot-toast';
+import CustomToast from '../CustomToast';
 
 const extrairYoutubeId = (url) => {
     const m = url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
@@ -8,7 +11,7 @@ const extrairYoutubeId = (url) => {
 };
 
 const ExercicioVideoCard = ({
-    titulo,
+    nomeExercicio,
     carga,
     repeticoesSeries,
     grupoMuscular,
@@ -19,16 +22,15 @@ const ExercicioVideoCard = ({
     espacamentoEntreIcons = "justify-start sm:gap-2 gap-4 xl:gap-4",
     larguraVideo = "lg:w-[80%] xl:w-[65%] md:w-[60%] w-full",
     inicialmenteAberto = false,
-    aulaRealizada = true,
     origemUso,
-    onToggleFinalizado
+    onToggleFinalizado,
+    idAulaTreinoExercicio,
 }) => {
     const [aberto, setAberto] = useState(inicialmenteAberto);
     const [isPlaying, setIsPlaying] = useState(false);
     const [observacoesLocal, setObservacoesLocal] = useState(observacoes);
     const videoId = useMemo(() => extrairYoutubeId(urlVideoExecucao), [urlVideoExecucao]);
     const isYoutube = urlVideoExecucao?.includes('youtube.com') || urlVideoExecucao?.includes('youtu.be');
-    const isGif = urlVideoExecucao?.endsWith('.gif');
 
     const toggle = () => setAberto(v => !v);
     const handlePlay = () => setIsPlaying(true);
@@ -58,6 +60,23 @@ const ExercicioVideoCard = ({
         return exerciciosFinalizados ? '#C5C8C6' : 'var(--azul-escuro)';
     }
 
+    const atualizarObservacoes = async () => {
+        try {
+            await caringuApi.patch(
+                `/aulas-treinos-exercicios/observacoes-aula/${idAulaTreinoExercicio}`,
+                { observacoes: observacoesLocal }
+            );
+            toast.custom((t) => (
+                <CustomToast t={t} type="success" message="Observação atualizada com sucesso!" />
+            ));
+        } catch (error) {
+            console.error('Erro ao salvar observações:', error);
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao salvar observação!" />
+            ));
+        }
+    };
+
 
     return (
         <div className={`flex flex-row w-full h-auto gap-3 md:gap-6 ${aberto ? 'items-start' : 'items-center'}`}>
@@ -84,7 +103,7 @@ const ExercicioVideoCard = ({
                             style={
                                 getTituloStyle(exerciciosFinalizados)
                             }>
-                            <span className="break-words whitespace-normal">{titulo}</span>
+                            <span className="break-words whitespace-normal">{nomeExercicio}</span>
                         </div>
                         <div className={`sm:mt-0 mt-4 flex flex-col lg:flex-row lg:flex-wrap items-start w-full ${espacamentoEntreIcons} text-base`}>
                             <div className="flex flex-col sm:flex-row items-center h-auto sm:w-auto w-full gap-2 flex-shrink-0">
@@ -157,9 +176,9 @@ const ExercicioVideoCard = ({
                 {aberto && (
                     <div className="flex flex-col h-auto w-full px-1 sm:px-7">
                         <div className="flex flex-col h-auto w-full">
-                            <label htmlFor={`observacoes-${titulo}`}>Observações</label>
+                            <label htmlFor={`observacoes-${nomeExercicio}`}>Observações</label>
                             <Input
-                                id={`observacoes-${titulo}`}
+                                id={`observacoes-${nomeExercicio}`}
                                 name="Observações"
                                 inputType="text"
                                 placeholder="Observações sobre o exercício"
@@ -168,7 +187,7 @@ const ExercicioVideoCard = ({
                                 fontSize="16px"
                                 fontWeight="500"
                                 width="100%"
-                                disabled={aulaRealizada}
+                                disabled={exerciciosFinalizados}
                             />
                         </div>
                         <div className="w-full h-auto flex flex-row items-center justify-center py-2">
@@ -180,6 +199,8 @@ const ExercicioVideoCard = ({
                                 classNameExtra="w-[60%] h-10 text-base"
                                 ariaLabel={"Botão Salvar Observações"}
                                 fontWeight="600"
+                                disabled={exerciciosFinalizados}
+                                onClick={atualizarObservacoes}
                             />
                         </div>
                         <div className="flex flex-col h-auto w-full gap-2.5 mt-2">

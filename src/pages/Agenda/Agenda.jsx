@@ -20,6 +20,7 @@ const Agenda = () => {
     useEffect(() => {
         const today = new Date();
         document.title = "Agenda | CaringU"
+        exibirTreinos();
         setSelectedDay({
             day: today.toLocaleDateString("pt-BR", { weekday: "long" }),
             date: today.toLocaleDateString("pt-BR", {
@@ -80,10 +81,6 @@ const Agenda = () => {
         }
     });
 
-    useEffect(() => {
-        document.title = "Agenda | Caringu";
-        exibirTreinos();
-    }, []);
 
 
 
@@ -175,7 +172,7 @@ const Agenda = () => {
                     </div>
                 </div>
             </div>
-             <Toaster position="top-right" reverseOrder={false} />
+            <Toaster position="top-right" reverseOrder={false} />
         </div>
     );
 };

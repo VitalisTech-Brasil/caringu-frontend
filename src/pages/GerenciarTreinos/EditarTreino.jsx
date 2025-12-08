@@ -18,6 +18,10 @@ import ExercicioChip from '../../components/Utils/CriarTreino/ExercicioChip.jsx'
 
 
 const EditarTreino = () => {
+
+    useEffect(() => {
+        document.title = "Editar Treino | CaringU";
+    }, []);
     // Estados locais
     const [exercicioInput, setExercicioInput] = useState('');
     const [focado, setFocado] = useState(false);
@@ -27,7 +31,6 @@ const EditarTreino = () => {
     const [exercicios, setExercicios] = useState([]);
     const [treino, setTreino] = useState([]);
     const [exercicioAtual, setExercicioAtual] = useState(null);
-    const [exerciciosSelecionados, setExerciciosSelecionados] = useState([]);
     const [exerciciosEditados, setExerciciosEditados] = useState([]);
     const [indexExercicioAtual, setIndexExercicioAtual] = useState(null);
     const [selectAberto, setSelectAberto] = useState(false);
@@ -41,7 +44,6 @@ const EditarTreino = () => {
     const {
         register: registerTreino,
         handleSubmit: handleSubmitTreino,
-        setValue,
         reset: resetTreino,
         formState: { errors: errorsTreino },
     } = useForm();
@@ -50,8 +52,6 @@ const EditarTreino = () => {
         register: registerExercicio,
         handleSubmit: handleSubmitExercicio,
         formState: { errors: errorsExercicio },
-        setValue: setValueExercicio,
-        watch: watchExercicio,
         reset: resetExercicio,
     } = useForm();
 
@@ -78,12 +78,12 @@ const EditarTreino = () => {
             console.log(idTreino);
 
             try {
+                console.log("buscando treino e exercícios");
                 const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
                 const data = response.data;
-                console.log(data);
+                console.log("treino salvo", data);
                 if (data.length > 0) {
                     setTreino(data);
-                    setExerciciosSelecionados(data);
                     setExerciciosEditados(data);
                 }
             } catch (error) {
@@ -232,17 +232,23 @@ const EditarTreino = () => {
             descricao: data.descricao
         }
         try {
-            const response = await caringuApi.put(
+            const res1 = await caringuApi.put(
                 `/treinos-exercicios/atualizar/treinos/${idTreino}/exercicios`,
                 payload
             );
+            const res2 = await caringuApi.put(`/treino/${idTreino}/personal/${idPersonal}`, payloadTreino);
 
-            const responseTreino = await caringuApi.put(`/treino/${idTreino}/personal/${idPersonal}`, payloadTreino)
-
-            toast.custom((t) => (
-                <CustomToast t={t} type="success" message="Treino atualizado com sucesso!" />
-            ));
-            navigate("/gerenciar-treinos");
+            if (
+                (res1.status === 200 || res1.status === 204) &&
+                (res2.status === 200 || res2.status === 204)
+            ) {
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Treino atualizado com sucesso!" />
+                ));
+                navigate("/gerenciar-treinos");
+            } else {
+                throw new Error("Erro ao atualizar treino.");
+            }
         } catch (error) {
             console.error('Erro ao salvar treino:', error);
             toast.custom((t) => (

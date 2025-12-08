@@ -12,7 +12,6 @@ const ModalPersonalizarExercicio = ({
     errors,
     exercicio,
     isValidYoutubeUrl,
-    InputComponent = () => null,
 }) => {
     if (!visivel) return null;
 
@@ -177,13 +176,16 @@ const ModalPersonalizarExercicio = ({
                             <Button
                                 texto="Cancelar"
                                 type="button"
-                                corTexto="var(--cor-secundaria)"
-                                cor="#B41F1F"
+                                corTexto="#B41F1F"
+                                cor="var(--cor-secundaria)"
                                 height="2.75rem"
                                 width="13.25rem"
                                 fontWeight="500"
                                 aria-label="Botão de Cancelar"
                                 onClick={onClose}
+                                borderStyle={"solid"}
+                                borderWidth={"2px"}
+                                borderColor={"#B41F1F"}
                             />
                             <Button
                                 type="submit"

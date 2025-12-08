@@ -1,69 +1,89 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import { FaChevronDown, FaChevronUp, FaUserCircle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/logos/caringu-logo-light.svg";
+import { useFotoPerfil } from "../../../context/FotoPerfilContext";
 import { caringuApi } from "../../../provider/caringuApi";
 
-const MenuLateralAluno = React.forwardRef((props, ref) => {
+const MenuLateralAluno = forwardRef((props, ref) => {
+  const { fotoPerfil, setFotoPerfil } = useFotoPerfil();
   const [isOpen, setIsOpen] = useState(false);
   const [isTreinosOpen, setIsTreinosOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userType, setUserType] = useState("");
+  const [imgError, setImgError] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
+  const studentId = sessionStorage.getItem("pessoaId");
 
-  const [nomePessoa, setNomePessoa] = useState("");
-  const [tipoPessoa, setTipoPessoa] = useState("");
-
-  const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
-  const [imgErro, setImgErro] = useState(false);
-
-  const alunoId = sessionStorage.getItem("pessoaId");
-
-  React.useImperativeHandle(ref, () => ({
-    toggleMenu: () => {
-      setIsOpen((prev) => !prev);
-    },
+  useImperativeHandle(ref, () => ({
+    toggleMenu: () => setIsOpen((prev) => !prev),
   }));
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfilePhoto = async () => {
       try {
-        const response = await caringuApi.get(`/alunos/${alunoId}`);
-
-        setUrlFotoPerfil(response?.data?.urlFotoPerfil || "");
+        const response = await caringuApi.get(`/alunos/${studentId}`);
+        const newPhoto = response?.data?.urlFotoPerfil || "";
+        setFotoPerfil(newPhoto);
       } catch (error) {
-        console.error("Erro ao buscar Aluno:", error);
+        console.error("Erro ao buscar foto de perfil do aluno:", error);
+      }
+    };
+    if (studentId) fetchProfilePhoto();
+  }, [studentId]);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [fotoPerfil]);
+
+  useEffect(() => {
+    const atualizarNomeDoStorage = () => {
+      const user = sessionStorage.getItem("usuario");
+      if (user) {
+        const nameParts = user.trim().split(/\s+/); // separa por espaços múltiplos
+
+        let displayName = "";
+
+        if (nameParts.length === 1) {
+          // Caso especial: só um nome
+          const name = nameParts[0];
+          const formatted =
+            name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+          displayName = formatted;
+        } else {
+          // Primeiro e último nome (sem duplicar)
+          const firstName = nameParts[0];
+          const lastName = nameParts[nameParts.length - 1];
+
+          const firstNameFormatted =
+            firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+
+          const lastNameFormatted =
+            lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase();
+
+          displayName = `${firstNameFormatted} ${lastNameFormatted}`;
+        }
+
+        setUserName(displayName);
+        setUserType(sessionStorage.getItem("tipo"));
       }
     };
 
-    if (alunoId) {
-      fetchData();
-    }
-  }, [alunoId]);
+    atualizarNomeDoStorage();
 
-  useEffect(() => {
-    const usuario = sessionStorage.getItem("usuario");
-
-    if (usuario) {
-      const nomeSeparado = usuario.split(" ");
-
-      const nome = nomeSeparado[0];
-      const nomeFormatado = nome[0].toUpperCase() + nome.slice(1);
-
-      const ultimoNome = nomeSeparado[nomeSeparado.length - 1];
-      const ultimoNomeFormatado =
-        ultimoNome[0].toUpperCase() + ultimoNome.slice(1);
-
-      const tipo = sessionStorage.getItem("tipo");
-
-      let nomeFinal = nomeFormatado + " " + ultimoNomeFormatado;
-
-      if (nomeFinal.length > 13) {
-        nomeFinal = nomeFormatado + " " + ultimoNomeFormatado[0] + ".";
+    const listener = (event) => {
+      if (event.type === "usuarioAtualizado") {
+        atualizarNomeDoStorage();
       }
+    };
 
-      setNomePessoa(nomeFinal);
-      setTipoPessoa(tipo);
-    }
+    window.addEventListener("usuarioAtualizado", listener);
+
+    return () => {
+      window.removeEventListener("usuarioAtualizado", listener);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -71,10 +91,7 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
     navigate("/");
   };
 
-  const getCurrentDay = () => {
-    const today = new Date();
-    return today.getDate(); // Retorna o dia atual
-  };
+  const getCurrentDay = () => new Date().getDate();
 
   const menuItems = [
     {
@@ -89,16 +106,16 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
           <path
             d="M11.275 3.55L4.5375 8.8C3.4125 9.675 2.5 11.5375 2.5 12.95V22.2125C2.5 25.1125 4.8625 27.4875 7.7625 27.4875H22.2375C25.1375 27.4875 27.5 25.1125 27.5 22.225V13.125C27.5 11.6125 26.4875 9.675 25.25 8.8125L17.525 3.4C15.775 2.175 12.9625 2.2375 11.275 3.55Z"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M15 22.4875V18.7375"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       ),
@@ -117,30 +134,30 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
           <path
             d="M15 15C18.4518 15 21.25 12.2018 21.25 8.75C21.25 5.29822 18.4518 2.5 15 2.5C11.5482 2.5 8.75 5.29822 8.75 8.75C8.75 12.2018 11.5482 15 15 15Z"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M4.26245 27.5C4.26245 22.6625 9.07499 18.75 15 18.75"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M22.75 26.75C24.9592 26.75 26.75 24.9592 26.75 22.75C26.75 20.5409 24.9592 18.75 22.75 18.75C20.5409 18.75 18.75 20.5409 18.75 22.75C18.75 24.9592 20.5409 26.75 22.75 26.75Z"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M27.5 27.5L26.25 26.25"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       ),
@@ -159,26 +176,26 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
           <path
             d="M24.375 6.00008H26.25C26.7675 6.00008 27.1875 6.56008 27.1875 7.25008V19.7501C27.1875 20.4401 26.7675 21.0001 26.25 21.0001H24.375C23.8575 21.0001 23.4375 20.4401 23.4375 19.7501V7.25008C23.4375 6.56008 23.8575 6.00008 24.375 6.00008Z"
             stroke="#020002"
-            stroke-width="2"
+            strokeWidth="2"
           />
           <path
             d="M20.625 1H22.5C23.0175 1 23.4375 1.56 23.4375 2.25V24.75C23.4375 25.44 23.0175 26 22.5 26H20.625C20.1075 26 19.6875 25.44 19.6875 24.75V2.25C19.6875 1.56 20.1075 1 20.625 1Z"
             stroke="#020002"
-            stroke-width="2"
+            strokeWidth="2"
           />
           <path
             d="M7.5 1H9.375C9.8925 1 10.3125 1.56 10.3125 2.25V24.75C10.3125 25.44 9.8925 26 9.375 26H7.5C6.9825 26 6.5625 25.44 6.5625 24.75V2.25C6.5625 1.56 6.9825 1 7.5 1Z"
             stroke="#020002"
-            stroke-width="2"
+            strokeWidth="2"
           />
           <path
             d="M3.75 6.00018H5.625C6.1425 6.00018 6.5625 6.56018 6.5625 7.25018V19.7502C6.5625 20.4402 6.1425 21.0002 5.625 21.0002H3.75C3.2325 21.0002 2.8125 20.4402 2.8125 19.7502V7.25018C2.8125 6.56018 3.2325 6.00018 3.75 6.00018Z"
             stroke="#020002"
-            stroke-width="2"
+            strokeWidth="2"
           />
-          <path d="M27.1875 13.5H30" stroke="#020002" stroke-width="2" />
-          <path d="M10.3125 13.5H19.6875" stroke="#020002" stroke-width="2" />
-          <path d="M0 13.5H2.8125" stroke="#020002" stroke-width="2" />
+          <path d="M27.1875 13.5H30" stroke="#020002" strokeWidth="2" />
+          <path d="M10.3125 13.5H19.6875" stroke="#020002" strokeWidth="2" />
+          <path d="M0 13.5H2.8125" stroke="#020002" strokeWidth="2" />
         </svg>
       ),
       label: "Minhas Aulas",
@@ -196,42 +213,42 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
           <path
             d="M7.37505 21.25H22.6126C24.9876 21.25 26.2375 20 26.2375 17.625V2.5H3.73755V17.625C3.75005 20 5.00005 21.25 7.37505 21.25Z"
             stroke="#020002"
-            stroke-width="2"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M2.5 2.5H27.5"
             stroke="#020002"
-            stroke-width="2"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M10 27.5L15 25V21.25"
             stroke="#020002"
-            stroke-width="2"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M20 27.5L15 25"
             stroke="#020002"
-            stroke-width="2"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M9.375 13.75L13.3125 10.4625C13.625 10.2 14.0375 10.275 14.25 10.625L15.75 13.125C15.9625 13.475 16.375 13.5375 16.6875 13.2875L20.625 10"
             stroke="#020002"
-            stroke-width="2"
-            stroke-miterlimit="10"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeMiterlimit="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       ),
@@ -250,23 +267,23 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
           <path
             d="M8.44997 27.5H21.55C25 27.5 26.375 25.3875 26.5375 22.8125L27.1875 12.4875C27.3625 9.7875 25.2125 7.5 22.5 7.5C21.7375 7.5 21.0375 7.0625 20.6875 6.3875L19.7875 4.575C19.2125 3.4375 17.7125 2.5 16.4375 2.5H13.575C12.2875 2.5 10.7875 3.4375 10.2125 4.575L9.31246 6.3875C8.96246 7.0625 8.26247 7.5 7.49997 7.5C4.78747 7.5 2.63747 9.7875 2.81247 12.4875L3.46247 22.8125C3.61247 25.3875 4.99997 27.5 8.44997 27.5Z"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M13.125 10H16.875"
             stroke="#020002"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
             d="M15 22.5C17.2375 22.5 19.0625 20.675 19.0625 18.4375C19.0625 16.2 17.2375 14.375 15 14.375C12.7625 14.375 10.9375 16.2 10.9375 18.4375C10.9375 20.675 12.7625 22.5 15 22.5Z"
             stroke="#020002"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       ),
@@ -462,19 +479,20 @@ const MenuLateralAluno = React.forwardRef((props, ref) => {
               className="flex items-center gap-4 p-4 border border-gray-300 border-t-0 border-l-0"
               style={{ minHeight: "5rem" }}
             >
-              {urlFotoPerfil && !imgErro ? (
+              {/* usar fotoPerfil do contexto */}
+              {fotoPerfil && !imgError ? (
                 <img
-                  src={urlFotoPerfil}
+                  src={fotoPerfil}
                   alt="Foto de perfil"
                   className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                  onError={() => setImgErro(true)}
+                  onError={() => setImgError(true)}
                 />
               ) : (
                 <FaUserCircle size={40} className="flex-shrink-0" />
               )}
               <div className="flex flex-col">
-                <p className="text-lg font-bold">{nomePessoa}</p>
-                <p className="text-sm">{tipoPessoa}</p>
+                <p className="text-lg font-bold">{userName}</p>
+                <p className="text-sm">{userType}</p>
               </div>
             </div>
 

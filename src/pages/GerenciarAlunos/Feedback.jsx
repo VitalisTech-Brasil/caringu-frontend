@@ -20,7 +20,6 @@ import CustomToast from '../../components/Utils/CustomToast';
 const Feedback = () => {
     const { idAluno } = useParams();
     const [imgErro, setImgErro] = useState(false);
-    const [aluno, setAluno] = useState();
     const location = useLocation();
     const alunoFromState = location.state?.aluno;
     const [novoFeedback, setNovoFeedback] = useState("");
@@ -42,7 +41,7 @@ const Feedback = () => {
 
         try {
             while (!last) {
-                const response = await caringuApi.get(`/aulas/aluno/${idAluno}/plano?page=${page}&size=20`);
+                const response = await caringuApi.get(`/feedbacks/aluno/${idAluno}/aulas?page=${page}&size=20`);
                 const { content, last: isLast } = response.data;
                 todasAulas = todasAulas.concat(Array.isArray(content) ? content : []);
                 last = isLast;
@@ -105,7 +104,7 @@ const Feedback = () => {
             fetchFeedbacksAula(aulaSelecionada.aulaId);
         } catch (error) {
             toast.custom((t) => (
-                <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
+                <CustomToast t={t} type="error" message="Erro ao enviar feedback." />
             ));
             console.error(error);
         }
@@ -201,7 +200,7 @@ const Feedback = () => {
                                         Nenhum treino atribuído.
                                     </div>
                                 ) : (
-                                    aulas.map((a, idx) => (
+                                    aulas.map((a) => (
                                         <AulaResumoCard
                                             key={a.aulaId}
                                             dataAula={a.dataAula}

@@ -1,24 +1,108 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import MenuLateralAluno from "../../../components/Aluno/MenuLateral/MenuLateral";
 import Header from "../../../components/Aluno/Header/Header";
 import { useLocation, Link } from "react-router-dom";
 import Button from "../../../components/Utils/Button"
 import Input from "../../../components/Utils/InputPosLogin";
 import CaixaFeedback from "../../../components/Utils/GerenciarAlunos/CaixaFeedback"
+import { caringuApi } from "../../../provider/caringuApi";
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import CustomToast from '../../../components/Utils/CustomToast';
 
 const FeedbackMensagem = () => {
+
+    useEffect(() => {
+        document.title = "Feedback | CaringU";
+    }, []);
+
     const menuRef = useRef(null);
 
     const location = useLocation();
     const aula = location.state?.aula;
+    const [novoFeedback, setNovoFeedback] = useState("");
+    const alunoId = sessionStorage.getItem('pessoaId');
+    const [mensagensFeedback, setMensagensFeedback] = useState([]);
 
-    const mensagensFeedback = [
-        { id: 1, label: 'Resposta do Aluno(a):', texto: 'Não senti mais dor!' },
-        { id: 2, label: 'Seu comentário:', texto: 'Que bom!' },
-        { id: 3, label: 'Resposta do Aluno(a):', texto: 'Consegui fazer todos os exercícios!' },
-    ];
+    const fetchFeedbacksAula = async (idAula) => {
+        try {
+            const response = await caringuApi.get(`/feedbacks/aula/${idAula}`);
+            const feedbacksArray = response.data;
+            let feedbacks = [];
+            if (
+                Array.isArray(feedbacksArray) &&
+                feedbacksArray.length > 0 &&
+                feedbacksArray[0] &&
+                typeof feedbacksArray[0] === 'object' &&
+                Array.isArray(feedbacksArray[0].feedbacks)
+            ) {
+                feedbacks = feedbacksArray[0].feedbacks;
+            }
+            setMensagensFeedback(feedbacks);
+            console.log("Feedbacks da aula:", feedbacks);
+        } catch (error) {
+            console.error("Erro ao buscar feedbacks da aula:", error);
+            setMensagensFeedback([]);
+        }
+    };
 
-    const [aulaSelecionada, setAulaSelecionada] = useState(aula || null);
+    const enviarFeedback = async (e) => {
+        e.preventDefault();
+        if (!novoFeedback.trim() || !aulaSelecionada) return;
+        const now = new Date();
+        const brasiliaOffsetMs = -3 * 60 * 60 * 1000;
+        const brasiliaDate = new Date(now.getTime() + brasiliaOffsetMs);
+
+        try {
+            const payload = {
+                autorId: Number(alunoId),
+                aulaId: aulaSelecionada.id,
+                autorTipo: "ALUNO",
+                descricao: novoFeedback,
+                dataCriacao: brasiliaDate.toISOString()
+            };
+            await caringuApi.post("/feedbacks", payload);
+            setNovoFeedback("");
+            fetchFeedbacksAula(aulaSelecionada.id);
+        } catch (error) {
+            toast.custom((t) => (
+                <CustomToast t={t} type="error" message="Erro ao enviar feedback." />
+            ));
+            console.error(error);
+        }
+    };
+
+    const [aulaSelecionada,] = useState(aula || null);
+
+    useEffect(() => {
+        if (aulaSelecionada?.id) {
+            fetchFeedbacksAula(aulaSelecionada.id);
+        }
+    }, [aulaSelecionada]);
+
+    if (!aula) {
+        return (
+            <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
+                <MenuLateralAluno ref={menuRef} />
+                <div className="flex-1 overflow-y-auto">
+                    <Header
+                        menuRef={menuRef}
+                        title="Feedback"
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                <path d="M27.5 14.375V19.375C27.5 23.75 25 25.625 21.25 25.625H8.75C5 25.625 2.5 23.75 2.5 19.375V10.625C2.5 6.25 5 4.375 8.75 4.375H15" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M8.75 11.25L12.6625 14.375C13.95 15.4 16.0625 15.4 17.35 14.375" stroke="#1D2D44" strokeWidth="2.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M24.35 3.5248L24.7 4.23729C24.875 4.58729 25.3125 4.9123 25.7 4.9873L26.175 5.0623C27.6 5.2998 27.9375 6.3498 26.9125 7.3873L26.475 7.82479C26.1875 8.12479 26.025 8.69979 26.1125 9.09979L26.175 9.3623C26.5625 11.0873 25.65 11.7498 24.15 10.8498L23.825 10.6623C23.4375 10.4373 22.8125 10.4373 22.425 10.6623L22.1 10.8498C20.5875 11.7623 19.675 11.0873 20.075 9.3623L20.1375 9.09979C20.225 8.69979 20.0625 8.12479 19.775 7.82479L19.3375 7.3873C18.3125 6.3498 18.65 5.2998 20.075 5.0623L20.55 4.9873C20.925 4.9248 21.375 4.58729 21.55 4.23729L21.9 3.5248C22.575 2.1623 23.675 2.1623 24.35 3.5248Z" stroke="#1D2D44" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        }
+                    />
+                    <div className="w-full h-auto p-2 md:p-4">
+                        <span className="text-xl text-gray-500">Informações da aula não disponíveis.</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -103,7 +187,10 @@ const FeedbackMensagem = () => {
                                 mensagens={mensagensFeedback}
                                 aluno={"aluno"}
                             />
-                            <form className="border-t-2 border-solid border-gray-300 px-4 flex flex-col h-auto gap-2 w-full pt-5">
+                            <form
+                                className="border-t-2 border-solid border-gray-300 px-4 flex flex-col h-auto gap-2 w-full pt-5"
+                                onSubmit={enviarFeedback}
+                            >
                                 <Input
                                     id={`feedback`}
                                     name={`feedback`}
@@ -112,11 +199,14 @@ const FeedbackMensagem = () => {
                                     fontWeight="500"
                                     width="100%"
                                     fontSize={"12px"}
+                                    value={novoFeedback}
+                                    onChange={(e) => setNovoFeedback(e.target.value)}
 
                                 />
                                 <div className="w-full h-auto flex flex-col items-center">
                                     <Button
                                         id="enviarFeedback"
+                                        type="submit"
                                         texto="Enviar Feedback"
                                         corTexto="#fff"
                                         cor="var(--azul-claro)"
@@ -139,6 +229,7 @@ const FeedbackMensagem = () => {
                     </div>
                 </div>
             </div>
+            <Toaster position="top-right" reverseOrder={false} />
         </div>
     );
 };

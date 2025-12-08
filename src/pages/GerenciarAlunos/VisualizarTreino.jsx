@@ -11,6 +11,7 @@ import MascaraTelefone from "../../components/Utils/Functions/MascaraTelefone"
 import MascaraData from "../../components/Utils/Functions/MascaraData"
 import MascaraNivelExperiencia from "../../components/Utils/Functions/MascaraNivelExperiencia";
 import MascaraGenero from '../../components/Utils/Functions/MascaraGenero';
+import { Toaster } from 'react-hot-toast';
 
 
 const VisualizarTreino = () => {
@@ -18,7 +19,6 @@ const VisualizarTreino = () => {
     const location = useLocation();
     const alunoFromState = location.state?.aluno;
     const { idAluno } = useParams();
-    const [aluno, setAluno] = useState(alunoFromState || null);
     const [nomeTreino, setNomeTreino] = useState('');
 
 
@@ -246,6 +246,7 @@ const VisualizarTreino = () => {
                         </div>
                     </div>
                 </div>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div>
     )

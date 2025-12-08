@@ -1,4 +1,3 @@
-import { complex } from "framer-motion";
 import React from "react";
 import Rating from "react-rating";
 import { FaUserCircle } from 'react-icons/fa'

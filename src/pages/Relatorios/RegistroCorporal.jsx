@@ -2,15 +2,23 @@ import React, { useEffect, useState } from 'react'
 import MenuLateral from '../../components/Personal/MenuLateral/MenuLateral'
 import Header from '../../components/Personal/Header/Header'
 import { Link } from 'react-router-dom'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams} from 'react-router-dom'
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro'
 import { caringuApi } from '../../provider/caringuApi'
+import Button from '../../components/Utils/Button'
+import ModalCompararFoto from '../../components/Fotos/ModalCompararFoto';
+import { Toaster } from 'react-hot-toast';
+
 
 const RelatorioTreinos = () => {
+
+    useEffect(() => {
+    document.title = "Progresso Corporal | CaringU";
+  }, []);
     const { idAluno } = useParams();
 
     const [tipoFoto, setTipoFoto] = useState(null);
-    const [periodoAvaliacaoEmMeses, setPeriodoAvaliacaoEmMeses] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [fotosCorporais, setFotosCorporais] = useState({
         FRONTAL: [],
@@ -24,8 +32,6 @@ const RelatorioTreinos = () => {
             const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
             const fotos = response.data;
             console.log("Fotos recebidas:", fotos);
-
-            setPeriodoAvaliacaoEmMeses(fotos.length > 0 ? fotos[0].periodoAvaliacao : 0);
 
             // Organiza as fotos por tipo
             const agrupadas = {
@@ -56,6 +62,11 @@ const RelatorioTreinos = () => {
         handleListarFotosCorporais();
     }, [idAluno]);
 
+    const abrirModal = (tipo) => {
+        setTipoFoto(tipo);
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateral />
@@ -79,9 +90,19 @@ const RelatorioTreinos = () => {
                                 { titulo: "Perfil Direito", tipo: "PERFIL_DIREITO", imagens: fotosCorporais.PERFIL_DIREITO },
                                 { titulo: "Costas", tipo: "COSTAS", imagens: fotosCorporais.COSTAS }
                             ].map(({ titulo, tipo, imagens }) => (
-                                <div key={tipo} className='flex flex-col mt-10 max-h-[400px] p-4'>
-                                    <div className='flex items-center justify-between'>
+                                <div key={tipo} className='flex flex-col mt-8 max-h-[400px] sm:p-4 p-0'>
+                                    <div className='flex sm:flex-row flex-col items-start sm:items-center justify-between sm:gap-0 gap-2 sm:pb-0 pb-3'>
                                         <h1 className='font-semibold text-[24px]'>{titulo}</h1>
+                                        <Button
+                                            texto="Comparar Fotos"
+                                            cor="#748CAB"
+                                            corTexto="#FFFFFF"
+                                            onClick={() => abrirModal(tipo)}
+                                            width="140px"
+                                            height="30px"
+                                            fontSize="12px"
+                                            fontWeight={"700"}
+                                        />
                                     </div>
                                     <div className='border-2 border-[#E6E6E2] rounded-lg'>
                                         <CarrosselRegistro imagens={imagens} />
@@ -90,7 +111,17 @@ const RelatorioTreinos = () => {
                             ))}
                         </div>
                     </div>
+                    {isModalOpen && (
+                        <ModalCompararFoto
+                            visivel={isModalOpen}
+                            fecharModal={() => setIsModalOpen(false)}
+                            ariaLabel="Modal para comparar fotos corporais"
+                            fotosCorporais={fotosCorporais}
+                            tipoSelecionado={tipoFoto}
+                        />
+                    )}
                 </main>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div >
     )

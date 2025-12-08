@@ -2,18 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import Button from "./Button";
 
 const CardPlano = ({
-  onEditar,
-  onDeletar,
-  onModalContratar,
   nome,
-  periodo,
   quantidadeAulas,
   valorAulas,
-  valorPlano,
   onAvaliarPersonal,
   ativo = true,
-  showContratarPlano = true,
-  disabled = false,
   nomePersonal,
   emailPersonal,
   experienciaPersonal,

@@ -4,55 +4,50 @@ import Header from '../../../components/Aluno/Header/Header';
 import AulaResumoCard from '../../../components/Aluno/CardAula';
 import Pagination from '../../../components/Utils/Pagination';
 import { useNavigate } from 'react-router-dom';
+import { caringuApi } from '../../../provider/caringuApi';
 
 const Feedback = () => {
-    const alunoId = sessionStorage.getItem("pessoaId");
     const navigate = useNavigate();
     const menuRef = useRef(null);
+    const idAluno = sessionStorage.getItem('pessoaId');
+    const [aulas, setAulas] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
+    const [totalPages, setTotalPages] = useState(1);
     const [inputType, setInputType] = useState('text');
     const [selectedDate, setSelectedDate] = useState('');
     const [searchActive, setSearchActive] = useState(false);
 
 
-    const formatInputDate = (dateStr) => {
-        if (!dateStr) return '';
-        const [year, month, day] = dateStr.split('-');
-        return `${day}/${month}/${year}`;
-    };
-
     useEffect(() => {
-        document.title = "Feedback | Caringu"
+        document.title = "Feedback | Caringu";
         const fetchInfosAula = async () => {
             try {
-                const response = await caringuApi.get(`/anamnese/${alunoId}`);// MUDAR URL PARA O NOVO ENDPOINT (!!!por padrão, deve ser sempre estar aberto o ultimo card do feedback)
-                setAluno(response.data);
-                console.log("Informações da Aula:", response.data);
+                const page = currentPage - 1;
+                // Monta a query de data se houver busca
+                let url = `/feedbacks/aluno/${idAluno}/aulas?page=${page}&size=${itemsPerPage}`;
+                if (searchActive && selectedDate) {
+                    url += `&data=${selectedDate}`; // selectedDate já está no formato yyyy-mm-dd
+                }
+                const response = await caringuApi.get(url);
+                const aulasTratadas = response.data.content.map(a => ({
+                    id: a.aulaId,
+                    data: a.dataAula,
+                    diaSemana: a.diaSemana,
+                    horarioInicio: a.horarioAula,
+                    horarioFim: a.horarioFim,
+                    quantidadeFeedbacks: a.qtdFeedbacks,
+                    nomePersonal: a.nomePersonal,
+                    nomeTreino: a.nomeTreino,
+                }));
+                setAulas(aulasTratadas);
+                setTotalPages(response.data.totalPages);
             } catch (error) {
                 console.error("Erro ao buscar informações da aula:", error);
             }
         };
         fetchInfosAula();
-    }, [alunoId]);
-
-    const aulas = [
-        { id: 1, data: "10/05/2025", diaSemana: "Segunda-Feira", horarioInicio: "15:00", horarioFim: "16:00", quantidadeFeedbacks: 4, nomePersonal: "João Pedro", nomeTreino: "Treino A" },
-        { id: 2, data: "11/05/2025", diaSemana: "Terça-Feira", horarioInicio: "09:00", horarioFim: "10:00", quantidadeFeedbacks: 0, nomePersonal: "João Pedro", nomeTreino: "Treino B" },
-        { id: 3, data: "12/05/2025", diaSemana: "Quarta-Feira", horarioInicio: "18:00", horarioFim: "19:00", quantidadeFeedbacks: 2, nomePersonal: "João Pedro", nomeTreino: "Treino C" },
-        { id: 4, data: "13/06/2025", diaSemana: "Quinta-Feira", horarioInicio: "07:00", horarioFim: "08:00", quantidadeFeedbacks: 1, nomePersonal: "João Pedro", nomeTreino: "Treino D" },
-        { id: 5, data: "14/07/2025", diaSemana: "Sexta-Feira", horarioInicio: "17:00", horarioFim: "18:00", quantidadeFeedbacks: 3, nomePersonal: "João Pedro", nomeTreino: "Treino E" },
-        { id: 6, data: "15/07/2025", diaSemana: "Sábado", horarioInicio: "10:00", horarioFim: "11:00", quantidadeFeedbacks: 0, nomePersonal: "João Pedro", nomeTreino: "Treino F" },
-    ];
-
-    const filteredAulas = searchActive && selectedDate
-        ? aulas.filter(a => a.data === formatInputDate(selectedDate))
-        : aulas;
-
-    const totalPages = Math.ceil(filteredAulas.length / itemsPerPage);
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentAulas = filteredAulas.slice(indexOfFirstItem, indexOfLastItem);
+    }, [idAluno, currentPage, searchActive, selectedDate]);
 
     const goToPage = (page) => {
         setCurrentPage(page);
@@ -119,19 +114,18 @@ const Feedback = () => {
                                 className="w-[80%] flex-1 bg-transparent border-b-2 pb-1 outline-none text-xs sm:text-[16px] text-[#1E293B]"
                             />
                             <svg className="shrink-0 w-6 h-6 text-[#1E293B]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M22 22L20 20" stroke="#1D2D44" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M22 22L20 20" stroke="#1D2D44" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </div>
                     </div>
-                    {/* bg-[var(--cor-secundaria)] */}
                     <div className="lg:w-[70%] w-full 2xl:w-[50%]  p-4 h-[70vh] gap-3 flex flex-col overflow-y-auto">
-                        {filteredAulas.length === 0 ? (
+                        {aulas.length === 0 ? (
                             <div className="text-sm italic text-gray-500">
                                 Nenhum treino atribuído.
                             </div>
                         ) : (
-                            currentAulas.map(a => (
+                            aulas.map(a => (
                                 <AulaResumoCard
                                     key={a.id}
                                     data={a.data}
@@ -139,6 +133,7 @@ const Feedback = () => {
                                     horarioInicio={a.horarioInicio}
                                     horarioFim={a.horarioFim}
                                     nomePersonal={a.nomePersonal}
+                                    nomeTreino={a.nomeTreino}
                                     onVerFeedbacks={() => navigate('/feedback-mensagem', { state: { aula: a } })}
                                 />
                             ))
@@ -147,7 +142,7 @@ const Feedback = () => {
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
-                        itemsLength={filteredAulas.length}
+                        itemsLength={aulas.length}
                         onPageChange={goToPage}
                         onPrevious={goToPrevious}
                         onNext={goToNext}

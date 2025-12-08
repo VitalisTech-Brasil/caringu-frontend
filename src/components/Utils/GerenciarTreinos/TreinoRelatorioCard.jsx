@@ -13,7 +13,7 @@ const TreinoRelatorioCard = ({
         >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-8 w-full">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start md:items-center gap-4 w-full sm:w-auto">
-                    <div className="relative flex grid-cols-2 items-center justify-between bg-[#FFFDF6] rounded-lg w-12 md:w-10">
+                    <div className="relative flex grid-cols-2 items-center justify-between bg-[#FDFFFD] rounded-lg w-12 md:w-10">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="sm:w-10 sm:h-15 w:14 h-21 col-span-1"

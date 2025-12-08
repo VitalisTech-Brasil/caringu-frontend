@@ -10,8 +10,6 @@ import { Toaster } from 'react-hot-toast';
 
 
 const Agenda = () => {
-    const pessoaId = sessionStorage.getItem("pessoaId");
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
     const [value, setValue] = useState(new Date());
     const [aulas, setAulas] = useState([]);
@@ -50,17 +48,6 @@ const Agenda = () => {
     }, []);
 
 
-
-
-    // const exibirTreinos = async () => {
-    //     try {
-    //         const response = await caringuApi.get(`/aulas/personal-aulas/${pessoaId}`);
-    //         setTreinosFinalizados(response.data);
-    //     } catch (error) {
-    //         console.error("Erro ao exibir treinos:", error);
-    //     }
-    // }
-
     function formatarHora(isoString) {
         const data = new Date(isoString);
         return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -90,10 +77,6 @@ const Agenda = () => {
         }
     });
 
-
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">

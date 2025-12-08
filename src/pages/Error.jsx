@@ -1,9 +1,14 @@
+import { useEffect } from "react";
 import Button from "../components/Utils/Button";
 import imgErro from "../assets/images/erro.png";
 import { useNavigate } from "react-router-dom";
 
 const Error = () => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "Erro | CaringU";
+      }, []);
 
     return (
         <>

@@ -7,6 +7,11 @@ import { caringuApi } from '../../provider/caringuApi';
 import Pagination from '../../components/Utils/Pagination';
 
 function MinhasAulas() {
+
+    useEffect(() => {
+        document.title = "Minhas Aulas | CaringU";
+    }, []);
+
     const navigate = useNavigate();
     const menuRef = useRef(null);
     const idAluno = sessionStorage.getItem('pessoaId');
@@ -14,7 +19,6 @@ function MinhasAulas() {
     const [aulas, setAulas] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // página começa em 1
     const [totalPages, setTotalPages] = useState(1);
-    const [itemsLength, setItemsLength] = useState(0);
     const pageSize = 4;
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -22,27 +26,25 @@ function MinhasAulas() {
 
 
     useEffect(() => {
-    const fetchAulas = async () => {
-        try {
-            let url = `/aulas/aluno/${idAluno}/plano?page=${currentPage - 1}&size=${pageSize}`;
-            if (searchTerm) {
-                url += `&data=${searchTerm}`;
+        const fetchAulas = async () => {
+            try {
+                let url = `/aulas/aluno/${idAluno}/plano?page=${currentPage - 1}&size=${pageSize}`;
+                if (searchTerm) {
+                    url += `&data=${searchTerm}`;
+                }
+                const response = await caringuApi.get(url);
+                const { content, totalPages } = response.data;
+                setAulas(Array.isArray(content) ? content : []);
+                setTotalPages(totalPages || 1);
+            } catch (error) {
+                setAulas([]);
+                setTotalPages(1);
+                console.error("Erro ao buscar aulas:", error);
             }
-            const response = await caringuApi.get(url);
-            const { content, totalPages, totalElements } = response.data;
-            setAulas(Array.isArray(content) ? content : []);
-            setTotalPages(totalPages || 1);
-            setItemsLength(totalElements || 0);
-        } catch (error) {
-            setAulas([]);
-            setTotalPages(1);
-            setItemsLength(0);
-            console.error("Erro ao buscar aulas:", error);
-        }
-    };
+        };
 
-    fetchAulas();
-}, [idAluno, currentPage, searchTerm]);
+        fetchAulas();
+    }, [idAluno, currentPage, searchTerm]);
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);

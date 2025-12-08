@@ -22,14 +22,13 @@ export default function InformacoesPessoais() {
 
     const [idEspecialidade, setIdEspecialidade] = useState(false);
     const [novaEspecialidade, setNovaEspecialidade] = useState('');
-    const [buscaEspecialidade, setBuscaEspecialidade] = useState("");
 
     const [especialidadesSelecionadas, setEspecialidadesSelecionadas] = useState([]);
     const [sugestoesEspecialidade, setSugestoesEspecialidade] = useState([]);
     const [especialidadesDisponiveis, setEspecialidadesDisponiveis] = useState([]);
     const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
 
-    const [nomeBairroAntigo, setNomeBairroAntigo] = useState("");
+    const [, setNomeBairroAntigo] = useState("");
 
     const personalId = sessionStorage.getItem('pessoaId');
 
@@ -86,30 +85,6 @@ export default function InformacoesPessoais() {
         } catch (error) {
             console.error('Erro ao adicionar especialidades:', error);
         }
-    };
-
-    const handleBuscaEspecialidade = (e) => {
-        const valor = e.target.value;
-        setBuscaEspecialidade(valor);
-
-        if (valor.length > 0) {
-            const filtradas = especialidadesDisponiveis.filter(op =>
-                op.nome.toLowerCase().includes(valor.toLowerCase()) &&
-                !formData.especialidades?.some(esp => esp.id === op.id)
-            );
-            setSugestoesEspecialidade(filtradas);
-        } else {
-            setSugestoesEspecialidade([]);
-        }
-    };
-
-    const selecionarEspecialidade = (especialidade) => {
-        setFormData((prev) => ({
-            ...prev,
-            especialidades: [...(prev.especialidades || []), especialidade],
-        }));
-        setBuscaEspecialidade("");
-        setSugestoesEspecialidade([]);
     };
 
     const removerMascara = (celular) => {

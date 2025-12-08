@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Calendar from 'react-calendar';
 import Button from "../Button";
-import { format, addDays, isAfter } from "date-fns";
+import { format, addDays } from "date-fns";
 import ptBR from 'date-fns/locale/pt-BR';
 import { useAgendamento } from "./Context/AgendamentoContext";
 import { caringuApi } from "../../../provider/caringuApi";
-import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import CustomToast from '../../Utils/CustomToast';
 import ButtonLoading from "../ButtonLoading";
@@ -27,11 +26,8 @@ const EtapaAgendamentoAula = ({
     setHorarioFim,
     todosHorariosPreenchidos,
     diasSelecionados,
-    setDiasSelecionados,
     showDropdown,
-    setShowDropdown,
     handleDateClick,
-    handleRemoveDate,
     handleSelectAll,
     handleCheck,
     handleToggleDropdown,
@@ -46,15 +42,29 @@ const EtapaAgendamentoAula = ({
     atualizarAlunos
 }) => {
     const { atualizarAgendamento } = useAgendamento();
-
+    const [datasAulasBloqueadas, setDatasAulasBloqueadas] = useState([]);
     const rascunhosDates = rascunhosPersistidos ?? [];      // array de { id, date }
     const setRascunhosDates = setRascunhosPersistidos;     // setter vindo do pai
 
     const [aulasDisponiveis, setAulasDisponiveis] = useState({})
     const [showRascunhoModal, setShowRascunhoModal] = useState(false);
     const [rascunhosCarregados, setRascunhosCarregados] = useState(false);
-    const [idsRascunhos, setIdsRascunhos] = useState([]);
-    const [generatedDates, setGeneratedDates] = useState([]);
+    const [, setGeneratedDates] = useState([]);
+
+    // Ref para controlar clique fora do dropdown de dias da semana
+    const diasSemanaDropdownRef = useRef(null);
+
+    // Garante que datas vindas do backend (rascunhos) sejam interpretadas
+    // sempre pelo dia correto, ignorando diferenças de fuso/UTC.
+    const parseDateOnlyFromISO = (isoString) => {
+        if (!isoString) return null;
+        const [datePart] = isoString.split("T");
+        const [year, month, day] = datePart.split("-").map(Number);
+        if (!year || !month || !day) return null;
+        const d = new Date(year, month - 1, day);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    };
 
     function getNextAvailableDates(weekdays, slotsToFill, startDate = new Date(), occupiedSet = new Set()) {
         const diasMap = {
@@ -117,19 +127,26 @@ const EtapaAgendamentoAula = ({
             return;
         }
 
-        const datas = aulas.map(a => ({
-            id: a.idAula,
-            date: new Date(a.dataHorarioInicio)
-        }));
+        const datas = aulas.map(a => {
+            const dateOnly = parseDateOnlyFromISO(a.dataHorarioInicio);
+            return {
+                id: a.idAula,
+                date: dateOnly
+            };
+        });
         setRascunhosDates(datas);
 
         if (carregar) {
             const novosHorarios = {};
             aulas.forEach(a => {
-                const dateKey = new Date(a.dataHorarioInicio).toISOString();
-                const inicio = a.dataHorarioInicio.split("T")[1].slice(0, 5);
-                const fim = a.dataHorarioFim.split("T")[1].slice(0, 5);
-                novosHorarios[dateKey] = { inicio, fim };
+                const baseDate = parseDateOnlyFromISO(a.dataHorarioInicio);
+                if (!baseDate) return;
+                const dateKey = baseDate.toISOString();
+                const inicio = a.dataHorarioInicio.split("T")[1]?.slice(0, 5);
+                const fim = a.dataHorarioFim.split("T")[1]?.slice(0, 5);
+                if (inicio && fim) {
+                    novosHorarios[dateKey] = { inicio, fim };
+                }
             });
             setHorarios(prev => ({ ...prev, ...novosHorarios }));
             setRascunhosCarregados(true);
@@ -226,7 +243,6 @@ const EtapaAgendamentoAula = ({
 
             // Limpar estado
             setSelectedDates([]);
-            setIdsRascunhos([]);
             setShowRascunhoModal(false);
             setRascunhosCarregados(false);
 
@@ -245,7 +261,8 @@ const EtapaAgendamentoAula = ({
             });
 
             if (typeof atualizarAlunos === "function") {
-                atualizarAlunos();             }
+                atualizarAlunos();
+            }
 
             onProsseguir();
         } catch (error) {
@@ -258,7 +275,23 @@ const EtapaAgendamentoAula = ({
 
     useEffect(() => {
         getBuscarAulasDisponiveis();
-    }, []);
+
+        const exibirAulas = async () => {
+            try {
+                const response = await caringuApi.get(`/aulas/alunos-aulas/${aluno.idAluno}`);
+                const datas = response.data.map(aula =>
+                    new Date(aula.dataHorarioInicio).toDateString()
+                );
+                setDatasAulasBloqueadas(datas);
+
+                console.log("Aulas do aluno selecionado:", response.data);
+            } catch (error) {
+                console.error("Erro ao exibir aulas:", error);
+            }
+        };
+
+        exibirAulas();
+    }, [aluno.idAluno]);
 
     // manualDates vem via props do ModalAgendarAula
     useEffect(() => {
@@ -275,18 +308,29 @@ const EtapaAgendamentoAula = ({
 
         const start = brasiliaToday ?? new Date();
 
-        // occupied = rascunhos + manuais (strings "Tue Sep 30 2025")
-        const occupiedKeys = new Set([
+        // Datas ocupadas para CONTAGEM: rascunhos + manuais
+        const occupiedKeysForCount = new Set([
             ...rascunhosDates.map(r => r.date.toDateString()),
             ...(manualDates || []).map(d => d.toDateString())
-        ])
+        ]);
 
-        const occupiedCount = occupiedKeys.size;
+        const occupiedCount = occupiedKeysForCount.size;
         const totalAllowed = aulasDisponiveis.aulasRestantes; // já considera confirmadas/rascunhos
         const slotsToFill = Math.max(0, totalAllowed - occupiedCount);
 
-        // gera apenas as N datas necessárias (excluindo já ocupadas)
-        const novasGeradas = getNextAvailableDates(diasSelecionados, slotsToFill, start, occupiedKeys);
+        // Datas ocupadas para GERAÇÃO: rascunhos + manuais + dias já bloqueados (aulas existentes)
+        const occupiedKeysForGeneration = new Set([
+            ...occupiedKeysForCount,
+            ...datasAulasBloqueadas
+        ]);
+
+        // gera apenas as N datas necessárias (excluindo já ocupadas/bloqueadas)
+        const novasGeradas = getNextAvailableDates(
+            diasSelecionados,
+            slotsToFill,
+            start,
+            occupiedKeysForGeneration
+        );
 
         // atualiza generatedDates
         setGeneratedDates(novasGeradas);
@@ -305,7 +349,58 @@ const EtapaAgendamentoAula = ({
 
         setSelectedDates(unique);
         setCheckedDates([]); // resetar checks ao recalcular
-    }, [diasSelecionados, aulasDisponiveis, manualDates, rascunhosDates]);
+    }, [
+        diasSelecionados,
+        aulasDisponiveis && aulasDisponiveis.aulasRestantes,
+        manualDates,
+        rascunhosDates,
+        datasAulasBloqueadas
+    ]);
+
+    // Fecha o dropdown de seleção de dias da semana ao clicar fora
+    useEffect(() => {
+        if (!showDropdown) return;
+
+        const handleClickOutside = (event) => {
+            if (diasSemanaDropdownRef.current && !diasSemanaDropdownRef.current.contains(event.target)) {
+                handleToggleDropdown();
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showDropdown, handleToggleDropdown]);
+
+    // Cálculo em tempo real das aulas restantes
+    // Regra: restantes = totalPlanejadas - aulas_rascunho - novas_datas_selecionadas
+    const calcularAulasRestantesEmTempoReal = () => {
+        if (!aulasDisponiveis || typeof aulasDisponiveis.aulasRestantes !== "number") {
+            return "";
+        }
+
+        const totalPlanejadas = aulasDisponiveis.aulasRestantes;
+
+        // Quando o usuário opta por continuar com rascunhos,
+        // consideramos as aulas atualmente em rascunho (estado local)
+        // como já ocupando parte do plano.
+        const totalRascunhos = rascunhosCarregados
+            ? rascunhosDates.length
+            : 0;
+
+        const rascunhoKeys = new Set(rascunhosDates.map(r => r.date.toDateString()));
+
+        // Novas datas selecionadas na etapa 1 que não fazem parte dos rascunhos
+        const adicionais = (selectedDates || []).filter(
+            d => !rascunhoKeys.has(d.toDateString())
+        ).length;
+
+        const restantes = Math.max(0, totalPlanejadas - totalRascunhos - adicionais);
+        return restantes;
+    };
+
+    const aulasRestantesTempoReal = calcularAulasRestantesEmTempoReal();
 
     const montarAulasParaEnvio = () => {
         return {
@@ -322,25 +417,6 @@ const EtapaAgendamentoAula = ({
         };
     };
 
-    const handleProsseguir = () => {
-        const aulas = selectedDates
-            .filter(date => horarios[date.toISOString()])
-            .map(date => {
-                const { inicio, fim } = horarios[date.toISOString()];
-                const dataStr = date.toISOString().slice(0, 10);
-                return {
-                    dataHorarioInicio: `${dataStr}T${inicio}:00`,
-                    dataHorarioFim: `${dataStr}T${fim}:00`
-                };
-            });
-
-        atualizarAgendamento({
-            aulas,
-            diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
-        });
-        onProsseguir();
-    };
-
     return (
         <>
             {showRascunhoModal && (
@@ -350,19 +426,22 @@ const EtapaAgendamentoAula = ({
                         <h2 className="text-lg font-semibold mb-4 text-center">
                             Você possui {aulasDisponiveis.aulasRascunho} aula(s) em rascunho.
                         </h2>
+                        <p className="text-center mb-2">
+                            Essas aulas foram salvas anteriormente, mas não foram concluídas.
+                        </p>
                         <p className="text-center mb-6">
-                            Deseja continuar com essas aulas ou descartá-las?
+                            Deseja continuar com esses aulas ou descartá-las?
                         </p>
                         <div className="flex justify-around">
                             <Button
-                                texto="Continuar"
+                                texto="Continuar editando"
                                 cor="var(--azul-claro)"
                                 corTexto="white"
                                 classNameExtra="p-3"
                                 onClick={carregarRascunhos}
                             />
                             <Button
-                                texto="Deletar"
+                                texto="Descartar rascunhos"
                                 cor="var(--cor-secundaria)"
                                 corTexto="#B41F1F"
                                 classNameExtra="p-3"
@@ -373,18 +452,25 @@ const EtapaAgendamentoAula = ({
                 </div>
             )}
             <div>
-                <div className="flex flex-row gap-2 mt-12 md:mt-3 text-base sm:text-lg 2xl:text-2xl">
-                    <span className="text-[var(--laranja)] font-semibold">
-                        {rascunhosCarregados && aulasDisponiveis.aulasRascunho > 0 ? (
-                            <>
-                                {aulasDisponiveis.aulasRestantes} restantes |{" "}
-                                {aulasDisponiveis.aulasRascunho} rascunho(s)
-                            </>
-                        ) : (
-                            aulasDisponiveis.aulasRestantes
-                        )}
-                    </span>
-                    <span>Aulas Para Agendar</span>
+                <div className="flex flex-col gap-1 mt-12 md:mt-3 text-base sm:text-lg 2xl:text-2xl">
+                    {rascunhosCarregados && rascunhosDates.length > 0 ? (
+                        <>
+                            <span className="text-[var(--laranja)] font-semibold">
+                                {rascunhosDates.length} aula(s) em rascunho foram carregadas.
+                            </span>
+                            <span className="text-[var(--laranja)] font-semibold">
+                                Restam {aulasRestantesTempoReal} aula(s) para concluir o plano.
+                            </span>
+                        </>
+                    ) : (
+                        <div className="flex flex-row gap-1">
+                            <div className="text-[var(--laranja)] font-semibold">
+                                {aulasRestantesTempoReal}
+                            </div>
+
+                            <div>Aula(s) Para Agendar</div>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="md:border-2 md:border-[#1D2D441A] md:border-solid py-3 md:py-0 rounded-md w-full flex flex-col md:flex-row">
@@ -403,6 +489,10 @@ const EtapaAgendamentoAula = ({
                             return str.charAt(0).toUpperCase() + str.slice(1);
                         }}
                         tileClassName={({ date, view }) => {
+                            if (view === 'month' && datasAulasBloqueadas.includes(date.toDateString())) {
+                                // Dia com aula já agendada (bloqueado)
+                                return 'bg-[#E96E354F] text-black rounded-full cursor-not-allowed relative group';
+                            }
                             if (view === 'month' && date < brasiliaToday) {
                                 return 'text-gray-400';
                             }
@@ -413,6 +503,23 @@ const EtapaAgendamentoAula = ({
                                 return 'rounded-full';
                             }
                             return 'cursor-pointer';
+                        }}
+                        tileDisabled={({ date, view }) => {
+                            return view === 'month' && datasAulasBloqueadas.includes(date.toDateString());
+                        }}
+                        tileContent={({ date, view }) => {
+                            if (view === "month" && datasAulasBloqueadas.includes(date.toDateString())) {
+                                // Ícone grande indicando bloqueio + tooltip
+                                return (
+                                    <div
+                                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                                        title="Aula já agendada neste dia"
+                                    >
+
+                                    </div>
+                                );
+                            }
+                            return null;
                         }}
                         prevLabel={<span className="text-[24px] font-medium">ᐸ</span>}
                         nextLabel={<span className="text-[24px] font-medium">ᐳ</span>}
@@ -426,7 +533,10 @@ const EtapaAgendamentoAula = ({
                             Agende seus treinos
                         </span>
                         <div className="w-full flex flex-row items-center justify-center md:justify-start">
-                            <div className="relative w-[90%] md:w-[85%] xl:min-w-[60%] xl:w-auto">
+                            <div
+                                ref={diasSemanaDropdownRef}
+                                className="relative w-[90%] md:w-[85%] xl:min-w-[60%] xl:w-auto"
+                            >
                                 <div
                                     className="p-2 rounded-md border-2 border-[#1D2D441A] bg-transparent cursor-pointer flex justify-between items-center text-sm 2xl:text-base"
                                     onClick={handleToggleDropdown}
@@ -483,7 +593,12 @@ const EtapaAgendamentoAula = ({
                                         className="w-4.5 h-4.5"
                                         id="meuInput"
                                     />
-                                    <label className="text-sm xl:text-base" htmlFor="meuInput">Selecionar Todos</label>
+                                    <label
+                                        className="text-sm xl:text-base cursor-pointer"
+                                        htmlFor="meuInput"
+                                    >
+                                        Selecionar Todos
+                                    </label>
                                 </>
                             )}
                         </div>
@@ -501,7 +616,7 @@ const EtapaAgendamentoAula = ({
                                         // se a data for igual, compara pelo horário
                                         return horarioA.localeCompare(horarioB);
                                     })
-                                    .map((data, idx) => (
+                                    .map((data) => (
                                         <div key={data.toISOString()} className="w-full h-auto flex flex-col xl:flex-row xl:items-center">
                                             <div className="flex flex-row gap-2 w-full xl:w-[60%] h-auto items-center text-[14px]">
                                                 <input
@@ -558,7 +673,20 @@ const EtapaAgendamentoAula = ({
                                 <input
                                     type="time"
                                     value={horarioFim}
-                                    onChange={e => setHorarioFim(e.target.value)}
+                                    onChange={e => {
+                                        const novoFim = e.target.value;
+
+                                        if (horarioInicio && novoFim <= horarioInicio) {
+                                            toast.custom((t) => (
+                                                <CustomToast t={t} type="error" message={`Horário inválido: o término não pode ser menor ou igual ao início.`} />
+                                            ));
+                                            setHorarioFim("");
+                                            return;
+                                        }
+
+                                        setHorarioFim(novoFim);
+                                    }}
+
                                     className="bg-transparent border-2 border-[#1D2D441A] border-solid p-2 rounded-md w-1/2 md:w-full"
                                 />
                             </div>

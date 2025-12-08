@@ -6,7 +6,6 @@ const Botton = ({
   onClick,
   cor,
   corTexto,
-  corHover = "none",
   width,
   height,
   type,

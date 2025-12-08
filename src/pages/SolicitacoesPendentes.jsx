@@ -9,6 +9,7 @@ import Modal from "../components/Utils/Modal";
 import iconCancelar from "../assets/images/cancelar.png";
 import toast, { Toaster } from "react-hot-toast";
 import CustomToast from "../components/Utils/CustomToast";
+import alerta from "../assets/images/alert.svg";
 
 
 const SolicitacoesPendentes = () => {
@@ -38,7 +39,7 @@ const SolicitacoesPendentes = () => {
         }
     }
 
-    const atualizarStatus = async (id, status) => {
+      const atualizarStatus = async (id, status) => {
         try {
             await caringuApi.patch(
                 `/planos-contratados/${id}/status`,
@@ -47,11 +48,20 @@ const SolicitacoesPendentes = () => {
             listarSolicitacoesPendentes();
             setModalCancelarVisivel(false);
             setSolicitacaoParaCancelar(null);
-            toast.custom((t) => (
-                <CustomToast t={t} type="success" message="Pagamento confirmado!" />
-            ));
+            if (status === "ATIVO") {
+                toast.custom((t) => (
+                    <CustomToast t={t} type="success" message="Pagamento confirmado!" />
+                ));
+            }else{
+                toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Cancelamento realizado!" />
+                ));
+            }
         } catch (error) {
             console.error("Erro ao atualizar status:", error);
+            toast.custom((t) => (
+                    <CustomToast t={t} type="error" message="Erro ao atualizar status!" />
+                ));
         }
     };
 

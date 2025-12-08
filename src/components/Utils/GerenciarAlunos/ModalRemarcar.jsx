@@ -28,7 +28,7 @@ const ModalRemarcar = ({
     }
 
 
-    const onSubmit = async (data) => {
+    const onSubmit = async () => {
         // Monta os campos para o backend
         const idAula = agendamento?.id;
         const idTreinoNovo = agendamentoCompleto?.idTreino;
@@ -79,9 +79,7 @@ const ModalRemarcar = ({
         }
     };
 
-    const [treinos, setTreinos] = useState([
-        { id: 1, nome: "Pernas" },
-    ]);
+
 
     const [agendamentoCompleto, setAgendamentoCompleto] = useState(null);
     const [treinosPersonal, setTreinosPersonal] = useState([]);
@@ -128,33 +126,8 @@ const ModalRemarcar = ({
         }
     }, [agendamentoCompleto?.dataHorarioInicio, agendamentoCompleto?.dataHorarioFim, visivel, setValue]);
 
-    const [treinosSelecionados, setTreinosSelecionados] = useState({});
-
-
-    useEffect(() => {
-        if (treinos && treinos.length > 0) {
-            const selecionados = {};
-            treinos.forEach(t => {
-                selecionados[t.id] = t.id; // valor inicial é o próprio id do treino agendado
-            });
-            setTreinosSelecionados(selecionados);
-        }
-    }, [treinos, visivel]);
-
-
-    const handleTreinoChange = (treinoId, value) => {
-        setTreinosSelecionados(prev => ({
-            ...prev,
-            [treinoId]: value
-        }));
-    };
-
-    const [novaData, setNovaData] = useState("");
-    const [novoHorario, setNovoHorario] = useState("");
-
     const handleFechar = () => {
-        setNovaData("");
-        setNovoHorario("");
+       
         if (fecharModal) fecharModal();
     };
 

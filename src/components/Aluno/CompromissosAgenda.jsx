@@ -1,10 +1,9 @@
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
-import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 
-const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => {
+const CompromissosAgenda = ({ compromissos, selectedDay }) => {
 
     const [errosImagem, setErrosImagem] = useState({});
 
@@ -16,8 +15,6 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
             [id]: true,
         }));
     };
-
-    const treinoFim = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     const today = new Date();
     const todayFormatted = today.toLocaleDateString("pt-BR", {
@@ -64,11 +61,6 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
         return compromissoDate.getTime() === selectedDate.getTime();
     });
 
-    const carregarEventosCalendario = () => {
-        if (typeof atualizarTreinos === "function") {
-            atualizarTreinos();
-        }
-    };
 
     return (
         <>
@@ -139,7 +131,10 @@ const CompromissosAgenda = ({ compromissos, selectedDay, atualizarTreinos }) => 
                                             </div>
                                             <div className="flex flex-row  items-center pl-4 w-full">
                                                 <button
-                                                    onClick={() => navigate(`/acompanhar-aula-aluno/${compromisso.id}`)}
+                                                    onClick={() => navigate(
+                                                        `/acompanhar-aula-aluno/${compromisso.id}`,
+                                                        { state: { compromisso } }
+                                                    )}
                                                     className="hover:bg-[#E2E4E7] hover:text-[var(--azul-escuro)] bg-[color:var(--azul-claro)] text-[var(--cor-secundaria)] text-xs 2xl:text-xl font-semibold rounded-md py-1 px-4 cursor-pointer h-auto w-45 2xl:w-70"
                                                 >
                                                     Acompanhar Aula

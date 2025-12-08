@@ -40,18 +40,15 @@ import PerfilAluno from './pages/Aluno/PerfilAluno.jsx';
 import AgendaAluno from './pages/Aluno/Agenda.jsx';
 import AcompanharAulaAluno from './pages/Aluno/AcompanharAula.jsx';
 import DashboardAluno from './pages/Aluno/DashboardAluno.jsx';
-
-
+import CompletarPerfil from "./pages/CompletarPerfil.jsx";
 const AppRoutes = () => {
 
   const [sessaoExpirada, setSessaoExpirada] = useState(false);
-  const [modalMensagem, setModalMensagem] = useState("");
-  const [modalTitulo, setModalTitulo] = useState("");
+
 
   useEffect(() => {
     const handler = () => {
-      /*       setModalMensagem(sessionStorage.getItem("modalMensagem") || "");
-            setModalTitulo(sessionStorage.getItem("modalTitulo") || ""); */
+
       setSessaoExpirada(true);
     };
 
@@ -70,6 +67,11 @@ const AppRoutes = () => {
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/complete-profile" element={
+          <ProtectedRoute>
+            <CompletarPerfil />
+          </ProtectedRoute>
+        } />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
 
         {/* Rotas protegidas */}

@@ -3,7 +3,7 @@ import EtapaAgendamentoAula from "../../components/Utils/GerenciarAlunos/EtapaAg
 import EtapaAtribuicao from "../../components/Utils/GerenciarAlunos/EtapaAtribuicaoTreinos"
 import CardAluno from "../../components/Utils/GerenciarAlunos/CardAluno";
 import { addDays, isAfter } from "date-fns";
-import { AgendamentoProvider, useAgendamento } from "./GerenciarAlunos/Context/AgendamentoContext";
+import { AgendamentoProvider } from "./GerenciarAlunos/Context/AgendamentoContext";
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
@@ -39,6 +39,12 @@ const ModalAgendarAula = ({
     const [rascunhosPersistidos, setRascunhosPersistidos] = useState([]);
 
     const currentAlunos = [aluno];
+
+      useEffect(() => {
+        return () => {
+          toast.remove();
+        };
+      }, []);
 
     const handleDateClick = (clickedDate) => {
         const dateStr = clickedDate.toDateString();
@@ -169,7 +175,6 @@ const ModalAgendarAula = ({
     const getBuscarAulasDisponiveis = async () => {
         try {
             const response = await caringuApi.get(`/aulas/${aluno.idAluno}/disponibilidade`);
-            const temAulasRascunho = response.data.aulasRascunho >= 1;
             setAulasDisponiveis(response.data);
         } catch (error) {
             console.error("Erro ao buscar aulas disponíveis:", error);

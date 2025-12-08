@@ -8,6 +8,8 @@ const extrairYoutubeId = (url) => {
 
 function CardExercicio({ exercicio, expandido, onExpand }) {
     const [isPlaying, setIsPlaying] = useState(false);
+    const isExpanded = expandido === exercicio.idExecucaoExercicio;
+
 
 
     return (
@@ -69,7 +71,7 @@ function CardExercicio({ exercicio, expandido, onExpand }) {
                 </span>
             </div>
 
-            {expandido && (
+            {isExpanded && (
                 <>
                     {/* Grupo muscular */}
                     <div className="ml-2">

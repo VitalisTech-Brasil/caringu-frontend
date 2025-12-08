@@ -163,7 +163,7 @@ export default function Etapa2({ setEtapa }) {
         celular: formatarCelular(data.telefone),
         dataNascimento: converterParaISO(data.dataNascimento),
         genero: data.genero,
-        tipoConta: dadosCadastro.tipoConta || "aluno",
+        urlFotoPerfil: dadosCadastro.fotoPerfilGoogle || null,
       };
 
       console.info("Payload aluno enviado: ", payloadAluno);

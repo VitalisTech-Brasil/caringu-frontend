@@ -4,11 +4,14 @@ import { toast } from "react-hot-toast";
 import CustomToast from "../Utils/CustomToast";
 import FotoPerfil from "../../components/PerfilPersonal/FotoPerfil/FotoPerfil";
 import MascaraTelefone from "../Utils/Functions/MascaraTelefone";
+import { useFotoPerfil } from "../../context/FotoPerfilContext";
 
 export default function InformacoesPessoaisAluno() {
     const [formData, setFormData] = useState({});
     const [urlFotoPerfil, setUrlFotoPerfil] = useState("");
     const [alunoData, setAlunoData] = useState({});
+    const nomeSessionStorage = sessionStorage.getItem("usuario");
+    const { setFotoPerfil } = useFotoPerfil();
 
     const alunoId = sessionStorage.getItem("pessoaId");
 
@@ -27,13 +30,16 @@ export default function InformacoesPessoaisAluno() {
                 setUrlFotoPerfil(response.data.urlFotoPerfil);
                 setFormData(dadosComMascara);
                 setAlunoData(dadosComMascara);
+                setFotoPerfil(response.data.urlFotoPerfil || "");
             } catch (error) {
                 console.error("Erro ao buscar aluno:", error);
             }
         };
 
-        fetchData();
-    }, [alunoId]);
+        if (alunoId) {
+            fetchData();
+        }
+    }, []);
 
     const removerMascara = (celular) => celular.replace(/\D/g, "");
 
@@ -88,6 +94,14 @@ export default function InformacoesPessoaisAluno() {
 
         try {
             await caringuApi.patch(`/alunos/${alunoId}`, dataParaSalvar);
+
+            const novoNome = dataParaSalvar.nome || formData.nome || "";
+            if (novoNome) {
+                sessionStorage.setItem("usuario", novoNome);
+                window.dispatchEvent(new CustomEvent("usuarioAtualizado", { detail: { nome: novoNome } }));
+                setAlunoData((prev) => ({ ...prev, nome: novoNome }));
+            }
+
             toast.custom(t => <CustomToast t={t} type="success" message="Perfil salvo com sucesso!" />);
         } catch (error) {
             toast.custom(t => <CustomToast t={t} type="error" message="Não foi possível salvar as informações do perfil." />);
@@ -101,8 +115,15 @@ export default function InformacoesPessoaisAluno() {
             <div className="space-y-8">
                 <FotoPerfil
                     urlFoto={urlFotoPerfil}
-                    nomePersonal={alunoData.nome || ""}
-                    onFotoChange={(novaUrl) => setUrlFotoPerfil(novaUrl)}
+                    nomePersonal={nomeSessionStorage || formData.nome || alunoData.nome || ""}
+                    onFotoChange={(novaUrl) => {
+                        setUrlFotoPerfil(novaUrl);
+                        setFormData((prev) => ({
+                            ...prev,
+                            urlFotoPerfil: novaUrl,
+                        }));
+                        setFotoPerfil(novaUrl || "");
+                    }}
                 />
 
                 <div className="bg-white border-2 border-[#1D2D441C] rounded-lg p-6 flex flex-col justify-center">

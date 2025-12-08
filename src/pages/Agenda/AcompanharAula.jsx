@@ -11,6 +11,7 @@ import MascaraData from "../../components/Utils/Functions/MascaraData";
 import MascaraGenero from "../../components/Utils/Functions/MascaraGenero";
 import MascaraNivelExperiencia from '../../components/Utils/Functions/MascaraNivelExperiencia';
 import MascaraTelefone from '../../components/Utils/Functions/MascaraTelefone';
+import { Toaster } from 'react-hot-toast';
 
 
 const AcompanharAula = () => {
@@ -94,6 +95,20 @@ const AcompanharAula = () => {
         }
     };
 
+        if (!idAula) {
+            return (
+                <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
+                    <MenuLateral />
+                    <div className="flex-1 overflow-y-auto">
+                        <Header />
+                        <div className="w-full h-auto p-2 md:p-4 2xl:">
+                            <span className="text-xl text-gray-500">Informações da aula não disponíveis.</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
 
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
@@ -114,9 +129,9 @@ const AcompanharAula = () => {
                     <div className="h-auto w-full flex flex-row items-center justify-center">
                         <div className="max-h-[80vh] h-auto w-[95%] bg-[rgba(29,45,68,0.11)] border-2 border-gray-300 rounded-md flex flex-col justify-start items-center py-5 gap-4 overflow-y-auto">
                             <div className="bg-[var(--cor-secundaria)] border-2 border-gray-300 rounded-md flex lg:flex-row flex-col items-center h-auto w-[95%] 2xl:w-[85%] py-5 px-2 sm:px-4 xl:px-12 gap-8">
-                                {aluno?.alunoId?.urlFotoPerfil && !imgErro ? (
+                                {aluno?.urlFotoPerfil && !imgErro ? (
                                     <img
-                                        src={aluno.alunoId.urlFotoPerfil}
+                                        src={aluno.urlFotoPerfil}
                                         alt="Imagem do aluno"
                                         className='w-20 h-20 lg:w-12 lg:h-12 xl:w-20 xl:h-20 2xl:w-25 2xl:h-25 rounded-full'
                                         onError={() => setImgErro(true)}
@@ -188,13 +203,14 @@ const AcompanharAula = () => {
                                                 {aula.exercicios?.map((ex) => (
                                                     <ExercicioVideoCard
                                                         key={ex.idExecucaoExercicio}
-                                                        titulo={ex.nomeExercicio}
+                                                        nomeExercicio={ex.nomeExercicio}
                                                         carga={ex.cargaKg}
                                                         repeticoesSeries={ex.repeticoesSeries}
                                                         observacoes={ex.observacoes}
                                                         urlVideoExecucao={ex.urlExemploExecucao}
                                                         tempoDescanso={segundosParaMinutos(Number(ex.descansoSegundos))}
                                                         exerciciosFinalizados={ex.finalizado}
+                                                        idAulaTreinoExercicio={ex.idAulaTreinoExercicio}
                                                         origemUso="visualizarAulas"
                                                         espacamentoEntreIcons="justify-start gap-3 xl:gap-10"
                                                         larguraVideo="xl:w-[40%] md:w-[80%] w-full"
@@ -225,6 +241,7 @@ const AcompanharAula = () => {
                         </div>
                     </div>
                 </div>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
         </div>
     );

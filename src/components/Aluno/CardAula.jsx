@@ -26,7 +26,7 @@ const CardAula = ({
                             <path d="M14 15C13.74 11.845 11.6043 9.36446 8.91143 9.0816C7.98286 8.9728 7.03571 8.9728 6.08857 9.0816C3.39571 9.38622 1.26 11.845 1 15" stroke="#1D2D44" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                         <span className="break-all text-sm xl:text-base">
-                            Igor Daniel
+                            {nomePersonal}
                         </span>
                     </div>
                     <div className="w-[34%] md:w-[20%]">

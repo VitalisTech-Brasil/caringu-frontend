@@ -6,14 +6,24 @@ import { Link, useParams } from 'react-router-dom';
 import CarrosselRegistro from '../../components/Utils/CarrosselRegistro';
 import ModalEvolucaoCorporal from '../../components/Fotos/ModalEvolucaoCorporal';
 import { caringuApi } from '../../provider/caringuApi';
+import ModalCompararFoto from '../../components/Fotos/ModalCompararFoto';
+import { Toaster } from 'react-hot-toast';
 
 const ProgressoCorporal = () => {
     const menuRef = useRef(null);
-    const { idAluno } = useParams();
+
+    // Pode vir pela rota (/aluno/:idAluno) ou pelo sessionStorage ("pessoaId")
+    const params = useParams();
+    const idAluno = params.idAluno || sessionStorage.getItem("pessoaId");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenComparacao, setIsModalOpenComparacao] = useState(false);
     const [tipoFoto, setTipoFoto] = useState(null);
     const [periodoAvaliacaoEmMeses, setPeriodoAvaliacaoEmMeses] = useState(0);
+
+    useEffect(() => {
+        document.title = "Progresso Corporal | CaringU";
+    }, []);
 
     const [fotosCorporais, setFotosCorporais] = useState({
         FRONTAL: [],
@@ -26,6 +36,10 @@ const ProgressoCorporal = () => {
         setTipoFoto(tipo);
         setIsModalOpen(true);
     };
+    const abrirModalComparacao = (tipo) => {
+        setTipoFoto(tipo);
+        setIsModalOpenComparacao(true);
+    }
 
     const fecharModal = () => {
         setIsModalOpen(false);
@@ -34,7 +48,7 @@ const ProgressoCorporal = () => {
 
     const handleListarFotosCorporais = async () => {
         try {
-            const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
+            const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno}`);
             const fotos = response.data;
             console.log("Fotos recebidas:", fotos);
 
@@ -68,7 +82,12 @@ const ProgressoCorporal = () => {
     useEffect(() => {
         handleListarFotosCorporais();
     }, [idAluno]);
-    
+
+    const handleFotoEnviadaComSucesso = async () => {
+        await handleListarFotosCorporais();
+        fecharModal();
+    };
+
     return (
         <div className="flex min-h-screen bg-[var(--cor-secundaria)]">
             <MenuLateralAluno ref={menuRef} />
@@ -97,18 +116,31 @@ const ProgressoCorporal = () => {
                                 { titulo: "Perfil Direito", tipo: "PERFIL_DIREITO", imagens: fotosCorporais.PERFIL_DIREITO },
                                 { titulo: "Costas", tipo: "COSTAS", imagens: fotosCorporais.COSTAS }
                             ].map(({ titulo, tipo, imagens }) => (
-                                <div key={tipo} className='flex flex-col mt-10 max-h-[400px] p-4'>
-                                    <div className='flex items-center justify-between'>
+                                <div key={tipo} className='flex flex-col mt-8 max-h-[400px] sm:p-4 p-0'>
+                                    <div className='flex sm:flex-row flex-col  items-start sm:items-center justify-between sm:pb-0 pb-3'>
                                         <h1 className='font-semibold text-[24px]'>{titulo}</h1>
-                                        <Button
-                                            texto="Enviar foto"
-                                            cor="#748CAB"
-                                            corTexto="#FFFFFF"
-                                            onClick={() => abrirModal(tipo)}
-                                            width="140px"
-                                            height="30px"
-                                            fontSize="12px"
-                                        />
+                                        <div className='flex w-auto h-auto gap-4 sm:flex-row'>
+                                            <Button
+                                                texto="Enviar foto"
+                                                cor="#748CAB"
+                                                corTexto="#FFFFFF"
+                                                onClick={() => abrirModal(tipo)}
+                                                width="140px"
+                                                height="30px"
+                                                fontSize="12px"
+                                                fontWeight={"700"}
+                                            />
+                                            <Button
+                                                texto="Comparar Fotos"
+                                                cor="#748CAB"
+                                                corTexto="#FFFFFF"
+                                                onClick={() => abrirModalComparacao(tipo)}
+                                                width="140px"
+                                                height="30px"
+                                                fontSize="12px"
+                                                fontWeight={"700"}
+                                            />
+                                        </div>
                                     </div>
                                     <div className='border-2 border-[#E6E6E2] rounded-lg'>
                                         <CarrosselRegistro imagens={imagens} />
@@ -117,7 +149,17 @@ const ProgressoCorporal = () => {
                             ))}
                         </div>
                     </div>
+                    {isModalOpenComparacao && (
+                        <ModalCompararFoto
+                            visivel={isModalOpenComparacao}
+                            fecharModal={() => setIsModalOpenComparacao(false)}
+                            ariaLabel="Modal para comparar fotos corporais"
+                            fotosCorporais={fotosCorporais}
+                            tipoSelecionado={tipoFoto}
+                        />
+                    )}
                 </main>
+                <Toaster position="top-right" reverseOrder={false} />
             </div>
             {isModalOpen && (
                 <ModalEvolucaoCorporal
@@ -125,6 +167,7 @@ const ProgressoCorporal = () => {
                     alunoId={idAluno}
                     periodoAvaliacao={periodoAvaliacaoEmMeses}
                     onClose={fecharModal}
+                    onSuccess={handleFotoEnviadaComSucesso}
                 />
             )}
         </div >

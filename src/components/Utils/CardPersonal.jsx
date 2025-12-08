@@ -9,7 +9,6 @@ const CardPersonal = ({
     nomePersonal,
     cidade,
     experiencia,
-    celular,
     email,
     urlFoto,
     especialidades = [],

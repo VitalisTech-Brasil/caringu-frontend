@@ -1,5 +1,4 @@
 import { React, useEffect, useState } from 'react';
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import setaVoltar from '../../assets/images/seta-voltar.svg';
 import googleLogo from '../../assets/logos/google-logo.svg';
 import loadingGif from "../../assets/gifs/loading.gif";
@@ -13,13 +12,17 @@ import toast from 'react-hot-toast';
 import CustomToast from '../Utils/CustomToast';
 import alert from "../../assets/images/alert.svg";
 import { caringuApi } from '../../provider/caringuApi';
+import { useGoogleSSO } from '../../hooks/useGoogleSSO';
+import { useFotoPerfil } from "../../context/FotoPerfilContext";
 
 const ColunaInputs = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitted } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [tempoRestante, setTempoRestante] = useState(null);
+  const { loginWithGoogle } = useGoogleSSO();
+  const { setFotoPerfil } = useFotoPerfil();
 
   useEffect(() => {
     return () => {
@@ -65,51 +68,15 @@ const ColunaInputs = () => {
     return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   };
 
-  const loginGoogle = useGoogleLogin({
-    onSuccess: async (codeResponse) => {
-      setLoadingGoogle(true);
-      try {
-        const response = await api.post('/login/google', {
-          code: codeResponse.code
-        }, {
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (response.status === 200) {
-          // authToken agora é enviado via cookie HttpOnly
-          sessionStorage.setItem('usuario', response.data.nome);
-          sessionStorage.setItem('pessoaId', response.data.pessoaId);
-          sessionStorage.setItem('tipo', response.data.tipo);
-          sessionStorage.setItem('email', response.data.email);
-
-          toast.custom((t) => (
-            <CustomToast t={t} type="success" message="Login com Google realizado!" />
-          ));
-
-          setTimeout(() => {
-            const tipo = (response.data.tipo || "").toString().toUpperCase();
-            if (tipo === "PERSONAL") {
-              navigate('/home');
-            } else if (tipo === "ALUNO") {
-              validarAlunoENavegar(response.data.pessoaId);
-            }
-          }, 1000);
-        }
-      } catch (error) {
-        toast.custom((t) => (
-          <CustomToast t={t} type="error" message="Erro ao fazer login com Google." />
-        ));
-      } finally {
-        setLoadingGoogle(false);
-      }
-    },
-    onError: () => {
-      toast.custom((t) => (
-        <CustomToast t={t} type="error" message="Login com Google falhou." />
-      ));
-    },
-    flow: 'auth-code'
-  });
+  // Wrapper para controlar estado de loading do botão Google
+  const handleLoginGoogle = () => {
+    setLoadingGoogle(true);
+    try {
+      loginWithGoogle();
+    } finally {
+      setLoadingGoogle(false);
+    }
+  };
 
   const verificarUsuario = async (data) => {
     setLoading(true);
@@ -124,10 +91,32 @@ const ColunaInputs = () => {
 
       if (response.status === 200) {
         // authToken agora é enviado via cookie HttpOnly
-        sessionStorage.setItem('pessoaId', response.data.pessoaId);
+        const pessoaId = response.data.pessoaId;
+        const tipo = (response.data.tipo || "").toString().toUpperCase();
+
+        sessionStorage.setItem('pessoaId', pessoaId);
         sessionStorage.setItem('usuario', response.data.nome);
         sessionStorage.setItem('tipo', response.data.tipo);
         sessionStorage.setItem('email', email);
+
+        // Busca inicial da foto de perfil para preencher o contexto/logo do menu
+        try {
+          let url = "";
+          if (tipo === "PERSONAL") {
+            const resp = await caringuApi.get(`/personal-trainers/${pessoaId}`);
+            url = resp?.data?.urlFotoPerfil || "";
+          } else if (tipo === "ALUNO") {
+            const resp = await caringuApi.get(`/alunos/${pessoaId}`);
+            url = resp?.data?.urlFotoPerfil || "";
+          } else {
+            const resp = await caringuApi.get(`/pessoas/${pessoaId}/foto-perfil`);
+            url = resp?.data?.urlFotoPerfil || "";
+          }
+          setFotoPerfil(url);
+        } catch (e) {
+          console.error("Erro ao buscar foto de perfil após login:", e);
+          setFotoPerfil("");
+        }
 
         toast.custom((t) => (
           <CustomToast t={t} type="success" message="Login realizado com sucesso!" />
@@ -254,7 +243,7 @@ const ColunaInputs = () => {
             width="100%"
             height="12.15%"
             fontSize="14px"
-            onClick={() => loginGoogle()}
+            onClick={handleLoginGoogle}
             disabled={!!tempoRestante}
           />
 
