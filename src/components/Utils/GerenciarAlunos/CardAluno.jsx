@@ -155,9 +155,6 @@ const CardAluno = ({
     }, [openMenuId, aluno.idAluno]);
 
     useEffect(() => {
-
-        console.log("Aluno no CardAluno: ");
-        console.log(aluno);
     }, [aluno]);
 
     return (

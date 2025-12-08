@@ -68,7 +68,6 @@ const AcompanharAula = () => {
                 setAluno(response.data);
                 const aulaData = await caringuApi.get(`/aulas-treinos-exercicios/acompanhamento-aulas/${idAula}`);
                 setAula(aulaData.data);
-                console.log("Aula:", aulaData.data);
             } catch (error) {
                 console.error("Erro ao buscar informações do aluno:", error);
             }

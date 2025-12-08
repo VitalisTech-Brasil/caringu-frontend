@@ -39,7 +39,6 @@ const FeedbackMensagem = () => {
                 feedbacks = feedbacksArray[0].feedbacks;
             }
             setMensagensFeedback(feedbacks);
-            console.log("Feedbacks da aula:", feedbacks);
         } catch (error) {
             console.error("Erro ao buscar feedbacks da aula:", error);
             setMensagensFeedback([]);

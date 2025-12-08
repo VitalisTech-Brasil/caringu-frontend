@@ -74,14 +74,11 @@ const EditarTreino = () => {
     // Busca treino e seus exercícios
     useEffect(() => {
         const fetchInfosTreino = async () => {
-            console.log(idPersonal);
-            console.log(idTreino);
+           
 
             try {
-                console.log("buscando treino e exercícios");
                 const response = await caringuApi.get(`/treinos-exercicios/buscar-info-treino-edit/${idPersonal}/${idTreino}`);
                 const data = response.data;
-                console.log("treino salvo", data);
                 if (data.length > 0) {
                     setTreino(data);
                     setExerciciosEditados(data);

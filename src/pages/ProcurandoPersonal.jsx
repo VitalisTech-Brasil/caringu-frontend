@@ -362,7 +362,6 @@ const ProcurandoPersonal = () => {
       const response = await caringuApi.get("personal-trainers/disponiveis");
       setAllTrainers(response.data);
       setFilteredTrainers(response.data);
-      console.log(response.data)
     } catch (error) {
       console.error("Erro ao buscar personal trainers:", error);
     }
@@ -390,7 +389,6 @@ const ProcurandoPersonal = () => {
         url += `?filtroNota=${filtroNota}`;
       }
       const response = await caringuApi.get(url);
-      console.log(response.data);
       setAllTrainers(response.data);
       setFilteredTrainers(response.data);
 

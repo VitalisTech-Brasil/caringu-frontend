@@ -50,8 +50,6 @@ const ProgressoCorporal = () => {
         try {
             const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno}`);
             const fotos = response.data;
-            console.log("Fotos recebidas:", fotos);
-
             setPeriodoAvaliacaoEmMeses(fotos.length > 0 ? fotos[0].periodoAvaliacao : 0);
 
             // Organiza as fotos por tipo
@@ -73,7 +71,6 @@ const ProgressoCorporal = () => {
             });
 
             setFotosCorporais(agrupadas);
-            console.log("Evoluções corporais do aluno:", agrupadas);
         } catch (error) {
             console.error("Erro ao listar fotos:", error);
         }

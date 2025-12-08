@@ -130,7 +130,6 @@ export default function Etapa3({ setEtapa }) {
         setMensagemCref("CREF e/ou nome não encontrado ou inválido.");
       }
 
-      console.log("Resposta da função:", response.data);
     } catch (error) {
       setCrefStatus("erro");
       setMensagemCref("Erro ao verificar o CREF. Tente novamente.");
@@ -262,8 +261,6 @@ export default function Etapa3({ setEtapa }) {
       experiencia: data.experiencia,
     };
 
-    console.log(data);
-    console.log("Payload acima");
     console.info("Payload enviado: ", payloadFinal);
 
     try {

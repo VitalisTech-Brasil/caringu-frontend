@@ -51,7 +51,6 @@ const Feedback = () => {
             if (todasAulas.length > 0) {
                 setAulaSelecionada(todasAulas[0]);
             }
-            console.log("Aulas do aluno:", todasAulas);
         } catch (error) {
             setAulas([]);
             setAulaSelecionada(null);
@@ -77,7 +76,6 @@ const Feedback = () => {
                 feedbacks = feedbacksArray[0].feedbacks;
             }
             setMensagensFeedback(feedbacks);
-            console.log("Feedbacks da aula:", feedbacks);
         } catch (error) {
             console.error("Erro ao buscar feedbacks da aula:", error);
             setMensagensFeedback([]);

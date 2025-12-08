@@ -85,7 +85,6 @@ const GerenciarExercicios = () => {
         const idPersonal = sessionStorage.getItem("pessoaId");
         try {
             const { data } = await caringuApi.get(`/exercicios/por-personal/${idPersonal}`);
-console.log("Exercícios do personal:", data);
             setTodosExercicios(data);
         } catch (e) {
             console.error(`Erro ao buscar os exercícios do personal com ID ${idPersonal}:`, e);

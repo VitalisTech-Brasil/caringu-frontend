@@ -184,7 +184,6 @@ const Header = () => {
 
         const notificacoesOrdenadas = ordenarNotificacoes(notifications.data);
         setNotificacoesGeral(notificacoesOrdenadas);
-        console.log("Notificações:", notificacoesOrdenadas);
       } catch (error) {
         console.error("Erro ao buscar notificações:", error);
       }
@@ -247,7 +246,6 @@ const Header = () => {
     const agora = new Date();
     const data = new Date(dataCriacao);
 
-    //  console.log("Agora:", agora, "| Data da notificação:", data);
 
     const diffMs = agora - data;
     const diffMin = Math.floor(diffMs / 60000);

@@ -95,7 +95,6 @@ const CriarTreino = () => {
             try {
                 const response = await caringuApi.get(`/exercicios/por-personal/${pessoaId}`);
                 setExercicios(response.data);
-                console.log("Exercicios", response.data);
             } catch (error) {
                 console.error('Erro ao buscar exercícios:', error);
             }

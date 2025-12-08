@@ -31,7 +31,6 @@ const RelatorioTreinos = () => {
         try {
             const response = await caringuApi.get(`/evolucao-corporal/aluno/${idAluno ? idAluno : 7}`);
             const fotos = response.data;
-            console.log("Fotos recebidas:", fotos);
 
             // Organiza as fotos por tipo
             const agrupadas = {
@@ -52,7 +51,6 @@ const RelatorioTreinos = () => {
             });
 
             setFotosCorporais(agrupadas);
-            console.log("Evoluções corporais do aluno:", agrupadas);
         } catch (error) {
             console.error("Erro ao listar fotos:", error);
         }

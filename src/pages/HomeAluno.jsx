@@ -126,7 +126,6 @@ const HomeAluno = () => {
           })
           : [];
         setProximasAulas(compromisso);
-        console.log("Próximas aulas:", compromisso);
 
 
       } catch (error) {

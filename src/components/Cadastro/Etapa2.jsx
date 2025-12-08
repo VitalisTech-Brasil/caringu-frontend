@@ -133,7 +133,6 @@ export default function Etapa2({ setEtapa }) {
     atualizarDados(data);
 
     // Direcionar fluxo baseado no tipo de conta
-    console.log("Tipo de conta:", dadosCadastro.tipoConta); // Debug temporário
     if (dadosCadastro.tipoConta === "personal") {
       setEtapa(3); // Personal Trainer vai para Etapa3 (CREF + especialidades)
     } else if (dadosCadastro.tipoConta === "aluno") {
@@ -174,9 +173,6 @@ export default function Etapa2({ setEtapa }) {
       } catch (error) {
         if (error.response?.status === 404) {
           // Se endpoint /alunos não existir, usar endpoint genérico
-          console.log(
-            "Endpoint /alunos não encontrado, usando endpoint genérico /usuarios"
-          );
           await caringuApi.post("/usuarios", payloadAluno);
         } else {
           throw error;

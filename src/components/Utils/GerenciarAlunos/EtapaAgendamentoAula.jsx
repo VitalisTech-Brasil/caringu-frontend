@@ -284,7 +284,6 @@ const EtapaAgendamentoAula = ({
                 );
                 setDatasAulasBloqueadas(datas);
 
-                console.log("Aulas do aluno selecionado:", response.data);
             } catch (error) {
                 console.error("Erro ao exibir aulas:", error);
             }
@@ -736,10 +735,6 @@ const EtapaAgendamentoAula = ({
                         disabled={!todosHorariosPreenchidos}
                         onClick={() => {
                             const dadosParaEnvio = montarAulasParaEnvio();
-                            console.log({
-                                ...dadosParaEnvio,
-                                diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))
-                            });
                             atualizarAgendamento({
                                 ...dadosParaEnvio,
                                 diasSemanaMarcados: diasSemana.filter(d => diasSelecionados.includes(d.value))

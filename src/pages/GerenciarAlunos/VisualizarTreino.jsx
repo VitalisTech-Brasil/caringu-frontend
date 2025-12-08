@@ -23,8 +23,6 @@ const VisualizarTreino = () => {
 
 
     useEffect(() => {
-        console.log('alunoFromState:', alunoFromState);
-        console.log('idAluno (from params):', idAluno);
     }, [location.state, alunoFromState, idAluno]);
 
     const [imgErro, setImgErro] = useState(false);
@@ -35,7 +33,6 @@ const VisualizarTreino = () => {
             const response = await caringuApi.get(`/aulas-treinos-exercicios/visualizar-aula/${aulaId}?idAluno=${idAluno}`);
             setNomeTreino(response.data.nomeTreino || '');
             setExercicios(response.data.exercicios || []);
-            console.log("Informações do exercicios:", response.data);
         } catch (error) {
             console.error("Erro ao buscar informações do aluno:", error);
         }
@@ -57,7 +54,6 @@ const VisualizarTreino = () => {
                 page += 1;
             }
             setAulas(todasAulas);
-            console.log("Aulas do aluno:", todasAulas);
         } catch (error) {
             setAulas([]);
             console.error("Erro ao buscar aulas:", error);

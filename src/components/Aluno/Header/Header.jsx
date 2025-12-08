@@ -23,7 +23,6 @@ const Header = ({
         const notifications = await caringuApi.get(`/notificacoes/pessoas/${alunoId}`);
         const notificacoesOrdenadas = ordenarNotificacoes(notifications.data);
         setNotificacoesGeral(notificacoesOrdenadas);
-        console.log("Notificações:", notificacoesOrdenadas);
       } catch (error) {
         console.error("Erro ao buscar notificações:", error);
       }
@@ -94,7 +93,6 @@ const Header = ({
 
   const redirecionarPorTipo = (tipo) => {
     // Implemente a lógica de redirecionamento baseada no tipo
-    console.log("Redirecionando para tipo:", tipo);
     setShowNotifications(false);
 
     // Exemplo de implementação:

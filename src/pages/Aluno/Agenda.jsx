@@ -21,7 +21,6 @@ const Agenda = () => {
             try {
                 const response = await caringuApi.get(`/aulas/alunos-aulas/${alunoId}`);
                 setAulas(response.data);
-                console.log("Aulas:", response.data);
             } catch (error) {
                 console.error("Erro ao exibir aulas:", error);
             }

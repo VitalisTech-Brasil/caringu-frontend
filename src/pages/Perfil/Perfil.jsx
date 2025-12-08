@@ -202,8 +202,6 @@ const Perfil = () => {
             };
 
             try {
-                console.log("Enviando para API:", dataParaSalvarPersonal);
-
                 await caringuApi.patch(`/personal-trainers/${personalId}`, dataParaSalvarPersonal);
 
                 // Atualiza nome na sessionStorage e contexto

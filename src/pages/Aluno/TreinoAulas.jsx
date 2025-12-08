@@ -24,8 +24,6 @@ function TreinoAulas() {
             const response = await caringuApi.get(`/aulas-treinos-exercicios/visualizar-aula/${idAula}?idAluno=${idAluno}`);
             setNomeTreino(response.data.nomeTreino || '');
             setExercicios(response.data.exercicios || []);
-            console.log("Informações do exercicios:", response.data);
-            console.log("Informações do treino:", response.data);
         } catch (error) {
             console.error("Erro ao buscar informações do aluno:", error);
         }
