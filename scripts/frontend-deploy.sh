@@ -30,7 +30,7 @@ echo "📁 Entrando no diretório da aplicação: $REMOTE_APP_DIR"
 cd "$REMOTE_APP_DIR"
 
 echo "🛑 Derrubando stack atual (docker compose down)..."
-sudo docker compose -f docker-compose-hub.yml down || echo "Aviso: docker compose down retornou erro (pode não haver stack ativa)."
+sudo docker compose down || sudo docker compose -f docker-compose-hub.yml down || echo "Aviso: docker compose down retornou erro (pode não haver stack ativa)."
 
 echo "🧹 Limpando imagens antigas (docker image prune -f)..."
 sudo docker image prune -f
