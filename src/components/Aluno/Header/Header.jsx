@@ -91,7 +91,7 @@ const Header = ({
     }
   }
 
-  const redirecionarPorTipo = (tipo) => {
+  const redirecionarPorTipo = () => {
     // Implemente a lógica de redirecionamento baseada no tipo
     setShowNotifications(false);
 
